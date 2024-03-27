@@ -1,0 +1,20 @@
+---
+export type Props = {
+  id: string;
+};
+
+const { id } = Astro.props;
+const gtagUrl = `https://www.googletagmanager.com/gtag/js?id=${id}`;
+---
+
+<Fragment>
+  <script is:inline type="text/partytown" src={gtagUrl}></script>
+  <script is:inline type="text/partytown" define:vars={{ id }}>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      window.dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+    gtag('config', id);
+  </script>
+</Fragment>

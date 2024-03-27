@@ -4,8 +4,11 @@ import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
 import { getEntry } from 'astro:content';
 
+import { CalendarIcon, ClockIcon } from '@radix-ui/react-icons';
+
 import Figure from '@/components/Figure.astro';
 import Link from '@/components/Link.astro';
+import { Separator } from '@/components/ui/separator';
 import { defaultLang } from '@/i18n/ui';
 import Layout from '@/layouts/Layout.astro';
 
@@ -36,7 +39,7 @@ export async function getStaticPaths() {
 
   return paths;
 }
-const { Content } = await Astro.props.post.render();
+const { Content, remarkPluginFrontmatter } = await Astro.props.post.render();
 const { post, lang } = Astro.props;
 const components = {
   figure: Figure,

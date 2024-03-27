@@ -31,7 +31,7 @@ export default [
       '**/.astro/**/*',
       '**/env.d.ts',
       '**/types.d.ts',
-      '**/Gtag.astro',
+      '**/GoogleAnalytics.astro',
     ],
   },
   {
