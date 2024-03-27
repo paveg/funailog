@@ -48,7 +48,7 @@ body {
       }
     }
     & .footnotes {
-      @apply mt-6 border-t border-solid text-sm text-muted-foreground dark:text-muted;
+      @apply mt-6 border-t border-solid text-sm text-muted-foreground;
       & li {
         @apply list-outside;
       }
