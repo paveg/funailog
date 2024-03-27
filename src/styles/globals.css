@@ -85,6 +85,7 @@
     --border: hsl(0, 0%, 14.9%);
     --input: hsl(0, 0%, 14.9%);
     --ring: hsl(0, 0%, 83.1%);
+    --hover: hsl(0, 0%, 19%);
   }
 }
 @layer base {
