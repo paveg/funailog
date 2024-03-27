@@ -65,7 +65,7 @@ const site = Astro.site ?? '';
         </>
       )
     }
-    <Gtag />
+    <Gtag id={import.meta.env.PUBLIC_GA_MEASUREMENT_ID} />
     <script is:inline>
       if (typeof window.localStorage.getItem('theme') === 'string') {
         const currentTheme = window.localStorage.getItem('theme');
