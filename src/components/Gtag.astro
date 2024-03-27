@@ -1,0 +1,17 @@
+---
+const isProd = import.meta.env.PROD;
+const GAScriptUrl = `https://www.googletagmanager.com/gtag/js?id=${isProd ? PUBLIC_GA_MEASUREMENT_ID : 'dummy'}`;
+---
+
+{
+  isProd && (
+    <Fragment>
+      <script type="text/partytown" src={GAScriptUrl} />
+      <script type="text/partytown" define:vars={{ PUBLIC_GA_MEASUREMENT_ID }}>
+        window.dataLayer = window.dataLayer || []; function gtag(){' '}
+        {window.dataLayer.push(arguments)}
+        gtag('js', new Date()); gtag('config', PUBLIC_GA_MEASUREMENT_ID);
+      </script>
+    </Fragment>
+  )
+}
