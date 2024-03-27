@@ -55,8 +55,8 @@ const fetchSiteImage = async (src: string) => {
     if (!img) {
       return undefined;
     }
-    const file = `.cache/embed/${hash}.${fileExt}`;
-    const filePath = path.join(process.cwd(), `./public/${file}`);
+    const file = `/.cache/embed/${hash}.${fileExt}`;
+    const filePath = path.join(process.cwd(), `./public${file}`);
     await sharp(Buffer.from(img))
       .resize(400)
       .toFormat(fileExt, {
@@ -68,7 +68,7 @@ const fetchSiteImage = async (src: string) => {
       recursive: true,
     });
 
-    fs.copyFileSync(filePath, path.join(process.cwd(), `./dist/${file}`));
+    fs.copyFileSync(filePath, path.join(process.cwd(), `./dist${file}`));
     siteImageMap.set(hash, file);
 
     return file;
