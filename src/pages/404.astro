@@ -1,0 +1,25 @@
+---
+import { getEntry } from 'astro:content';
+
+import Link from '@/components/Link.astro';
+import Layout from '@/layouts/Layout.astro';
+const meta = await getEntry('site', 'meta');
+---
+
+<Layout
+  title=`404 Not Found | ${meta.data.index.title}`
+  description="The page you are looking for hasn't been found"
+  path="/404"
+  og={{
+    enabled: false,
+  }}
+  ><main class="mx-auto py-12 text-center">
+    <h1>404 Not Found</h1>
+    <p class="text-sm text-secondary dark:text-secondary-foreground">
+      The page you are looking for hasn't been found.
+    </p>
+    <p>
+      <Link href="/">Go Back to Home.</Link>
+    </p>
+  </main></Layout
+>

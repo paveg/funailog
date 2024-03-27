@@ -1,0 +1,62 @@
+---
+import type { Page } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+
+import { CalendarIcon, ReloadIcon } from '@radix-ui/react-icons';
+
+import { defaultLang, showDefaultLang } from '@/i18n/ui';
+
+export type Props = {
+  page: Page<CollectionEntry<'blog'>>;
+};
+const { page } = Astro.props;
+---
+
+<>
+  <ul class="space-y-6">
+    {
+      page.data.map((post) => {
+        const { slug, data, collection } = post;
+        const [lang, year, ...id] = slug.split('/');
+        const path = `/${lang}/${collection}/posts/${year}/${id}`;
+        const blogPath =
+          defaultLang === lang && !showDefaultLang
+            ? `/${collection}/posts/${year}/${id}`
+            : path;
+        return (
+          <li>
+            <article>
+              <span>
+                <time
+                  class="flex items-center justify-start gap-2"
+                  datetime={data.published.toISOString()}
+                >
+                  {data.lastUpdated ? (
+                    <ReloadIcon className="size-4" />
+                  ) : (
+                    <CalendarIcon className="size-4" />
+                  )}
+                  {new Intl.DateTimeFormat('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  }).format(data.lastUpdated ?? data.published)}
+                </time>
+              </span>
+              <a href={blogPath}>
+                <h2>{data.title}</h2>
+              </a>
+              <span
+                id="description"
+                class="text-xs text-muted-foreground md:text-sm"
+              >
+                {data.description}
+              </span>
+            </article>
+          </li>
+        );
+      })
+    }
+    <article></article>
+  </ul>
+</>

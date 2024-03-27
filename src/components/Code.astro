@@ -1,0 +1,77 @@
+---
+const props = Astro.props;
+---
+
+<figure {...props}>
+  <slot />
+</figure>
+
+<style>
+  figure {
+    @apply relative mb-4 mt-6 text-sm;
+    font-family: var(--font-code);
+
+    /* Background & Layout */
+    :global(pre) {
+      @apply overflow-x-auto rounded-md;
+    }
+
+    :global(code) {
+      counter-reset: line;
+      @apply grid;
+
+      :global([data-line]) {
+        @apply border-l-4 border-solid border-transparent px-2;
+      }
+
+      > :global([data-line]::before) {
+        counter-increment: line;
+        content: counter(line);
+        @apply mr-5 inline-block w-4 text-right text-[var(--code-bg)];
+      }
+
+      :global([data-highlighted-line]) {
+        @apply border-l-[var(--code-hl-sign)] bg-[var(--code-hl)];
+        :global(span) {
+          background: unset;
+        }
+      }
+
+      :global([data-highlighted-chars]) {
+        @apply rounded-sm bg-[var(--code-find)] p-0.5;
+        :global(span) {
+          background: unset;
+        }
+      }
+    }
+
+    :global([data-rehype-pretty-code-title]) {
+      & + :global(pre) {
+        @apply pb-3 pt-3;
+      }
+    }
+
+    :global(pre:not([data-rehype-pretty-code-title] + pre)) {
+      @apply py-3;
+    }
+
+    /* Code title */
+    :global([data-rehype-pretty-code-title]) {
+      @apply top-0 w-full overflow-hidden text-ellipsis whitespace-nowrap rounded-tl-md rounded-tr-md border-x-2 border-t-2 border-solid bg-[var(--code-title-bg)] px-4 pb-0.5 text-[var(--code-title)] underline underline-offset-1;
+    }
+  }
+
+  :global(pre[data-theme*=' ']),
+  :global(pre[data-theme*=' '] span) {
+    color: var(--shiki-light);
+    background: var(--shiki-light-bg);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(pre[data-theme*=' ']),
+    :global(pre[data-theme*=' '] span) {
+      color: var(--shiki-dark);
+      background: var(--shiki-dark-bg);
+    }
+  }
+</style>

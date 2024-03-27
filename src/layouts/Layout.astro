@@ -1,0 +1,88 @@
+---
+import '@/styles/globals.css';
+
+import '@fontsource-variable/m-plus-2';
+import '@fontsource-variable/m-plus-1-code';
+
+import Footer from '@/components/Footer.astro';
+import Header from '@/components/Header.astro';
+import { TailwindIndicator } from '@/components/tailwind-indicator';
+
+export type Props = {
+  title: string;
+  description: string;
+  path: string;
+  og: {
+    enabled: boolean;
+    image?: URL;
+    width?: number;
+    height?: number;
+    type?: 'article' | 'website';
+  };
+  lang?: string;
+};
+
+const { title, description, path, og, lang } = Astro.props;
+const site = Astro.site ?? '';
+---
+
+<!doctype html>
+<html lang={lang ?? 'ja'}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="48x48" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="author" content="Ryota Ikezawa" />
+    <link rel="author" href={site} />
+    <meta name="creator" content="Ryota Ikezawa" />
+    <meta name="publisher" content="Ryota Ikezawa" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={new URL(path, site).toString()} />
+    <meta property="og:site_name" content={title} />
+    <meta name="twitter:site" content="@paveg_" />
+    <meta name="twitter:creator" content="@paveg_" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {
+      og.enabled && (
+        <>
+          <meta property="og:type" content={og.type ?? 'website'} />
+          <meta
+            property="og:image"
+            content={og.image ?? new URL('/default.jpg', site).toString()}
+          />
+          <meta property="og:image:width" content={`${og.width ?? 1200}`} />
+          <meta property="og:image:height" content={`${og.height ?? 630}`} />
+          <meta
+            property="twitter:card"
+            content={og.type === 'article' ? 'summary_large_card' : 'summary'}
+          />
+        </>
+      )
+    }
+    <script is:inline>
+      if (typeof window.localStorage.getItem('theme') === 'string') {
+        const currentTheme = window.localStorage.getItem('theme');
+        if (currentTheme === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
+      }
+      if (
+        typeof window.localStorage.getItem('theme') !== 'string' &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+      ) {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
+    <title>{title}</title>
+  </head>
+  <body>
+    <Header />
+    <slot />
+    <Footer />
+    <TailwindIndicator />
+  </body>
+</html>

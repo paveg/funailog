@@ -1,0 +1,60 @@
+---
+import '@/styles/articles.css';
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import { getEntry } from 'astro:content';
+
+import Figure from '@/components/Figure.astro';
+import Link from '@/components/Link.astro';
+import { defaultLang } from '@/i18n/ui';
+import Layout from '@/layouts/Layout.astro';
+
+export type Props = {
+  post: CollectionEntry<'blog'>;
+  lang: string;
+};
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+
+  const paths = posts
+    .filter((post) => {
+      const [lang] = post.slug.split('/');
+      return defaultLang !== lang;
+    })
+    .map((post) => {
+      const [lang, year, slug] = post.slug.split('/');
+      return {
+        params: {
+          lang,
+          year,
+          slug,
+        },
+        props: { post, lang },
+      };
+    });
+
+  return paths;
+}
+const { Content } = await Astro.props.post.render();
+const { post, lang } = Astro.props;
+const components = {
+  figure: Figure,
+  a: Link,
+};
+const meta = await getEntry('site', 'meta');
+---
+
+<Layout
+  title={`${post.data.title} | ${meta.data.index.title}`}
+  description={post.data.description}
+  path={`${post.collection}/posts/${post.slug}`}
+  og={{ enabled: false }}
+  lang={lang}
+  ><main>
+    <article>
+      <h1>{lang} | {post.data.title}</h1>
+      <Content components={components} />
+    </article>
+  </main>
+</Layout>

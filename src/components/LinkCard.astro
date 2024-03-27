@@ -1,0 +1,57 @@
+---
+import { ReaderIcon } from '@radix-ui/react-icons';
+
+import { Card, CardContent, CardHeader } from './ui/card';
+
+import { fetchLinkCard } from '@/lib/api';
+export type Props = {
+  href: string;
+};
+
+const props = Astro.props;
+
+const { title, description, image } = await fetchLinkCard(props.href);
+---
+
+{
+  title === 'Access Denied' ? (
+    <a
+      target="_blank"
+      rel="noopener noreferrer"
+      href={props.href}
+      class="px-2 text-link after:content-['🔗'] visited:text-link-visited hover:italic hover:text-link-hover hover:underline active:text-link-active"
+    >
+      <slot />
+    </a>
+  ) : (
+    <div>
+      <a {...props} class="not-prose">
+        <Card className="flex h-[109px] max-w-xl overflow-hidden duration-300 hover:-top-3 hover:bg-hover hover:shadow-md">
+          <CardHeader className="flex shrink grow basis-7/12 flex-col  overflow-hidden whitespace-nowrap p-4 *:overflow-hidden *:text-ellipsis">
+            <span class="font-bold">{title}</span>
+            <span class="grow text-xs leading-4 text-secondary-foreground">
+              {description}
+            </span>
+            <span class="flex items-center gap-1 text-xs leading-4">
+              {new URL(props.href).hostname}
+            </span>
+          </CardHeader>
+          <CardContent className="max-w-[200px] shrink grow basis-5/12 p-0">
+            {image.src ? (
+              <img
+                class="m-0 h-full rounded-r-md object-cover"
+                src={image.src}
+                alt={title}
+                width={400}
+              />
+            ) : (
+              <span class="flex size-full items-center justify-center border-l border-solid">
+                <ReaderIcon className="size-8" />
+              </span>
+            )}
+          </CardContent>
+        </Card>
+      </a>
+    </div>
+  )
+}

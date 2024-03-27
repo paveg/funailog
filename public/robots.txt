@@ -1,0 +1,8 @@
+User-Agent: Google-Extended
+Disallow: /
+
+User-Agent: *
+Allow: /
+
+Host: https://www.funailog.com
+Sitemap: https://www.funailog.com/sitemap-index.xml

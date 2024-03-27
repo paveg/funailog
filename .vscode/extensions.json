@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "GitHub.copilot",
+    "wix.vscode-import-cost",
+    "bradlc.vscode-tailwindcss",
+    "astro-build.astro-vscode",
+    "rvest.vs-code-prettier-eslint",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode"
+  ],
+  "unwantedRecommendations": []
+}

@@ -1,0 +1,39 @@
+---
+import { ExternalLinkIcon } from '@radix-ui/react-icons';
+
+import LinkCard from './LinkCard.astro';
+
+type Props = {
+  href: string;
+  ['data-linkcard']?: string;
+};
+
+const props = Astro.props;
+const isInternal = props.href.startsWith('/');
+const isAnchor = props.href.startsWith('#');
+---
+
+{
+  Object.hasOwn(props, 'data-linkcard') ? (
+    <LinkCard {...props}>
+      <slot />
+    </LinkCard>
+  ) : isAnchor || isInternal ? (
+    <a
+      href={props.href}
+      class="inline-flex items-center px-2 text-link visited:text-link-visited hover:italic hover:text-link-hover hover:underline active:text-link-active"
+    >
+      <slot />
+    </a>
+  ) : (
+    <a
+      target="_blank"
+      rel="noopener noreferrer"
+      href={props.href}
+      class="inline-flex items-center px-2 text-link visited:text-link-visited hover:italic hover:text-link-hover hover:underline active:text-link-active"
+    >
+      <slot />
+      <ExternalLinkIcon className="ml-1 size-4" />
+    </a>
+  )
+}

@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: hsl(0, 0%, 100%);
+    --foreground: hsl(0, 0%, 3.9%);
+
+    --card: hsl(0, 0%, 100%);
+    --card-foreground: hsl(0, 0%, 3.9%);
+
+    --popover: hsl(0, 0%, 100%);
+    --popover-foreground: hsl(0, 0%, 3.9%);
+
+    --primary: hsl(0, 0%, 9%);
+    --primary-foreground: hsl(0, 0%, 98%);
+
+    --secondary: hsl(0, 0%, 96.1%);
+    --secondary-foreground: hsl(0, 0%, 9%);
+
+    --muted: hsl(0, 0%, 96.1%);
+    --muted-foreground: hsl(0, 0%, 45.1%);
+
+    --accent: hsl(0, 0%, 96.1%);
+    --accent-foreground: hsl(0, 0%, 9%);
+
+    --destructive: hsl(0, 84.2%, 60.2%);
+    --destructive-foreground: hsl(0, 0%, 98%);
+
+    --border: hsl(0, 0%, 89.8%);
+    --input: hsl(0, 0%, 89.8%);
+    --ring: hsl(0, 0%, 3.9%);
+    --hover: hsl(0, 0%, 93%);
+
+    --radius: 0.5rem;
+
+    --link: hsl(229, 100%, 60%);
+    --link-hover: hsl(229, 100%, 70%);
+    --link-active: hsl(229, 100%, 50%);
+    --link-visited: hsl(229, 60%, 60%);
+
+    --font-body: 'M PLUS 2 Variable', 'sans-serif';
+    --font-code: 'M PLUS 1 Code Variable', 'monospace';
+
+    /* code syntax highlight */
+    --code-bg: hsl(0, 0%, 42%);
+    --code-title: hsl(0, 0%, 9%);
+    --code-title-bg: hsl(0, 0%, 96%);
+    --code-hl: hsl(39, 10.5%, 23%);
+    --code-hl-sign: hsl(201, 45%, 75%);
+    --code-find: hsl(39, 10.5%, 23%);
+  }
+
+  .dark {
+    --background: hsl(0, 0%, 3.9%);
+    --foreground: hsl(0, 0%, 98%);
+
+    --card: hsl(0, 0%, 3.9%);
+    --card-foreground: hsl(0, 0%, 98%);
+
+    --popover: hsl(0, 0%, 3.9%);
+    --popover-foreground: hsl(0, 0%, 98%);
+
+    --primary: hsl(0, 0%, 98%);
+    --primary-foreground: hsl(0, 0%, 9%);
+
+    --secondary: hsl(0, 0%, 14.9%);
+    --secondary-foreground: hsl(0, 0%, 98%);
+
+    --muted: hsl(0, 0%, 14.9%);
+    --muted-foreground: hsl(0, 0%, 63.9%);
+
+    --accent: hsl(0, 0%, 14.9%);
+    --accent-foreground: hsl(0, 0%, 98%);
+
+    --destructive: hsl(0, 62.8%, 30.6%);
+    --destructive-foreground: hsl(0, 0%, 98%);
+
+    --link: hsl(219, 50%, 70%);
+    --link-hover: hsl(219, 50%, 80%);
+    --link-active: hsl(219, 50%, 90%);
+    --link-visited: hsl(219, 50%, 60%);
+
+    --border: hsl(0, 0%, 14.9%);
+    --input: hsl(0, 0%, 14.9%);
+    --ring: hsl(0, 0%, 83.1%);
+  }
+}
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply mx-auto min-h-screen max-w-3xl space-y-4 bg-background px-4 py-5 leading-7 text-foreground;
+    font-family: var(--font-body);
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold leading-6;
+  }
+
+  h1 {
+    @apply text-3xl lg:text-5xl;
+  }
+  h2 {
+    @apply text-xl md:text-2xl lg:text-3xl;
+  }
+
+  h3 {
+    @apply text-lg md:text-xl lg:text-2xl;
+  }
+
+  h4 {
+    @apply text-base md:text-lg lg:text-xl;
+  }
+
+  h5,
+  h6 {
+    @apply text-base lg:text-lg;
+  }
+
+  blockquote {
+    @apply relative font-semibold italic;
+    &::before {
+      @apply left-1 h-full bg-muted-foreground;
+    }
+  }
+  p:not(blockquote > p) {
+    @apply mt-6;
+  }
+}

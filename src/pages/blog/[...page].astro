@@ -1,0 +1,41 @@
+---
+import type { Page, PaginateFunction } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+import { getEntry, getCollection } from 'astro:content';
+
+import Posts from '@/components/Posts.astro';
+import Layout from '@/layouts/Layout.astro';
+
+export type Props = {
+  page: Page<CollectionEntry<'blog'>>;
+};
+
+export async function getStaticPaths({
+  paginate,
+}: {
+  paginate: PaginateFunction;
+}) {
+  const posts = (await getCollection('blog'))
+    .sort(
+      (a, b) =>
+        (a.data.lastUpdated ?? a.data.published).getTime() -
+        (b.data.lastUpdated ?? b.data.published).getTime(),
+    )
+    .reverse();
+
+  return paginate(posts, { pageSize: 5 });
+}
+
+const meta = await getEntry('site', 'meta');
+const { page } = Astro.props;
+---
+
+<Layout
+  title={meta.data.index.title}
+  description={meta.data.blog.description}
+  path={page.url.current}
+  og={{
+    enabled: false,
+  }}
+  ><main><Posts page={page} /></main>
+</Layout>

@@ -1,0 +1,59 @@
+---
+import { getEntry } from 'astro:content';
+
+import {
+  GitHubLogoIcon,
+  InstagramLogoIcon,
+  TwitterLogoIcon,
+} from '@radix-ui/react-icons';
+
+import ButtonLink from '@/components/ButtonLink.astro';
+const meta = await getEntry('site', 'meta');
+const today = new Date();
+const currentYear = today.getFullYear();
+const startYear = 2023;
+const iconClass = 'size-5';
+---
+
+<footer>
+  <div
+    class="mt-12 flex flex-col items-center justify-between gap-4 border-t md:h-24 md:flex-row"
+  >
+    <p class="text-xs text-muted-foreground md:text-sm">
+      &copy; {startYear}-{currentYear}
+      {meta.data.author.name}.
+    </p>
+    <div>
+      <ButtonLink
+        variant="ghost"
+        size="icon"
+        href={meta.data.links.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Link to GitHub"
+      >
+        <GitHubLogoIcon className={iconClass} />
+      </ButtonLink>
+      <ButtonLink
+        variant="ghost"
+        size="icon"
+        href={meta.data.links.twitter}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Link to X(Twitter) timeline"
+      >
+        <TwitterLogoIcon className={iconClass} />
+      </ButtonLink>
+      <ButtonLink
+        variant="ghost"
+        size="icon"
+        href={meta.data.links.instagram}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Link to Instagram profile"
+      >
+        <InstagramLogoIcon className={iconClass} />
+      </ButtonLink>
+    </div>
+  </div>
+</footer>

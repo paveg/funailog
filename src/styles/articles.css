@@ -1,0 +1,60 @@
+body {
+  article {
+    @apply prose-sm flex-grow break-words dark:prose-invert md:prose lg:prose-lg;
+    & ul {
+      @apply list-disc;
+    }
+    & ol {
+      @apply list-decimal;
+    }
+    & li {
+      @apply list-inside;
+    }
+    & h1 {
+      @apply mt-12;
+    }
+    & h2,
+    h3 {
+      @apply mb-4 mt-8;
+    }
+    & h4 {
+      @apply mb-2 mt-6;
+    }
+    & h5 {
+      @apply mb-2 mt-4;
+    }
+    & h6 {
+      @apply mb-1 mt-2;
+    }
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      &::before {
+        content: '#';
+        color: var(--link);
+        @apply mr-2;
+      }
+
+      &:hover {
+        a > span.heading-link-icon {
+          &:after {
+            content: '🔗';
+            vertical-align: 0.05em;
+            @apply ml-2 text-sm;
+          }
+        }
+      }
+    }
+    & .footnotes {
+      @apply mt-6 border-t border-solid text-sm text-muted-foreground dark:text-muted;
+      & li {
+        @apply list-outside;
+      }
+      & .data-footnote-backref {
+        text-decoration: none;
+      }
+    }
+  }
+}

@@ -1,0 +1,63 @@
+---
+import {
+  EyeClosedIcon,
+  HomeIcon,
+  InfoCircledIcon,
+  Pencil2Icon,
+} from '@radix-ui/react-icons';
+
+import ButtonLink from '@/components/ButtonLink.astro';
+import { ModeToggle } from '@/components/mode-toggle';
+---
+
+<header>
+  <nav id="global">
+    <div class="flex w-full grow">
+      <div id="action toggle container" class="mr-auto">
+        <ModeToggle client:only="react" />
+      </div>
+      <div id="global link container" class="flex justify-end">
+        <ButtonLink
+          aria-label="Go to Home page"
+          variant="ghost"
+          size="sm"
+          class="gap-2"
+          href="/"
+          ><HomeIcon className="size-4" /><span class="hidden sm:block"
+            >Home</span
+          ></ButtonLink
+        >
+        <ButtonLink
+          aria-label="Go to Blog page"
+          variant="ghost"
+          size="sm"
+          class="gap-2"
+          href="/blog"
+          ><Pencil2Icon className="size-4" /><span class="hidden sm:block"
+            >Blog</span
+          ></ButtonLink
+        >
+        <ButtonLink
+          aria-label="Go to About page"
+          variant="ghost"
+          size="sm"
+          class="gap-2"
+          href="/about"
+          ><InfoCircledIcon className="size-4" /><span class="hidden sm:block"
+            >About</span
+          ></ButtonLink
+        >
+        <ButtonLink
+          aria-label="Go to Privacy policy page"
+          variant="ghost"
+          size="sm"
+          class="gap-2"
+          href="/privacy"
+          ><EyeClosedIcon className="size-4" /><span class="hidden sm:block"
+            >Privacy</span
+          >
+        </ButtonLink>
+      </div>
+    </div>
+  </nav>
+</header>
