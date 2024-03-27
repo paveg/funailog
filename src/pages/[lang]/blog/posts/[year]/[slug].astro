@@ -46,14 +46,58 @@ const meta = await getEntry('site', 'meta');
 ---
 
 <Layout
-  title={`${post.data.title} | ${meta.data.index.title}`}
+  title={`${meta.data.index.title}`}
   description={post.data.description}
   path={`${post.collection}/posts/${post.slug}`}
   og={{ enabled: false }}
   lang={lang}
   ><main>
     <article>
-      <h1>{lang} | {post.data.title}</h1>
+      <h1>{post.data.title}</h1>
+      {
+        post.data.heroImage && (
+          <img src={post.data.heroImage} alt={post.data.heroImage} />
+        )
+      }
+      <div class="mb-2 flex items-center justify-between gap-2 text-sm">
+        {
+          post.data.lastUpdated ? (
+            <>
+              <time
+                class="flex items-center gap-1"
+                id="lastUpdated"
+                datetime={post.data.lastUpdated.toISOString()}
+              >
+                <ReloadIcon className="my-0 size-4" />
+
+                {new Intl.DateTimeFormat('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                }).format(post.data.lastUpdated || post.data.published)}
+              </time>
+            </>
+          ) : (
+            <time
+              class="flex items-center gap-1"
+              id="published"
+              datetime={post.data.published.toISOString()}
+            >
+              <CalendarIcon className="my-0 size-4" />
+              {new Intl.DateTimeFormat('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+              }).format(post.data.published)}
+            </time>
+          )
+        }
+        <span class="flex items-center gap-1">
+          <ClockIcon className="my-0 size-4" />
+          {remarkPluginFrontmatter.minRead}
+        </span>
+      </div>
+      <Separator />
       <Content components={components} />
     </article>
   </main>
