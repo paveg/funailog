@@ -21,7 +21,7 @@ const isAnchor = props.href.startsWith('#');
       target="_blank"
       rel="noopener noreferrer"
       href={props.href}
-      class="text-link visited:text-link-visited hover:text-link-hover active:text-link-active px-2 after:content-['🔗'] hover:italic hover:underline"
+      class="px-2 text-link after:content-['🔗'] visited:text-link-visited hover:italic hover:text-link-hover hover:underline active:text-link-active"
     >
       <slot />
     </a>
