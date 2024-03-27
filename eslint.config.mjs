@@ -26,7 +26,13 @@ export default [
     },
   },
   {
-    ignores: ['**/dist/**', '**/.astro/**/*', '**/env.d.ts', '**/types.d.ts'],
+    ignores: [
+      '**/dist/**',
+      '**/.astro/**/*',
+      '**/env.d.ts',
+      '**/types.d.ts',
+      '**/Gtag.astro',
+    ],
   },
   {
     languageOptions: {
