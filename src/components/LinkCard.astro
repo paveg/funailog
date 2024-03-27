@@ -11,6 +11,8 @@ export type Props = {
 const props = Astro.props;
 
 const { title, description, image } = await fetchLinkCard(props.href);
+const isInternal = props.href.startsWith('/');
+const isAnchor = props.href.startsWith('#');
 ---
 
 {
@@ -25,7 +27,12 @@ const { title, description, image } = await fetchLinkCard(props.href);
     </a>
   ) : (
     <div>
-      <a {...props} class="not-prose">
+      <a
+        {...props}
+        target={isAnchor || isInternal ? '_blank' : '_self'}
+        rel={isAnchor || isInternal ? 'noopener noreferrer' : ''}
+        class="not-prose"
+      >
         <Card className="flex h-[109px] w-full overflow-hidden duration-300 hover:-top-3 hover:bg-hover hover:shadow-md">
           <CardHeader className="flex shrink grow basis-7/12 flex-col  overflow-hidden whitespace-nowrap p-4 *:overflow-hidden *:text-ellipsis">
             <span class="font-bold">{title}</span>
