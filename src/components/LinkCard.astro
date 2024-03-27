@@ -21,7 +21,7 @@ const isAnchor = props.href.startsWith('#');
       target="_blank"
       rel="noopener noreferrer"
       href={props.href}
-      class="px-2 text-link after:content-['🔗'] visited:text-link-visited hover:italic hover:text-link-hover hover:underline active:text-link-active"
+      class="text-link visited:text-link-visited hover:text-link-hover active:text-link-active px-2 after:content-['🔗'] hover:italic hover:underline"
     >
       <slot />
     </a>
@@ -29,8 +29,8 @@ const isAnchor = props.href.startsWith('#');
     <div>
       <a
         {...props}
-        target={isAnchor || isInternal ? '_blank' : '_self'}
-        rel={isAnchor || isInternal ? 'noopener noreferrer' : ''}
+        target={isAnchor || isInternal ? '_self' : '_blank'}
+        rel={isAnchor || isInternal ? '' : 'noopener noreferrer'}
         class="not-prose"
       >
         <Card className="flex h-[109px] w-full overflow-hidden duration-300 hover:-top-3 hover:bg-hover hover:shadow-md">
