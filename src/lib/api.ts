@@ -67,7 +67,8 @@ const fetchSiteImage = async (src: string) => {
     fs.mkdirSync(path.join(process.cwd(), `./dist/.cache/embed`), {
       recursive: true,
     });
-    fs.copyFileSync(filePath, path.join(process.cwd(), `./dist/${filePath}`));
+
+    fs.copyFileSync(filePath, path.join(process.cwd(), `./dist/${file}`));
     siteImageMap.set(hash, file);
 
     return file;

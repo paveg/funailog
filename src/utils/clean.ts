@@ -7,4 +7,6 @@ const destCacheDir = path.join(process.cwd(), './dist/.cache');
 await Promise.allSettled([
   fs.promises.rm(publicCacheDir, { recursive: true }),
   fs.promises.rm(destCacheDir, { recursive: true }),
+  fs.promises.mkdir(`${publicCacheDir}/embed`, { recursive: true }),
+  fs.promises.mkdir(`${destCacheDir}/embed`, { recursive: true }),
 ]);
