@@ -5,5 +5,6 @@ export const pageCollection = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
+    emoji: z.string().optional().default('📝'),
   }),
 });

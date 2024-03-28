@@ -35,7 +35,7 @@ const { page } = Astro.props;
   description={meta.data.blog.description}
   path={page.url.current}
   og={{
-    enabled: false,
+    enabled: true,
   }}
   ><main><Posts page={page} /></main>
 </Layout>

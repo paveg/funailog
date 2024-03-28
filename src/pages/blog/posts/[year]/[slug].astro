@@ -44,13 +44,20 @@ const components = {
   a: Link,
 };
 const meta = await getEntry('site', 'meta');
+const site = Astro.site ?? '';
 ---
 
 <Layout
   title={`${post.data.title} | ${meta.data.index.title}`}
   description={post.data.description}
   path={`${post.collection}/posts/${post.slug}`}
-  og={{ enabled: false }}
+  og={{
+    enabled: true,
+    width: 1200,
+    height: 630,
+    image: new URL(`/api/og/article/${post.collection}/${post.slug}.png`, site),
+    type: 'article',
+  }}
   ><main>
     <article>
       <h1>{post.data.title}</h1>
