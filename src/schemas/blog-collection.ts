@@ -11,5 +11,6 @@ export const blogCollection = defineCollection({
     isPublished: z.boolean(),
     tags: z.array(z.string()).optional(),
     related: z.array(z.string()).optional(),
+    emoji: z.string().optional().default('📝'),
   }),
 });
