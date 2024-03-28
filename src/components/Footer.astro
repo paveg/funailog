@@ -6,6 +6,7 @@ import {
   InstagramLogoIcon,
   TwitterLogoIcon,
 } from '@radix-ui/react-icons';
+import { RssIcon } from 'lucide-react';
 
 import ButtonLink from '@/components/ButtonLink.astro';
 const meta = await getEntry('site', 'meta');
@@ -24,6 +25,14 @@ const iconClass = 'size-5';
       {meta.data.author.name}.
     </p>
     <div>
+      <ButtonLink
+        variant="ghost"
+        size="icon"
+        href="/rss.xml"
+        aria-label="Link to rss feed"
+      >
+        <RssIcon className={iconClass} />
+      </ButtonLink>
       <ButtonLink
         variant="ghost"
         size="icon"
