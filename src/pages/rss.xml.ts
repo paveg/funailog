@@ -16,7 +16,7 @@ export async function GET(context: APIContext) {
     site: context.site ?? '',
     items: posts.map((post) => {
       const [lang, ...slug] = post.slug.split('/');
-      const translatePath = useTranslatedPath(lang);
+      const translatePath = useTranslatedPath(lang ?? 'ja');
       const url = translatePath(`/${post.collection}/posts/${slug.join('/')}`);
       return {
         title: post.data.title,
