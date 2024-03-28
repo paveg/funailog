@@ -2,7 +2,8 @@ import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
 import { getEntry, getCollection } from 'astro:content';
 
-import { defaultLang, showDefaultLang } from '@/i18n/ui';
+import { ui } from '@/i18n/ui';
+import { useTranslatedPath } from '@/i18n/utils';
 
 export async function GET(context: APIContext) {
   const meta = await getEntry('site', 'meta');
@@ -16,10 +17,8 @@ export async function GET(context: APIContext) {
     site: context.site ?? '',
     items: posts.map((post) => {
       const [lang, ...slug] = post.slug.split('/');
-      const url =
-        !showDefaultLang && lang === defaultLang
-          ? `/${post.collection}/posts/${slug.join('/')}`
-          : `/${lang}/${post.collection}/posts/${slug.join('/')}`;
+      const translatePath = useTranslatedPath(lang as keyof typeof ui);
+      const url = `/${post.collection}/${translatePath(slug.join('/'))}`;
       return {
         title: post.data.title,
         description: post.data.description,
