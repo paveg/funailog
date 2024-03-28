@@ -72,7 +72,6 @@ const isProd = import.meta.env.PROD;
         <GoogleAnalytics id={import.meta.env.PUBLIC_GA_MEASUREMENT_ID} />
       )
     }
-    {isProd && <CloudflareAnalytics />}
     <script is:inline>
       if (typeof window.localStorage.getItem('theme') === 'string') {
         const currentTheme = window.localStorage.getItem('theme');
