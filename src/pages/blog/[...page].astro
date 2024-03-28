@@ -5,6 +5,7 @@ import { getEntry, getCollection } from 'astro:content';
 
 import Posts from '@/components/Posts.astro';
 import { defaultLang } from '@/i18n/ui';
+import { getLangFromUrl } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 
 export type Props = {
@@ -33,12 +34,14 @@ export async function getStaticPaths({
 
 const meta = await getEntry('site', 'meta');
 const { page } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
 ---
 
 <Layout
   title={meta.data.index.title}
   description={meta.data.blog.description}
   path="/blog"
+  lang={lang}
   hreflang
   og={{
     enabled: true,

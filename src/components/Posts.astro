@@ -24,7 +24,6 @@ const lang = getLangFromUrl(url);
         const [, ...rest] = slug.split('/');
         const translatePath = useTranslatedPath(lang);
         const path = translatePath(rest.join('/'));
-        console.log(path);
         return (
           <li>
             <article>
