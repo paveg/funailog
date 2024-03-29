@@ -18,51 +18,52 @@ const lang = getLangFromUrl(url);
 ---
 
 <>
-  <LanguageToggle
-    client:load
-    lang={lang}
-    pathname={url.pathname}
-    collectionPath="blog"
-  />
-  <ul class="space-y-6 py-8">
-    {
-      page.data.map((post) => {
-        const { slug, data, collection } = post;
-        const path = exactSlugPath(slug);
-        return (
-          <li>
-            <article>
-              <span>
-                <time
-                  class="flex items-center justify-start gap-2"
-                  datetime={data.published.toISOString()}
-                >
-                  {data.lastUpdated ? (
-                    <ReloadIcon className="size-4" />
-                  ) : (
-                    <CalendarIcon className="size-4" />
-                  )}
-                  {new Intl.DateTimeFormat('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  }).format(data.lastUpdated ?? data.published)}
-                </time>
-              </span>
-              <a href={`/${collection}/${path}`}>
-                <h2>{data.title}</h2>
-              </a>
-              <span
-                id="description"
-                class="text-xs text-muted-foreground md:text-sm"
-              >
-                {data.description}
-              </span>
-            </article>
-          </li>
-        );
-      })
-    }
-    <Pagination page={page} />
-  </ul>
+  <div class="space-y-6">
+    <LanguageToggle
+      client:load
+      lang={lang}
+      pathname={url.pathname}
+      collectionPath="blog"
+    />
+    <ul class="space-y-8">
+      {
+        page.data.map((post) => {
+          const { slug, data, collection } = post;
+          const path = exactSlugPath(slug);
+          return (
+            <li>
+              <article>
+                <span>
+                  <time
+                    class="flex items-center justify-start gap-2"
+                    datetime={data.published.toISOString()}
+                  >
+                    {data.lastUpdated ? (
+                      <ReloadIcon className="size-4" />
+                    ) : (
+                      <CalendarIcon className="size-4" />
+                    )}
+                    {new Intl.DateTimeFormat('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    }).format(data.lastUpdated ?? data.published)}
+                  </time>
+                </span>
+                <a href={`/${collection}/${path}`}>
+                  <h2>{data.title}</h2>
+                </a>
+                <span class="text-xs leading-4 text-muted-foreground md:text-sm">
+                  {data.description}
+                </span>
+              </article>
+            </li>
+          );
+        })
+      }
+    </ul>
+    <div class="pt-4">
+      <Pagination page={page} />
+    </div>
+  </div>
 </>

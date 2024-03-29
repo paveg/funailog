@@ -22,7 +22,7 @@ const PaginationContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ul
     ref={ref}
-    className={cn('flex flex-row items-center gap-1', className)}
+    className={cn('mx-10 flex w-full justify-between', className)}
     {...props}
   />
 ));
@@ -63,12 +63,17 @@ PaginationLink.displayName = 'PaginationLink';
 
 const PaginationPrevious = ({
   className,
+  disabled,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
+}: React.ComponentProps<typeof PaginationLink> & { disabled?: boolean }) => (
   <PaginationLink
     aria-label="Go to previous page"
     size="default"
-    className={cn('gap-1 pl-2.5', className)}
+    className={cn(
+      'gap-1 pl-2.5',
+      disabled && 'cursor-not-allowed text-muted-foreground',
+      className,
+    )}
     {...props}
   >
     <ChevronLeft className="size-4" />
@@ -79,12 +84,17 @@ PaginationPrevious.displayName = 'PaginationPrevious';
 
 const PaginationNext = ({
   className,
+  disabled,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
+}: React.ComponentProps<typeof PaginationLink> & { disabled?: boolean }) => (
   <PaginationLink
     aria-label="Go to next page"
     size="default"
-    className={cn('gap-1 pr-2.5', className)}
+    className={cn(
+      'gap-1 pr-2.5',
+      disabled && 'cursor-not-allowed text-muted-foreground',
+      className,
+    )}
     {...props}
   >
     <span>Next</span>

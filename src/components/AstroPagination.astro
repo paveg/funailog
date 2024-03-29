@@ -8,7 +8,6 @@ import {
   PaginationPrevious,
   PaginationItem,
   PaginationNext,
-  PaginationEllipsis,
 } from '@/components/ui/pagination';
 
 export type Props = {
@@ -18,30 +17,23 @@ export type Props = {
 const { page } = Astro.props;
 ---
 
-<nav class="mt-10">
-  <Pagination>
-    <PaginationContent>
-      {
-        page?.url.prev && (
-          <PaginationItem>
-            <PaginationPrevious size="sm" isActive href={page?.url?.prev} />
-          </PaginationItem>
-        )
-      }
-      {
-        page?.url?.prev && page?.url?.next && (
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-        )
-      }
-      {
-        page?.url?.next && (
-          <PaginationItem>
-            <PaginationNext size="sm" isActive href={page?.url?.next} />
-          </PaginationItem>
-        )
-      }
-    </PaginationContent>
-  </Pagination>
-</nav>
+<Pagination>
+  <PaginationContent>
+    <PaginationItem>
+      <PaginationPrevious
+        size="sm"
+        disabled={!page?.url.prev}
+        isActive={!!page?.url.prev}
+        href={page?.url?.prev}
+      />
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationNext
+        size="sm"
+        disabled={!page?.url.next}
+        isActive={!!page?.url.next}
+        href={page?.url?.next}
+      />
+    </PaginationItem>
+  </PaginationContent>
+</Pagination>
