@@ -5,16 +5,29 @@ import { ui } from '@/i18n/ui';
 import { useTranslations } from '@/i18n/utils';
 
 type Props = {
-  collectionPath?: 'blog' | '';
+  collectionName?: 'blog' | '';
   pathname: string;
   lang: keyof typeof ui;
 };
 
-export const LanguageToggle = ({ pathname, collectionPath, lang }: Props) => {
+const areArrayEqual = (arr1: string[], arr2: string[]): boolean => {
+  return JSON.stringify(arr1) === JSON.stringify(arr2);
+};
+
+const isCollectRoot = (pathname: string, collectionName: string): boolean => {
+  const pathnameArray = pathname
+    .split('/')
+    .filter((item) => item !== '' && isNaN(item as any));
+  const cArray = collectionName.split('/');
+  return areArrayEqual(pathnameArray, cArray);
+};
+
+export const LanguageToggle = ({ pathname, collectionName, lang }: Props) => {
   const t = useTranslations(lang);
-  const isCollectionRoot = pathname === `/${collectionPath}/`;
   const newPath = (
-    isCollectionRoot ? [collectionPath, 'en'] : [collectionPath]
+    isCollectRoot(pathname, collectionName ?? '')
+      ? [collectionName, 'en']
+      : [collectionName]
   ).join('/');
   return (
     <>

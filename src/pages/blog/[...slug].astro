@@ -2,7 +2,6 @@
 import '@/styles/articles.css';
 import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
-import { getEntry } from 'astro:content';
 
 import { CalendarIcon, ClockIcon, ReloadIcon } from '@radix-ui/react-icons';
 
@@ -10,7 +9,7 @@ import Figure from '@/components/Figure.astro';
 import Link from '@/components/Link.astro';
 import { Separator } from '@/components/ui/separator';
 import { ui } from '@/i18n/ui';
-import { useTranslatedPath } from '@/i18n/utils';
+import { useTranslatedPath, useTranslations } from '@/i18n/utils';
 import { getLangFromUrl } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 
@@ -39,16 +38,16 @@ const components = {
   figure: Figure,
   a: Link,
 };
-const meta = await getEntry('site', 'meta');
 const site = Astro.site ?? '';
-const lang = getLangFromUrl(Astro.url);
+const globalLang = getLangFromUrl(Astro.url);
 const [, ...slug] = post.slug.split('/');
-const translatePath = useTranslatedPath(lang);
+const translatePath = useTranslatedPath(globalLang);
 const path = `${post.collection}/${translatePath(slug.join('/'))}`;
+const t = useTranslations(globalLang);
 ---
 
 <Layout
-  title={`${post.data.title} | ${meta.data.index.title}`}
+  title={`${post.data.title} | ${t('main.title')}`}
   description={post.data.description}
   path={path}
   og={{

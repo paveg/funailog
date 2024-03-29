@@ -1,13 +1,13 @@
 ---
-import { getEntry } from 'astro:content';
-
 import Link from '@/components/Link.astro';
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
-const meta = await getEntry('site', 'meta');
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <Layout
-  title=`404 Not Found | ${meta.data.index.title}`
+  title=`404 Not Found | ${t("main.title")}`
   description="The page you are looking for hasn't been found"
   path="/404"
   og={{

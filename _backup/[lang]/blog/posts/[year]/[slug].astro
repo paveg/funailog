@@ -9,6 +9,7 @@ import { CalendarIcon, ClockIcon, ReloadIcon } from '@radix-ui/react-icons';
 import Figure from '@/components/Figure.astro';
 import Link from '@/components/Link.astro';
 import { Separator } from '@/components/ui/separator';
+import { defaultLang } from '@/i18n/ui';
 import Layout from '@/layouts/Layout.astro';
 
 export type Props = {
@@ -19,16 +20,22 @@ export type Props = {
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
 
-  const paths = posts.map((post) => {
-    const [lang, ...slug] = post.slug.split('/');
-    return {
-      params: {
-        lang,
-        slug: slug.join('/'),
-      },
-      props: { post, lang },
-    };
-  });
+  const paths = posts
+    .filter((post) => {
+      const [lang] = post.slug.split('/');
+      return defaultLang !== lang;
+    })
+    .map((post) => {
+      const [lang, year, slug] = post.slug.split('/');
+      return {
+        params: {
+          lang,
+          year,
+          slug,
+        },
+        props: { post, lang },
+      };
+    });
 
   return paths;
 }
@@ -43,7 +50,7 @@ const site = Astro.site ?? '';
 ---
 
 <Layout
-  title={`${meta.data.index.title}`}
+  title={`${meta.data.main.title}`}
   description={post.data.description}
   path={`${post.collection}/posts/${post.slug}`}
   og={{

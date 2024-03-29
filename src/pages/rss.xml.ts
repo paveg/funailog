@@ -12,8 +12,8 @@ export async function GET(context: APIContext) {
     .reverse();
 
   return await rss({
-    title: meta.data.index.title,
-    description: meta.data.index.description,
+    title: meta.data.rss.title,
+    description: meta.data.rss.description,
     site: context.site ?? '',
     items: posts.map((post) => {
       const [lang, ...slug] = post.slug.split('/');

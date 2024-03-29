@@ -9,10 +9,12 @@ const t = useTranslations(lang);
 <Layout
   title={t('main.title')}
   description={t('main.description')}
-  path="/"
+  path="https://www.funailog.com"
   og={{
     enabled: true,
   }}
+  lang={lang}
+  hreflang
 >
   <main>
     <h1>{t('main.title')}</h1>

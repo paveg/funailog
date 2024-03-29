@@ -1,11 +1,11 @@
 ---
-import { getEntry } from 'astro:content';
 import '@/styles/articles.css';
 import '@fontsource-variable/m-plus-2';
 import { getCollection, type CollectionEntry } from 'astro:content';
 
 import Figure from '@/components/Figure.astro';
 import Link from '@/components/Link.astro';
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 
 export type Props = {
@@ -33,11 +33,12 @@ const components = {
   figure: Figure,
   a: Link,
 };
-const meta = await getEntry('site', 'meta');
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
 <Layout
-  title={`${page.data.title} | ${meta.data.index.title}`}
+  title={`${page.data.title} | ${t('main.title')}`}
   description={page.data.description}
   path={`/${page.slug}`}
   og={{

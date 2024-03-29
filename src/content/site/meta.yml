@@ -1,9 +1,9 @@
-index:
+main:
+  title: main.title
+  description: main.description
+rss:
   title: フナイログ
-  description: The logs of a software engineer whose name is Funai.
-blog:
-  title: Blog | フナイログ
-  description: A list of blog posts
+  description: ガジェットやエンジニアリングがメインのライフログ
 author:
   name: Ryota Ikezawa
 links:
