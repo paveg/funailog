@@ -27,5 +27,6 @@
   },
   "search.exclude": {
     "**/node_modules/.pnpm/**": true
-  }
+  },
+  "files.autoSave": "onFocusChange"
 }

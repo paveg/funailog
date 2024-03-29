@@ -3,12 +3,11 @@ import type { Page } from 'astro';
 import type { CollectionEntry } from 'astro:content';
 
 import { CalendarIcon, ReloadIcon } from '@radix-ui/react-icons';
-import { LanguagesIcon } from 'lucide-react';
 
 import Pagination from './AstroPagination.astro';
 
-import { defaultLang } from '@/i18n/ui';
-import { getLangFromUrl, useTranslatedPath } from '@/i18n/utils';
+import { LanguageToggle } from '@/components/language-toggle';
+import { exactSlugPath, getLangFromUrl } from '@/i18n/utils';
 
 export type Props = {
   page: Page<CollectionEntry<'blog'>>;
@@ -16,30 +15,20 @@ export type Props = {
 const { page } = Astro.props;
 const url = Astro.url;
 const lang = getLangFromUrl(url);
-const newLang = lang === defaultLang ? 'en' : '';
 ---
 
 <>
-  <a class="flex justify-end" href={`/blog/${newLang}`}>
-    <div
-      class="flex w-fit items-center justify-start gap-3 rounded-md p-2 text-sm hover:bg-hover"
-    >
-      <LanguagesIcon className="size-5" />
-      {
-        lang === defaultLang
-          ? '英語記事へ切り替える'
-          : 'Switch to Japanese articles'
-      }
-    </div>
-  </a>
-
+  <LanguageToggle
+    client:load
+    lang={lang}
+    pathname={url.pathname}
+    collectionPath="blog"
+  />
   <ul class="space-y-6 py-8">
     {
       page.data.map((post) => {
         const { slug, data, collection } = post;
-        const [, ...rest] = slug.split('/');
-        const translatePath = useTranslatedPath(lang);
-        const path = translatePath(rest.join('/'));
+        const path = exactSlugPath(slug);
         return (
           <li>
             <article>

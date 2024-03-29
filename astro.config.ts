@@ -38,7 +38,8 @@ export default defineConfig({
     }),
   ],
   build: {
-    format: 'file',
+    // If I set 'file', Astro.url.pathname should return '/file.html'
+    format: 'directory',
   },
   prefetch: {
     defaultStrategy: 'viewport',
