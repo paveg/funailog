@@ -5,3 +5,5 @@ export const ui = {
   en: {},
   ja: {},
 } as const;
+
+export const supportLangs: (keyof typeof ui)[] = ['en', 'ja'];

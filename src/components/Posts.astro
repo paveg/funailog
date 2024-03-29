@@ -6,25 +6,25 @@ import { CalendarIcon, ReloadIcon } from '@radix-ui/react-icons';
 
 import Pagination from './AstroPagination.astro';
 
-import { defaultLang, showDefaultLang } from '@/i18n/ui';
+import { getLangFromUrl, useTranslatedPath } from '@/i18n/utils';
 
 export type Props = {
   page: Page<CollectionEntry<'blog'>>;
 };
 const { page } = Astro.props;
+const url = Astro.url;
+const lang = getLangFromUrl(url);
+// TODO: switch language button
 ---
 
 <>
-  <ul class="space-y-6">
+  <ul class="space-y-6 py-8">
     {
       page.data.map((post) => {
         const { slug, data, collection } = post;
-        const [lang, year, ...id] = slug.split('/');
-        const path = `/${lang}/${collection}/posts/${year}/${id}`;
-        const blogPath =
-          defaultLang === lang && !showDefaultLang
-            ? `/${collection}/posts/${year}/${id}`
-            : path;
+        const [, ...rest] = slug.split('/');
+        const translatePath = useTranslatedPath(lang);
+        const path = translatePath(rest.join('/'));
         return (
           <li>
             <article>
@@ -45,7 +45,7 @@ const { page } = Astro.props;
                   }).format(data.lastUpdated ?? data.published)}
                 </time>
               </span>
-              <a href={blogPath}>
+              <a href={`/${collection}/${path}`}>
                 <h2>{data.title}</h2>
               </a>
               <span

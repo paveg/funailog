@@ -4,7 +4,6 @@ import type { CollectionEntry } from 'astro:content';
 import { getEntry, getCollection } from 'astro:content';
 
 import Posts from '@/components/Posts.astro';
-import { defaultLang } from '@/i18n/ui';
 import { getLangFromUrl } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 
@@ -20,7 +19,7 @@ export async function getStaticPaths({
   const posts = (await getCollection('blog'))
     .filter((post) => {
       const [lang] = post.slug.split('/');
-      return lang === defaultLang;
+      return lang === 'en';
     })
     .sort(
       (a, b) =>
@@ -40,11 +39,11 @@ const lang = getLangFromUrl(Astro.url);
 <Layout
   title={meta.data.index.title}
   description={meta.data.blog.description}
-  path="/blog"
   lang={lang}
-  hreflang
+  path="/blog"
   og={{
     enabled: true,
   }}
+  hreflang
   ><main><Posts page={page} /></main>
 </Layout>

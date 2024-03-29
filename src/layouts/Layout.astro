@@ -8,6 +8,7 @@ import GoogleAnalytics from '@/components/analytics/GoogleAnalytics.astro';
 import Footer from '@/components/Footer.astro';
 import Header from '@/components/Header.astro';
 import { TailwindIndicator } from '@/components/tailwind-indicator';
+import { supportLangs } from '@/i18n/ui';
 
 export type Props = {
   title: string;
@@ -21,9 +22,10 @@ export type Props = {
     type?: 'article' | 'website';
   };
   lang?: string;
+  hreflang?: boolean;
 };
 
-const { title, description, path, og, lang } = Astro.props;
+const { title, description, path, og, lang, hreflang } = Astro.props;
 const site = Astro.site ?? '';
 const isProd = import.meta.env.PROD;
 ---
@@ -39,6 +41,16 @@ const isProd = import.meta.env.PROD;
       type="application/rss+xml"
       href={new URL('/rss.xml', site).toString()}
     />
+    {
+      hreflang &&
+        supportLangs.map((l) => (
+          <link
+            rel="alternate"
+            hreflang={l}
+            href={new URL([path, l].join('/'), site).toString()}
+          />
+        ))
+    }
     <link rel="sitemap" href="/sitemap-index.xml" type="application/xml" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="48x48" />
     <meta name="generator" content={Astro.generator} />
