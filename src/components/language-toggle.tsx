@@ -17,6 +17,7 @@ const areArrayEqual = (arr1: string[], arr2: string[]): boolean => {
 const isCollectRoot = (pathname: string, collectionName: string): boolean => {
   const pathnameArray = pathname
     .split('/')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .filter((item) => item !== '' && isNaN(item as any));
   const cArray = collectionName.split('/');
   return areArrayEqual(pathnameArray, cArray);
