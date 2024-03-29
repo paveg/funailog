@@ -3,11 +3,9 @@ import type { Page } from 'astro';
 import type { CollectionEntry } from 'astro:content';
 
 import { CalendarIcon, ReloadIcon } from '@radix-ui/react-icons';
-import { LanguagesIcon } from 'lucide-react';
 
 import Pagination from './AstroPagination.astro';
 
-import { defaultLang } from '@/i18n/ui';
 import { getLangFromUrl, useTranslatedPath } from '@/i18n/utils';
 
 export type Props = {
@@ -16,23 +14,10 @@ export type Props = {
 const { page } = Astro.props;
 const url = Astro.url;
 const lang = getLangFromUrl(url);
+// TODO: switch language button
 ---
 
 <>
-  <div class="w-1/4 rounded-md border hover:-top-3 hover:shadow-md">
-    <a
-      class="m-1 flex items-center justify-around gap-1"
-      href={lang === defaultLang ? '/blog/en' : '/blog'}
-      aria-label={lang === defaultLang
-        ? '英語記事を読む'
-        : 'Switch to Japanese blog'}
-    >
-      <LanguagesIcon className="size-4" />
-      <span>
-        {lang === defaultLang ? 'Switch to English' : '日本語に切り替え'}
-      </span>
-    </a>
-  </div>
   <ul class="space-y-6 py-8">
     {
       page.data.map((post) => {
