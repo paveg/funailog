@@ -69,39 +69,39 @@ const t = useTranslations(globalLang);
           <img src={post.data.heroImage} alt={post.data.heroImage} />
         )
       }
-      <div class="mb-2 flex items-center justify-between gap-2 text-sm">
-        {
-          post.data.lastUpdated ? (
-            <>
+      <div class="mb-2 flex items-end justify-between gap-2 text-sm">
+        <span>
+          {
+            post.data.lastUpdated && (
               <time
                 class="flex items-center gap-1"
                 id="lastUpdated"
                 datetime={post.data.lastUpdated.toISOString()}
               >
                 <ReloadIcon className="my-0 size-4" />
-
                 {new Intl.DateTimeFormat('en-US', {
                   year: 'numeric',
                   month: 'short',
                   day: 'numeric',
-                }).format(post.data.lastUpdated || post.data.published)}
+                }).format(post.data.lastUpdated)}
               </time>
-            </>
-          ) : (
-            <time
-              class="flex items-center gap-1"
-              id="published"
-              datetime={post.data.published.toISOString()}
-            >
-              <CalendarIcon className="my-0 size-4" />
-              {new Intl.DateTimeFormat('en-US', {
+            )
+          }
+          <time
+            class="flex items-center gap-1"
+            id="published"
+            datetime={post.data.published.toISOString()}
+          >
+            <CalendarIcon className="my-0 size-4" />
+            {
+              new Intl.DateTimeFormat('en-US', {
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric',
-              }).format(post.data.published)}
-            </time>
-          )
-        }
+              }).format(post.data.published)
+            }
+          </time>
+        </span>
         <span class="flex items-center gap-1">
           <ClockIcon className="my-0 size-4" />
           {remarkPluginFrontmatter.minRead}
