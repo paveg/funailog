@@ -21,7 +21,7 @@ export async function getStaticPaths({
   const paginates = tags.flatMap((tag) => {
     const posts = allPosts
       .filter((post) => {
-        const [slugLang, ...slugs] = post.slug.split('/');
+        const [slugLang] = post.slug.split('/');
         return post.data.tags?.includes(tag) && slugLang === 'en';
       })
       .sort(
