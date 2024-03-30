@@ -6,6 +6,9 @@ import '@fontsource-variable/m-plus-1-code';
 
 import { getEntry } from 'astro:content';
 
+import { Schema } from 'astro-seo-schema';
+import { Article } from 'schema-dts';
+
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics.astro';
 import Footer from '@/components/Footer.astro';
 import Header from '@/components/Header.astro';
@@ -28,9 +31,11 @@ export type Props = {
     path: string;
     hreflang: keyof typeof ui | 'x-default';
   }[];
+  jsonLdSchema?: Article;
 };
 
-const { title, description, path, og, lang, hreflangs } = Astro.props;
+const { title, description, path, og, lang, hreflangs, jsonLdSchema } =
+  Astro.props;
 const site = Astro.site ?? '';
 const isProd = import.meta.env.PROD;
 const meta = await getEntry('site', 'meta');
@@ -92,6 +97,7 @@ const meta = await getEntry('site', 'meta');
         <GoogleAnalytics id={import.meta.env.PUBLIC_GA_MEASUREMENT_ID} />
       )
     }
+    {jsonLdSchema && <Schema item={jsonLdSchema} />}
     <script is:inline>
       if (typeof window.localStorage.getItem('theme') === 'string') {
         const currentTheme = window.localStorage.getItem('theme');
