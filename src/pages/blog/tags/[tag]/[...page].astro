@@ -1,0 +1,62 @@
+---
+import type { Page, PaginateFunction } from 'astro';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+import Posts from '@/components/Posts.astro';
+import { defaultLang } from '@/i18n/ui';
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+import Layout from '@/layouts/Layout.astro';
+
+export type Props = {
+  page: Page<CollectionEntry<'blog'>>;
+};
+
+export async function getStaticPaths({
+  paginate,
+}: {
+  paginate: PaginateFunction;
+}) {
+  const allPosts = await getCollection('blog');
+  const tags = [...new Set(allPosts.flatMap((post) => post.data.tags ?? []))];
+  const paginates = tags.flatMap((tag) => {
+    const posts = allPosts
+      .filter((post) => {
+        const [slugLang] = post.slug.split('/');
+        return post.data.tags?.includes(tag) && slugLang === defaultLang;
+      })
+      .sort(
+        (a, b) =>
+          (a.data.lastUpdated ?? a.data.published).getTime() -
+          (b.data.lastUpdated ?? b.data.published).getTime(),
+      )
+      .reverse();
+
+    return paginate(posts, {
+      pageSize: 5,
+      params: { tag },
+    });
+  });
+
+  return paginates;
+}
+
+const { page } = Astro.props;
+const params = Astro.params;
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<Layout
+  title={`タグ: #${params.tag} | ${t('main.title')}`}
+  description={t('tags.description')}
+  path={`/blog/tags/${params.tag}`}
+  lang={lang}
+  hreflang={false}
+  og={{
+    enabled: true,
+  }}
+>
+  <main><Posts page={page} /></main></Layout
+>

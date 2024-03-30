@@ -7,6 +7,7 @@ import { CalendarIcon, ReloadIcon } from '@radix-ui/react-icons';
 import Pagination from './AstroPagination.astro';
 
 import { LanguageToggle } from '@/components/language-toggle';
+import { showDefaultLang, defaultLang } from '@/i18n/ui';
 import { exactSlugPath, getLangFromUrl } from '@/i18n/utils';
 
 export type Props = {
@@ -55,6 +56,22 @@ const lang = getLangFromUrl(url);
                 </a>
                 <span class="text-xs leading-4 text-muted-foreground md:text-sm">
                   {data.description}
+                </span>
+                <span class="flex gap-1 text-sm">
+                  {data?.tags &&
+                    data.tags.map((tag) => {
+                      return (
+                        <a
+                          href={
+                            !showDefaultLang && lang === defaultLang
+                              ? `/blog/tags/${tag}`
+                              : `/blog/${lang}/tags/${tag}`
+                          }
+                        >
+                          #{tag}
+                        </a>
+                      );
+                    })}
                 </span>
               </article>
             </li>
