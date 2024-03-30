@@ -5,7 +5,7 @@ export const blogCollection = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    heroImage: z.string().optional().default('/default.jpg'),
+    heroImage: z.string().optional(),
     published: z.date(),
     lastUpdated: z.date().optional(),
     isPublished: z.boolean(),

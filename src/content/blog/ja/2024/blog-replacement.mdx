@@ -3,9 +3,9 @@ title: ブログを移行しました
 description: 以前のブログから、新しいブログサイトに移行しました。技術的な話もそうですが、アーキテクチャ全体を見直して、UI全体を見やすくしています。
 category: lifestyle
 published: 2024-03-20
-lastUpdated: 2024-03-27
-heroImage: /default.jpg
+lastUpdated: 2024-03-30
 isPublished: true
+tags: ['blog', 'Astro', 'Cloudflare', 'TailwindCSS', 'mdx']
 ---
 
 ## Nextjs to Astro.build again
@@ -25,6 +25,10 @@ isPublished: true
 
 また、基本的なブログの構造はシンプルさを保ちつつ必要な機能だけを付け足しています。
 
+LightHouseはできるだけフルスコアに近い数値を取れるようにしています。
+
+![LightHouse Image](https://funailog.imgix.net/2024/lighthouse.png?auto=format,compress,enhance)
+
 ### 実装済みの機能まとめ
 
 - ブログ記事の一覧表示
@@ -33,6 +37,7 @@ isPublished: true
 - シンタックスハイライト
 - カテゴリの表示
 - 読了時間の表示
+- RSS機能の実装
 
 ### シンタックスハイライト
 
@@ -78,6 +83,14 @@ https://github.com/haxibami/haxibami.net
 
 https://www.funailog.com/blog/en/2023/rebuild-wsl2-with-alacritty
 
+hreflangも同様に全部のページで実装済みです。
+日本語のページを全体に表示するのは微妙なので、多くのケースではenページをx-defaultとして指定しています。
+
+以下のページはまだ追加していないので、その内追加する予定です。
+
+- [ ] `/en/about`
+- [ ] `/en/privacy`
+
 #### ダークモード
 
 ダークモードにも対応しています。画面のちらつきを抑えるための対応も行っています。
@@ -91,7 +104,8 @@ https://www.funailog.com/blog/en/2023/rebuild-wsl2-with-alacritty
 具体的には、以下のような課題があります。
 
 - [x] 画像の管理
-- [ ] Google Analyticsなどのトラッキングツールの利用
+- [x] Google Analyticsなどのトラッキングツールの利用
+   - [x] Cloudflare Analyticsも導入してみました
 
 これらの課題については、今後のアップデートで対応していく予定です。
 
@@ -112,7 +126,8 @@ https://www.imgix.com/
 ### OGP画像
 
 動的な生成を行うべきでAstroにはそういう機能も備わっているはずなので、今後の課題として考えています。
-数日以内に対応予定です。
+
+2024/03/29に対応済
 
 ## まとめ
 
