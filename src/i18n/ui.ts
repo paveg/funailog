@@ -13,6 +13,8 @@ export const ui = {
     'tags.description': 'Tag list',
     'categories.index': 'Categories',
     'categories.description': 'Category list',
+    'content.notfound': 'Content not found',
+    'content.back': 'Back to blog home',
   },
   ja: {
     'main.title': 'フナイログ',
@@ -25,6 +27,8 @@ export const ui = {
     'tags.description': 'タグ一覧ページ',
     'categories.index': 'カテゴリ一覧',
     'categories.description': 'カテゴリ一覧ページ',
+    'content.notfound': 'コンテンツが見つかりませんでした',
+    'content.back': 'ブログトップへ戻る',
   },
 } as const;
 

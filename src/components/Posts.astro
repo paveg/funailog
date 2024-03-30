@@ -5,6 +5,7 @@ import type { CollectionEntry } from 'astro:content';
 import { CalendarIcon, ReloadIcon } from '@radix-ui/react-icons';
 
 import Pagination from './AstroPagination.astro';
+import NotFound from './NotFound.astro';
 import { Badge } from './ui/badge';
 
 import { LanguageToggle } from '@/components/language-toggle';
@@ -33,64 +34,68 @@ const lang = getLangFromUrl(url);
     </div>
     <ul class="space-y-8">
       {
-        page.data.map((post) => {
-          const { slug, data, collection } = post;
-          const path = exactSlugPath(slug);
-          return (
-            <li>
-              <article>
-                <span class="flex items-center justify-start gap-4">
-                  <time
-                    class="flex items-center justify-start gap-2"
-                    datetime={data.published.toISOString()}
-                  >
-                    {data.lastUpdated ? (
-                      <ReloadIcon className="size-4" />
-                    ) : (
-                      <CalendarIcon className="size-4" />
-                    )}
-                    {new Intl.DateTimeFormat('en-US', {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                    }).format(data.lastUpdated ?? data.published)}
-                  </time>
-                  <a
-                    href={
-                      !showDefaultLang && lang === defaultLang
-                        ? `/${collection}/categories/${data.category}`
-                        : `/${collection}/${lang}/categories/${data.category}`
-                    }
-                  >
-                    <Badge variant="secondary">{data.category}</Badge>
+        page.data.length === 0 ? (
+          <NotFound />
+        ) : (
+          page.data.map((post) => {
+            const { slug, data, collection } = post;
+            const path = exactSlugPath(slug);
+            return (
+              <li>
+                <article>
+                  <span class="flex items-center justify-start gap-4">
+                    <time
+                      class="flex items-center justify-start gap-2"
+                      datetime={data.published.toISOString()}
+                    >
+                      {data.lastUpdated ? (
+                        <ReloadIcon className="size-4" />
+                      ) : (
+                        <CalendarIcon className="size-4" />
+                      )}
+                      {new Intl.DateTimeFormat('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      }).format(data.lastUpdated ?? data.published)}
+                    </time>
+                    <a
+                      href={
+                        !showDefaultLang && lang === defaultLang
+                          ? `/${collection}/categories/${data.category}`
+                          : `/${collection}/${lang}/categories/${data.category}`
+                      }
+                    >
+                      <Badge variant="secondary">{data.category}</Badge>
+                    </a>
+                  </span>
+                  <a href={`/${collection}/${path}`}>
+                    <h2>{data.title}</h2>
                   </a>
-                </span>
-                <a href={`/${collection}/${path}`}>
-                  <h2>{data.title}</h2>
-                </a>
-                <span class="text-xs leading-4 text-muted-foreground md:text-sm">
-                  {data.description}
-                </span>
-                <span class="flex gap-1 text-sm">
-                  {data?.tags &&
-                    data.tags.map((tag) => {
-                      return (
-                        <a
-                          href={
-                            !showDefaultLang && lang === defaultLang
-                              ? `/blog/tags/${tag}`
-                              : `/blog/${lang}/tags/${tag}`
-                          }
-                        >
-                          #{tag}
-                        </a>
-                      );
-                    })}
-                </span>
-              </article>
-            </li>
-          );
-        })
+                  <span class="text-xs leading-4 text-muted-foreground md:text-sm">
+                    {data.description}
+                  </span>
+                  <span class="flex gap-1 text-sm">
+                    {data?.tags &&
+                      data.tags.map((tag) => {
+                        return (
+                          <a
+                            href={
+                              !showDefaultLang && lang === defaultLang
+                                ? `/blog/tags/${tag}`
+                                : `/blog/${lang}/tags/${tag}`
+                            }
+                          >
+                            #{tag}
+                          </a>
+                        );
+                      })}
+                  </span>
+                </article>
+              </li>
+            );
+          })
+        )
       }
     </ul>
     <div class="pt-12">
