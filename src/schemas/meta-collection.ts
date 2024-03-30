@@ -6,6 +6,7 @@ export const metaCollection = defineCollection({
     main: z.object({
       title: z.string(),
       description: z.string(),
+      defaultImage: z.string(),
     }),
     rss: z.object({
       title: z.string(),

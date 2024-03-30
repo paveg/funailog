@@ -4,6 +4,8 @@ import '@/styles/globals.css';
 import '@fontsource-variable/m-plus-2';
 import '@fontsource-variable/m-plus-1-code';
 
+import { getEntry } from 'astro:content';
+
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics.astro';
 import Footer from '@/components/Footer.astro';
 import Header from '@/components/Header.astro';
@@ -31,6 +33,7 @@ export type Props = {
 const { title, description, path, og, lang, hreflangs } = Astro.props;
 const site = Astro.site ?? '';
 const isProd = import.meta.env.PROD;
+const meta = await getEntry('site', 'meta');
 ---
 
 <html lang={lang ?? defaultLang}>
@@ -73,7 +76,7 @@ const isProd = import.meta.env.PROD;
           <meta property="og:type" content={og.type ?? 'website'} />
           <meta
             property="og:image"
-            content={og.image ?? new URL('/default.jpg', site).toString()}
+            content={og.image ?? new URL(meta.data.main.defaultImage)}
           />
           <meta property="og:image:width" content={`${og.width ?? 1200}`} />
           <meta property="og:image:height" content={`${og.height ?? 630}`} />
