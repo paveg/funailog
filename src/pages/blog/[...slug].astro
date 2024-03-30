@@ -6,7 +6,8 @@ import { getCollection } from 'astro:content';
 import { getEntry } from 'astro:content';
 
 import { CalendarIcon, ClockIcon, ReloadIcon } from '@radix-ui/react-icons';
-import { Article } from 'schema-dts';
+
+import type { Article, WithContext } from 'schema-dts';
 
 import Figure from '@/components/Figure.astro';
 import Link from '@/components/Link.astro';
@@ -48,24 +49,29 @@ const [, ...slug] = post.slug.split('/');
 const translatePath = useTranslatedPath(globalLang);
 const path = `${post.collection}/${translatePath(slug.join('/'))}`;
 const t = useTranslations(globalLang);
-const articleLd: Article = {
+// TODO: Refactor rich result content
+const articleLd: WithContext<Article> = {
+  '@context': 'https://schema.org',
   '@type': 'Article',
+  '@id': new URL(path, site).toString(),
   headline: post.data.title,
   description: post.data.description,
   datePublished: post.data.published.toISOString(),
-  dateModified: post.data.lastUpdated?.toISOString(),
-  mainEntityOfPage: {
-    '@type': 'WebPage',
-    '@id': new URL(path, site).toString(),
-  },
   image: new URL(
     post.data.heroImage ??
       `/api/og/article/${post.collection}/${post.slug}.png`,
     site,
   ).toString(),
-  author: {
-    '@type': 'Person',
-    name: meta.data.author.name,
+  author: [
+    {
+      '@type': 'Person',
+      name: meta.data.author.name ?? 'Unknown',
+    },
+  ],
+  inLanguage: globalLang,
+  keywords: post.data.tags ?? [],
+  isPartOf: {
+    '@type': 'WebSite',
   },
 };
 ---
