@@ -5,6 +5,7 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 
 import Figure from '@/components/Figure.astro';
 import Link from '@/components/Link.astro';
+import { defaultLang } from '@/i18n/ui';
 import { getLangFromUrl, useTranslations } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 
@@ -44,6 +45,10 @@ const t = useTranslations(lang);
   og={{
     enabled: true,
   }}
+  hreflangs={[
+    { path: `/${page.slug}`, hreflang: defaultLang },
+    { path: `/${page.slug}`, hreflang: 'x-default' },
+  ]}
 >
   <main>
     <article>

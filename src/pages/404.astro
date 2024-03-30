@@ -1,5 +1,6 @@
 ---
 import Link from '@/components/Link.astro';
+import { defaultLang } from '@/i18n/ui';
 import { getLangFromUrl, useTranslations } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 const lang = getLangFromUrl(Astro.url);
@@ -13,6 +14,10 @@ const t = useTranslations(lang);
   og={{
     enabled: false,
   }}
+  hreflangs={[
+    { path: '/404', hreflang: defaultLang },
+    { path: '/404', hreflang: 'x-default' },
+  ]}
   ><main class="mx-auto py-12 text-center">
     <h1>404 Not Found</h1>
     <p class="text-sm text-secondary-foreground">

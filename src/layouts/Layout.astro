@@ -8,7 +8,7 @@ import GoogleAnalytics from '@/components/analytics/GoogleAnalytics.astro';
 import Footer from '@/components/Footer.astro';
 import Header from '@/components/Header.astro';
 import { TailwindIndicator } from '@/components/tailwind-indicator';
-import { hrefLangs } from '@/i18n/ui';
+import { ui, defaultLang } from '@/i18n/ui';
 
 export type Props = {
   title: string;
@@ -22,11 +22,13 @@ export type Props = {
     type?: 'article' | 'website';
   };
   lang?: string;
-  // TODO: Fix it to set individually parameters as hreflang and href
-  hreflang?: boolean;
+  hreflangs: {
+    path: string;
+    hreflang: keyof typeof ui | 'x-default';
+  }[];
 };
 
-const { title, description, path, og, lang, hreflang } = Astro.props;
+const { title, description, path, og, lang, hreflangs } = Astro.props;
 const site = Astro.site ?? '';
 const isProd = import.meta.env.PROD;
 ---
@@ -43,16 +45,29 @@ const isProd = import.meta.env.PROD;
       href={new URL('/rss.xml', site).toString()}
     />
     {
-      hreflang &&
-        hrefLangs.map((l) => (
+      hreflangs ? (
+        hreflangs.map((hl) => (
           <link
-            rel="alternate"
-            hreflang={l}
-            href={new URL([path, l].join('/'), site).toString()}
+            ref="alternate"
+            hreflang={hl.hreflang}
+            href={new URL(hl.path, site).toString()}
           />
         ))
+      ) : (
+        <>
+          <link
+            rel="alternate"
+            hreflang={lang ?? defaultLang}
+            href={new URL(path, site).toString()}
+          />
+          <link
+            rel="alternate"
+            hreflang="x-default"
+            href={new URL(path, site).toString()}
+          />
+        </>
+      )
     }
-    <link rel="alternate" hreflang="ja" href={new URL(path, site).toString()} />
     <link rel="sitemap" href="/sitemap-index.xml" type="application/xml" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="48x48" />
     <meta name="generator" content={Astro.generator} />

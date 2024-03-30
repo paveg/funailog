@@ -8,7 +8,7 @@ import { CalendarIcon, ClockIcon, ReloadIcon } from '@radix-ui/react-icons';
 import Figure from '@/components/Figure.astro';
 import Link from '@/components/Link.astro';
 import { Separator } from '@/components/ui/separator';
-import { ui } from '@/i18n/ui';
+import { defaultLang, ui } from '@/i18n/ui';
 import { useTranslatedPath, useTranslations } from '@/i18n/utils';
 import { getLangFromUrl } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
@@ -57,6 +57,10 @@ const t = useTranslations(globalLang);
     image: new URL(`/api/og/article/${post.collection}/${post.slug}.png`, site),
     type: 'article',
   }}
+  hreflangs={[
+    { path: `${path}`, hreflang: defaultLang },
+    { path: `${path}`, hreflang: 'x-default' },
+  ]}
   ><main>
     <article>
       <h1>{post.data.title}</h1>
