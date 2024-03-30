@@ -1,6 +1,6 @@
 body {
   article {
-    @apply prose-sm flex-grow break-words dark:prose-invert md:prose lg:prose-lg;
+    @apply prose-sm mx-auto flex-grow break-words dark:prose-invert md:prose lg:prose-lg;
     & ul {
       @apply list-disc;
     }

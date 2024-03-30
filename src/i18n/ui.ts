@@ -8,6 +8,8 @@ export const ui = {
     'index.comment': 'An exciting blank canvas awaiting its masterpiece.',
     'blog.description': 'Article list',
     'blog.switch': 'Switch to Japanese articles',
+    'tags.index': 'Tags',
+    'tags.description': 'Tag list',
   },
   ja: {
     'main.title': 'フナイログ',
@@ -15,6 +17,8 @@ export const ui = {
     'index.comment': 'このページに、置くべきコンテンツはまだ決まっていません。',
     'blog.description': '記事一覧',
     'blog.switch': '英語記事へ切り替える',
+    'tags.index': 'タグ一覧',
+    'tags.description': 'タグ一覧ページ',
   },
 } as const;
 
