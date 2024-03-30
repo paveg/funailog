@@ -34,7 +34,7 @@ const isProd = import.meta.env.PROD;
 ---
 
 <!doctype html>
-<html lang={lang ?? 'ja'}>
+<html lang={lang ?? defaultLang}>
   <head>
     <meta charset="utf-8" />
     <meta name="description" content={description} />
@@ -45,28 +45,13 @@ const isProd = import.meta.env.PROD;
       href={new URL('/rss.xml', site).toString()}
     />
     {
-      hreflangs ? (
-        hreflangs.map((hl) => (
-          <link
-            ref="alternate"
-            hreflang={hl.hreflang}
-            href={new URL(hl.path, site).toString()}
-          />
-        ))
-      ) : (
-        <>
-          <link
-            rel="alternate"
-            hreflang={lang ?? defaultLang}
-            href={new URL(path, site).toString()}
-          />
-          <link
-            rel="alternate"
-            hreflang="x-default"
-            href={new URL(path, site).toString()}
-          />
-        </>
-      )
+      hreflangs.map((hl) => (
+        <link
+          ref="alternate"
+          hreflang={hl.hreflang}
+          href={new URL(hl.path, site).toString()}
+        />
+      ))
     }
     <link rel="sitemap" href="/sitemap-index.xml" type="application/xml" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="48x48" />
