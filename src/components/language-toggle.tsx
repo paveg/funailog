@@ -42,7 +42,7 @@ export const LanguageToggle = ({ pathname, collectionName, lang }: Props) => {
         }}
       >
         <LanguagesIcon className="size-4" />
-        <span class="hidden sm:block">{t('blog.switch')}</span>
+        <span className="hidden sm:block">{t('blog.switch')}</span>
       </Button>
     </>
   );

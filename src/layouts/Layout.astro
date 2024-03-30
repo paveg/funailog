@@ -47,7 +47,7 @@ const isProd = import.meta.env.PROD;
     {
       hreflangs.map((hl) => (
         <link
-          ref="alternate"
+          rel="alternate"
           hreflang={hl.hreflang}
           href={new URL(hl.path, site).toString()}
         />
