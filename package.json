@@ -33,7 +33,6 @@
     "@tailwindcss/typography": "^0.5.10",
     "astro": "^4.5.9",
     "astro-purgecss": "^4.1.0",
-    "astro-seo-schema": "^4.0.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "lucide-react": "^0.363.0",

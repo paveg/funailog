@@ -50,9 +50,6 @@ dependencies:
   astro-purgecss:
     specifier: ^4.1.0
     version: 4.1.0(astro@4.5.10)(purgecss@5.0.0)
-  astro-seo-schema:
-    specifier: ^4.0.0
-    version: 4.0.0(astro@4.5.10)(schema-dts@1.1.2)
   class-variance-authority:
     specifier: ^0.7.0
     version: 0.7.0
@@ -2248,16 +2245,6 @@ packages:
     dependencies:
       astro: 4.5.10(@types/node@20.11.30)(lightningcss@1.24.1)(typescript@5.4.3)
       purgecss: 5.0.0
-    dev: false
-
-  /astro-seo-schema@4.0.0(astro@4.5.10)(schema-dts@1.1.2):
-    resolution: {integrity: sha512-ZcpxuQWSlyOVru+sN5LwUHqfrQpOEyv6Ksxq6WBNhycEHE0AEgGdiHkfhAmQbVqT4HXM8bmZOZlYlwwsYkfPAw==}
-    peerDependencies:
-      astro: ^4.0.0
-      schema-dts: ^1.1.0
-    dependencies:
-      astro: 4.5.10(@types/node@20.11.30)(lightningcss@1.24.1)(typescript@5.4.3)
-      schema-dts: 1.1.2(typescript@5.4.3)
     dev: false
 
   /astro@4.5.10(@types/node@20.11.30)(lightningcss@1.24.1)(typescript@5.4.3):
