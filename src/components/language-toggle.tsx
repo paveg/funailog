@@ -33,6 +33,7 @@ export const LanguageToggle = ({ pathname, collectionName, lang }: Props) => {
   return (
     <>
       <Button
+        aria-label="switch language button"
         variant="outline"
         className="gap-2"
         onClick={(event) => {
@@ -41,7 +42,7 @@ export const LanguageToggle = ({ pathname, collectionName, lang }: Props) => {
         }}
       >
         <LanguagesIcon className="size-4" />
-        {t('blog.switch')}
+        <span className="hidden sm:block">{t('blog.switch')}</span>
       </Button>
     </>
   );

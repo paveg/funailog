@@ -4,6 +4,7 @@ import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
 import Posts from '@/components/Posts.astro';
+import { defaultLang } from '@/i18n/ui';
 import { getLangFromUrl, useTranslations } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 
@@ -52,10 +53,16 @@ const t = useTranslations(lang);
   description={t('tags.description')}
   path={`/blog/${lang}/tags/${params.tag}`}
   lang={lang}
-  hreflang={false}
   og={{
     enabled: true,
   }}
+  hreflangs={[
+    { path: `/blog/tags/${params.tag}`, hreflang: defaultLang },
+    { path: `/blog/en/tags/${params.tag}`, hreflang: 'en' },
+    { path: `/blog/en/tags/${params.tag}`, hreflang: 'x-default' },
+  ]}
 >
-  <main><Posts page={page} /></main></Layout
->
+  <main>
+    <Posts title={`#${params.tag}`} page={page} />
+  </main>
+</Layout>

@@ -18,12 +18,12 @@ export async function getStaticPaths({
   paginate: PaginateFunction;
 }) {
   const allPosts = await getCollection('blog');
-  const tags = [...new Set(allPosts.flatMap((post) => post.data.tags ?? []))];
-  const paginates = tags.flatMap((tag) => {
+  const categories = [...new Set(allPosts.map((post) => post.data.category))];
+  const paginates = categories.flatMap((category) => {
     const posts = allPosts
       .filter((post) => {
         const [slugLang] = post.slug.split('/');
-        return post.data.tags?.includes(tag) && slugLang === defaultLang;
+        return post.data.category === category && slugLang === defaultLang;
       })
       .sort(
         (a, b) =>
@@ -34,7 +34,7 @@ export async function getStaticPaths({
 
     return paginate(posts, {
       pageSize: 5,
-      params: { tag },
+      params: { category },
     });
   });
 
@@ -49,18 +49,20 @@ const t = useTranslations(lang);
 ---
 
 <Layout
-  title={`タグ: #${params.tag} | ${t('main.title')}`}
-  description={t('tags.description')}
-  path={`/blog/tags/${params.tag}`}
+  title={`カテゴリ: ${params.category} | ${t('main.title')}`}
+  description={t('categories.description')}
+  path={`/blog/categories/${params.category}`}
   lang={lang}
   og={{
     enabled: true,
   }}
   hreflangs={[
-    { path: `/blog/tags/${params.tag}`, hreflang: defaultLang },
-    { path: `/blog/en/tags/${params.tag}`, hreflang: 'en' },
-    { path: `/blog/en/tags/${params.tag}`, hreflang: 'x-default' },
+    { path: `/blog/categories/${params.category}`, hreflang: defaultLang },
+    { path: `/blog/en/categories/${params.category}`, hreflang: 'en' },
+    { path: `/blog/en/categories/${params.category}`, hreflang: 'x-default' },
   ]}
 >
-  <main><Posts title={`#${params.tag}`} page={page} /></main></Layout
->
+  <main>
+    <Posts title={`カテゴリ: ${params.category}`} page={page} />
+  </main>
+</Layout>

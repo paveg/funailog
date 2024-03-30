@@ -4,6 +4,7 @@ import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
 
 import Posts from '@/components/Posts.astro';
+import { defaultLang } from '@/i18n/ui';
 import { getLangFromUrl, useTranslations } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 
@@ -40,10 +41,14 @@ const t = useTranslations(lang);
   title={t('main.title')}
   description={t('blog.description')}
   lang={lang}
-  path="/blog"
+  path={`/blog/${lang}`}
   og={{
     enabled: true,
   }}
-  hreflang
-  ><main><Posts page={page} /></main>
+  hreflangs={[
+    { path: `/blog`, hreflang: defaultLang },
+    { path: '/blog/en', hreflang: 'en' },
+    { path: '/blog/en', hreflang: 'x-default' },
+  ]}
+  ><main><Posts title={t('blog.index')} page={page} /></main>
 </Layout>
