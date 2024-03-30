@@ -1,9 +1,13 @@
 ---
 import '@/styles/articles.css';
+import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
+import { getEntry } from 'astro:content';
 
 import { CalendarIcon, ClockIcon, ReloadIcon } from '@radix-ui/react-icons';
+
+import type { Article, WithContext } from 'schema-dts';
 
 import Figure from '@/components/Figure.astro';
 import Link from '@/components/Link.astro';
@@ -13,6 +17,7 @@ import { useTranslatedPath, useTranslations } from '@/i18n/utils';
 import { getLangFromUrl } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 
+const meta = await getEntry('site', 'meta');
 export type Props = {
   post: CollectionEntry<'blog'>;
 };
@@ -44,6 +49,31 @@ const [, ...slug] = post.slug.split('/');
 const translatePath = useTranslatedPath(globalLang);
 const path = `${post.collection}/${translatePath(slug.join('/'))}`;
 const t = useTranslations(globalLang);
+// TODO: Refactor rich result content
+const articleLd: WithContext<Article> = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  '@id': new URL(path, site).toString(),
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.published.toISOString(),
+  image: new URL(
+    post.data.heroImage ??
+      `/api/og/article/${post.collection}/${post.slug}.png`,
+    site,
+  ).toString(),
+  author: [
+    {
+      '@type': 'Person',
+      name: meta.data.author.name ?? 'Unknown',
+    },
+  ],
+  inLanguage: globalLang,
+  keywords: post.data.tags ?? [],
+  isPartOf: {
+    '@type': 'WebSite',
+  },
+};
 ---
 
 <Layout
@@ -65,14 +95,18 @@ const t = useTranslations(globalLang);
     { path: `${path}`, hreflang: defaultLang },
     { path: `${path}`, hreflang: 'x-default' },
   ]}
-  ><main>
+  jsonLdSchema={articleLd}
+>
+  <main>
     <article>
       <h1 class="text-center">{post.data.title}</h1>
-      <ima
+      <Image
+        class="rounded-sm hover:-top-3 hover:shadow-md"
         src={post.data.heroImage ?? '/first-place.jpg'}
         alt="This is a hero image of the article"
         width={1200}
-        height={630}></ima>
+        height={630}
+      />
       <div class="mb-2 flex items-end justify-between gap-2 text-sm">
         <span>
           {
