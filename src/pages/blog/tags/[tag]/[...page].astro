@@ -18,9 +18,12 @@ export async function getStaticPaths({
   paginate: PaginateFunction;
 }) {
   const allPosts = await getCollection('blog');
-  const tags = [...new Set(allPosts.flatMap((post) => post.data.tags ?? []))];
+  const publishedPosts = allPosts.filter((post) => post.data.isPublished);
+  const tags = [
+    ...new Set(publishedPosts.flatMap((post) => post.data.tags ?? [])),
+  ];
   const paginates = tags.flatMap((tag) => {
-    const posts = allPosts
+    const posts = publishedPosts
       .filter((post) => {
         const [slugLang] = post.slug.split('/');
         return post.data.tags?.includes(tag) && slugLang === defaultLang;

@@ -8,6 +8,7 @@ import { useTranslatedPath } from '@/i18n/utils';
 export async function GET(context: APIContext) {
   const meta = await getEntry('site', 'meta');
   const posts = (await getCollection('blog'))
+    .filter((post) => post.data.isPublished)
     .sort((a, b) => a.data.published.getTime() - b.data.published.getTime())
     .reverse();
 

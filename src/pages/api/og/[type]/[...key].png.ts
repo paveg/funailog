@@ -4,7 +4,9 @@ import { getCollection } from 'astro:content';
 import ogImage from '@/components/ogImage';
 
 const docs = await getCollection('page');
-const posts = await getCollection('blog');
+const posts = (await getCollection('blog')).filter(
+  (post) => post.data.isPublished,
+);
 
 const articles = [...docs, ...posts];
 
