@@ -138,6 +138,7 @@ const ogImage = async (text: string, date?: Date, emoji?: string) => {
       loadAdditionalAsset: async (languageCode, segment) => {
         if (languageCode === 'emoji') {
           const emojiSvg = await fetch(
+            // https://fonts.google.com/noto/specimen/Noto+Color+Emoji?query=emoji
             'https://rawcdn.githack.com/googlefonts/noto-emoji/main/svg/emoji_u' +
               segment.codePointAt(0)?.toString(16) +
               '.svg',

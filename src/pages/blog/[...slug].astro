@@ -22,7 +22,9 @@ export type Props = {
 };
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
+  const posts = (await getCollection('blog')).filter(
+    (post) => post.data.isPublished,
+  );
 
   const paths = posts.map((post) => {
     const [lang, ...slug] = post.slug.split('/');

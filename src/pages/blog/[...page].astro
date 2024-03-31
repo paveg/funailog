@@ -18,6 +18,7 @@ export async function getStaticPaths({
   paginate: PaginateFunction;
 }) {
   const posts = (await getCollection('blog'))
+    .filter((post) => post.data.isPublished)
     .filter((post) => {
       const [lang] = post.slug.split('/');
       return lang === defaultLang;
