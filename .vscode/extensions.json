@@ -6,7 +6,11 @@
     "astro-build.astro-vscode",
     "rvest.vs-code-prettier-eslint",
     "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode"
+    "esbenp.prettier-vscode",
+    "DavidAnson.vscode-markdownlint",
+    "yzhang.markdown-all-in-one",
+    "shd101wyy.markdown-preview-enhanced",
+    "znck.grammarly"
   ],
   "unwantedRecommendations": []
 }
