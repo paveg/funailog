@@ -10,7 +10,10 @@
     "DavidAnson.vscode-markdownlint",
     "yzhang.markdown-all-in-one",
     "shd101wyy.markdown-preview-enhanced",
-    "znck.grammarly"
+    "znck.grammarly",
+    "unifiedjs.vscode-mdx",
+    "esbenp.prettier-vscode",
+    "rvest.vs-code-prettier-eslint"
   ],
   "unwantedRecommendations": []
 }
