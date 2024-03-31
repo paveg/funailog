@@ -7,8 +7,6 @@ import { getEntry } from 'astro:content';
 
 import { CalendarIcon, ClockIcon, ReloadIcon } from '@radix-ui/react-icons';
 
-import type { Article, WithContext } from 'schema-dts';
-
 import Figure from '@/components/Figure.astro';
 import Link from '@/components/Link.astro';
 import { Separator } from '@/components/ui/separator';
@@ -16,6 +14,7 @@ import { defaultLang, ui } from '@/i18n/ui';
 import { useTranslatedPath, useTranslations } from '@/i18n/utils';
 import { getLangFromUrl } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
+import { ArticleLd } from '@/lib/rich-results';
 
 const meta = await getEntry('site', 'meta');
 export type Props = {
@@ -49,31 +48,6 @@ const [, ...slug] = post.slug.split('/');
 const translatePath = useTranslatedPath(globalLang);
 const path = `${post.collection}/${translatePath(slug.join('/'))}`;
 const t = useTranslations(globalLang);
-// TODO: Refactor rich result content
-const articleLd: WithContext<Article> = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
-  '@id': new URL(path, site).toString(),
-  headline: post.data.title,
-  description: post.data.description,
-  datePublished: post.data.published.toISOString(),
-  image: new URL(
-    post.data.heroImage ??
-      `/api/og/article/${post.collection}/${post.slug}.png`,
-    site,
-  ).toString(),
-  author: [
-    {
-      '@type': 'Person',
-      name: meta.data.author.name ?? 'Unknown',
-    },
-  ],
-  inLanguage: globalLang,
-  keywords: post.data.tags ?? [],
-  isPartOf: {
-    '@type': 'WebSite',
-  },
-};
 ---
 
 <Layout
@@ -95,7 +69,7 @@ const articleLd: WithContext<Article> = {
     { path: `${path}`, hreflang: defaultLang },
     { path: `${path}`, hreflang: 'x-default' },
   ]}
-  jsonLdSchema={articleLd}
+  jsonLdSchema={ArticleLd(meta, post, site, globalLang)}
 >
   <main>
     <article>

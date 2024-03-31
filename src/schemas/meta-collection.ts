@@ -19,6 +19,7 @@ export const metaCollection = defineCollection({
       github: z.string(),
       twitter: z.string(),
       instagram: z.string(),
+      linkedin: z.string(),
     }),
   }),
 });
