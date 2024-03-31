@@ -1,0 +1,133 @@
+---
+title: JSON-LDをAstroブログで扱う
+description: JSON-LDをAstro.buildのブログで扱う方法を紹介します
+category: programming
+published: 2024-03-31
+isPublished: true
+tags: ['SEO', 'Astro', 'JSON-LD']
+---
+
+## JSON-LDとは
+
+> JSON-LD is a lightweight Linked Data format. It is easy for humans to read and write. It is based on the already successful JSON format and provides a way to help JSON data interoperate at Web-scale.
+
+JJSON-LD(JavaScript Object Notation for Linked Data)は、Webページに構造化データを埋め込む手法の一つです。
+
+構造化データを埋め込むことで、検索エンジンがWebページの内容を適切に理解し、検索結果の質を高めることができます。
+
+**つまり、SEO(検索エンジン最適化)の改善に役立ちます。**
+
+また、埋め込んだ構造化データには、コンテンツのタイトルや説明、画像などのメタデータが含まれるため、ソーシャルメディアでのコンテンツ共有を促進する効果もあります。
+さらに、JSON-LDはJSONベースの記述なので、Web開発者にとって親しみやすい形式となっています。
+このようにJSON-LDを活用することで、Webサイト全体の可視性とアクセシビリティが向上し、ユーザーへの情報伝達がスムーズになります。
+
+https://json-ld.org/
+
+## Schema.org について
+
+基本的にJSON-LDで構造化データを検索エンジンなどに提供するに当たっては、[Schema.org](https://schema.org) の仕様に従うのが良いです。
+
+Schema.orgとは、Google、Microsoft、Yahoo!、Yandexなどの主要な検索エンジンが共同で開発し、ウェブサイトの構造化データマークアップを標準化したものです。
+
+### 基本的な概念
+
+- アイテムスコープ(Itemscope)
+  - 構造化データのルート要素を定義します。
+- アイテムタイプ(Itemtype)
+  - 構造化データの種類を定義します。
+- アイテムプロパティ(Itemprop)
+  - アイテムに関する具体的な情報（名前、説明、画像など）を指定します。
+
+JSON-LDでは上記を以下の様にJSON形式で記述します。
+
+```json title="schema.json"
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "フナイログ",
+  "url": "https://funailog.com",
+  "author": {
+    "@type": "Person",
+    "name": "Ryota Ikezawa"
+  }
+}
+```
+
+この例では、`@context` によって、Schema.orgの語彙が使用されていることが宣言されます。
+`@type` によってアイテムの種類がウェブサイトであること、また制作者の名前が指定されています。
+
+具体的にどのようなスキーマがあるかは、 https://schema.org/docs/schemas.html で確認することが可能です。
+
+## JSON-LDを組み込むためのステップ
+
+今回はAstro.buildで構築されたこのブログの記事ページに対して、JSON-LDを組み込んでみます。
+
+これは先に述べたように、ブログ記事の検索性を向上させるための一手段です。
+コンポーネントの分離や構成にも寄りますが、記事を描画するコンポーネントの冒頭に以下のようなscriptを書いて外から個別の値を渡すのが良いと思います。
+
+```astro
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite"
+    // ...
+  }
+</script>
+```
+
+あるいは、以下のようにするのも良いでしょう。
+
+```astro
+---
+import { Article, WithContext } from 'schema-dts';
+type Props = {
+  jsonLd?: WithContext<Article>;
+};
+
+const { jsonLd } = Astro.props;
+---
+
+<head>
+  {
+    jsonLd && (
+      <script
+        is:inline
+        type="application/ld+json"
+        set:html={JSON.stringify(jsonLd)}
+      />
+    )
+  }
+</head>
+```
+
+もしも、構成するアプリケーションの構成に問題がなければ、以下のプラグインを利用しても良いかもしれません。
+
+内部では先ほど記述したものを呼び出しているだけなので、自分で作るのと大差はないです。
+
+https://github.com/codiume/orbit/tree/main/packages/astro-seo-schema
+
+一方Schemaの型定義は欲しいと思うので、 [schema-dts](https://github.com/google/schema-dts) は利用すべきです。
+
+### 再利用性を高めるためにコンポーネントやライブラリとして分割する
+
+今回は、再利用性を高めるために `rich-results.ts` の中に `ArticleLd` として切り出します。
+
+メタデータとして、blogのコレクション、サイトメタデータ、言語属性などを渡して構成します。
+
+実際のコードは以下のリンクです。
+
+https://github.com/paveg/funailog/blob/main/src/lib/rich-results.ts
+
+ページの構成次第では先に書いた通り、`Layout.astro` と blogコンテンツのページの2つだけに実装すれば良いでしょう。
+
+## 実装したJSON-LDをテストする
+
+Googleが [リッチリザルトテスト](https://search.google.com/test/rich-results)を提供しています。
+
+実装してデプロイを行ったあとに、ウェブページをテストして問題ないか確認しましょう。
+
+![Rich Result Test Sample](https://funailog.imgix.net/2024/rich-result-text-preview.png?auto=format,compress,enhance)
+
+## まとめ
+
+あなたのブログにもぜひJSON-LDを組み込んでみてください。

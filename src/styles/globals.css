@@ -126,7 +126,7 @@
   }
 
   blockquote {
-    @apply relative font-semibold italic;
+    @apply relative italic;
     &::before {
       @apply left-1 h-full bg-muted-foreground;
     }
