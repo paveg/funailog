@@ -1,14 +1,14 @@
 ---
 import '@/styles/articles.css';
-import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
 import { getEntry } from 'astro:content';
 
-import { CalendarIcon, ClockIcon, ReloadIcon } from '@radix-ui/react-icons';
-
 import Figure from '@/components/Figure.astro';
 import Link from '@/components/Link.astro';
+import { BlogDate } from '@/components/markdown/blog-date';
+import { BlogMeta } from '@/components/markdown/blog-meta';
+import Image from '@/components/markdown/Image.astro';
 import { Separator } from '@/components/ui/separator';
 import { defaultLang, ui } from '@/i18n/ui';
 import { useTranslatedPath, useTranslations } from '@/i18n/utils';
@@ -43,6 +43,7 @@ const { post } = Astro.props;
 const components = {
   figure: Figure,
   a: Link,
+  img: Image,
 };
 const site = Astro.site ?? '';
 const globalLang = getLangFromUrl(Astro.url);
@@ -50,6 +51,7 @@ const [, ...slug] = post.slug.split('/');
 const translatePath = useTranslatedPath(globalLang);
 const path = `${post.collection}/${translatePath(slug.join('/'))}`;
 const t = useTranslations(globalLang);
+const defaultImagePath = '/first-place.jpg';
 ---
 
 <Layout
@@ -76,51 +78,19 @@ const t = useTranslations(globalLang);
   <main>
     <article>
       <h1 class="text-center">{post.data.title}</h1>
+      <BlogDate post={post} lang={globalLang} />
       <Image
-        class="rounded-sm hover:-top-3 hover:shadow-md"
-        src={post.data.heroImage ?? '/first-place.jpg'}
-        alt="This is a hero image of the article"
+        class="my-4 rounded-sm"
+        src={post.data.heroImage ?? defaultImagePath}
+        alt="A hero image of the article"
         width={1200}
         height={630}
       />
-      <div class="mb-2 flex items-end justify-between gap-2 text-sm">
-        <span>
-          {
-            post.data.lastUpdated && (
-              <time
-                class="flex items-center gap-1"
-                id="lastUpdated"
-                datetime={post.data.lastUpdated.toISOString()}
-              >
-                <ReloadIcon className="my-0 size-4" />
-                {new Intl.DateTimeFormat('en-US', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                }).format(post.data.lastUpdated)}
-              </time>
-            )
-          }
-          <time
-            class="flex items-center gap-1"
-            id="published"
-            datetime={post.data.published.toISOString()}
-          >
-            <CalendarIcon className="my-0 size-4" />
-            {
-              new Intl.DateTimeFormat('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              }).format(post.data.published)
-            }
-          </time>
-        </span>
-        <span class="flex items-center gap-1">
-          <ClockIcon className="my-0 size-4" />
-          {remarkPluginFrontmatter.minRead}
-        </span>
-      </div>
+      <BlogMeta
+        post={post}
+        lang={globalLang}
+        minRead={remarkPluginFrontmatter.minRead}
+      />
       <Separator />
       <Content components={components} />
     </article>
