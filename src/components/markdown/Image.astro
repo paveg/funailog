@@ -1,0 +1,16 @@
+---
+import { Image as AstroImage } from 'astro:assets';
+
+const { src, alt, ...props } = Astro.props;
+const imageProps = {
+  src,
+  alt,
+  width: 1200,
+  height: 630,
+  widths: [576, 768, 992, 1200, 1400, 1600],
+  sizes: '(min-width: 1200px) 720px, (min-width: 780px) calc(100vw - 32px)',
+  ...props,
+};
+---
+
+<AstroImage loading="lazy" class="rounded" {...imageProps} />

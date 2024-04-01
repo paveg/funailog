@@ -9,6 +9,7 @@ import NotFound from './NotFound.astro';
 import { Badge } from './ui/badge';
 
 import { LanguageToggle } from '@/components/language-toggle';
+import { TagsComponent } from '@/components/markdown/tags';
 import { showDefaultLang, defaultLang } from '@/i18n/ui';
 import { exactSlugPath, getLangFromUrl } from '@/i18n/utils';
 
@@ -24,7 +25,7 @@ const lang = getLangFromUrl(url);
 <>
   <div class="py-4">
     <div class="flex items-center justify-between pb-8">
-      {title && <h1>{title}</h1>}
+      {title && <h1 class="capitalize">{title}</h1>}
       <LanguageToggle
         client:load
         lang={lang}
@@ -39,6 +40,7 @@ const lang = getLangFromUrl(url);
         ) : (
           page.data.map((post) => {
             const { slug, data, collection } = post;
+            const tags = data.tags ?? [];
             const path = exactSlugPath(slug);
             return (
               <li>
@@ -66,7 +68,9 @@ const lang = getLangFromUrl(url);
                           : `/${collection}/${lang}/categories/${data.category}`
                       }
                     >
-                      <Badge variant="secondary">{data.category}</Badge>
+                      <Badge className="capitalize" variant="secondary">
+                        {data.category}
+                      </Badge>
                     </a>
                   </span>
                   <a href={`/${collection}/${path}`}>
@@ -75,22 +79,13 @@ const lang = getLangFromUrl(url);
                   <span class="text-xs leading-4 text-muted-foreground md:text-sm">
                     {data.description}
                   </span>
-                  <span class="flex gap-1 text-sm">
-                    {data?.tags &&
-                      data.tags.map((tag) => {
-                        return (
-                          <a
-                            href={
-                              !showDefaultLang && lang === defaultLang
-                                ? `/blog/tags/${tag}`
-                                : `/blog/${lang}/tags/${tag}`
-                            }
-                          >
-                            #{tag}
-                          </a>
-                        );
-                      })}
-                  </span>
+                  {tags.length > 0 && (
+                    <TagsComponent
+                      tags={tags}
+                      lang={lang}
+                      collection={collection}
+                    />
+                  )}
                 </article>
               </li>
             );
