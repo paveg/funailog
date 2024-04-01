@@ -4,12 +4,11 @@ import type { CollectionEntry } from 'astro:content';
 
 import { CalendarIcon, ReloadIcon } from '@radix-ui/react-icons';
 
-import Pagination from './AstroPagination.astro';
-import NotFound from './NotFound.astro';
-import { Badge } from './ui/badge';
-
+import Pagination from '@/components/AstroPagination.astro';
 import { LanguageToggle } from '@/components/language-toggle';
 import { TagsComponent } from '@/components/markdown/tags';
+import NotFound from '@/components/NotFound.astro';
+import { Badge } from '@/components/ui/badge';
 import { showDefaultLang, defaultLang } from '@/i18n/ui';
 import { exactSlugPath, getLangFromUrl } from '@/i18n/utils';
 

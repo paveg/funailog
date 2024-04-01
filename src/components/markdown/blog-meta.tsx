@@ -2,8 +2,7 @@ import type { CollectionEntry } from 'astro:content';
 
 import { TimerIcon } from '@radix-ui/react-icons';
 
-import { TagsComponent } from './tags';
-
+import { TagsComponent } from '@/components/markdown/tags';
 import { type ui } from '@/i18n/ui';
 
 type Props = {
