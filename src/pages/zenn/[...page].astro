@@ -1,5 +1,5 @@
 ---
-import type { PaginateFunction } from 'astro';
+import type { Page, PaginateFunction } from 'astro';
 
 import {
   CalendarIcon,
@@ -8,14 +8,16 @@ import {
   ReloadIcon,
 } from '@radix-ui/react-icons';
 
+import type { ZennArticle, ZennArticleData } from '@/types/zenn';
+
+import Pagination from '@/components/AstroPagination.astro';
 import { Badge } from '@/components/ui/badge';
 import { defaultLang } from '@/i18n/ui';
 import { getLangFromUrl, useTranslations } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
-import Pagination from '@/components/AstroPagination.astro';
 
 export type Props = {
-  page: Page<ZennArticle[]>;
+  page: Page<ZennArticle>;
 };
 
 export async function getStaticPaths({
@@ -24,7 +26,7 @@ export async function getStaticPaths({
   paginate: PaginateFunction;
 }) {
   const res = await fetch('https://zenn.dev/api/articles?username=pav');
-  const data: ZennArticles = await res.json();
+  const data: ZennArticleData = await res.json();
   const allPosts = data.articles;
   const posts: ZennArticle[] = allPosts
     .sort(
@@ -60,7 +62,7 @@ const t = useTranslations(lang);
       {
         page.data.map((post) => {
           return (
-            <li key={post.id}>
+            <li id={post.slug}>
               <article>
                 <div class="rounded-md p-4 shadow-accent hover:-top-3 hover:shadow-md dark:shadow-accent-foreground">
                   <a
@@ -71,7 +73,7 @@ const t = useTranslations(lang);
                     <div class="flex items-center justify-start gap-3">
                       <time
                         class="flex items-center justify-start gap-2"
-                        datetime={post.published}
+                        datetime={post.published_at}
                       >
                         {post.body_updated_at ? (
                           <ReloadIcon className="size-4" />
@@ -83,7 +85,7 @@ const t = useTranslations(lang);
                           month: 'short',
                           day: 'numeric',
                         }).format(
-                          Date.parse(post.body_updated_at ?? post.published),
+                          Date.parse(post.body_updated_at ?? post.published_at),
                         )}
                       </time>
                       <Badge className="capitalize" variant="outline">
@@ -91,8 +93,8 @@ const t = useTranslations(lang);
                       </Badge>
                     </div>
                     <div class="pb-3">
-                      <h2 class="items-center">
-                        {post.title} {post.emoji}
+                      <h2 class="block items-center overflow-hidden text-ellipsis whitespace-nowrap">
+                        {post.title}
                       </h2>
                       <div class="flex justify-start gap-3">
                         <span class="flex items-center gap-2">
@@ -103,6 +105,7 @@ const t = useTranslations(lang);
                           <ChatBubbleIcon className="size-5" />
                           {post.comments_count}
                         </span>
+                        <span>{post.emoji}</span>
                       </div>
                     </div>
                   </a>

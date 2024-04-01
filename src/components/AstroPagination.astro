@@ -2,6 +2,8 @@
 import type { Page } from 'astro';
 import type { CollectionEntry } from 'astro:content';
 
+import type { ZennArticle } from '@/types/zenn';
+
 import {
   Pagination,
   PaginationContent,
@@ -9,11 +11,10 @@ import {
   PaginationItem,
   PaginationNext,
 } from '@/components/ui/pagination';
-import type { ZennArticle } from '@/types/zenn';
 import { cn } from '@/lib/utils';
 
 export type Props = {
-  page: Page<CollectionEntry<'blog'>> | Page<ZennArticle[]>;
+  page: Page<CollectionEntry<'blog'>> | Page<ZennArticle>;
 };
 
 const { page } = Astro.props;
