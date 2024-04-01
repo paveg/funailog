@@ -15,6 +15,8 @@ export const ui = {
     'categories.description': 'Category list',
     'content.notfound': 'Content not found',
     'content.back': 'Back to blog home',
+    'zenn.index': 'Zenn articles',
+    'zenn.description': 'Zenn articles list',
   },
   ja: {
     'main.title': 'フナイログ',
@@ -29,6 +31,8 @@ export const ui = {
     'categories.description': 'カテゴリ一覧ページ',
     'content.notfound': 'コンテンツが見つかりませんでした',
     'content.back': 'ブログトップへ戻る',
+    'zenn.index': 'Zenn 記事一覧',
+    'zenn.description': 'Zenn.dev 記事一覧ページ',
   },
 } as const;
 

@@ -79,8 +79,8 @@
 
     --link: hsl(219, 50%, 70%);
     --link-hover: hsl(219, 50%, 80%);
-    --link-active: hsl(219, 50%, 90%);
-    --link-visited: hsl(219, 50%, 60%);
+    --link-active: hsl(219, 50%, 60%);
+    --link-visited: hsl(219, 50%, 70%);
 
     --border: hsl(0, 0%, 14.9%);
     --input: hsl(0, 0%, 14.9%);
