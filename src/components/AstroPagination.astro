@@ -9,9 +9,11 @@ import {
   PaginationItem,
   PaginationNext,
 } from '@/components/ui/pagination';
+import type { ZennArticle } from '@/types/zenn';
+import { cn } from '@/lib/utils';
 
 export type Props = {
-  page: Page<CollectionEntry<'blog'>>;
+  page: Page<CollectionEntry<'blog'>> | Page<ZennArticle[]>;
 };
 
 const { page } = Astro.props;
@@ -21,8 +23,8 @@ const { page } = Astro.props;
   <PaginationContent>
     <PaginationItem>
       <PaginationPrevious
+        className={cn({ hidden: !page?.url.prev })}
         size="sm"
-        disabled={!page?.url.prev}
         isActive={!!page?.url.prev}
         href={page?.url?.prev}
       />
@@ -30,7 +32,7 @@ const { page } = Astro.props;
     <PaginationItem>
       <PaginationNext
         size="sm"
-        disabled={!page?.url.next}
+        className={cn({ hidden: !page?.url.next })}
         isActive={!!page?.url.next}
         href={page?.url?.next}
       />

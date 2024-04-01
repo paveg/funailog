@@ -8,6 +8,9 @@ import {
 
 import ButtonLink from '@/components/ButtonLink.astro';
 import { ModeToggle } from '@/components/mode-toggle';
+import { Zenn } from '@/icons/zenn';
+import { cn } from '@/lib/utils';
+const url = Astro.url;
 ---
 
 <header>
@@ -21,37 +24,63 @@ import { ModeToggle } from '@/components/mode-toggle';
           aria-label="Go to Home page"
           variant="ghost"
           size="sm"
-          class="gap-2"
+          class={cn(
+            'gap-2',
+            (url.pathname === '/' || url.pathname === '/en') &&
+              'text-link-active',
+          )}
           href="/"
-          ><HomeIcon className="size-4" /><span class="hidden sm:block"
-            >Home</span
-          ></ButtonLink
         >
+          <HomeIcon className="size-4" />
+          <span class="hidden sm:block">Home</span>
+        </ButtonLink>
         <ButtonLink
           aria-label="Go to Blog page"
           variant="ghost"
           size="sm"
-          class="gap-2"
+          class={cn(
+            'gap-2',
+            url.pathname.includes('/blog') && 'text-link-active',
+          )}
           href="/blog"
-          ><Pencil2Icon className="size-4" /><span class="hidden sm:block"
-            >Blog</span
-          ></ButtonLink
         >
+          <Pencil2Icon className="size-4" />
+          <span class="hidden sm:block">Blog</span>
+        </ButtonLink>
+        <ButtonLink
+          aria-label="Go to tech articles on zenn.dev"
+          variant="ghost"
+          size="sm"
+          class={cn(
+            'gap-2',
+            url.pathname.includes('/zenn') && 'text-link-active',
+          )}
+          href="/zenn"
+        >
+          <Zenn size={4} />
+          <span class="hidden sm:block">Zenn</span>
+        </ButtonLink>
         <ButtonLink
           aria-label="Go to About page"
           variant="ghost"
           size="sm"
-          class="gap-2"
+          class={cn(
+            'gap-2',
+            url.pathname.includes('/about') && 'text-link-active',
+          )}
           href="/about"
-          ><InfoCircledIcon className="size-4" /><span class="hidden sm:block"
-            >About</span
-          ></ButtonLink
         >
+          <InfoCircledIcon className="size-4" />
+          <span class="hidden sm:block">About</span>
+        </ButtonLink>
         <ButtonLink
           aria-label="Go to Privacy policy page"
           variant="ghost"
           size="sm"
-          class="gap-2"
+          class={cn(
+            'gap-2',
+            url.pathname.includes('/privacy') && 'text-link-active',
+          )}
           href="/privacy"
           ><EyeClosedIcon className="size-4" /><span class="hidden sm:block"
             >Privacy</span
