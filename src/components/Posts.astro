@@ -2,9 +2,8 @@
 import type { Page } from 'astro';
 import type { CollectionEntry } from 'astro:content';
 
-import { CalendarIcon, ReloadIcon } from '@radix-ui/react-icons';
-
 import Pagination from '@/components/AstroPagination.astro';
+import { DateComponent } from '@/components/date';
 import { LanguageToggle } from '@/components/language-toggle';
 import { TagsComponent } from '@/components/markdown/tags';
 import NotFound from '@/components/NotFound.astro';
@@ -44,23 +43,9 @@ const lang = getLangFromUrl(url);
             return (
               <li>
                 <article>
-                  <span class="flex items-center justify-start gap-4">
-                    <time
-                      class="flex items-center justify-start gap-2"
-                      datetime={data.published.toISOString()}
-                    >
-                      {data.lastUpdated ? (
-                        <ReloadIcon className="size-4" />
-                      ) : (
-                        <CalendarIcon className="size-4" />
-                      )}
-                      {new Intl.DateTimeFormat('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      }).format(data.lastUpdated ?? data.published)}
-                    </time>
+                  <span class="flex items-center justify-start gap-2 align-middle">
                     <a
+                      class="pb-0.5"
                       href={
                         !showDefaultLang && lang === defaultLang
                           ? `/${collection}/categories/${data.category}`
@@ -71,6 +56,17 @@ const lang = getLangFromUrl(url);
                         {data.category}
                       </Badge>
                     </a>
+                    {post.data.lastUpdated ? (
+                      <DateComponent
+                        type="updated"
+                        date={post.data.lastUpdated}
+                      />
+                    ) : (
+                      <DateComponent
+                        type="published"
+                        date={post.data.published}
+                      />
+                    )}
                   </span>
                   <a href={`/${collection}/${path}`}>
                     <h2>{data.title}</h2>

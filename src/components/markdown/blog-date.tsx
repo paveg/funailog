@@ -1,21 +1,12 @@
 import type { CollectionEntry } from 'astro:content';
 
-import { CalendarIcon, ReloadIcon } from '@radix-ui/react-icons';
-
+import { DateComponent } from '@/components/date';
 import { Badge } from '@/components/ui/badge';
 import { defaultLang, showDefaultLang, type ui } from '@/i18n/ui';
 
 type Props = {
   post: CollectionEntry<'blog'>;
   lang: keyof typeof ui;
-};
-
-const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  }).format(date);
 };
 
 export const BlogDate = ({ post, lang }: Props) => {
@@ -36,18 +27,8 @@ export const BlogDate = ({ post, lang }: Props) => {
         <Badge className="capitalize">{category}</Badge>
       </a>
       <div className="flex gap-2">
-        {lastUpdated && (
-          <time id="last-updated-date" className="flex items-center gap-1">
-            <ReloadIcon className="pt-0.5" />
-            {formatDate(lastUpdated)}
-          </time>
-        )}
-        {published && (
-          <time id="published-date" className="flex items-center gap-1">
-            <CalendarIcon className="pt-0.5" />
-            {formatDate(published)}
-          </time>
-        )}
+        {lastUpdated && <DateComponent type="updated" date={lastUpdated} />}
+        {published && <DateComponent type="published" date={published} />}
       </div>
     </div>
   );

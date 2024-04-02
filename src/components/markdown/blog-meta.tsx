@@ -13,7 +13,7 @@ type Props = {
 
 export const BlogMeta = ({ post, minRead, lang }: Props) => {
   const { collection } = post;
-  const tags = post.data.tags ?? [];
+  const tags = post.data?.tags ?? [];
   return (
     <div
       id="post-meta-container"
