@@ -13,7 +13,8 @@
     "znck.grammarly",
     "unifiedjs.vscode-mdx",
     "esbenp.prettier-vscode",
-    "rvest.vs-code-prettier-eslint"
+    "rvest.vs-code-prettier-eslint",
+    "taichi.vscode-textlint"
   ],
   "unwantedRecommendations": []
 }

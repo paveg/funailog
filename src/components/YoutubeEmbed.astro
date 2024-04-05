@@ -1,0 +1,33 @@
+---
+import fetchSiteMetadata from 'fetch-site-metadata';
+
+export type Props = {
+  href: string;
+};
+const props = Astro.props;
+
+const urlPattern =
+  /(?=(\s*))\1(?:<a [^>]*?>)??(?=(\s*))\2(?:https?:\/\/)??(?:w{3}\.)??(?:youtube\.com|youtu\.be)\/(?:watch\?v=|embed\/|shorts\/)??([A-Za-z0-9-_]{11})(?:[^\s<>]*)(?=(\s*))\4(?:<\/a>)??(?=(\s*))\5/;
+
+function extractVideoId(url: string): string | undefined {
+  const match = url.match(urlPattern);
+  return match?.[3];
+}
+const videoId = extractVideoId(props.href);
+const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+const { title } = await fetchSiteMetadata(props.href, {
+  suppressAdditionalRequest: true,
+}).catch(() => ({
+  title: 'YouTube Video',
+}));
+---
+
+<div>
+  <iframe
+    title={title}
+    class="aspect-video w-full rounded"
+    src={embedUrl}
+    loading="lazy"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen></iframe>
+</div>

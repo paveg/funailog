@@ -12,7 +12,7 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeSlug from 'rehype-slug';
 
-import remarkLinkCard from './src/lib/remark-link-card';
+import remarkLink from './src/lib/remark-link';
 import { remarkReadingTime } from './src/lib/remark-reading-time';
 
 import type { Element } from 'hast';
@@ -64,7 +64,7 @@ export default defineConfig({
       footnoteLabel: 'footnote',
       footnoteBackLabel: '↩',
     },
-    remarkPlugins: [remarkLinkCard, remarkReadingTime],
+    remarkPlugins: [remarkLink, remarkReadingTime],
     rehypePlugins: [
       rehypeSlug,
       [
