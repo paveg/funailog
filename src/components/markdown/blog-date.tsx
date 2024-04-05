@@ -13,10 +13,7 @@ export const BlogDate = ({ post, lang }: Props) => {
   const { collection } = post;
   const { lastUpdated, published, category } = post.data;
   return (
-    <div
-      id="post-data-container"
-      className="my-2 flex justify-between text-xs md:text-sm"
-    >
+    <div className="my-2 flex justify-between text-xs md:text-sm">
       <a
         href={
           !showDefaultLang && lang === defaultLang

@@ -23,11 +23,14 @@ const remarkLinkcard: Plugin<void[], Root> = () => {
         return;
       }
 
+      const isYoutubeLink = child.url.includes('youtube');
+
       child.data = {
         ...child.data,
         hProperties: {
           ...child.data?.hProperties,
           dataLinkcard: true,
+          dataYoutube: isYoutubeLink,
         },
       };
     });

@@ -15,11 +15,8 @@ export const BlogMeta = ({ post, minRead, lang }: Props) => {
   const { collection } = post;
   const tags = post.data?.tags ?? [];
   return (
-    <div
-      id="post-meta-container"
-      className="my-2 flex flex-col items-end justify-end text-xs md:text-sm"
-    >
-      <span id="reading-time" className="flex items-center justify-end gap-2">
+    <div className="my-2 flex flex-col items-end justify-end text-xs md:text-sm">
+      <span className="flex items-center justify-end gap-2">
         <TimerIcon />
         {minRead}
       </span>

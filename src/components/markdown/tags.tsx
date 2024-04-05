@@ -9,9 +9,9 @@ type Props = {
 };
 export const TagsComponent = ({ tags, lang, collection }: Props) => {
   return (
-    <div className="space-x-2 text-xs md:text-sm">
+    <div key={tags.join('-')} className="space-x-2 text-xs md:text-sm">
       {tags.map((tag) => (
-        <span>
+        <span key={tag}>
           <a
             className="text-link no-underline visited:text-link-visited hover:italic hover:text-link-hover hover:underline active:text-link-active"
             href={
