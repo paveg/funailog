@@ -10,7 +10,7 @@ import { BlogDate } from '@/components/markdown/blog-date';
 import { BlogMeta } from '@/components/markdown/blog-meta';
 import Image from '@/components/markdown/Image.astro';
 import { Separator } from '@/components/ui/separator';
-import { defaultLang, ui } from '@/i18n/ui';
+import { ui } from '@/i18n/ui';
 import { useTranslatedPath, useTranslations } from '@/i18n/utils';
 import { getLangFromUrl } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
@@ -70,7 +70,7 @@ const defaultImagePath = '/first-place.jpg';
     type: 'article',
   }}
   hreflangs={[
-    { path: `${path}`, hreflang: defaultLang },
+    { path: `${path}`, hreflang: globalLang },
     { path: `${path}`, hreflang: 'x-default' },
   ]}
   jsonLdSchema={ArticleLd(meta, post, site, globalLang)}

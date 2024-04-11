@@ -38,7 +38,7 @@ const publisher = (site: URL | '', lang: keyof typeof ui): Organization => {
   };
 };
 
-const website = (
+export const WebsiteLd = (
   meta: CollectionEntry<'site'>,
   site: URL | '',
   lang: keyof typeof ui,
@@ -79,6 +79,6 @@ export const ArticleLd = (
     inLanguage: supportLangs,
     author: [person(meta)],
     publisher: publisher(site, lang),
-    isPartOf: website(meta, site, lang),
+    isPartOf: WebsiteLd(meta, site, lang),
   };
 };

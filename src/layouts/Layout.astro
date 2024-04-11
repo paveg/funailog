@@ -6,7 +6,7 @@ import '@fontsource-variable/m-plus-1-code';
 
 import { getEntry } from 'astro:content';
 
-import type { Article, WithContext } from 'schema-dts';
+import type { Article, WebSite, WithContext } from 'schema-dts';
 
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics.astro';
 import Footer from '@/components/Footer.astro';
@@ -30,7 +30,7 @@ export type Props = {
     path: string;
     hreflang: keyof typeof ui | 'x-default';
   }[];
-  jsonLdSchema?: WithContext<Article>;
+  jsonLdSchema?: WithContext<Article> | WebSite;
 };
 
 const { title, description, path, og, lang, hreflangs, jsonLdSchema } =
