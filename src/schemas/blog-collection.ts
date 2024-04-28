@@ -16,6 +16,7 @@ export const blogCollection = defineCollection({
         'gadgets',
         'travel',
         'lifestyle',
+        'vehicles',
         'other',
       ])
       .default('other'),
