@@ -23,6 +23,9 @@ export const ui = {
     'content.back': 'Back to blog home',
     'zenn.index': 'Zenn articles',
     'zenn.description': 'Zenn articles list',
+    '404.title': '404 Not Found',
+    '404.description': "The page you are looking for hasn't been found.",
+    '404.back': 'Go Back to Home',
   },
   ja: {
     'main.title': 'フナイログ',
@@ -39,6 +42,9 @@ export const ui = {
     'content.back': 'ブログトップへ戻る',
     'zenn.index': 'Zenn 記事一覧',
     'zenn.description': 'Zenn.dev 記事一覧ページ',
+    '404.title': '404 ページが見つかりません',
+    '404.description': 'お探しのページは見つかりませんでした。',
+    '404.back': 'ホームへ戻る',
   },
 } as const;
 

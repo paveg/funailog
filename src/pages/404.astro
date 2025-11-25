@@ -8,8 +8,8 @@ const t = useTranslations(lang);
 ---
 
 <Layout
-  title=`404 Not Found | ${t("main.title")}`
-  description="The page you are looking for hasn't been found"
+  title={`${t('404.title')} | ${t('main.title')}`}
+  description={t('404.description')}
   path="/404"
   og={{
     enabled: false,
@@ -18,13 +18,14 @@ const t = useTranslations(lang);
     { path: '/404', hreflang: defaultLang },
     { path: '/404', hreflang: 'x-default' },
   ]}
-  ><main class="mx-auto py-12 text-center">
-    <h1>404 Not Found</h1>
+>
+  <main class="mx-auto py-12 text-center">
+    <h1>{t('404.title')}</h1>
     <p class="text-sm text-secondary-foreground">
-      The page you are looking for hasn't been found.
+      {t('404.description')}
     </p>
     <p>
-      <Link href="/">Go Back to Home.</Link>
+      <Link href="/">{t('404.back')}</Link>
     </p>
-  </main></Layout
->
+  </main>
+</Layout>
