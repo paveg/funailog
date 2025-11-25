@@ -1,11 +1,11 @@
 ---
 import type { Page, PaginateFunction } from 'astro';
-import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 
 import Posts from '@/components/Posts.astro';
-import { defaultLang } from '@/i18n/ui';
-import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+import { PAGINATION } from '@/config/site';
+import { useTranslations, generateHreflangs } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 
 export type Props = {
@@ -19,10 +19,12 @@ export async function getStaticPaths({
 }) {
   const allPosts = await getCollection('blog');
   const publishedPosts = allPosts.filter((post) => post.data.isPublished);
+
   const tags = [
     ...new Set(publishedPosts.flatMap((post) => post.data.tags ?? [])),
   ];
-  const paginates = tags.flatMap((tag) => {
+
+  return tags.flatMap((tag) => {
     const posts = publishedPosts
       .filter((post) => {
         const [slugLang] = post.slug.split('/');
@@ -35,37 +37,31 @@ export async function getStaticPaths({
       )
       .reverse();
 
+    if (posts.length === 0) return [];
+
     return paginate(posts, {
-      pageSize: 5,
+      pageSize: PAGINATION.pageSize,
       params: { tag },
     });
   });
-
-  return paginates;
 }
 
 const { page } = Astro.props;
 const params = Astro.params;
-
-const lang = getLangFromUrl(Astro.url);
+const lang = 'en';
 const t = useTranslations(lang);
+const basePath = `blog/tags/${params.tag}`;
 ---
 
 <Layout
   title={`Tag: #${params.tag} | ${t('main.title')}`}
   description={t('tags.description')}
-  path={`/blog/${lang}/tags/${params.tag}`}
+  path={`/en/blog/tags/${params.tag}`}
   lang={lang}
   og={{
     enabled: true,
   }}
-  hreflangs={[
-    { path: `/blog/tags/${params.tag}`, hreflang: defaultLang },
-    { path: `/blog/en/tags/${params.tag}`, hreflang: 'en' },
-    { path: `/blog/en/tags/${params.tag}`, hreflang: 'x-default' },
-  ]}
+  hreflangs={generateHreflangs(basePath)}
 >
-  <main>
-    <Posts title={`#${params.tag}`} page={page} />
-  </main>
+  <main><Posts title={`#${params.tag}`} page={page} /></main>
 </Layout>

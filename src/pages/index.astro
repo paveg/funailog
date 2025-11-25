@@ -1,8 +1,11 @@
 ---
 import { getEntry } from 'astro:content';
 
-import { defaultLang } from '@/i18n/ui';
-import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+import {
+  getLangFromUrl,
+  useTranslations,
+  generateHreflangs,
+} from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 import { WebsiteLd } from '@/lib/rich-results';
 
@@ -19,11 +22,7 @@ const meta = await getEntry('site', 'meta');
   og={{
     enabled: true,
   }}
-  hreflangs={[
-    { path: '/', hreflang: defaultLang },
-    { path: '/en', hreflang: 'en' },
-    { path: '/en', hreflang: 'x-default' },
-  ]}
+  hreflangs={generateHreflangs('')}
   jsonLdSchema={WebsiteLd(meta, site, lang)}
 >
   <main>

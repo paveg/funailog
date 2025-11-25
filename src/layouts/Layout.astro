@@ -45,6 +45,21 @@ const meta = await getEntry('site', 'meta');
     <meta charset="utf-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width initial-scale=1" />
+    <!-- Font preloading for faster LCP -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/_fonts/m-plus-2-latin-wght-normal.woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/_fonts/m-plus-2-japanese-wght-normal.woff2"
+      crossorigin="anonymous"
+    />
     <link
       rel="alternate"
       type="application/rss+xml"
@@ -107,7 +122,7 @@ const meta = await getEntry('site', 'meta');
     }
     <script
       is:inline
-      async
+      type="text/partytown"
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4759937737528616"
       crossorigin="anonymous"></script>
     <script is:inline>

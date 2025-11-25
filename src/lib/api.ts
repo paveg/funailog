@@ -45,34 +45,54 @@ const siteMetadata = async (url: string) => {
   }
 };
 
+const FETCH_TIMEOUT_MS = 5000;
+
+const fetchWithTimeout = async (url: string): Promise<ArrayBuffer | null> => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    return response.arrayBuffer();
+  } catch (error) {
+    console.warn(`Failed to fetch image (timeout or error): ${url}`);
+    return null;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+};
+
 const fetchSiteImage = async (src: string) => {
   const hash = crypto.createHash('sha256').update(src).digest('hex');
   const cached = siteImageMap.get(hash);
-  const img = await fetch(src).then((res) => res.arrayBuffer());
+
+  // Check cache BEFORE fetching
   if (cached) {
     return cached;
-  } else {
-    if (!img) {
-      return undefined;
-    }
-    const file = `/.cache/embed/${hash}.${fileExt}`;
-    const filePath = path.join(process.cwd(), `./public${file}`);
-    await sharp(Buffer.from(img))
-      .resize(400)
-      .toFormat(fileExt, {
-        quality: 30,
-      })
-      .toFile(filePath);
-
-    fs.mkdirSync(path.join(process.cwd(), `./dist/.cache/embed`), {
-      recursive: true,
-    });
-
-    fs.copyFileSync(filePath, path.join(process.cwd(), `./dist${file}`));
-    siteImageMap.set(hash, file);
-
-    return file;
   }
+
+  const img = await fetchWithTimeout(src);
+  if (!img) {
+    return undefined;
+  }
+
+  const file = `/.cache/embed/${hash}.${fileExt}`;
+  const filePath = path.join(process.cwd(), `./public${file}`);
+  await sharp(Buffer.from(img))
+    .resize(400)
+    .toFormat(fileExt, {
+      quality: 30,
+    })
+    .toFile(filePath);
+
+  fs.mkdirSync(path.join(process.cwd(), `./dist/.cache/embed`), {
+    recursive: true,
+  });
+
+  fs.copyFileSync(filePath, path.join(process.cwd(), `./dist${file}`));
+  siteImageMap.set(hash, file);
+
+  return file;
 };
 
 export const fetchLinkCard = async (href: string) => {
