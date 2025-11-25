@@ -38,6 +38,9 @@ const { title, description, path, og, lang, hreflangs, jsonLdSchema } =
 const site = Astro.site ?? '';
 const isProd = import.meta.env.PROD;
 const meta = await getEntry('site', 'meta');
+if (!meta) {
+  throw new Error('Site meta configuration not found');
+}
 ---
 
 <html lang={lang ?? defaultLang}>

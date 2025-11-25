@@ -13,6 +13,9 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const site = Astro.site ?? '';
 const meta = await getEntry('site', 'meta');
+if (!meta) {
+  throw new Error('Site meta configuration not found');
+}
 ---
 
 <Layout

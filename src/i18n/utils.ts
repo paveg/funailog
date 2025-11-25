@@ -56,9 +56,12 @@ export function generateHreflangs(basePath: string): Array<{
   path: string;
   hreflang: SupportedLang | 'x-default';
 }> {
-  const hreflangs = supportLangs.map((lang) => ({
+  const hreflangs: Array<{
+    path: string;
+    hreflang: SupportedLang | 'x-default';
+  }> = supportLangs.map((lang) => ({
     path: buildLocalizedPath(basePath, lang),
-    hreflang: lang as SupportedLang,
+    hreflang: lang,
   }));
 
   // x-default points to the default language version
