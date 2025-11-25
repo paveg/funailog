@@ -5,5 +5,5 @@ import { pageCollection } from '@/schemas/page-collection';
 export const collections = {
   page: pageCollection,
   blog: blogCollection,
-  data: metaCollection,
+  site: metaCollection,
 };

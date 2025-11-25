@@ -17,6 +17,9 @@ import Layout from '@/layouts/Layout.astro';
 import { ArticleLd } from '@/lib/rich-results';
 
 const meta = await getEntry('site', 'meta');
+if (!meta) {
+  throw new Error('Site meta configuration not found');
+}
 export type Props = {
   post: CollectionEntry<'blog'>;
 };

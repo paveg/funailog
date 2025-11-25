@@ -4,8 +4,8 @@ import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
 
 import Posts from '@/components/Posts.astro';
-import { defaultLang } from '@/i18n/ui';
-import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+import { PAGINATION } from '@/config/site';
+import { useTranslations, generateHreflangs } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 
 export type Props = {
@@ -30,26 +30,23 @@ export async function getStaticPaths({
     )
     .reverse();
 
-  return paginate(posts, { pageSize: 5 });
+  return paginate(posts, { pageSize: PAGINATION.pageSize });
 }
 
 const { page } = Astro.props;
-const lang = getLangFromUrl(Astro.url);
+const lang = 'en';
 const t = useTranslations(lang);
 ---
 
 <Layout
-  title={t('main.title')}
+  title={`${t('blog.index')} | ${t('main.title')}`}
   description={t('blog.description')}
+  path="/en/blog"
   lang={lang}
-  path={`/blog/${lang}`}
   og={{
     enabled: true,
   }}
-  hreflangs={[
-    { path: `/blog`, hreflang: defaultLang },
-    { path: '/blog/en', hreflang: 'en' },
-    { path: '/blog/en', hreflang: 'x-default' },
-  ]}
-  ><main><Posts title={t('blog.index')} page={page} /></main>
+  hreflangs={generateHreflangs('blog')}
+>
+  <main><Posts title={t('blog.index')} page={page} /></main>
 </Layout>

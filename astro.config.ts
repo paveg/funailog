@@ -5,8 +5,7 @@ import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
 import { defineConfig } from 'astro/config';
 
-// TODO: Adopt purgecss but CSS for tailwind is not working properly
-// import purgecss from 'astro-purgecss';
+import purgecss from 'astro-purgecss';
 import { h } from 'hastscript';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypePrettyCode from 'rehype-pretty-code';
@@ -28,12 +27,20 @@ export default defineConfig({
     }),
     mdx(),
     sitemap(),
-    // purgecss({
-    //   fontFace: true,
-    // }),
+    purgecss({
+      fontFace: true,
+      safelist: {
+        // Keep all dark mode and prose classes
+        standard: [/^dark/, /^prose/, /^shiki/, /^astro-/],
+        // Keep radix-ui component classes
+        deep: [/radix/, /data-/],
+        // Keep Tailwind animation and dynamic classes
+        greedy: [/animate-/, /transition-/],
+      },
+    }),
     partytown({
       config: {
-        forward: ['dataLayer.push'],
+        forward: ['dataLayer.push', 'adsbygoogle.push'],
       },
     }),
   ],

@@ -1,11 +1,11 @@
 ---
 import type { Page, PaginateFunction } from 'astro';
-import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 
 import Posts from '@/components/Posts.astro';
-import { defaultLang } from '@/i18n/ui';
-import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+import { PAGINATION } from '@/config/site';
+import { useTranslations, generateHreflangs } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 
 export type Props = {
@@ -19,10 +19,12 @@ export async function getStaticPaths({
 }) {
   const allPosts = await getCollection('blog');
   const publishedPosts = allPosts.filter((post) => post.data.isPublished);
+
   const categories = [
     ...new Set(publishedPosts.map((post) => post.data.category)),
   ];
-  const paginates = categories.flatMap((category) => {
+
+  return categories.flatMap((category) => {
     const posts = publishedPosts
       .filter((post) => {
         const [slugLang] = post.slug.split('/');
@@ -35,35 +37,31 @@ export async function getStaticPaths({
       )
       .reverse();
 
+    if (posts.length === 0) return [];
+
     return paginate(posts, {
-      pageSize: 5,
+      pageSize: PAGINATION.pageSize,
       params: { category },
     });
   });
-
-  return paginates;
 }
 
 const { page } = Astro.props;
 const params = Astro.params;
-
-const lang = getLangFromUrl(Astro.url);
+const lang = 'en';
 const t = useTranslations(lang);
+const basePath = `blog/categories/${params.category}`;
 ---
 
 <Layout
   title={`Category: ${params.category} | ${t('main.title')}`}
   description={t('categories.description')}
-  path={`/blog/en/categories/${params.category}`}
+  path={`/en/blog/categories/${params.category}`}
   lang={lang}
   og={{
     enabled: true,
   }}
-  hreflangs={[
-    { path: `/blog/categories/${params.category}`, hreflang: defaultLang },
-    { path: `/blog/en/categories/${params.category}`, hreflang: 'en' },
-    { path: `/blog/en/categories/${params.category}`, hreflang: 'x-default' },
-  ]}
+  hreflangs={generateHreflangs(basePath)}
 >
   <main>
     <Posts title={params.category} page={page} />

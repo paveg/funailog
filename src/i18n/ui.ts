@@ -1,5 +1,11 @@
-export const showDefaultLang = false;
-export const defaultLang = 'ja';
+import {
+  I18N_CONFIG,
+  SUPPORTED_LANGS,
+  type SupportedLang,
+} from '@/config/site';
+
+export const showDefaultLang = I18N_CONFIG.showDefaultLangInUrl;
+export const defaultLang = I18N_CONFIG.defaultLang;
 
 export const ui = {
   en: {
@@ -36,4 +42,5 @@ export const ui = {
   },
 } as const;
 
-export const supportLangs: (keyof typeof ui)[] = ['en', 'ja'];
+export const supportLangs = SUPPORTED_LANGS;
+export type { SupportedLang };
