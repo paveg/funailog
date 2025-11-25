@@ -45,21 +45,6 @@ const meta = await getEntry('site', 'meta');
     <meta charset="utf-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width initial-scale=1" />
-    <!-- Font preloading for faster LCP -->
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      href="/_fonts/m-plus-2-latin-wght-normal.woff2"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      href="/_fonts/m-plus-2-japanese-wght-normal.woff2"
-      crossorigin="anonymous"
-    />
     <link
       rel="alternate"
       type="application/rss+xml"
@@ -100,7 +85,7 @@ const meta = await getEntry('site', 'meta');
           <meta property="og:image:width" content={`${og.width ?? 1200}`} />
           <meta property="og:image:height" content={`${og.height ?? 630}`} />
           <meta
-            property="twitter:card"
+            name="twitter:card"
             content={og.type === 'article' ? 'summary_large_image' : 'summary'}
           />
         </>
