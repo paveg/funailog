@@ -4,32 +4,22 @@ import type { CollectionEntry } from 'astro:content';
 
 import Pagination from '@/components/AstroPagination.astro';
 import { DateComponent } from '@/components/date';
-import { LanguageToggle } from '@/components/language-toggle';
 import { TagsComponent } from '@/components/markdown/tags';
 import NotFound from '@/components/NotFound.astro';
 import { Badge } from '@/components/ui/badge';
-import { showDefaultLang, defaultLang } from '@/i18n/ui';
-import { exactSlugPath, getLangFromUrl } from '@/i18n/utils';
+import { exactSlugPath } from '@/i18n/utils';
 
 export type Props = {
   page: Page<CollectionEntry<'blog'>>;
   title?: string;
 };
 const { page, title } = Astro.props;
-const url = Astro.url;
-const lang = getLangFromUrl(url);
 ---
 
 <>
   <div class="py-4">
     <div class="flex items-center justify-between pb-8">
-      {title && <h1 class="capitalize">{title}</h1>}
-      <LanguageToggle
-        client:load
-        lang={lang}
-        pathname={url.pathname}
-        collectionName="blog"
-      />
+      {title && <h1 class="font-heading capitalize">{title}</h1>}
     </div>
     <ul class="space-y-8">
       {
@@ -42,15 +32,11 @@ const lang = getLangFromUrl(url);
             const path = exactSlugPath(slug);
             return (
               <li>
-                <article>
+                <article class="group">
                   <span class="flex items-center justify-start gap-2 align-middle">
                     <a
                       class="pb-0.5"
-                      href={
-                        !showDefaultLang && lang === defaultLang
-                          ? `/${collection}/categories/${data.category}`
-                          : `/${collection}/${lang}/categories/${data.category}`
-                      }
+                      href={`/${collection}/categories/${data.category}`}
                     >
                       <Badge className="capitalize" variant="secondary">
                         {data.category}
@@ -69,17 +55,15 @@ const lang = getLangFromUrl(url);
                     )}
                   </span>
                   <a href={`/${collection}/${path}`}>
-                    <h2>{data.title}</h2>
+                    <h2 class="font-heading transition-colors duration-normal group-hover:text-link">
+                      {data.title}
+                    </h2>
                   </a>
                   <span class="text-xs leading-4 text-muted-foreground md:text-sm">
                     {data.description}
                   </span>
                   {tags.length > 0 && (
-                    <TagsComponent
-                      tags={tags}
-                      lang={lang}
-                      collection={collection}
-                    />
+                    <TagsComponent tags={tags} collection={collection} />
                   )}
                 </article>
               </li>

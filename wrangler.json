@@ -5,5 +5,15 @@
   "assets": {
     "directory": "./dist",
     "not_found_handling": "404-page"
-  }
+  },
+  "routes": [
+    {
+      "pattern": "www.funailog.com/*",
+      "zone_name": "funailog.com"
+    },
+    {
+      "pattern": "funailog.com/*",
+      "zone_name": "funailog.com"
+    }
+  ]
 }

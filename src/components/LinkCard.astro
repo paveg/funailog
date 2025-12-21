@@ -32,7 +32,7 @@ const isAnchor = props.href.startsWith('#');
         rel={isAnchor || isInternal ? '' : 'noopener noreferrer'}
         class="not-prose"
       >
-        <Card className="flex h-[109px] w-full overflow-hidden duration-300 hover:-top-3 hover:bg-hover hover:shadow-md">
+        <Card className="flex h-[109px] w-full overflow-hidden transition-all duration-normal ease-soft hover:-translate-y-0.5 hover:shadow-md">
           <CardHeader className="flex shrink grow basis-7/12 flex-col  overflow-hidden whitespace-nowrap p-4 *:overflow-hidden *:text-ellipsis">
             <span class="font-bold">{title}</span>
             <span class="grow text-xs leading-4 text-secondary-foreground">
@@ -45,7 +45,7 @@ const isAnchor = props.href.startsWith('#');
           <CardContent className="max-w-[200px] shrink grow basis-5/12 p-0">
             {image.src ? (
               <img
-                class="m-0 h-full rounded-r-md object-cover"
+                class="m-0 h-full rounded-r-xl object-cover"
                 src={image.src}
                 alt={title}
                 width={400}

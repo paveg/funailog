@@ -4,110 +4,160 @@
 
 @layer base {
   :root {
-    --background: hsl(0, 0%, 100%);
-    --foreground: hsl(0, 0%, 3.9%);
+    /* Soft Minimal - Washi (和紙) カラーパレット */
+    --background: hsl(40, 33%, 98%);
+    --foreground: hsl(30, 10%, 20%);
 
-    --card: hsl(0, 0%, 100%);
-    --card-foreground: hsl(0, 0%, 3.9%);
+    --card: hsl(40, 40%, 99%);
+    --card-foreground: hsl(30, 10%, 20%);
 
-    --popover: hsl(0, 0%, 100%);
-    --popover-foreground: hsl(0, 0%, 3.9%);
+    --popover: hsl(40, 40%, 99%);
+    --popover-foreground: hsl(30, 10%, 20%);
 
-    --primary: hsl(0, 0%, 9%);
-    --primary-foreground: hsl(0, 0%, 98%);
+    --primary: hsl(30, 8%, 25%);
+    --primary-foreground: hsl(40, 33%, 98%);
 
-    --secondary: hsl(0, 0%, 96.1%);
-    --secondary-foreground: hsl(0, 0%, 9%);
+    --secondary: hsl(35, 25%, 93%);
+    --secondary-foreground: hsl(30, 10%, 25%);
 
-    --muted: hsl(0, 0%, 96.1%);
-    --muted-foreground: hsl(0, 0%, 45.1%);
+    --muted: hsl(35, 20%, 94%);
+    --muted-foreground: hsl(30, 8%, 50%);
 
-    --accent: hsl(0, 0%, 96.1%);
-    --accent-foreground: hsl(0, 0%, 9%);
+    --accent: hsl(15, 35%, 92%);
+    --accent-foreground: hsl(15, 50%, 35%);
 
-    --destructive: hsl(0, 84.2%, 60.2%);
-    --destructive-foreground: hsl(0, 0%, 98%);
+    --destructive: hsl(0, 55%, 55%);
+    --destructive-foreground: hsl(0, 0%, 100%);
 
-    --border: hsl(0, 0%, 89.8%);
-    --input: hsl(0, 0%, 89.8%);
-    --ring: hsl(0, 0%, 3.9%);
-    --hover: hsl(0, 0%, 93%);
+    --border: hsl(35, 15%, 88%);
+    --input: hsl(35, 15%, 88%);
+    --ring: hsl(30, 8%, 25%);
+    --hover: hsl(35, 20%, 96%);
 
-    --radius: 0.5rem;
+    /* 角丸 */
+    --radius: 0.75rem;
+    --radius-sm: 0.375rem;
+    --radius-md: 1rem;
+    --radius-lg: 1.25rem;
+    --radius-xl: 1.5rem;
 
-    --link: hsl(229, 100%, 60%);
-    --link-hover: hsl(229, 100%, 70%);
-    --link-active: hsl(229, 100%, 50%);
-    --link-visited: hsl(229, 60%, 60%);
+    /* シャドウ */
+    --shadow-xs: 0 1px 2px hsl(30 10% 20% / 0.03);
+    --shadow-sm: 0 2px 4px hsl(30 10% 20% / 0.04),
+      0 1px 2px hsl(30 10% 20% / 0.02);
+    --shadow: 0 4px 8px hsl(30 10% 20% / 0.05), 0 2px 4px hsl(30 10% 20% / 0.03);
+    --shadow-md: 0 8px 16px hsl(30 10% 20% / 0.06),
+      0 4px 8px hsl(30 10% 20% / 0.04);
+    --shadow-lg: 0 16px 32px hsl(30 10% 20% / 0.08),
+      0 8px 16px hsl(30 10% 20% / 0.05);
+    --shadow-hover: 0 8px 24px hsl(30 10% 20% / 0.1),
+      0 4px 12px hsl(30 10% 20% / 0.06);
 
-    --font-body: 'M PLUS 2 Variable', 'sans-serif';
-    --font-code: 'M PLUS 1 Code Variable', 'monospace';
+    /* リンク - 深い藍色 */
+    --link: hsl(215, 45%, 45%);
+    --link-hover: hsl(215, 50%, 55%);
+    --link-active: hsl(215, 55%, 40%);
+    --link-visited: hsl(215, 30%, 50%);
 
-    /* code syntax highlight */
-    --code-bg: hsl(0, 0%, 42%);
-    --code-title: hsl(0, 0%, 9%);
-    --code-title-bg: hsl(0, 0%, 96%);
-    --code-hl: hsl(39, 10.5%, 23%);
-    --code-hl-sign: hsl(201, 45%, 75%);
-    --code-find: hsl(39, 10.5%, 23%);
+    /* フォント */
+    --font-body: 'Zen Kaku Gothic New', 'Hiragino Sans',
+      'Hiragino Kaku Gothic ProN', sans-serif;
+    --font-heading: 'Zen Maru Gothic', 'Zen Kaku Gothic New', sans-serif;
+    --font-code: 'JetBrains Mono Variable', 'JetBrains Mono', monospace;
+
+    /* コードシンタックスハイライト */
+    --code-bg: hsl(35, 15%, 92%);
+    --code-title: hsl(30, 10%, 25%);
+    --code-title-bg: hsl(35, 20%, 96%);
+    --code-hl: hsl(35, 25%, 88%);
+    --code-hl-sign: hsl(215, 45%, 50%);
+    --code-find: hsl(35, 25%, 85%);
+
+    /* アニメーション */
+    --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+    --duration-fast: 150ms;
+    --duration-normal: 250ms;
+    --duration-slow: 400ms;
   }
 
   .dark {
-    --background: hsl(0, 0%, 3.9%);
-    --foreground: hsl(0, 0%, 98%);
+    --background: hsl(30, 8%, 10%);
+    --foreground: hsl(35, 20%, 90%);
 
-    --card: hsl(0, 0%, 3.9%);
-    --card-foreground: hsl(0, 0%, 98%);
+    --card: hsl(30, 8%, 13%);
+    --card-foreground: hsl(35, 20%, 90%);
 
-    --popover: hsl(0, 0%, 3.9%);
-    --popover-foreground: hsl(0, 0%, 98%);
+    --popover: hsl(30, 8%, 13%);
+    --popover-foreground: hsl(35, 20%, 90%);
 
-    --primary: hsl(0, 0%, 98%);
-    --primary-foreground: hsl(0, 0%, 9%);
+    --primary: hsl(35, 20%, 90%);
+    --primary-foreground: hsl(30, 8%, 10%);
 
-    --secondary: hsl(0, 0%, 14.9%);
-    --secondary-foreground: hsl(0, 0%, 98%);
+    --secondary: hsl(30, 10%, 18%);
+    --secondary-foreground: hsl(35, 18%, 85%);
 
-    --muted: hsl(0, 0%, 14.9%);
-    --muted-foreground: hsl(0, 0%, 63.9%);
+    --muted: hsl(30, 8%, 18%);
+    --muted-foreground: hsl(35, 12%, 55%);
 
-    --accent: hsl(0, 0%, 14.9%);
-    --accent-foreground: hsl(0, 0%, 98%);
+    --accent: hsl(15, 15%, 20%);
+    --accent-foreground: hsl(15, 40%, 75%);
 
-    --destructive: hsl(0, 62.8%, 30.6%);
-    --destructive-foreground: hsl(0, 0%, 98%);
+    --destructive: hsl(0, 50%, 45%);
+    --destructive-foreground: hsl(0, 0%, 100%);
 
-    --link: hsl(219, 50%, 70%);
-    --link-hover: hsl(219, 50%, 80%);
-    --link-active: hsl(219, 50%, 60%);
-    --link-visited: hsl(219, 50%, 70%);
+    --link: hsl(210, 40%, 65%);
+    --link-hover: hsl(210, 45%, 75%);
+    --link-active: hsl(210, 45%, 55%);
+    --link-visited: hsl(210, 30%, 60%);
 
-    --border: hsl(0, 0%, 14.9%);
-    --input: hsl(0, 0%, 14.9%);
-    --ring: hsl(0, 0%, 83.1%);
-    --hover: hsl(0, 0%, 19%);
+    --border: hsl(30, 8%, 22%);
+    --input: hsl(30, 8%, 22%);
+    --ring: hsl(35, 20%, 80%);
+    --hover: hsl(30, 8%, 16%);
+
+    /* ダークモード用シャドウ */
+    --shadow-xs: 0 1px 2px hsl(0 0% 0% / 0.2);
+    --shadow-sm: 0 2px 4px hsl(0 0% 0% / 0.25), 0 1px 2px hsl(0 0% 0% / 0.15);
+    --shadow: 0 4px 8px hsl(0 0% 0% / 0.3), 0 2px 4px hsl(0 0% 0% / 0.2);
+    --shadow-md: 0 8px 16px hsl(0 0% 0% / 0.35), 0 4px 8px hsl(0 0% 0% / 0.25);
+    --shadow-lg: 0 16px 32px hsl(0 0% 0% / 0.4), 0 8px 16px hsl(0 0% 0% / 0.3);
+    --shadow-hover: 0 8px 24px hsl(0 0% 0% / 0.45),
+      0 4px 12px hsl(0 0% 0% / 0.35);
+
+    /* ダークモード用コードハイライト */
+    --code-bg: hsl(30, 8%, 16%);
+    --code-title: hsl(35, 18%, 85%);
+    --code-title-bg: hsl(30, 8%, 20%);
+    --code-hl: hsl(30, 10%, 22%);
+    --code-hl-sign: hsl(210, 40%, 65%);
+    --code-find: hsl(30, 10%, 25%);
   }
 }
+
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
-    @apply mx-auto min-h-screen max-w-3xl space-y-4 bg-background px-4 py-5 leading-7 text-foreground;
+    @apply mx-auto min-h-screen max-w-3xl space-y-4 bg-background px-4 py-5 leading-7 text-foreground antialiased;
     font-family: var(--font-body);
   }
+
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    @apply font-bold leading-6;
+    @apply font-bold leading-tight tracking-tight;
+    font-family: var(--font-heading);
   }
 
   h1 {
     @apply text-3xl lg:text-5xl;
   }
+
   h2 {
     @apply text-xl md:text-2xl lg:text-3xl;
   }
@@ -131,7 +181,12 @@
       @apply left-1 h-full bg-muted-foreground;
     }
   }
+
   p:not(blockquote > p) {
     @apply mt-6;
+  }
+
+  code {
+    font-family: var(--font-code);
   }
 }
