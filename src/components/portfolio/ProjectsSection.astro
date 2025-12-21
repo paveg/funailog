@@ -4,6 +4,7 @@ import { ExternalLinkIcon, GitHubLogoIcon } from '@radix-ui/react-icons';
 import type { SupportedLang } from '@/config/site';
 import type { Project } from '@/schemas/portfolio-collection';
 
+import { Badge } from '@/components/ui/badge';
 import { useTranslations } from '@/i18n/utils';
 
 interface Props {
@@ -80,12 +81,12 @@ const getAriaLabel = (name: string, type: 'site' | 'repo') => {
           <p class="text-sm text-muted-foreground">{project.description}</p>
           <div class="flex flex-wrap gap-1.5">
             {project.techStack.slice(0, 5).map((tech) => (
-              <span class="bg-muted/50 rounded-md px-2 py-0.5 text-xs text-muted-foreground">
+              <Badge variant="secondary" className="text-xs">
                 {tech}
-              </span>
+              </Badge>
             ))}
             {project.techStack.length > 5 && (
-              <span class="text-muted-foreground/60 rounded-md px-2 py-0.5 text-xs">
+              <span class="text-muted-foreground/60 px-1 py-0.5 text-xs">
                 +{project.techStack.length - 5}
               </span>
             )}

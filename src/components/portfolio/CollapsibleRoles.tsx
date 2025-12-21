@@ -64,7 +64,7 @@ export function CollapsibleRoles({
   const hiddenCount = roles.length - initialVisibleCount;
 
   return (
-    <div className="mt-6">
+    <div className="mt-3">
       {visibleRoles.map((role, index) => {
         const isCurrent = role.period.end === null;
         const isLast = isExpanded
@@ -72,12 +72,15 @@ export function CollapsibleRoles({
           : index === visibleRoles.length - 1;
 
         return (
-          <div key={`${role.role}-${role.period.start}`} className="flex gap-4">
+          <div
+            key={`${role.role}-${role.period.start}`}
+            className="flex gap-3 sm:gap-4"
+          >
             {/* Stepper Indicator Column */}
             <div className="flex flex-col items-center">
               {/* Circle Indicator */}
               <div
-                className={`flex size-8 shrink-0 items-center justify-center rounded-full border-2 text-xs font-semibold ${
+                className={`flex size-6 shrink-0 items-center justify-center rounded-full border-2 text-xs font-semibold sm:size-8 ${
                   isCurrent
                     ? 'border-primary bg-primary text-primary-foreground'
                     : 'border-emerald-500 bg-emerald-500 text-white'
@@ -86,7 +89,7 @@ export function CollapsibleRoles({
                 {isCurrent ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="size-4"
+                    className="size-3 sm:size-4"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -99,7 +102,7 @@ export function CollapsibleRoles({
                 ) : (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="size-4"
+                    className="size-3 sm:size-4"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -111,9 +114,9 @@ export function CollapsibleRoles({
                   </svg>
                 )}
               </div>
-              {/* Connecting Line */}
+              {/* Connecting Line (bottom) */}
               {(!isLast || (hasHiddenRoles && !isExpanded)) && (
-                <div className="bg-border/60 my-1 w-0.5 flex-1" />
+                <div className="my-1 w-0.5 flex-1 bg-border" />
               )}
             </div>
 
@@ -207,9 +210,9 @@ export function CollapsibleRoles({
 
       {/* Expand/Collapse Button */}
       {hasHiddenRoles && (
-        <div className="flex gap-4">
+        <div className="flex gap-3 sm:gap-4">
           <div className="flex flex-col items-center">
-            <div className="size-8" />
+            <div className="size-6 sm:size-8" />
           </div>
           <button
             type="button"
