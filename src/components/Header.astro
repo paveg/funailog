@@ -8,7 +8,6 @@ import {
 
 import ButtonLink from '@/components/ButtonLink.astro';
 import { ModeToggle } from '@/components/mode-toggle';
-import { Zenn } from '@/icons/zenn';
 import { cn } from '@/lib/utils';
 const url = Astro.url;
 ---
@@ -25,9 +24,8 @@ const url = Astro.url;
           variant="ghost"
           size="sm"
           class={cn(
-            'gap-2',
-            (url.pathname === '/' || url.pathname === '/en') &&
-              'text-link-active',
+            'gap-2 rounded-lg',
+            url.pathname === '/' && 'text-link-active',
           )}
           href="/"
         >
@@ -39,7 +37,7 @@ const url = Astro.url;
           variant="ghost"
           size="sm"
           class={cn(
-            'gap-2',
+            'gap-2 rounded-lg',
             url.pathname.includes('/blog') && 'text-link-active',
           )}
           href="/blog"
@@ -48,24 +46,11 @@ const url = Astro.url;
           <span class="hidden sm:block">Blog</span>
         </ButtonLink>
         <ButtonLink
-          aria-label="Go to tech articles on zenn.dev"
-          variant="ghost"
-          size="sm"
-          class={cn(
-            'gap-2',
-            url.pathname.includes('/zenn') && 'text-link-active',
-          )}
-          href="/zenn"
-        >
-          <Zenn size={4} />
-          <span class="hidden sm:block">Zenn</span>
-        </ButtonLink>
-        <ButtonLink
           aria-label="Go to About page"
           variant="ghost"
           size="sm"
           class={cn(
-            'gap-2',
+            'gap-2 rounded-lg',
             url.pathname.includes('/about') && 'text-link-active',
           )}
           href="/about"
@@ -78,7 +63,7 @@ const url = Astro.url;
           variant="ghost"
           size="sm"
           class={cn(
-            'gap-2',
+            'gap-2 rounded-lg',
             url.pathname.includes('/privacy') && 'text-link-active',
           )}
           href="/privacy"

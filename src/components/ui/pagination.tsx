@@ -54,6 +54,7 @@ const PaginationLink = ({
         variant: isActive ? 'outline' : 'ghost',
         size,
       }),
+      'rounded-lg',
       className,
     )}
     {...props}

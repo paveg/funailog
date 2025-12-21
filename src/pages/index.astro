@@ -1,16 +1,11 @@
 ---
 import { getEntry } from 'astro:content';
 
-import {
-  getLangFromUrl,
-  useTranslations,
-  generateHreflangs,
-} from '@/i18n/utils';
+import { useTranslations, generateHreflangs } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 import { WebsiteLd } from '@/lib/rich-results';
 
-const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
+const t = useTranslations('ja');
 const site = Astro.site ?? '';
 const meta = await getEntry('site', 'meta');
 if (!meta) {
@@ -26,7 +21,7 @@ if (!meta) {
     enabled: true,
   }}
   hreflangs={generateHreflangs('')}
-  jsonLdSchema={WebsiteLd(meta, site, lang)}
+  jsonLdSchema={WebsiteLd(meta, site)}
 >
   <main>
     <h1>{t('main.title')}</h1>

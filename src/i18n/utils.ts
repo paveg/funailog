@@ -1,91 +1,55 @@
-import {
-  ui,
-  defaultLang,
-  showDefaultLang,
-  supportLangs,
-  type SupportedLang,
-} from './ui';
+import { ui, defaultLang, type SupportedLang } from './ui';
 
-export function getLangFromUrl(url: URL): SupportedLang {
-  const pathnames = url.pathname.split('/');
-  const lang = pathnames.find((pathname) => pathname in ui);
-  if (lang) return lang as SupportedLang;
+export function getLangFromUrl(_url: URL): SupportedLang {
   return defaultLang;
 }
 
-export function useTranslations(lang: SupportedLang) {
+export function useTranslations(_lang: SupportedLang) {
   return function t(key: keyof (typeof ui)[typeof defaultLang]) {
-    return ui[lang][key] || ui[defaultLang][key];
+    return ui[defaultLang][key];
   };
 }
 
-export function useTranslatedPath(lang: SupportedLang) {
-  return function translatePath(path: string, l: string = lang) {
-    return !showDefaultLang && l === defaultLang ? path : `${l}/${path}`;
+export function useTranslatedPath(_lang: SupportedLang) {
+  return function translatePath(path: string) {
+    return path;
   };
 }
 
 export function exactSlugPath(slug: string) {
   const [lang, ...slugs] = slug.split('/');
-
-  return !showDefaultLang && lang === defaultLang ? slugs.join('/') : slug;
-}
-
-/**
- * Build a localized path for a given language
- * Handles the showDefaultLang logic centrally
- */
-export function buildLocalizedPath(
-  basePath: string,
-  lang: SupportedLang,
-): string {
-  // Remove leading slash for consistent handling
-  const path = basePath.startsWith('/') ? basePath.slice(1) : basePath;
-
-  if (!showDefaultLang && lang === defaultLang) {
-    return `/${path}`;
+  if (lang === defaultLang) {
+    return slugs.join('/');
   }
-  return `/${lang}/${path}`;
+  return slug;
 }
 
 /**
- * Generate hreflang array for SEO
- * Automatically includes all supported languages and x-default
+ * Build a localized path (simplified for single language)
+ */
+export function buildLocalizedPath(basePath: string): string {
+  const path = basePath.startsWith('/') ? basePath.slice(1) : basePath;
+  return `/${path}`;
+}
+
+/**
+ * Generate hreflang array for SEO (simplified)
  */
 export function generateHreflangs(basePath: string): Array<{
   path: string;
   hreflang: SupportedLang | 'x-default';
 }> {
-  const hreflangs: Array<{
-    path: string;
-    hreflang: SupportedLang | 'x-default';
-  }> = supportLangs.map((lang) => ({
-    path: buildLocalizedPath(basePath, lang),
-    hreflang: lang,
-  }));
-
-  // x-default points to the default language version
-  hreflangs.push({
-    path: buildLocalizedPath(basePath, defaultLang),
-    hreflang: 'x-default',
-  });
-
-  return hreflangs;
+  const path = buildLocalizedPath(basePath);
+  return [
+    { path, hreflang: 'ja' },
+    { path, hreflang: 'x-default' },
+  ];
 }
 
 /**
- * Get the alternate language (for language toggle)
- */
-export function getAlternateLang(currentLang: SupportedLang): SupportedLang {
-  return currentLang === 'ja' ? 'en' : 'ja';
-}
-
-/**
- * Extract language from a content slug (e.g., "ja/2024/post-name")
+ * Extract language from a content slug
  */
 export function getLangFromSlug(slug: string): SupportedLang {
   const [lang] = slug.split('/');
-  return supportLangs.includes(lang as SupportedLang)
-    ? (lang as SupportedLang)
-    : defaultLang;
+  return lang === defaultLang ? defaultLang : defaultLang;
 }

@@ -29,12 +29,15 @@ importers:
       '@astrojs/tailwind':
         specifier: ^6.0.2
         version: 6.0.2(astro@5.16.0(@types/node@24.10.4)(jiti@1.21.0)(lightningcss@1.24.1)(rollup@4.53.3)(typescript@5.4.3)(yaml@2.8.1))(tailwindcss@3.4.1)
-      '@fontsource-variable/m-plus-1-code':
-        specifier: ^5.0.18
-        version: 5.0.18
-      '@fontsource-variable/m-plus-2':
-        specifier: ^5.0.16
-        version: 5.0.16
+      '@fontsource-variable/jetbrains-mono':
+        specifier: ^5.2.8
+        version: 5.2.8
+      '@fontsource/zen-kaku-gothic-new':
+        specifier: ^5.2.7
+        version: 5.2.7
+      '@fontsource/zen-maru-gothic':
+        specifier: ^5.2.8
+        version: 5.2.8
       '@radix-ui/react-icons':
         specifier: ^1.3.0
         version: 1.3.0(react@19.2.0)
@@ -605,11 +608,14 @@ packages:
     resolution: {integrity: sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@fontsource-variable/m-plus-1-code@5.0.18':
-    resolution: {integrity: sha512-r2o1lGViN/eUHQAPQ9jYVXolfno91s34uABSYNkltElQeXFy5sVwR4RGUyt2jDPz5/BLXy54D2NpYMOTeKLkKw==}
+  '@fontsource-variable/jetbrains-mono@5.2.8':
+    resolution: {integrity: sha512-WBA9elru6Jdp5df2mES55wuOO0WIrn3kpXnI4+W2ek5u3ZgLS9XS4gmIlcQhiZOWEKl95meYdvK7xI+ETLCq/Q==}
 
-  '@fontsource-variable/m-plus-2@5.0.16':
-    resolution: {integrity: sha512-wkYeG2VSGLp2XBCZ3dav1winUEMla/D2lhpK7SmtPjwd4GIj6OEZJbEGTOmcM5FQ16r8pX5a5uPeIzw12Li6SA==}
+  '@fontsource/zen-kaku-gothic-new@5.2.7':
+    resolution: {integrity: sha512-tfGiyBqeeBjUURHm+RIuBJCxIKhZFp46/+LEc+zCxR4sLslKwlVpWda0ZOnX/mTvOHpfr4DYjiV/pVosRXHWaw==}
+
+  '@fontsource/zen-maru-gothic@5.2.8':
+    resolution: {integrity: sha512-6RkH33+rgEJy1hkUdDAf+3PyQ7oUjX3vj7cekmfx/bT/9BEPd07FqrjcGBQDe4uWmUebEKuIZep3phDjsnJ6vA==}
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -5004,9 +5010,11 @@ snapshots:
       '@eslint/core': 0.17.0
       levn: 0.4.1
 
-  '@fontsource-variable/m-plus-1-code@5.0.18': {}
+  '@fontsource-variable/jetbrains-mono@5.2.8': {}
 
-  '@fontsource-variable/m-plus-2@5.0.16': {}
+  '@fontsource/zen-kaku-gothic-new@5.2.7': {}
+
+  '@fontsource/zen-maru-gothic@5.2.8': {}
 
   '@humanfs/core@0.19.1': {}
 

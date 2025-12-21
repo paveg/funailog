@@ -8,13 +8,11 @@ import type {
   Person,
 } from 'schema-dts';
 
-import { supportLangs, type ui } from '@/i18n/ui';
 import { useTranslations } from '@/i18n/utils';
 
 const person = (meta: CollectionEntry<'site'>): Person => {
   return {
     '@type': 'Person',
-    // TODO: Add profile page and link to it
     '@id': meta.data.links.twitter,
     name: meta.data.author.name,
     sameAs: [
@@ -26,8 +24,8 @@ const person = (meta: CollectionEntry<'site'>): Person => {
   };
 };
 
-const publisher = (site: URL | '', lang: keyof typeof ui): Organization => {
-  const t = useTranslations(lang);
+const publisher = (site: URL | ''): Organization => {
+  const t = useTranslations('ja');
   const url = new URL('/', site).toString();
 
   return {
@@ -41,18 +39,17 @@ const publisher = (site: URL | '', lang: keyof typeof ui): Organization => {
 export const WebsiteLd = (
   meta: CollectionEntry<'site'>,
   site: URL | '',
-  lang: keyof typeof ui,
 ): WebSite => {
-  const t = useTranslations(lang);
+  const t = useTranslations('ja');
   const url = new URL('/', site).toString();
   return {
     '@type': 'WebSite',
     '@id': url,
     name: t('main.title'),
     url: url,
-    inLanguage: supportLangs,
+    inLanguage: 'ja',
     author: [person(meta)],
-    publisher: publisher(site, lang),
+    publisher: publisher(site),
   };
 };
 
@@ -60,7 +57,6 @@ export const ArticleLd = (
   meta: CollectionEntry<'site'>,
   blog: CollectionEntry<'blog'>,
   site: URL | '',
-  lang: keyof typeof ui,
 ): WithContext<Article> => {
   return {
     '@context': 'https://schema.org',
@@ -76,9 +72,9 @@ export const ArticleLd = (
     keywords: blog.data.tags ?? [],
     datePublished: blog.data.published.toISOString(),
     dateModified: (blog.data.lastUpdated ?? blog.data.published).toISOString(),
-    inLanguage: supportLangs,
+    inLanguage: 'ja',
     author: [person(meta)],
-    publisher: publisher(site, lang),
-    isPartOf: WebsiteLd(meta, site, lang),
+    publisher: publisher(site),
+    isPartOf: WebsiteLd(meta, site),
   };
 };

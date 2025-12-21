@@ -10,9 +10,7 @@ import { BlogDate } from '@/components/markdown/blog-date';
 import { BlogMeta } from '@/components/markdown/blog-meta';
 import Image from '@/components/markdown/Image.astro';
 import { Separator } from '@/components/ui/separator';
-import { ui } from '@/i18n/ui';
-import { useTranslatedPath, useTranslations } from '@/i18n/utils';
-import { getLangFromUrl } from '@/i18n/utils';
+import { useTranslations } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 import { ArticleLd } from '@/lib/rich-results';
 
@@ -30,11 +28,10 @@ export async function getStaticPaths() {
   );
 
   const paths = posts.map((post) => {
-    const [lang, ...slug] = post.slug.split('/');
-    const translatePath = useTranslatedPath(lang as keyof typeof ui);
+    const [, ...slug] = post.slug.split('/');
     return {
       params: {
-        slug: translatePath(slug.join('/')),
+        slug: slug.join('/'),
       },
       props: { post },
     };
@@ -49,11 +46,9 @@ const components = {
   img: Image,
 };
 const site = Astro.site ?? '';
-const globalLang = getLangFromUrl(Astro.url);
 const [, ...slug] = post.slug.split('/');
-const translatePath = useTranslatedPath(globalLang);
-const path = `${post.collection}/${translatePath(slug.join('/'))}`;
-const t = useTranslations(globalLang);
+const path = `${post.collection}/${slug.join('/')}`;
+const t = useTranslations('ja');
 const defaultImagePath = '/first-place.jpg';
 ---
 
@@ -73,28 +68,24 @@ const defaultImagePath = '/first-place.jpg';
     type: 'article',
   }}
   hreflangs={[
-    { path: `${path}`, hreflang: globalLang },
+    { path: `${path}`, hreflang: 'ja' },
     { path: `${path}`, hreflang: 'x-default' },
   ]}
-  jsonLdSchema={ArticleLd(meta, post, site, globalLang)}
+  jsonLdSchema={ArticleLd(meta, post, site)}
 >
   <main>
     <article>
       <h1 class="text-center">{post.data.title}</h1>
-      <BlogDate post={post} lang={globalLang} />
+      <BlogDate post={post} />
       <Image
-        class="my-2 rounded-sm"
+        class="my-2 rounded-xl shadow-sm"
         src={post.data.heroImage ?? defaultImagePath}
         alt="A hero image of the article"
         width={1200}
         height={630}
       />
-      <BlogMeta
-        post={post}
-        lang={globalLang}
-        minRead={remarkPluginFrontmatter.minRead}
-      />
-      <Separator />
+      <BlogMeta post={post} minRead={remarkPluginFrontmatter.minRead} />
+      <Separator className="bg-border/40" />
       <Content components={components} />
     </article>
   </main>

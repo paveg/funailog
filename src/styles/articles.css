@@ -11,20 +11,20 @@ body {
       @apply list-inside;
     }
     & h1 {
-      @apply mt-12;
+      @apply mt-12 font-heading;
     }
     & h2,
     h3 {
-      @apply mb-4 mt-8;
+      @apply mb-4 mt-8 font-heading;
     }
     & h4 {
-      @apply mb-2 mt-6;
+      @apply mb-2 mt-6 font-heading;
     }
     & h5 {
-      @apply mb-2 mt-4;
+      @apply mb-2 mt-4 font-heading;
     }
     & h6 {
-      @apply mb-1 mt-2;
+      @apply mb-1 mt-2 font-heading;
     }
     h2,
     h3,
@@ -34,7 +34,7 @@ body {
       &::before {
         content: '#';
         color: var(--link);
-        @apply mr-2;
+        @apply mr-2 opacity-60;
       }
 
       &:hover {
@@ -47,8 +47,25 @@ body {
         }
       }
     }
+    & a {
+      @apply text-link transition-colors duration-normal;
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+    & code {
+      @apply rounded-md bg-muted px-1.5 py-0.5 font-code text-sm;
+    }
+    & pre {
+      @apply rounded-lg shadow-sm;
+    }
+    & blockquote {
+      @apply border-l-4 border-primary pl-4 italic text-muted-foreground;
+      border-left-color: hsl(var(--primary) / 0.3);
+    }
     & .footnotes {
-      @apply mt-6 border-t border-solid text-sm text-muted-foreground;
+      @apply mt-6 border-t border-border pt-4 text-sm text-muted-foreground;
+      border-top-color: hsl(var(--border) / 0.4);
       & li {
         @apply list-outside;
       }

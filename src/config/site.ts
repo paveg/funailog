@@ -3,8 +3,8 @@
  * Centralized settings to avoid magic strings and improve maintainability
  */
 
-// Supported languages
-export const SUPPORTED_LANGS = ['ja', 'en'] as const;
+// Supported languages (Japanese only)
+export const SUPPORTED_LANGS = ['ja'] as const;
 export type SupportedLang = (typeof SUPPORTED_LANGS)[number];
 
 // i18n configuration

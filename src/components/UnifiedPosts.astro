@@ -1,0 +1,111 @@
+---
+import type { Page } from 'astro';
+
+import {
+  ChatBubbleIcon,
+  ExternalLinkIcon,
+  HeartIcon,
+} from '@radix-ui/react-icons';
+
+import type { UnifiedPost } from '@/types/unified-post';
+
+import Pagination from '@/components/AstroPagination.astro';
+import { DateComponent } from '@/components/date';
+import { TagsComponent } from '@/components/markdown/tags';
+import NotFound from '@/components/NotFound.astro';
+import { Badge } from '@/components/ui/badge';
+
+export type Props = {
+  page: Page<UnifiedPost>;
+  title?: string;
+};
+const { page, title } = Astro.props;
+---
+
+<>
+  <div class="py-4">
+    <div class="flex items-center justify-between pb-8">
+      {title && <h1 class="font-heading capitalize">{title}</h1>}
+    </div>
+    <ul class="space-y-8">
+      {
+        page.data.length === 0 ? (
+          <NotFound />
+        ) : (
+          page.data.map((post) => {
+            const isZenn = post.type === 'zenn';
+            const tags = post.tags ?? [];
+
+            return (
+              <li>
+                <article class="group">
+                  <span class="flex items-center justify-start gap-2 align-middle">
+                    {isZenn ? (
+                      <Badge className="capitalize" variant="outline">
+                        <span class="mr-1">{post.emoji}</span>
+                        zenn
+                      </Badge>
+                    ) : (
+                      <a
+                        class="pb-0.5"
+                        href={`/blog/categories/${post.category}`}
+                      >
+                        <Badge className="capitalize" variant="secondary">
+                          {post.category}
+                        </Badge>
+                      </a>
+                    )}
+                    {post.lastUpdated ? (
+                      <DateComponent type="updated" date={post.lastUpdated} />
+                    ) : (
+                      <DateComponent type="published" date={post.date} />
+                    )}
+                  </span>
+                  <a
+                    href={post.url}
+                    target={isZenn ? '_blank' : '_self'}
+                    rel={isZenn ? 'noopener noreferrer' : undefined}
+                  >
+                    <h2 class="font-heading transition-colors duration-normal group-hover:text-link">
+                      {post.title}
+                      {isZenn && (
+                        <ExternalLinkIcon className="ml-1 inline-block size-4 opacity-50" />
+                      )}
+                    </h2>
+                  </a>
+                  {isZenn ? (
+                    <div class="flex items-center gap-3 text-xs text-muted-foreground md:text-sm">
+                      <span class="flex items-center gap-1">
+                        <HeartIcon className="size-4" />
+                        {post.likedCount}
+                      </span>
+                      <span class="flex items-center gap-1">
+                        <ChatBubbleIcon className="size-4" />
+                        {post.commentsCount}
+                      </span>
+                      <Badge variant="outline" className="text-xs">
+                        {post.articleType}
+                      </Badge>
+                    </div>
+                  ) : (
+                    <>
+                      <span class="text-xs leading-4 text-muted-foreground md:text-sm">
+                        {post.originalPost?.data.description}
+                      </span>
+                      {tags.length > 0 && (
+                        <TagsComponent tags={tags} collection="blog" />
+                      )}
+                    </>
+                  )}
+                </article>
+              </li>
+            );
+          })
+        )
+      }
+    </ul>
+    <div class="pt-12">
+      <Pagination page={page} />
+    </div>
+  </div>
+</>
