@@ -11,20 +11,20 @@ body {
       @apply list-inside;
     }
     & h1 {
-      @apply mt-10 font-heading;
+      @apply mt-10 font-heading text-foreground;
     }
     & h2,
     h3 {
-      @apply mb-3 mt-6 font-heading;
+      @apply mb-3 mt-6 font-heading text-foreground;
     }
     & h4 {
-      @apply mb-2 mt-5 font-heading;
+      @apply mb-2 mt-5 font-heading text-foreground;
     }
     & h5 {
-      @apply mb-2 mt-4 font-heading;
+      @apply mb-2 mt-4 font-heading text-foreground;
     }
     & h6 {
-      @apply mb-1 mt-3 font-heading;
+      @apply mb-1 mt-3 font-heading text-foreground;
     }
     h2,
     h3,
