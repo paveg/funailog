@@ -42,23 +42,19 @@ function PostItem({ post }: { post: SerializedPost }) {
 
   return (
     <article className="group">
-      <span className="flex items-center justify-start gap-2 align-middle">
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
         {isZenn ? (
           <Badge className="capitalize" variant="outline">
-            <span className="mr-1">{post.emoji}</span>
-            zenn
+            {post.emoji} zenn
           </Badge>
         ) : (
-          <a className="pb-0.5" href={`/blog/categories/${post.category}`}>
+          <a href={`/blog/categories/${post.category}`}>
             <Badge className="capitalize" variant="secondary">
               {post.category}
             </Badge>
           </a>
         )}
-        <time
-          className="flex items-center gap-1 text-xs text-muted-foreground"
-          dateTime={displayDate}
-        >
+        <time className="flex items-center gap-1" dateTime={displayDate}>
           {hasUpdate ? (
             <ReloadIcon className="size-3" />
           ) : (
@@ -66,45 +62,44 @@ function PostItem({ post }: { post: SerializedPost }) {
           )}
           {formatDate(displayDate)}
         </time>
-      </span>
+      </div>
       <a
         href={post.url}
         target={isZenn ? '_blank' : '_self'}
         rel={isZenn ? 'noopener noreferrer' : undefined}
+        className="block pt-1"
       >
-        <h2 className="font-heading transition-colors duration-normal group-hover:text-link">
+        <h2 className="font-heading text-foreground transition-colors duration-fast group-hover:text-link">
           {post.title}
           {isZenn && (
-            <ExternalLinkIcon className="ml-1 inline-block size-4 opacity-50" />
+            <ExternalLinkIcon className="ml-1 inline-block size-3.5 opacity-40" />
           )}
         </h2>
       </a>
       {isZenn ? (
-        <div className="flex items-center gap-3 text-xs text-muted-foreground md:text-sm">
+        <div className="flex items-center gap-3 pt-1 text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
-            <HeartIcon className="size-4" />
+            <HeartIcon className="size-3.5" />
             {post.likedCount}
           </span>
           <span className="flex items-center gap-1">
-            <ChatBubbleIcon className="size-4" />
+            <ChatBubbleIcon className="size-3.5" />
             {post.commentsCount}
           </span>
-          <Badge variant="outline" className="text-xs">
-            {post.articleType}
-          </Badge>
+          <span className="text-muted-foreground/70">{post.articleType}</span>
         </div>
       ) : (
         <>
-          <span className="text-xs leading-4 text-muted-foreground md:text-sm">
+          <p className="pt-1 text-sm leading-relaxed text-muted-foreground">
             {post.description}
-          </span>
+          </p>
           {post.tags && post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 pt-1">
+            <div className="flex flex-wrap gap-2 pt-2">
               {post.tags.map((tag) => (
                 <a
                   key={tag}
                   href={`/blog/tags/${tag}`}
-                  className="text-xs text-muted-foreground hover:text-link"
+                  className="text-xs text-muted-foreground transition-colors hover:text-foreground"
                 >
                   #{tag}
                 </a>

@@ -28,5 +28,6 @@
   "search.exclude": {
     "**/node_modules/.pnpm/**": true
   },
-  "files.autoSave": "onFocusChange"
+  "files.autoSave": "onFocusChange",
+  "i18next.i18nPaths": "/Users/ryota/repos/github.com/paveg/funailog/src/i18n"
 }

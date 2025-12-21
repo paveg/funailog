@@ -18,10 +18,10 @@ const { page, title } = Astro.props;
 
 <>
   <div class="py-4">
-    <div class="flex items-center justify-between pb-8">
+    <div class="flex items-center justify-between pb-6">
       {title && <h1 class="font-heading capitalize">{title}</h1>}
     </div>
-    <ul class="space-y-8">
+    <ul class="space-y-6">
       {
         page.data.length === 0 ? (
           <NotFound />
@@ -33,11 +33,8 @@ const { page, title } = Astro.props;
             return (
               <li>
                 <article class="group">
-                  <span class="flex items-center justify-start gap-2 align-middle">
-                    <a
-                      class="pb-0.5"
-                      href={`/${collection}/categories/${data.category}`}
-                    >
+                  <div class="flex items-center gap-2 text-xs text-muted-foreground">
+                    <a href={`/${collection}/categories/${data.category}`}>
                       <Badge className="capitalize" variant="secondary">
                         {data.category}
                       </Badge>
@@ -53,15 +50,15 @@ const { page, title } = Astro.props;
                         date={post.data.published}
                       />
                     )}
-                  </span>
-                  <a href={`/${collection}/${path}`}>
-                    <h2 class="font-heading transition-colors duration-normal group-hover:text-link">
+                  </div>
+                  <a href={`/${collection}/${path}`} class="block pt-1">
+                    <h2 class="font-heading text-foreground transition-colors duration-fast group-hover:text-link">
                       {data.title}
                     </h2>
                   </a>
-                  <span class="text-xs leading-4 text-muted-foreground md:text-sm">
+                  <p class="pt-1 text-sm leading-relaxed text-muted-foreground">
                     {data.description}
-                  </span>
+                  </p>
                   {tags.length > 0 && (
                     <TagsComponent tags={tags} collection={collection} />
                   )}
@@ -72,7 +69,7 @@ const { page, title } = Astro.props;
         )
       }
     </ul>
-    <div class="pt-12">
+    <div class="pt-10">
       <Pagination page={page} />
     </div>
   </div>

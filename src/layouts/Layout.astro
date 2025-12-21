@@ -4,9 +4,9 @@ import '@/styles/globals.css';
 import '@fontsource/zen-kaku-gothic-new/400.css';
 import '@fontsource/zen-kaku-gothic-new/500.css';
 import '@fontsource/zen-kaku-gothic-new/700.css';
-import '@fontsource/zen-maru-gothic/400.css';
-import '@fontsource/zen-maru-gothic/500.css';
-import '@fontsource/zen-maru-gothic/700.css';
+import '@fontsource/noto-sans-jp/400.css';
+import '@fontsource/noto-sans-jp/500.css';
+import '@fontsource/noto-sans-jp/700.css';
 import '@fontsource-variable/jetbrains-mono';
 
 import { getEntry } from 'astro:content';
@@ -113,11 +113,6 @@ if (!meta) {
         />
       )
     }
-    <script
-      is:inline
-      type="text/partytown"
-      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4759937737528616"
-      crossorigin="anonymous"></script>
     <script is:inline>
       if (typeof window.localStorage.getItem('theme') === 'string') {
         const currentTheme = window.localStorage.getItem('theme');
