@@ -1,0 +1,399 @@
+# Portfolio profile data - Updated: 2024-12-21
+profile:
+  name: Ryota Ikezawa
+  nameKana: イケザワ リョウタ
+  title: Senior Architect / Full Stack Engineer
+  summary: |
+    8年以上の経験を持つフルスタックエンジニア。
+    freee株式会社にて人事労務統合基盤チームのシニアアーキテクトとして、
+    マイクロサービスの設計・運用、クロスチームアーキテクチャ、テクニカルリードを担当。
+    Ruby, Rails, Go, TypeScript, React.js, AWS, Dockerに精通。
+  avatar: /profile.jpg
+
+workExperience:
+  # === freee株式会社（約10年在籍） ===
+  - company: freee株式会社
+    role: Senior Architect / Full Stack Engineer
+    period:
+      start: '2015-11'
+      end: null
+    description: |
+      クラウド会計ソフトを提供するfreee株式会社にて約10年在籍。
+      データ集約機能の開発からスタートし、テックリード、
+      エンジニアリングマネージャーを経て現在はシニアアーキテクトとして従事。
+    technologies:
+      - Ruby
+      - Rails
+      - TypeScript
+      - React
+      - Go
+      - MySQL
+      - AWS
+      - Docker
+      - Kubernetes
+    # 役職変遷
+    roles:
+      - role: Senior Architect / Full Stack Engineer
+        period:
+          start: '2025-01'
+          end: null
+        project: 人事労務統合基盤
+        description: |
+          人事労務統合基盤チームにてシニアアーキテクトとして従事。
+          レガシーシステムのリモデリング、マイクロサービス設計、機能開発、
+          マイグレーションなどを担当。クロスチームアーキテクチャにも関与。
+        technologies:
+          - Go
+          - Ruby
+          - Rails
+          - TypeScript
+          - React
+          - MySQL
+          - Kubernetes
+          - Docker
+          - Vite
+          - Datadog
+          - ArgoCD
+        star:
+          - situation: '[TODO: 状況・背景を記載]'
+            task: '[TODO: 課題・目標を記載]'
+            action: '[TODO: 実施したアクションを記載]'
+            result: '[TODO: 成果・数値を記載]'
+
+      - role: Engineering Manager / Tech Lead
+        period:
+          start: '2024-07'
+          end: '2024-12'
+        project: 従業員ポータル
+        description: |
+          グローバルチームの一部を率いて従業員ポータル機能を企画からリリースまで担当。
+          英語環境でのプレイングマネージャーとしてチーム運営と開発の両方をリード。
+        technologies:
+          - Go
+          - Ruby
+          - Rails
+          - TypeScript
+          - React
+          - MySQL
+          - Kubernetes
+          - Docker
+          - Vite
+        star:
+          - situation: |
+              既存のfreee人事労務は管理者向けUIで従業員にフォーカスされていなかった。
+              従業員体験改善のための企画として従業員ポータルを開発。
+              社外ツールのタスク対応依頼機能のリプレースも目標としていた。
+            task: |
+              グローバルチームのリードとして、チーム運営、技術設計・アーキテクチャ策定、
+              プロジェクト管理を担当。
+            action: |
+              英語でのチーム運営を実施しながら、技術的なリードとメンバー育成を両立。
+              リリースまでの制約が大きく、英語を喋れない日本語チームとのやり取りも多かったため、
+              積極的なコミュニケーションを実施し認識齟齬を減らすよう努めた。
+            result: |
+              予定通りリリースを達成し、チームパフォーマンスも向上。
+              社内のタスク対応依頼ツールを内製に置き換えてコスト削減を実現。
+
+      - role: Engineering Manager / Tech Lead
+        period:
+          start: '2024-01'
+          end: '2024-06'
+        project: freee顧問先管理
+        description: |
+          グローバルチームにてプレイングマネージャーとして顧問先管理機能の開発をリード。
+          チームメンバーの育成、プロジェクト管理、技術戦略の策定に従事しながら、
+          自らも開発に参加。freee顧問先管理β版のリリースに貢献。
+        links:
+          - url: https://corp.freee.co.jp/news/20231108freee_advisor.html
+            label: freee顧問先管理β版リリース
+        technologies:
+          - Go
+          - Ruby
+          - Rails
+          - TypeScript
+          - React
+          - MySQL
+          - Kubernetes
+          - Docker
+          - Vite
+        star:
+          - situation: |
+              既存のデータモデルに負債があり、企業間の契約表現が不十分だった。
+              メンテナンスされていなかった古い顧問先管理機能をリニューアルする必要があった。
+            task: |
+              2人リード体制のチームで、技術設計・プロジェクト管理・ステークホルダー調整を担当。
+              メンバーがそれぞれ独立して責任を持ちながら並列開発できる体制を構築。
+            action: |
+              契約モデルの正規化を含むデータモデル再設計を実施。
+              他チームや事業部とのステークホルダー連携を行いながら技術的なリードを担当。
+            result: |
+              freee顧問先管理β版を予定通りリリース。
+              その後、税理士の利用事業所数1000を達成し、0→1のプロダクト立ち上げに成功。
+              データモデルの改善により正確な契約表現が可能に。
+              レガシーシステムの廃止とチームメンバーの成長を実現。
+
+      - role: Senior Software Engineer / Tech Lead
+        period:
+          start: '2022-07'
+          end: '2023-12'
+        project: freeeデータ化サービス
+        description: |
+          グローバルチームにてfreeeデータ化サービスのテックリードとして従事。
+          紙の証憑をスキャンして仕訳データ化するサービスの開発・保守、技術選定を担当。
+          2023年2月の正式版リリースに貢献。
+        links:
+          - url: https://adv.freee.co.jp/service/receipt-data-entry
+            label: freeeデータ化サービス
+          - url: https://corp.freee.co.jp/news/20230208d12n.secure.freee.html
+            label: 正式版リリースノート
+        technologies:
+          - Go
+          - Ruby
+          - Rails
+          - TypeScript
+          - React
+          - MySQL
+          - Kubernetes
+          - Docker
+          - Vite
+        star:
+          - situation: '[TODO: 状況・背景を記載]'
+            task: '[TODO: 課題・目標を記載]'
+            action: '[TODO: 実施したアクションを記載]'
+            result: '[TODO: 成果・数値を記載]'
+
+      - role: Full Stack Engineer / Tech Lead
+        period:
+          start: '2019-07'
+          end: '2022-06'
+        project: オンラインレンディングプラットフォーム
+        description: |
+          金融子会社（フリーファイナンスラボ株式会社）にてオンラインレンディングプラットフォームの開発をリード。
+          3名のエンジニアを監督し、サービスライフサイクル全体を管理。
+        links:
+          - url: https://www.freee.co.jp/financing/
+            label: freee資金調達
+          - url: https://www.freee.co.jp/financing/cash-flow/
+            label: 資金繰り改善ナビ
+        technologies:
+          - Ruby
+          - Rails
+          - TypeScript
+          - React
+          - MySQL
+          - Go
+          - AWS Lambda
+          - ECS
+          - Docker
+
+      - role: Software Engineer
+        period:
+          start: '2015-11'
+          end: '2019-06'
+        project: データ集約機能
+        description: |
+          同期チームにてデータ集約機能の開発・運用に従事。
+          銀行・クレジットカード会社等からのスクレイピングやAPI連携による
+          明細取得機能を開発し、データモデル・明細モデルへの変換処理を実装。
+          関連するウェブ画面や機能の開発も担当。
+          2017年5月からはスクレイピングエンジンのリアーキテクチャプロジェクトに
+          メンバーとして参加し、マルチレイヤードアーキテクチャへの移行を推進。
+        links:
+          - url: https://corp.freee.co.jp/news/freee-amex-api-8458.html
+            label: アメリカン・エキスプレスAPI連携
+          - url: https://corp.freee.co.jp/news/mufg-api-8934.html
+            label: 三菱UFJ銀行API連携
+          - url: https://corp.freee.co.jp/news/shinkin-253-8950.html
+            label: 信用金庫API連携
+          - url: https://corp.freee.co.jp/news/gmoaozora-api-9124.html
+            label: GMOあおぞらネット銀行API連携
+          - url: https://corp.freee.co.jp/news/jcb-freee-9159.html
+            label: JCB API連携
+        technologies:
+          - Ruby
+          - Go
+          - Rails
+          - CoffeeScript
+          - MySQL
+          - Selenium WebDriver
+
+  # === 他社経験 ===
+  - company: ACALL株式会社
+    role: Application Engineer（業務委託）
+    period:
+      start: '2018-08'
+      end: '2019-04'
+    description: |
+      業務委託としてRailsフレームワークのアップグレード、
+      依存関係管理、PaperclipからActiveStorageへのマイグレーションを担当。
+    technologies:
+      - Ruby
+      - Rails
+      - ActiveStorage
+
+  - company: エクストップテクノロジー株式会社
+    role: Network Engineer
+    period:
+      start: '2015-04'
+      end: '2015-10'
+    description: |
+      オンプレミス環境からAWS（パブリッククラウド）への
+      インフラ移行プロジェクトに従事。
+    technologies:
+      - AWS
+      - Linux
+      - オンプレミス移行
+
+projects:
+  - name: funailog
+    type: personal
+    period:
+      start: '2023-01'
+      end: null
+    description: 個人技術ブログ。Astroで構築し、Cloudflare Workersにデプロイ。
+    techStack:
+      - Astro
+      - React
+      - TypeScript
+      - Tailwind CSS
+      - Cloudflare Workers
+    url: https://funailog.com
+    repository: https://github.com/paveg/funailog
+
+  - name: dots
+    type: personal
+    period:
+      start: '2020-01'
+      end: null
+    description: chezmoiで管理する個人の開発環境設定。
+    techStack:
+      - chezmoi
+      - Neovim
+      - Lua
+      - Zsh
+    repository: https://github.com/paveg/dots
+
+  - name: BIBGEN
+    type: personal
+    period:
+      start: '2024-01'
+      end: null
+    description: |
+      モトクロス、エンデューロなどバイクレース用のゼッケンナンバーを
+      簡単に生成・印刷できるWebアプリ。
+    techStack:
+      - Next.js
+      - React
+      - TypeScript
+      - Vercel
+    url: https://bibgen.vercel.app/
+
+  - name: Attain
+    type: personal
+    period:
+      start: '2024-01'
+      end: null
+    description: |
+      データドリブンなフィットネストラッキングアプリ。
+      AIコーチングでトレーニングを最適化。
+    techStack:
+      - React
+      - TypeScript
+      - iOS
+      - Android
+    url: https://attain-app.com/lp
+
+  - name: DailyDose
+    type: personal
+    period:
+      start: '2024-01'
+      end: null
+    description: |
+      サプリメント管理アプリ。バーコードスキャン、
+      AI摂取タイミング提案、リマインダー機能を搭載。
+    techStack:
+      - React
+      - TypeScript
+      - Cloudflare Workers
+      - PWA
+    url: https://daily-dose.pavegy.workers.dev
+
+  - name: oura
+    type: oss
+    period:
+      start: '2020-01'
+      end: null
+    description: |
+      Oura Ring用の非公式Ruby APIクライアント。
+      ウェアラブルデバイスのデータ取得を簡素化。
+    techStack:
+      - Ruby
+      - REST API
+    repository: https://github.com/paveg/oura
+
+skills:
+  - category: Programming Languages
+    items:
+      - name: Ruby
+        level: expert
+        yearsOfExperience: 8
+      - name: TypeScript
+        level: expert
+        yearsOfExperience: 5
+      - name: Go
+        level: advanced
+        yearsOfExperience: 3
+      - name: Python
+        level: intermediate
+        yearsOfExperience: 2
+
+  - category: Frontend
+    items:
+      - name: React
+        level: expert
+        yearsOfExperience: 5
+      - name: Next.js
+        level: advanced
+        yearsOfExperience: 3
+      - name: Astro
+        level: advanced
+        yearsOfExperience: 2
+
+  - category: Backend & Infrastructure
+    items:
+      - name: Ruby on Rails
+        level: expert
+        yearsOfExperience: 8
+      - name: Node.js
+        level: advanced
+        yearsOfExperience: 4
+      - name: MySQL
+        level: advanced
+        yearsOfExperience: 8
+      - name: PostgreSQL
+        level: intermediate
+        yearsOfExperience: 3
+      - name: Docker
+        level: advanced
+        yearsOfExperience: 5
+      - name: Kubernetes
+        level: advanced
+        yearsOfExperience: 4
+      - name: AWS
+        level: advanced
+        yearsOfExperience: 5
+
+# 現在有効な資格なし（過去の資格は記載しない）
+# certifications:
+#   - name: LPIC2
+#     issuer: Linux Professional Institute
+#     date: '2015-08'
+#     expirationDate: '2020-08'
+
+education:
+  - institution: 専修大学
+    degree: 学士（法学）
+    field: 政治学科
+    period:
+      start: '2011-04'
+      end: '2015-03'

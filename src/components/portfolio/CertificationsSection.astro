@@ -1,0 +1,58 @@
+---
+import { CheckCircledIcon, ExternalLinkIcon } from '@radix-ui/react-icons';
+
+import type { SupportedLang } from '@/config/site';
+import type { Certification } from '@/schemas/portfolio-collection';
+
+import { useTranslations } from '@/i18n/utils';
+
+interface Props {
+  items: Certification[];
+  lang?: SupportedLang;
+}
+
+const { items, lang = 'ja' } = Astro.props;
+const t = useTranslations(lang);
+
+function formatDate(dateStr: string): string {
+  return dateStr.replace('-', '/');
+}
+
+const certAriaLabel = lang === 'en' ? 'Verify certification' : '資格証明を確認';
+---
+
+<section class="space-y-4">
+  <h2 class="font-heading text-xl font-semibold">
+    {t('portfolio.certifications')}
+  </h2>
+  <div class="space-y-3">
+    {
+      items.map((cert) => (
+        <div class="border-border/50 bg-card/50 flex items-start gap-3 rounded-lg border p-3 transition-colors hover:border-border">
+          <CheckCircledIcon className="mt-0.5 size-4 shrink-0 text-green-600 dark:text-green-400" />
+          <div class="flex-1">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-medium">{cert.name}</span>
+              {cert.url && (
+                <a
+                  href={cert.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="rounded p-0.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  aria-label={certAriaLabel}
+                >
+                  <ExternalLinkIcon className="size-3.5" />
+                </a>
+              )}
+            </div>
+            <div class="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
+              <span>{cert.issuer}</span>
+              <span>•</span>
+              <span>{formatDate(cert.date)}</span>
+            </div>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>

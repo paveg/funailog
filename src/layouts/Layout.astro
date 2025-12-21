@@ -129,9 +129,11 @@ if (!meta) {
     </script>
     <title>{title}</title>
   </head>
-  <body>
+  <body class="flex min-h-screen flex-col">
     <Header />
-    <slot />
+    <main class="grow">
+      <slot />
+    </main>
     <Footer />
     <TailwindIndicator />
   </body>

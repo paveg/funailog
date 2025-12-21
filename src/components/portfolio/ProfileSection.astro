@@ -1,0 +1,45 @@
+---
+import type { Profile } from '@/schemas/portfolio-collection';
+
+interface Props {
+  profile: Profile;
+}
+
+const { profile } = Astro.props;
+---
+
+<section class="space-y-4">
+  <div class="flex flex-col items-center gap-5 sm:flex-row sm:items-start">
+    {
+      profile.avatar && (
+        <img
+          src={profile.avatar}
+          alt={profile.name}
+          class="border-primary/20 size-24 rounded-full border-2 object-cover shadow-md"
+        />
+      )
+    }
+    <div class="flex-1 text-center sm:text-left">
+      <h1 class="font-heading text-2xl font-bold tracking-tight">
+        {profile.name}
+      </h1>
+      {
+        profile.nameKana && (
+          <p class="text-muted-foreground/70 mt-0.5 text-sm">
+            {profile.nameKana}
+          </p>
+        )
+      }
+      <p
+        class="bg-primary/10 mt-2 inline-block rounded-full px-3 py-1 text-sm font-medium text-primary"
+      >
+        {profile.title}
+      </p>
+    </div>
+  </div>
+  <p
+    class="bg-muted/30 rounded-xl p-4 text-sm leading-relaxed text-muted-foreground"
+  >
+    {profile.summary}
+  </p>
+</section>

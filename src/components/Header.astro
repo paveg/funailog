@@ -1,10 +1,5 @@
 ---
-import {
-  EyeClosedIcon,
-  HomeIcon,
-  InfoCircledIcon,
-  Pencil2Icon,
-} from '@radix-ui/react-icons';
+import { HomeIcon, Pencil2Icon, PersonIcon } from '@radix-ui/react-icons';
 
 import ButtonLink from '@/components/ButtonLink.astro';
 import { ModeToggle } from '@/components/mode-toggle';
@@ -46,30 +41,17 @@ const url = Astro.url;
           <span class="hidden sm:block">Blog</span>
         </ButtonLink>
         <ButtonLink
-          aria-label="Go to About page"
+          aria-label="Go to Portfolio page"
           variant="ghost"
           size="sm"
           class={cn(
             'gap-2 rounded-lg',
-            url.pathname.includes('/about') && 'text-link-active',
+            url.pathname.includes('/portfolio') && 'text-link-active',
           )}
-          href="/about"
+          href="/portfolio"
         >
-          <InfoCircledIcon className="size-4" />
-          <span class="hidden sm:block">About</span>
-        </ButtonLink>
-        <ButtonLink
-          aria-label="Go to Privacy policy page"
-          variant="ghost"
-          size="sm"
-          class={cn(
-            'gap-2 rounded-lg',
-            url.pathname.includes('/privacy') && 'text-link-active',
-          )}
-          href="/privacy"
-          ><EyeClosedIcon className="size-4" /><span class="hidden sm:block"
-            >Privacy</span
-          >
+          <PersonIcon className="size-4" />
+          <span class="hidden sm:block">Portfolio</span>
         </ButtonLink>
       </div>
     </div>
