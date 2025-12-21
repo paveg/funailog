@@ -58,7 +58,7 @@
     "@eslint/js": "^9.39.1",
     "@types/hast": "^3.0.4",
     "@types/mdast": "^4.0.3",
-    "@types/node": "^20.11.30",
+    "@types/node": "^24.10.4",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@types/unist": "^3.0.2",
@@ -89,11 +89,11 @@
     "rehype-pretty-code": "^0.13.0",
     "rehype-slug": "^6.0.0",
     "satori": "^0.10.13",
-    "sharp": "^0.33.3",
+    "sharp": "^0.34.5",
     "shiki": "^1.2.1",
     "typescript": "^5.4.3",
     "typescript-eslint": "^8.48.0",
-    "unified": "^11.0.4",
+    "unified": "^11.0.5",
     "unist-util-visit": "^5.0.0"
   }
 }
