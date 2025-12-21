@@ -1,0 +1,97 @@
+---
+import { ExternalLinkIcon, GitHubLogoIcon } from '@radix-ui/react-icons';
+
+import type { SupportedLang } from '@/config/site';
+import type { Project } from '@/schemas/portfolio-collection';
+
+import { useTranslations } from '@/i18n/utils';
+
+interface Props {
+  items: Project[];
+  lang?: SupportedLang;
+}
+
+const { items, lang = 'ja' } = Astro.props;
+const t = useTranslations(lang);
+
+const typeStyles: Record<Project['type'], string> = {
+  work: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+  personal:
+    'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
+  oss: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
+};
+
+const typeLabels: Record<Project['type'], Record<SupportedLang, string>> = {
+  work: { ja: '業務', en: 'Work' },
+  personal: { ja: '個人', en: 'Personal' },
+  oss: { ja: 'OSS', en: 'OSS' },
+};
+
+const getAriaLabel = (name: string, type: 'site' | 'repo') => {
+  if (lang === 'en') {
+    return type === 'site' ? `Open ${name} website` : `Open ${name} repository`;
+  }
+  return type === 'site'
+    ? `${name}のサイトを開く`
+    : `${name}のリポジトリを開く`;
+};
+---
+
+<section class="space-y-4">
+  <h2 class="font-heading text-xl font-semibold">{t('portfolio.projects')}</h2>
+  <div class="grid gap-3 sm:grid-cols-2">
+    {
+      items.map((project) => (
+        <div class="border-border/50 bg-card/50 group flex flex-col gap-2 rounded-xl border p-4 transition-all hover:border-border hover:shadow-sm">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="font-medium">{project.name}</span>
+              <span
+                class={`rounded-full px-2 py-0.5 text-xs font-medium ${typeStyles[project.type]}`}
+              >
+                {typeLabels[project.type][lang]}
+              </span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              {project.url && (
+                <a
+                  href={project.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  aria-label={getAriaLabel(project.name, 'site')}
+                >
+                  <ExternalLinkIcon className="size-4" />
+                </a>
+              )}
+              {project.repository && (
+                <a
+                  href={project.repository}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  aria-label={getAriaLabel(project.name, 'repo')}
+                >
+                  <GitHubLogoIcon className="size-4" />
+                </a>
+              )}
+            </div>
+          </div>
+          <p class="text-sm text-muted-foreground">{project.description}</p>
+          <div class="flex flex-wrap gap-1.5">
+            {project.techStack.slice(0, 5).map((tech) => (
+              <span class="bg-muted/50 rounded-md px-2 py-0.5 text-xs text-muted-foreground">
+                {tech}
+              </span>
+            ))}
+            {project.techStack.length > 5 && (
+              <span class="text-muted-foreground/60 rounded-md px-2 py-0.5 text-xs">
+                +{project.techStack.length - 5}
+              </span>
+            )}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>

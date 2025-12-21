@@ -1,0 +1,49 @@
+---
+import { CodeIcon } from '@radix-ui/react-icons';
+
+import type { SupportedLang } from '@/config/site';
+
+interface Props {
+  lang?: SupportedLang;
+}
+
+const { lang = 'ja' } = Astro.props;
+const isDev = import.meta.env.DEV;
+
+const texts = {
+  ja: {
+    title: 'CV生成（開発環境のみ）',
+    description:
+      '非公開情報（住所・電話番号など）を含むPDFを生成するには、以下のコマンドを実行してください。',
+    note: '.envファイルにCV_ADDRESS, CV_PHONE, CV_EMAIL, CV_BIRTH_DATEを設定してください。',
+  },
+  en: {
+    title: 'CV Generation (Dev only)',
+    description:
+      'To generate a PDF with private information (address, phone, etc.), run the following command.',
+    note: 'Set CV_ADDRESS, CV_PHONE, CV_EMAIL, CV_BIRTH_DATE in your .env file.',
+  },
+};
+
+const t = texts[lang];
+---
+
+{
+  isDev && (
+    <div class="rounded-lg border border-dashed border-amber-500/50 bg-amber-50/50 p-4 dark:bg-amber-900/10">
+      <p class="mb-2 text-sm font-medium text-amber-700 dark:text-amber-400">
+        {t.title}
+      </p>
+      <p class="mb-3 text-sm text-amber-600 dark:text-amber-500">
+        {t.description}
+      </p>
+      <div class="flex items-center gap-2 rounded-md bg-amber-100/50 p-3 font-mono text-sm dark:bg-amber-900/20">
+        <CodeIcon className="size-4 shrink-0 text-amber-600 dark:text-amber-400" />
+        <code class="text-amber-800 dark:text-amber-300">pnpm cv</code>
+      </div>
+      <p class="mt-2 text-xs text-amber-600/80 dark:text-amber-500/80">
+        {t.note}
+      </p>
+    </div>
+  )
+}

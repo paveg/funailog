@@ -1,0 +1,155 @@
+---
+import { CollapsibleRoles } from './CollapsibleRoles';
+
+import type { SupportedLang } from '@/config/site';
+import type { WorkExperience } from '@/schemas/portfolio-collection';
+
+import { Badge } from '@/components/ui/badge';
+import { useTranslations } from '@/i18n/utils';
+
+interface Props {
+  items: WorkExperience[];
+  lang?: SupportedLang;
+}
+
+const { items, lang = 'ja' } = Astro.props;
+const t = useTranslations(lang);
+
+function formatPeriod(period: { start: string; end: string | null }): string {
+  const start = period.start.replace('-', '/');
+  const end = period.end
+    ? period.end.replace('-', '/')
+    : lang === 'en'
+      ? 'Present'
+      : '現在';
+  return `${start} - ${end}`;
+}
+
+function calculateYears(period: { start: string; end: string | null }): string {
+  const startDate = new Date(period.start);
+  const endDate = period.end ? new Date(period.end) : new Date();
+  const years = Math.floor(
+    (endDate.getTime() - startDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000),
+  );
+  if (years > 0) {
+    return lang === 'en' ? `${years} years` : `${years}年`;
+  }
+  return lang === 'en' ? 'Less than 1 year' : '1年未満';
+}
+
+// Companies with many roles get collapsible treatment
+const COLLAPSIBLE_THRESHOLD = 3;
+---
+
+<section class="space-y-4">
+  <h2 class="font-heading text-xl font-semibold">
+    {t('portfolio.workExperience')}
+  </h2>
+  <div class="space-y-0">
+    {
+      items.map((work, workIndex) => {
+        const isCurrentCompany = work.period.end === null;
+        const isLastCompany = workIndex === items.length - 1;
+        return (
+          <div class="flex gap-4">
+            {/* Company Stepper Indicator Column */}
+            <div class="flex flex-col items-center">
+              {/* Circle Indicator */}
+              <div
+                class:list={[
+                  'flex size-10 shrink-0 items-center justify-center rounded-full border-2 text-sm font-semibold',
+                  isCurrentCompany
+                    ? 'border-primary bg-primary text-primary-foreground'
+                    : 'border-emerald-500 bg-emerald-500 text-white',
+                ]}
+              >
+                {isCurrentCompany ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="size-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="4" fill="currentColor" />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="size-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                )}
+              </div>
+              {/* Connecting Line */}
+              {!isLastCompany && <div class="my-1 w-0.5 flex-1 bg-border" />}
+            </div>
+
+            {/* Company Content Column */}
+            <div class:list={['flex-1 pb-8', isLastCompany && 'pb-0']}>
+              {/* Company Header */}
+              <div class="flex flex-wrap items-baseline justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg font-semibold">{work.company}</span>
+                  <span class="bg-primary/10 rounded-full px-2 py-0.5 text-xs font-medium text-primary">
+                    {calculateYears(work.period)}
+                  </span>
+                </div>
+                <span class="text-sm text-muted-foreground">
+                  {formatPeriod(work.period)}
+                </span>
+              </div>
+
+              {/* Company Summary */}
+              <p class="mt-2 text-sm text-muted-foreground">
+                {work.description}
+              </p>
+
+              {/* Technologies (company level) - shown only for companies without roles */}
+              {work.technologies &&
+                work.technologies.length > 0 &&
+                !work.roles && (
+                  <div class="mt-3 flex flex-wrap gap-1.5">
+                    {work.technologies.map((tech) => (
+                      <Badge variant="secondary" className="text-xs">
+                        {tech}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+
+              {/* Role Progression - Collapsible for companies with many roles */}
+              {work.roles &&
+                work.roles.length > 0 &&
+                (work.roles.length >= COLLAPSIBLE_THRESHOLD ? (
+                  <CollapsibleRoles
+                    client:load
+                    roles={work.roles}
+                    initialVisibleCount={2}
+                    lang={lang}
+                  />
+                ) : (
+                  <CollapsibleRoles
+                    client:load
+                    roles={work.roles}
+                    initialVisibleCount={work.roles.length}
+                    lang={lang}
+                  />
+                ))}
+            </div>
+          </div>
+        );
+      })
+    }
+  </div>
+</section>

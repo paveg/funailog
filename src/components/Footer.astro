@@ -8,7 +8,6 @@ import {
 } from '@radix-ui/react-icons';
 import { RssIcon } from 'lucide-react';
 
-import ButtonLink from '@/components/ButtonLink.astro';
 const meta = await getEntry('site', 'meta');
 if (!meta) {
   throw new Error('Site meta configuration not found');
@@ -16,56 +15,90 @@ if (!meta) {
 const today = new Date();
 const currentYear = today.getFullYear();
 const startYear = 2023;
-const iconClass = 'size-5';
 ---
 
-<footer>
-  <div
-    class="border-border/40 bg-secondary/20 flex flex-col items-center justify-between gap-4 border-t py-6 md:h-24 md:flex-row md:py-0"
-  >
-    <p class="text-xs text-muted-foreground md:text-sm">
-      &copy; {startYear}-{currentYear}
-      {meta.data.author.name}.
-    </p>
-    <div class="flex gap-1">
-      <ButtonLink
-        variant="ghost"
-        size="icon"
-        href="/rss.xml"
-        aria-label="Link to rss feed"
+<footer class="mt-auto">
+  <!-- 装飾的な区切り線 - 和紙の繊維をイメージ -->
+  <div class="relative py-8">
+    <div class="absolute inset-x-0 top-1/2 flex items-center justify-center">
+      <div
+        class="h-px w-16 bg-gradient-to-r from-transparent via-border to-transparent"
       >
-        <RssIcon className={iconClass} />
-      </ButtonLink>
-      <ButtonLink
-        variant="ghost"
-        size="icon"
+      </div>
+      <div class="bg-border/60 mx-3 size-1 rotate-45"></div>
+      <div
+        class="h-px w-16 bg-gradient-to-l from-transparent via-border to-transparent"
+      >
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="flex flex-col items-center gap-6 pb-8 pt-2 md:flex-row md:items-center md:justify-between"
+  >
+    <!-- コピーライトとリンク（モバイル: 下、デスクトップ: 左） -->
+    <div
+      class="order-2 flex flex-col items-center gap-2 text-center md:order-1 md:items-start md:text-left"
+    >
+      <a
+        href="/privacy"
+        class="relative text-xs text-muted-foreground transition-colors duration-200 after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-0 after:bg-current after:transition-all after:duration-300 hover:text-foreground hover:after:w-full"
+      >
+        Privacy Policy
+      </a>
+      <p class="text-muted-foreground/70 text-[11px] tracking-wide">
+        &copy; {startYear}&ndash;{currentYear}
+        {meta.data.author.name}
+      </p>
+    </div>
+
+    <!-- ソーシャルアイコン（モバイル: 上、デスクトップ: 右） -->
+    <nav
+      aria-label="Social links"
+      class="order-1 flex items-center gap-1 md:order-2"
+    >
+      <a
+        href="/rss.xml"
+        class="hover:bg-secondary/60 group relative flex size-10 items-center justify-center rounded-full transition-all duration-300"
+        aria-label="RSSフィードを購読"
+      >
+        <RssIcon
+          className="size-[18px] text-muted-foreground transition-colors duration-300 group-hover:text-foreground"
+        />
+      </a>
+      <a
         href={meta.data.links.github}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Link to GitHub"
+        class="hover:bg-secondary/60 group relative flex size-10 items-center justify-center rounded-full transition-all duration-300"
+        aria-label="GitHubプロフィール"
       >
-        <GitHubLogoIcon className={iconClass} />
-      </ButtonLink>
-      <ButtonLink
-        variant="ghost"
-        size="icon"
+        <GitHubLogoIcon
+          className="size-[18px] text-muted-foreground transition-colors duration-300 group-hover:text-foreground"
+        />
+      </a>
+      <a
         href={meta.data.links.twitter}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Link to X(Twitter) timeline"
+        class="hover:bg-secondary/60 group relative flex size-10 items-center justify-center rounded-full transition-all duration-300"
+        aria-label="X (Twitter)"
       >
-        <TwitterLogoIcon className={iconClass} />
-      </ButtonLink>
-      <ButtonLink
-        variant="ghost"
-        size="icon"
+        <TwitterLogoIcon
+          className="size-[18px] text-muted-foreground transition-colors duration-300 group-hover:text-foreground"
+        />
+      </a>
+      <a
         href={meta.data.links.instagram}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Link to Instagram profile"
+        class="hover:bg-secondary/60 group relative flex size-10 items-center justify-center rounded-full transition-all duration-300"
+        aria-label="Instagram"
       >
-        <InstagramLogoIcon className={iconClass} />
-      </ButtonLink>
-    </div>
+        <InstagramLogoIcon
+          className="size-[18px] text-muted-foreground transition-colors duration-300 group-hover:text-foreground"
+        />
+      </a>
+    </nav>
   </div>
 </footer>

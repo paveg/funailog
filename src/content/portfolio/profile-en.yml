@@ -1,0 +1,381 @@
+# Portfolio profile data (English) - Updated: 2024-12-21
+profile:
+  name: Ryota Ikezawa
+  title: Senior Architect / Full Stack Engineer
+  summary: |
+    Full-stack engineer with over 8 years of experience.
+    Currently serving as a Senior Architect in the HR/Payroll Integration Platform team at freee K.K.,
+    responsible for microservices design/operations, cross-team architecture, and technical leadership.
+    Proficient in Ruby, Rails, Go, TypeScript, React.js, AWS, and Docker.
+  avatar: /profile.jpg
+
+workExperience:
+  # === freee K.K. (approximately 10 years) ===
+  - company: freee K.K.
+    role: Senior Architect / Full Stack Engineer
+    period:
+      start: '2015-11'
+      end: null
+    description: |
+      Approximately 10 years at freee K.K., a cloud accounting software provider.
+      Started with data aggregation feature development, progressed through Tech Lead
+      and Engineering Manager roles, currently serving as Senior Architect.
+    technologies:
+      - Ruby
+      - Rails
+      - TypeScript
+      - React
+      - Go
+      - MySQL
+      - AWS
+      - Docker
+      - Kubernetes
+    roles:
+      - role: Senior Architect / Full Stack Engineer
+        period:
+          start: '2025-01'
+          end: null
+        project: HR/Payroll Integration Platform
+        description: |
+          Serving as Senior Architect in the HR/Payroll Integration Platform team.
+          Responsible for legacy system remodeling, microservices design, feature development,
+          and migrations. Also involved in cross-team architecture initiatives.
+        technologies:
+          - Go
+          - Ruby
+          - Rails
+          - TypeScript
+          - React
+          - MySQL
+          - Kubernetes
+          - Docker
+          - Vite
+          - Datadog
+          - ArgoCD
+
+      - role: Engineering Manager / Tech Lead
+        period:
+          start: '2024-07'
+          end: '2024-12'
+        project: Employee Portal
+        description: |
+          Led a portion of the global team to deliver the Employee Portal feature from planning to release.
+          Served as a playing manager in an English-speaking environment, leading both team operations and development.
+        technologies:
+          - Go
+          - Ruby
+          - Rails
+          - TypeScript
+          - React
+          - MySQL
+          - Kubernetes
+          - Docker
+          - Vite
+        star:
+          - situation: |
+              The existing freee HR product had an admin-focused UI that didn't prioritize employee experience.
+              Initiated the Employee Portal project to improve employee experience.
+              Also aimed to replace an external task request tool with an in-house solution.
+            task: |
+              As global team lead, responsible for team operations, technical design/architecture,
+              and project management.
+            action: |
+              Managed team operations in English while balancing technical leadership and member development.
+              With significant release constraints and frequent interaction with Japanese-speaking teams,
+              actively facilitated communication to minimize misunderstandings.
+            result: |
+              Successfully released on schedule with improved team performance.
+              Replaced external task request tool with in-house solution, achieving cost reduction.
+
+      - role: Engineering Manager / Tech Lead
+        period:
+          start: '2024-01'
+          end: '2024-06'
+        project: freee Advisor Client Management
+        description: |
+          Led the development of the Advisor Client Management feature as a playing manager in the global team.
+          Engaged in team member development, project management, and technical strategy while actively participating in development.
+          Contributed to the beta release of freee Advisor Client Management.
+        links:
+          - url: https://corp.freee.co.jp/news/20231108freee_advisor.html
+            label: freee Advisor Beta Release
+        technologies:
+          - Go
+          - Ruby
+          - Rails
+          - TypeScript
+          - React
+          - MySQL
+          - Kubernetes
+          - Docker
+          - Vite
+        star:
+          - situation: |
+              Existing data model had technical debt with insufficient contract representation between companies.
+              The legacy advisor management feature was unmaintained and needed renewal.
+            task: |
+              In a dual-lead team structure, responsible for technical design, project management, and stakeholder coordination.
+              Built a structure where team members could independently own responsibilities and develop in parallel.
+            action: |
+              Redesigned data model including contract model normalization.
+              Provided technical leadership while coordinating with other teams and business units.
+            result: |
+              Released freee Advisor Client Management beta on schedule.
+              Subsequently achieved 1,000 accountant client offices, successfully completing 0→1 product launch.
+              Improved data model enabled accurate contract representation.
+              Successfully deprecated legacy system and achieved team growth.
+
+      - role: Senior Software Engineer / Tech Lead
+        period:
+          start: '2022-07'
+          end: '2023-12'
+        project: freee Data Entry Service
+        description: |
+          Served as Tech Lead for freee Data Entry Service in the global team.
+          Responsible for development, maintenance, and technology selection for a service that
+          scans paper receipts and converts them to journal entry data.
+          Contributed to the official release in February 2023.
+        links:
+          - url: https://adv.freee.co.jp/service/receipt-data-entry
+            label: freee Data Entry Service
+          - url: https://corp.freee.co.jp/news/20230208d12n.secure.freee.html
+            label: Official Release Note
+        technologies:
+          - Go
+          - Ruby
+          - Rails
+          - TypeScript
+          - React
+          - MySQL
+          - Kubernetes
+          - Docker
+          - Vite
+
+      - role: Full Stack Engineer / Tech Lead
+        period:
+          start: '2019-07'
+          end: '2022-06'
+        project: Online Lending Platform
+        description: |
+          Led development of the online lending platform at the financial subsidiary (freee Finance Lab Inc.).
+          Supervised 3 engineers and managed the entire service lifecycle.
+        links:
+          - url: https://www.freee.co.jp/financing/
+            label: freee Financing
+          - url: https://www.freee.co.jp/financing/cash-flow/
+            label: Cash Flow Management Navi
+        technologies:
+          - Ruby
+          - Rails
+          - TypeScript
+          - React
+          - MySQL
+          - Go
+          - AWS Lambda
+          - ECS
+          - Docker
+
+      - role: Software Engineer
+        period:
+          start: '2015-11'
+          end: '2019-06'
+        project: Data Aggregation Feature
+        description: |
+          Worked on development and operations of data aggregation features in the Sync team.
+          Developed transaction retrieval features via scraping and API integration with banks and credit card companies,
+          implementing data model and transaction model conversion processing.
+          Also handled related web UI and feature development.
+          From May 2017, participated as a member in the scraping engine re-architecture project,
+          driving the transition to a multi-layered architecture.
+        links:
+          - url: https://corp.freee.co.jp/news/freee-amex-api-8458.html
+            label: American Express API Integration
+          - url: https://corp.freee.co.jp/news/mufg-api-8934.html
+            label: MUFG Bank API Integration
+          - url: https://corp.freee.co.jp/news/shinkin-253-8950.html
+            label: Shinkin Bank API Integration
+          - url: https://corp.freee.co.jp/news/gmoaozora-api-9124.html
+            label: GMO Aozora Net Bank API Integration
+          - url: https://corp.freee.co.jp/news/jcb-freee-9159.html
+            label: JCB API Integration
+        technologies:
+          - Ruby
+          - Go
+          - Rails
+          - CoffeeScript
+          - MySQL
+          - Selenium WebDriver
+
+  # === Other Experience ===
+  - company: ACALL Inc.
+    role: Application Engineer (Contract)
+    period:
+      start: '2018-08'
+      end: '2019-04'
+    description: |
+      As a contractor, handled Rails framework upgrades,
+      dependency management, and migration from Paperclip to ActiveStorage.
+    technologies:
+      - Ruby
+      - Rails
+      - ActiveStorage
+
+  - company: Exetop Technology Inc.
+    role: Network Engineer
+    period:
+      start: '2015-04'
+      end: '2015-10'
+    description: |
+      Worked on infrastructure migration projects
+      from on-premises environments to AWS (public cloud).
+    technologies:
+      - AWS
+      - Linux
+      - On-premises Migration
+
+projects:
+  - name: funailog
+    type: personal
+    period:
+      start: '2023-01'
+      end: null
+    description: Personal tech blog. Built with Astro and deployed to Cloudflare Workers.
+    techStack:
+      - Astro
+      - React
+      - TypeScript
+      - Tailwind CSS
+      - Cloudflare Workers
+    url: https://funailog.com
+    repository: https://github.com/paveg/funailog
+
+  - name: dots
+    type: personal
+    period:
+      start: '2020-01'
+      end: null
+    description: Personal development environment configuration managed with chezmoi.
+    techStack:
+      - chezmoi
+      - Neovim
+      - Lua
+      - Zsh
+    repository: https://github.com/paveg/dots
+
+  - name: BIBGEN
+    type: personal
+    period:
+      start: '2024-01'
+      end: null
+    description: |
+      A web app for easily generating and printing bib numbers
+      for motorcycle races like motocross and enduro.
+    techStack:
+      - Next.js
+      - React
+      - TypeScript
+      - Vercel
+    url: https://bibgen.vercel.app/
+
+  - name: Attain
+    type: personal
+    period:
+      start: '2024-01'
+      end: null
+    description: |
+      A data-driven fitness tracking app.
+      Optimize training with AI coaching.
+    techStack:
+      - React
+      - TypeScript
+      - iOS
+      - Android
+    url: https://attain-app.com/lp
+
+  - name: DailyDose
+    type: personal
+    period:
+      start: '2024-01'
+      end: null
+    description: |
+      Supplement management app with barcode scanning,
+      AI-powered intake timing suggestions, and reminder features.
+    techStack:
+      - React
+      - TypeScript
+      - Cloudflare Workers
+      - PWA
+    url: https://daily-dose.pavegy.workers.dev
+
+  - name: oura
+    type: oss
+    period:
+      start: '2020-01'
+      end: null
+    description: |
+      Unofficial Ruby API client for Oura Ring.
+      Simplifies wearable device data retrieval.
+    techStack:
+      - Ruby
+      - REST API
+    repository: https://github.com/paveg/oura
+
+skills:
+  - category: Programming Languages
+    items:
+      - name: Ruby
+        level: expert
+        yearsOfExperience: 8
+      - name: TypeScript
+        level: expert
+        yearsOfExperience: 5
+      - name: Go
+        level: advanced
+        yearsOfExperience: 3
+      - name: Python
+        level: intermediate
+        yearsOfExperience: 2
+
+  - category: Frontend
+    items:
+      - name: React
+        level: expert
+        yearsOfExperience: 5
+      - name: Next.js
+        level: advanced
+        yearsOfExperience: 3
+      - name: Astro
+        level: advanced
+        yearsOfExperience: 2
+
+  - category: Backend & Infrastructure
+    items:
+      - name: Ruby on Rails
+        level: expert
+        yearsOfExperience: 8
+      - name: Node.js
+        level: advanced
+        yearsOfExperience: 4
+      - name: MySQL
+        level: advanced
+        yearsOfExperience: 8
+      - name: PostgreSQL
+        level: intermediate
+        yearsOfExperience: 3
+      - name: Docker
+        level: advanced
+        yearsOfExperience: 5
+      - name: Kubernetes
+        level: advanced
+        yearsOfExperience: 4
+      - name: AWS
+        level: advanced
+        yearsOfExperience: 5
+
+education:
+  - institution: Senshu University
+    degree: Bachelor of Law
+    field: Political Science
+    period:
+      start: '2011-04'
+      end: '2015-03'

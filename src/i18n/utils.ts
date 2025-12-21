@@ -4,9 +4,9 @@ export function getLangFromUrl(_url: URL): SupportedLang {
   return defaultLang;
 }
 
-export function useTranslations(_lang: SupportedLang) {
+export function useTranslations(lang: SupportedLang) {
   return function t(key: keyof (typeof ui)[typeof defaultLang]) {
-    return ui[defaultLang][key];
+    return ui[lang][key] || ui[defaultLang][key];
   };
 }
 

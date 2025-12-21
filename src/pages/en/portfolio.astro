@@ -1,0 +1,86 @@
+---
+import { getEntry } from 'astro:content';
+
+import CertificationsSection from '@/components/portfolio/CertificationsSection.astro';
+import CVExportButton from '@/components/portfolio/CVExportButton.astro';
+import EducationSection from '@/components/portfolio/EducationSection.astro';
+import ProfileSection from '@/components/portfolio/ProfileSection.astro';
+import ProjectsSection from '@/components/portfolio/ProjectsSection.astro';
+import SkillsSection from '@/components/portfolio/SkillsSection.astro';
+import WorkExperienceSection from '@/components/portfolio/WorkExperienceSection.astro';
+import { useTranslations } from '@/i18n/utils';
+import Layout from '@/layouts/Layout.astro';
+
+const t = useTranslations('en');
+const portfolio = await getEntry('portfolio', 'profile-en');
+
+if (!portfolio) {
+  throw new Error('Portfolio data not found');
+}
+---
+
+<Layout
+  title={`Portfolio | ${t('main.title')}`}
+  description={t('portfolio.description')}
+  path="/en/portfolio"
+  og={{ enabled: true }}
+  hreflangs={[
+    { path: '/portfolio', hreflang: 'ja' },
+    { path: '/en/portfolio', hreflang: 'en' },
+    { path: '/portfolio', hreflang: 'x-default' },
+  ]}
+>
+  <main class="space-y-12">
+    <div class="flex items-center justify-between">
+      <div></div>
+      <a
+        href="/portfolio"
+        class="border-border/60 inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="size-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="12" cy="12" r="10"></circle>
+          <path
+            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+          ></path>
+          <path d="M2 12h20"></path>
+        </svg>
+        日本語
+      </a>
+    </div>
+
+    <ProfileSection profile={portfolio.data.profile} />
+
+    <CVExportButton lang="en" />
+
+    <WorkExperienceSection items={portfolio.data.workExperience} lang="en" />
+
+    <ProjectsSection items={portfolio.data.projects} lang="en" />
+
+    <SkillsSection items={portfolio.data.skills} lang="en" />
+
+    {
+      portfolio.data.certifications &&
+        portfolio.data.certifications.length > 0 && (
+          <CertificationsSection
+            items={portfolio.data.certifications}
+            lang="en"
+          />
+        )
+    }
+
+    {
+      portfolio.data.education && portfolio.data.education.length > 0 && (
+        <EducationSection items={portfolio.data.education} lang="en" />
+      )
+    }
+  </main>
+</Layout>
