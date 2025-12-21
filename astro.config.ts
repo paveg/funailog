@@ -1,5 +1,4 @@
 import mdx from '@astrojs/mdx';
-import partytown from '@astrojs/partytown';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
@@ -36,11 +35,6 @@ export default defineConfig({
         deep: [/radix/, /data-/],
         // Keep Tailwind animation and dynamic classes
         greedy: [/animate-/, /transition-/],
-      },
-    }),
-    partytown({
-      config: {
-        forward: ['dataLayer.push', 'adsbygoogle.push'],
       },
     }),
   ],

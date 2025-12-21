@@ -13,7 +13,7 @@ import { getEntry } from 'astro:content';
 
 import type { Article, WebSite, WithContext } from 'schema-dts';
 
-import GoogleAnalytics from '@/components/analytics/GoogleAnalytics.astro';
+import CloudflareAnalytics from '@/components/analytics/CloudflareAnalytics.astro';
 import Footer from '@/components/Footer.astro';
 import Header from '@/components/Header.astro';
 import { TailwindIndicator } from '@/components/tailwind-indicator';
@@ -99,11 +99,7 @@ if (!meta) {
         </>
       )
     }
-    {
-      isProd && (
-        <GoogleAnalytics id={import.meta.env.PUBLIC_GA_MEASUREMENT_ID} />
-      )
-    }
+    {isProd && <CloudflareAnalytics />}
     {
       jsonLdSchema && (
         <script
