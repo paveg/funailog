@@ -1,6 +1,6 @@
 body {
   article {
-    @apply prose-sm mx-auto flex-grow break-words dark:prose-invert md:prose lg:prose-lg;
+    @apply prose-sm max-w-none flex-grow break-words dark:prose-invert md:prose md:max-w-none;
     & ul {
       @apply list-disc;
     }
@@ -11,61 +11,52 @@ body {
       @apply list-inside;
     }
     & h1 {
-      @apply mt-12 font-heading;
+      @apply mt-10 font-heading;
     }
     & h2,
     h3 {
-      @apply mb-4 mt-8 font-heading;
+      @apply mb-3 mt-6 font-heading;
     }
     & h4 {
-      @apply mb-2 mt-6 font-heading;
+      @apply mb-2 mt-5 font-heading;
     }
     & h5 {
       @apply mb-2 mt-4 font-heading;
     }
     & h6 {
-      @apply mb-1 mt-2 font-heading;
+      @apply mb-1 mt-3 font-heading;
     }
     h2,
     h3,
     h4,
     h5,
     h6 {
-      &::before {
-        content: '#';
-        color: var(--link);
-        @apply mr-2 opacity-60;
-      }
-
       &:hover {
         a > span.heading-link-icon {
           &:after {
-            content: '🔗';
-            vertical-align: 0.05em;
-            @apply ml-2 text-sm;
+            content: '#';
+            @apply ml-1 text-xs text-muted-foreground;
           }
         }
       }
     }
     & a {
-      @apply text-link transition-colors duration-normal;
+      @apply text-link underline-offset-2 transition-colors duration-fast;
       &:hover {
-        opacity: 0.8;
+        @apply text-link-hover;
       }
     }
     & code {
-      @apply rounded-md bg-muted px-1.5 py-0.5 font-code text-sm;
+      @apply rounded bg-muted px-1 py-0.5 font-code text-sm;
     }
     & pre {
-      @apply rounded-lg shadow-sm;
+      @apply rounded-md;
     }
     & blockquote {
-      @apply border-l-4 border-primary pl-4 italic text-muted-foreground;
-      border-left-color: hsl(var(--primary) / 0.3);
+      @apply border-l-2 border-border pl-4 not-italic text-muted-foreground;
     }
     & .footnotes {
-      @apply mt-6 border-t border-border pt-4 text-sm text-muted-foreground;
-      border-top-color: hsl(var(--border) / 0.4);
+      @apply mt-8 border-t border-border pt-4 text-sm text-muted-foreground;
       & li {
         @apply list-outside;
       }

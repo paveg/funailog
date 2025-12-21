@@ -32,29 +32,29 @@ const isAnchor = props.href.startsWith('#');
         rel={isAnchor || isInternal ? '' : 'noopener noreferrer'}
         class="not-prose"
       >
-        <Card className="flex h-[109px] w-full overflow-hidden transition-all duration-normal ease-soft hover:-translate-y-0.5 hover:shadow-md">
-          <CardHeader className="flex shrink grow basis-7/12 flex-col  overflow-hidden whitespace-nowrap p-4 *:overflow-hidden *:text-ellipsis">
-            <span class="font-bold">{title}</span>
+        <Card className="hover:bg-accent/50 flex h-[100px] w-full overflow-hidden transition-colors duration-fast">
+          <CardHeader className="flex shrink grow basis-7/12 flex-col overflow-hidden whitespace-nowrap p-3 *:overflow-hidden *:text-ellipsis">
+            <span class="text-sm font-medium text-foreground">{title}</span>
             <span class="grow text-xs leading-4 text-secondary-foreground">
               {description}
             </span>
-            <span class="flex items-center gap-1 text-xs leading-4">
+            <span class="flex items-center gap-1 text-xs leading-4 text-muted-foreground">
               {new URL(props.href).hostname}
             </span>
           </CardHeader>
-          <CardContent className="max-w-[200px] shrink grow basis-5/12 p-0">
+          <CardContent className="max-w-[180px] shrink grow basis-5/12 p-0">
             {image.src ? (
               <img
-                class="m-0 h-full rounded-r-xl object-cover"
+                class="m-0 h-full rounded-r-md object-cover"
                 src={image.src}
                 alt={title}
-                width={400}
-                height={109}
+                width={360}
+                height={100}
                 loading="lazy"
               />
             ) : (
-              <span class="flex size-full items-center justify-center border-l border-solid">
-                <ReaderIcon className="size-8" />
+              <span class="flex size-full items-center justify-center border-l border-border">
+                <ReaderIcon className="size-6 text-muted-foreground" />
               </span>
             )}
           </CardContent>

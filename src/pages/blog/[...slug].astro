@@ -75,17 +75,17 @@ const defaultImagePath = '/first-place.jpg';
 >
   <main>
     <article>
-      <h1 class="text-center">{post.data.title}</h1>
+      <h1 class="text-center font-heading">{post.data.title}</h1>
       <BlogDate post={post} />
       <Image
-        class="my-2 rounded-xl shadow-sm"
+        class="my-3 rounded-md"
         src={post.data.heroImage ?? defaultImagePath}
         alt="A hero image of the article"
         width={1200}
         height={630}
       />
       <BlogMeta post={post} minRead={remarkPluginFrontmatter.minRead} />
-      <Separator className="bg-border/40" />
+      <Separator className="bg-border" />
       <Content components={components} />
     </article>
   </main>
