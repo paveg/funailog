@@ -134,14 +134,14 @@ const styles = StyleSheet.create({
   },
   // ATS-friendly single column layout
   section: {
-    marginBottom: 14,
+    marginBottom: 10,
   },
   sectionTitle: {
     fontSize: 11,
     fontWeight: 'bold',
     color: ACCENT_COLOR,
-    marginBottom: 6,
-    paddingBottom: 3,
+    marginBottom: 4,
+    paddingBottom: 2,
     borderBottomWidth: 1.5,
     borderBottomColor: ACCENT_COLOR,
   },
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   },
   // Experience - clear hierarchy
   experienceItem: {
-    marginBottom: 12,
+    marginBottom: 8,
   },
   experienceHeader: {
     flexDirection: 'row',
