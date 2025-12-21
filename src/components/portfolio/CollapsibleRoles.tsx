@@ -30,13 +30,13 @@ const translations = {
   ja: {
     current: '現在',
     present: '現在',
-    showMore: (count: number) => `他${count}件の経歴を表示`,
+    showMore: (count: number) => `他 ${count} 件の経歴`,
     collapse: '折りたたむ',
   },
   en: {
     current: 'Current',
     present: 'Present',
-    showMore: (count: number) => `Show ${count} more`,
+    showMore: (count: number) => `+${count} more roles`,
     collapse: 'Collapse',
   },
 };
@@ -64,7 +64,7 @@ export function CollapsibleRoles({
   const hiddenCount = roles.length - initialVisibleCount;
 
   return (
-    <div className="mt-3">
+    <div className="mt-4">
       {visibleRoles.map((role, index) => {
         const isCurrent = role.period.end === null;
         const isLast = isExpanded
@@ -74,39 +74,28 @@ export function CollapsibleRoles({
         return (
           <div
             key={`${role.role}-${role.period.start}`}
-            className="flex gap-3 sm:gap-4"
+            className="flex gap-2.5 sm:gap-3.5"
           >
             {/* Stepper Indicator Column */}
             <div className="flex flex-col items-center">
-              {/* Circle Indicator */}
+              {/* Circle Indicator - smaller on mobile */}
               <div
-                className={`flex size-6 shrink-0 items-center justify-center rounded-full border-2 text-xs font-semibold sm:size-8 ${
+                className={`flex size-5 shrink-0 items-center justify-center rounded-full border-[1.5px] shadow-sm sm:size-6 ${
                   isCurrent
-                    ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-emerald-500 bg-emerald-500 text-white'
+                    ? 'border-primary/80 bg-primary text-primary-foreground'
+                    : 'border-emerald-400 bg-emerald-500 text-white'
                 }`}
               >
                 {isCurrent ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="size-3 sm:size-4"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <circle cx="12" cy="12" r="4" fill="currentColor" />
-                  </svg>
+                  <span className="size-1.5 rounded-full bg-current sm:size-2" />
                 ) : (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="size-3 sm:size-4"
+                    className="size-2.5 sm:size-3"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="2.5"
+                    strokeWidth="3"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   >
@@ -114,63 +103,63 @@ export function CollapsibleRoles({
                   </svg>
                 )}
               </div>
-              {/* Connecting Line (bottom) */}
+              {/* Connecting Line - visible solid line */}
               {(!isLast || (hasHiddenRoles && !isExpanded)) && (
-                <div className="my-1 w-0.5 flex-1 bg-border" />
+                <div className="my-1 min-h-6 w-px flex-1 bg-neutral-300 dark:bg-neutral-600" />
               )}
             </div>
 
             {/* Content Column */}
             <div
-              className={`flex-1 ${isLast && !hasHiddenRoles ? 'pb-0' : 'pb-6'}`}
+              className={`min-w-0 flex-1 ${isLast && !hasHiddenRoles ? 'pb-0' : 'pb-5'}`}
             >
-              {/* Current Badge */}
+              {/* Current indicator above role */}
               {isCurrent && (
-                <span className="bg-primary/10 mb-1.5 inline-block rounded-full px-2.5 py-0.5 text-xs font-medium text-primary">
+                <span className="mb-0.5 inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground">
+                  <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
                   {t.current}
                 </span>
               )}
-
               {/* Role Header */}
-              <div className="flex flex-wrap items-baseline gap-x-2">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                 <span
-                  className={`text-sm font-semibold ${
+                  className={`text-[13px] font-semibold leading-tight sm:text-sm ${
                     isCurrent ? 'text-foreground' : 'text-foreground/80'
                   }`}
                 >
                   {role.role}
                 </span>
                 {role.project && (
-                  <span className="rounded-md bg-blue-100 px-2 py-0.5 text-xs text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                  <Badge variant="project" className="text-[10px]">
                     {role.project}
-                  </span>
+                  </Badge>
                 )}
               </div>
 
               {/* Period */}
-              <span className="mt-0.5 block text-xs text-muted-foreground">
+              <span className="mt-0.5 block text-[11px] tabular-nums text-muted-foreground sm:text-xs">
                 {formatPeriod(role.period, lang)}
               </span>
 
               {/* Role Description */}
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground sm:text-sm">
                 {role.description}
               </p>
 
               {/* Role Links */}
               {role.links && role.links.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
+                <div className="mt-2 flex flex-wrap gap-1.5 sm:gap-2">
                   {role.links.map((link) => (
                     <a
                       key={link.url}
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                      className="hover:border-primary/20 hover:bg-primary/5 inline-flex items-center gap-1 rounded-md border border-transparent px-1.5 py-0.5 text-[11px] text-primary transition-colors sm:text-xs"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="size-3"
+                        className="size-2.5 sm:size-3"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -188,17 +177,17 @@ export function CollapsibleRoles({
                 </div>
               )}
 
-              {/* Role Technologies as Badges */}
+              {/* Role Technologies as Badges - responsive grid */}
               {role.technologies && role.technologies.length > 0 && (
-                <div className="mt-2.5 flex flex-wrap gap-1.5">
-                  {role.technologies.slice(0, 6).map((tech) => (
-                    <Badge key={tech} variant="secondary" className="text-xs">
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {role.technologies.slice(0, 5).map((tech) => (
+                    <Badge key={tech} variant="tech" className="text-[10px]">
                       {tech}
                     </Badge>
                   ))}
-                  {role.technologies.length > 6 && (
-                    <span className="text-muted-foreground/60 px-1 py-0.5 text-xs">
-                      +{role.technologies.length - 6}
+                  {role.technologies.length > 5 && (
+                    <span className="text-muted-foreground/70 inline-flex items-center px-1.5 py-0.5 text-[10px]">
+                      +{role.technologies.length - 5}
                     </span>
                   )}
                 </div>
@@ -210,20 +199,21 @@ export function CollapsibleRoles({
 
       {/* Expand/Collapse Button */}
       {hasHiddenRoles && (
-        <div className="flex gap-3 sm:gap-4">
+        <div className="flex gap-2.5 sm:gap-3.5">
+          {/* Connector to button */}
           <div className="flex flex-col items-center">
-            <div className="size-6 sm:size-8" />
+            <div className="size-5 sm:size-6" />
           </div>
           <button
             type="button"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="border-border/60 mt-2 inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            className="border-muted-foreground/30 bg-muted/30 hover:border-primary/40 hover:bg-primary/5 group mt-1 inline-flex items-center gap-1.5 rounded-full border border-dashed px-3 py-1 text-[11px] font-medium text-muted-foreground transition-all hover:text-primary sm:text-xs"
           >
             {isExpanded ? (
               <>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="size-3.5"
+                  className="size-3 transition-transform group-hover:-translate-y-0.5"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -239,7 +229,7 @@ export function CollapsibleRoles({
               <>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="size-3.5"
+                  className="size-3 transition-transform group-hover:translate-y-0.5"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
