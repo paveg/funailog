@@ -51,13 +51,13 @@ const COLLAPSIBLE_THRESHOLD = 3;
         const isCurrentCompany = work.period.end === null;
         const isLastCompany = workIndex === items.length - 1;
         return (
-          <div class="flex gap-4">
+          <div class="flex gap-3 sm:gap-4">
             {/* Company Stepper Indicator Column */}
             <div class="flex flex-col items-center">
               {/* Circle Indicator */}
               <div
                 class:list={[
-                  'flex size-10 shrink-0 items-center justify-center rounded-full border-2 text-sm font-semibold',
+                  'flex size-8 shrink-0 items-center justify-center rounded-full border-2 text-xs font-semibold sm:size-10 sm:text-sm',
                   isCurrentCompany
                     ? 'border-primary bg-primary text-primary-foreground'
                     : 'border-emerald-500 bg-emerald-500 text-white',
@@ -66,7 +66,7 @@ const COLLAPSIBLE_THRESHOLD = 3;
                 {isCurrentCompany ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="size-5"
+                    class="size-4 sm:size-5"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -79,7 +79,7 @@ const COLLAPSIBLE_THRESHOLD = 3;
                 ) : (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="size-5"
+                    class="size-4 sm:size-5"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -91,21 +91,23 @@ const COLLAPSIBLE_THRESHOLD = 3;
                   </svg>
                 )}
               </div>
-              {/* Connecting Line */}
+              {/* Connecting Line - show only between companies */}
               {!isLastCompany && <div class="my-1 w-0.5 flex-1 bg-border" />}
             </div>
 
             {/* Company Content Column */}
             <div class:list={['flex-1 pb-8', isLastCompany && 'pb-0']}>
               {/* Company Header */}
-              <div class="flex flex-wrap items-baseline justify-between gap-2">
-                <div class="flex items-center gap-2">
-                  <span class="text-lg font-semibold">{work.company}</span>
-                  <span class="bg-primary/10 rounded-full px-2 py-0.5 text-xs font-medium text-primary">
+              <div class="flex flex-col gap-0.5 sm:flex-row sm:flex-wrap sm:items-baseline sm:justify-between sm:gap-2">
+                <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                  <span class="text-base font-semibold sm:text-lg">
+                    {work.company}
+                  </span>
+                  <span class="bg-primary/10 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium text-primary">
                     {calculateYears(work.period)}
                   </span>
                 </div>
-                <span class="text-sm text-muted-foreground">
+                <span class="text-xs text-muted-foreground sm:text-sm">
                   {formatPeriod(work.period)}
                 </span>
               </div>

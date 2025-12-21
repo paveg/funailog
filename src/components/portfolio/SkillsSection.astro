@@ -2,6 +2,7 @@
 import type { SupportedLang } from '@/config/site';
 import type { Skill } from '@/schemas/portfolio-collection';
 
+import { Badge } from '@/components/ui/badge';
 import { useTranslations } from '@/i18n/utils';
 
 interface Props {
@@ -41,9 +42,9 @@ function getCategoryColor(category: string): string {
           </span>
           <div class="mt-2 flex flex-wrap gap-2">
             {category.items.map((skill) => (
-              <span class="border-border/50 bg-card/50 rounded-lg border px-2.5 py-1 text-sm transition-colors hover:border-border">
+              <Badge variant="secondary" className="text-sm">
                 {skill.name}
-              </span>
+              </Badge>
             ))}
           </div>
         </div>
