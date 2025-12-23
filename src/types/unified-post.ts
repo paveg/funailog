@@ -71,12 +71,11 @@ export function zennToUnified(article: ZennArticle): UnifiedPost {
 }
 
 /**
- * Sort unified posts by date (newest first)
+ * Sort unified posts by published date (newest first)
+ * Note: Uses published date (date), not lastUpdated, to maintain consistent chronological order
  */
 export function sortUnifiedPosts(posts: UnifiedPost[]): UnifiedPost[] {
   return posts.sort((a, b) => {
-    const dateA = a.lastUpdated ?? a.date;
-    const dateB = b.lastUpdated ?? b.date;
-    return dateB.getTime() - dateA.getTime();
+    return b.date.getTime() - a.date.getTime();
   });
 }
