@@ -17,88 +17,73 @@ const currentYear = today.getFullYear();
 const startYear = 2023;
 ---
 
-<footer class="mt-auto">
-  <!-- 装飾的な区切り線 - 和紙の繊維をイメージ -->
-  <div class="relative py-8">
-    <div class="absolute inset-x-0 top-1/2 flex items-center justify-center">
-      <div
-        class="h-px w-16 bg-gradient-to-r from-transparent via-border to-transparent"
-      >
-      </div>
-      <div class="bg-border/60 mx-3 size-1 rotate-45"></div>
-      <div
-        class="h-px w-16 bg-gradient-to-l from-transparent via-border to-transparent"
-      >
-      </div>
-    </div>
+<footer class="mt-auto pb-8 pt-16">
+  <!-- 繊細な区切り線 -->
+  <div class="mb-8 flex items-center justify-center gap-4">
+    <div class="to-border/60 h-px w-12 bg-gradient-to-r from-transparent"></div>
+    <div class="bg-border/40 size-1.5 rounded-full"></div>
+    <div class="to-border/60 h-px w-12 bg-gradient-to-l from-transparent"></div>
   </div>
 
-  <div
-    class="flex flex-col items-center gap-6 pb-8 pt-2 md:flex-row md:items-center md:justify-between"
-  >
-    <!-- コピーライトとリンク（モバイル: 下、デスクトップ: 左） -->
-    <div
-      class="order-2 flex flex-col items-center gap-2 text-center md:order-1 md:items-start md:text-left"
-    >
-      <a
-        href="/privacy"
-        class="relative text-xs text-muted-foreground transition-colors duration-200 after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-0 after:bg-current after:transition-all after:duration-300 hover:text-foreground hover:after:w-full"
-      >
-        Privacy Policy
-      </a>
-      <p class="text-muted-foreground/70 text-[11px] tracking-wide">
-        &copy; {startYear}&ndash;{currentYear}
-        {meta.data.author.name}
-      </p>
-    </div>
-
-    <!-- ソーシャルアイコン（モバイル: 上、デスクトップ: 右） -->
-    <nav
-      aria-label="Social links"
-      class="order-1 flex items-center gap-1 md:order-2"
-    >
+  <div class="flex flex-col items-center gap-6">
+    <!-- ソーシャルアイコン -->
+    <nav aria-label="Social links" class="flex items-center gap-2">
       <a
         href="/rss.xml"
-        class="hover:bg-secondary/60 group relative flex size-10 items-center justify-center rounded-full transition-all duration-300"
+        class="group relative flex size-9 items-center justify-center rounded-lg transition-all duration-200 hover:bg-accent"
         aria-label="RSSフィードを購読"
       >
         <RssIcon
-          className="size-[18px] text-muted-foreground transition-colors duration-300 group-hover:text-foreground"
+          className="size-4 text-muted-foreground transition-colors duration-200 group-hover:text-foreground"
         />
       </a>
       <a
         href={meta.data.links.github}
         target="_blank"
         rel="noopener noreferrer"
-        class="hover:bg-secondary/60 group relative flex size-10 items-center justify-center rounded-full transition-all duration-300"
+        class="group relative flex size-9 items-center justify-center rounded-lg transition-all duration-200 hover:bg-accent"
         aria-label="GitHubプロフィール"
       >
         <GitHubLogoIcon
-          className="size-[18px] text-muted-foreground transition-colors duration-300 group-hover:text-foreground"
+          className="size-4 text-muted-foreground transition-colors duration-200 group-hover:text-foreground"
         />
       </a>
       <a
         href={meta.data.links.twitter}
         target="_blank"
         rel="noopener noreferrer"
-        class="hover:bg-secondary/60 group relative flex size-10 items-center justify-center rounded-full transition-all duration-300"
+        class="group relative flex size-9 items-center justify-center rounded-lg transition-all duration-200 hover:bg-accent"
         aria-label="X (Twitter)"
       >
         <TwitterLogoIcon
-          className="size-[18px] text-muted-foreground transition-colors duration-300 group-hover:text-foreground"
+          className="size-4 text-muted-foreground transition-colors duration-200 group-hover:text-foreground"
         />
       </a>
       <a
         href={meta.data.links.instagram}
         target="_blank"
         rel="noopener noreferrer"
-        class="hover:bg-secondary/60 group relative flex size-10 items-center justify-center rounded-full transition-all duration-300"
+        class="group relative flex size-9 items-center justify-center rounded-lg transition-all duration-200 hover:bg-accent"
         aria-label="Instagram"
       >
         <InstagramLogoIcon
-          className="size-[18px] text-muted-foreground transition-colors duration-300 group-hover:text-foreground"
+          className="size-4 text-muted-foreground transition-colors duration-200 group-hover:text-foreground"
         />
       </a>
     </nav>
+
+    <!-- コピーライトとリンク -->
+    <div class="flex flex-col items-center gap-2 text-center">
+      <a
+        href="/privacy"
+        class="text-xs text-muted-foreground transition-colors duration-200 hover:text-foreground"
+      >
+        Privacy Policy
+      </a>
+      <p class="text-muted-foreground/60 text-[10px] tracking-wider">
+        &copy; {startYear}&ndash;{currentYear}
+        {meta.data.author.name}
+      </p>
+    </div>
   </div>
 </footer>

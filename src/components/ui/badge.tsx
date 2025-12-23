@@ -4,23 +4,26 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 const badgeVariants = cva(
-  'inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] font-medium tracking-wide transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+  'inline-flex items-center rounded-md border px-2.5 py-0.5 text-[11px] font-medium tracking-wide transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
   {
     variants: {
       variant: {
         default:
-          'border-primary/20 bg-primary/10 hover:border-primary/30 hover:bg-primary/15 text-primary',
+          'border-primary/15 bg-primary/8 hover:bg-primary/12 text-primary',
         secondary:
-          'bg-secondary/60 text-secondary-foreground/90 hover:bg-secondary/80 border-border shadow-sm hover:border-border hover:text-secondary-foreground',
+          'border-border bg-secondary text-secondary-foreground hover:bg-accent',
         destructive:
-          'border-destructive/20 bg-destructive/10 hover:border-destructive/30 hover:bg-destructive/15 text-destructive',
+          'border-destructive/20 bg-destructive/10 hover:bg-destructive/15 text-destructive',
         outline:
-          'hover:border-foreground/30 border-border bg-transparent text-muted-foreground hover:text-foreground',
-        // Green tech tags for technologies
-        tech: 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-300 hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 dark:hover:border-emerald-700 dark:hover:bg-emerald-900',
-        // Blue project tags for project names
+          'border-border bg-transparent text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+        // Tech tags - subtle warm tones matching the design system
+        tech: 'border-primary/10 bg-primary/5 text-primary/80 hover:bg-primary/10 dark:border-primary/20 dark:bg-primary/10 dark:text-primary/90',
+        // Project tags - slightly different tone
         project:
-          'border-blue-200 bg-blue-50 text-blue-700 hover:border-blue-300 hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-300 dark:hover:border-blue-700 dark:hover:bg-blue-900',
+          'border-muted-foreground/20 dark:border-muted-foreground/25 bg-muted text-muted-foreground hover:bg-accent',
+        // Category badge for blog posts
+        category:
+          'border-warm/20 hover:bg-warm/15 dark:border-warm/30 dark:bg-warm/10 bg-warm-light text-warm dark:text-warm',
       },
     },
     defaultVariants: {
