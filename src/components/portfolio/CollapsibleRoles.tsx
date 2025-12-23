@@ -82,8 +82,8 @@ export function CollapsibleRoles({
               <div
                 className={`flex size-5 shrink-0 items-center justify-center rounded-full border-[1.5px] shadow-sm sm:size-6 ${
                   isCurrent
-                    ? 'border-primary/80 bg-primary text-primary-foreground'
-                    : 'border-emerald-400 bg-emerald-500 text-white'
+                    ? 'border-warm/60 bg-warm text-white'
+                    : 'border-primary/30 bg-primary/10 text-primary'
                 }`}
               >
                 {isCurrent ? (
@@ -105,7 +105,7 @@ export function CollapsibleRoles({
               </div>
               {/* Connecting Line - visible solid line */}
               {(!isLast || (hasHiddenRoles && !isExpanded)) && (
-                <div className="my-1 min-h-6 w-px flex-1 bg-neutral-300 dark:bg-neutral-600" />
+                <div className="my-1 min-h-6 w-px flex-1 bg-border" />
               )}
             </div>
 
@@ -116,7 +116,7 @@ export function CollapsibleRoles({
               {/* Current indicator above role */}
               {isCurrent && (
                 <span className="mb-0.5 inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground">
-                  <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
+                  <span className="size-1.5 animate-pulse rounded-full bg-warm" />
                   {t.current}
                 </span>
               )}

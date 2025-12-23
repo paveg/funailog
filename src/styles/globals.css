@@ -4,56 +4,64 @@
 
 @layer base {
   :root {
-    /* 静謐 - Serene & Refined カラーパレット */
-    --background: hsl(0, 0%, 99%);
-    --foreground: hsl(0, 0%, 15%);
+    /* Warm Minimal - 温もりのあるミニマル */
+    --background: hsl(40, 20%, 98%);
+    --foreground: hsl(30, 10%, 18%);
 
-    --card: hsl(0, 0%, 100%);
-    --card-foreground: hsl(0, 0%, 15%);
+    --card: hsl(40, 25%, 99%);
+    --card-foreground: hsl(30, 10%, 18%);
 
-    --popover: hsl(0, 0%, 100%);
-    --popover-foreground: hsl(0, 0%, 15%);
+    --popover: hsl(40, 25%, 99%);
+    --popover-foreground: hsl(30, 10%, 18%);
 
-    --primary: hsl(0, 0%, 12%);
-    --primary-foreground: hsl(0, 0%, 99%);
+    --primary: hsl(30, 15%, 20%);
+    --primary-foreground: hsl(40, 20%, 98%);
 
-    --secondary: hsl(0, 0%, 96%);
-    --secondary-foreground: hsl(0, 0%, 20%);
+    --secondary: hsl(35, 15%, 94%);
+    --secondary-foreground: hsl(30, 10%, 25%);
 
-    --muted: hsl(0, 0%, 96%);
-    --muted-foreground: hsl(0, 0%, 38%);
+    --muted: hsl(35, 12%, 93%);
+    --muted-foreground: hsl(30, 8%, 45%);
 
-    --accent: hsl(0, 0%, 94%);
-    --accent-foreground: hsl(0, 0%, 20%);
+    --accent: hsl(35, 20%, 92%);
+    --accent-foreground: hsl(30, 10%, 22%);
 
-    --destructive: hsl(0, 60%, 50%);
+    --destructive: hsl(0, 65%, 50%);
     --destructive-foreground: hsl(0, 0%, 100%);
 
-    --border: hsl(0, 0%, 90%);
-    --input: hsl(0, 0%, 90%);
-    --ring: hsl(0, 0%, 20%);
-    --hover: hsl(0, 0%, 97%);
+    --border: hsl(35, 15%, 88%);
+    --input: hsl(35, 15%, 88%);
+    --ring: hsl(30, 15%, 25%);
+    --hover: hsl(35, 18%, 96%);
 
-    /* 角丸 - 控えめ */
-    --radius: 0.375rem;
-    --radius-sm: 0.25rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.625rem;
-    --radius-xl: 0.75rem;
+    /* 角丸 - やや大きめで柔らかい印象 */
+    --radius: 0.5rem;
+    --radius-sm: 0.375rem;
+    --radius-md: 0.625rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
 
-    /* シャドウ - 繊細 */
-    --shadow-xs: 0 1px 2px hsl(0 0% 0% / 0.02);
-    --shadow-sm: 0 1px 3px hsl(0 0% 0% / 0.04);
-    --shadow: 0 2px 6px hsl(0 0% 0% / 0.05);
-    --shadow-md: 0 4px 12px hsl(0 0% 0% / 0.06);
-    --shadow-lg: 0 8px 24px hsl(0 0% 0% / 0.08);
-    --shadow-hover: 0 6px 16px hsl(0 0% 0% / 0.08);
+    /* シャドウ - 温かみのある色調 */
+    --shadow-xs: 0 1px 2px hsl(30 20% 20% / 0.03);
+    --shadow-sm: 0 1px 3px hsl(30 20% 20% / 0.05),
+      0 1px 2px hsl(30 20% 20% / 0.03);
+    --shadow: 0 2px 8px hsl(30 20% 20% / 0.06), 0 1px 3px hsl(30 20% 20% / 0.04);
+    --shadow-md: 0 4px 16px hsl(30 20% 20% / 0.08),
+      0 2px 6px hsl(30 20% 20% / 0.04);
+    --shadow-lg: 0 8px 30px hsl(30 20% 20% / 0.1),
+      0 4px 12px hsl(30 20% 20% / 0.05);
+    --shadow-hover: 0 8px 25px hsl(30 20% 20% / 0.12),
+      0 4px 10px hsl(30 20% 20% / 0.06);
 
-    /* リンク - 落ち着いた青 */
-    --link: hsl(220, 35%, 40%);
-    --link-hover: hsl(220, 40%, 50%);
-    --link-active: hsl(220, 45%, 35%);
-    --link-visited: hsl(220, 20%, 45%);
+    /* リンク - 深みのあるインディゴ */
+    --link: hsl(230, 45%, 45%);
+    --link-hover: hsl(230, 50%, 55%);
+    --link-active: hsl(230, 50%, 40%);
+    --link-visited: hsl(230, 25%, 50%);
+
+    /* アクセントカラー */
+    --accent-warm: hsl(25, 70%, 55%);
+    --accent-warm-light: hsl(25, 70%, 95%);
 
     /* フォント */
     --font-body: 'Zen Kaku Gothic New', 'Hiragino Sans',
@@ -63,70 +71,76 @@
     --font-code: 'JetBrains Mono Variable', 'JetBrains Mono', monospace;
 
     /* コードシンタックスハイライト */
-    --code-bg: hsl(0, 0%, 96%);
-    --code-title: hsl(0, 0%, 20%);
-    --code-title-bg: hsl(0, 0%, 98%);
-    --code-hl: hsl(0, 0%, 92%);
-    --code-hl-sign: hsl(220, 35%, 45%);
-    --code-find: hsl(0, 0%, 90%);
+    --code-bg: hsl(35, 15%, 95%);
+    --code-title: hsl(30, 10%, 25%);
+    --code-title-bg: hsl(35, 20%, 97%);
+    --code-hl: hsl(35, 18%, 90%);
+    --code-hl-sign: hsl(230, 45%, 50%);
+    --code-find: hsl(35, 15%, 88%);
 
     /* アニメーション */
     --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     --duration-fast: 150ms;
     --duration-normal: 200ms;
     --duration-slow: 350ms;
   }
 
   .dark {
-    --background: hsl(0, 0%, 8%);
-    --foreground: hsl(0, 0%, 90%);
+    --background: hsl(25, 10%, 8%);
+    --foreground: hsl(35, 15%, 90%);
 
-    --card: hsl(0, 0%, 10%);
-    --card-foreground: hsl(0, 0%, 90%);
+    --card: hsl(25, 8%, 11%);
+    --card-foreground: hsl(35, 15%, 90%);
 
-    --popover: hsl(0, 0%, 10%);
-    --popover-foreground: hsl(0, 0%, 90%);
+    --popover: hsl(25, 8%, 11%);
+    --popover-foreground: hsl(35, 15%, 90%);
 
-    --primary: hsl(0, 0%, 90%);
-    --primary-foreground: hsl(0, 0%, 8%);
+    --primary: hsl(35, 15%, 90%);
+    --primary-foreground: hsl(25, 10%, 10%);
 
-    --secondary: hsl(0, 0%, 15%);
-    --secondary-foreground: hsl(0, 0%, 85%);
+    --secondary: hsl(25, 8%, 16%);
+    --secondary-foreground: hsl(35, 12%, 82%);
 
-    --muted: hsl(0, 0%, 15%);
-    --muted-foreground: hsl(0, 0%, 63%);
+    --muted: hsl(25, 6%, 16%);
+    --muted-foreground: hsl(35, 8%, 60%);
 
-    --accent: hsl(0, 0%, 18%);
-    --accent-foreground: hsl(0, 0%, 85%);
+    --accent: hsl(25, 10%, 18%);
+    --accent-foreground: hsl(35, 12%, 85%);
 
-    --destructive: hsl(0, 55%, 45%);
+    --destructive: hsl(0, 60%, 45%);
     --destructive-foreground: hsl(0, 0%, 100%);
 
-    --link: hsl(215, 35%, 65%);
-    --link-hover: hsl(215, 40%, 75%);
-    --link-active: hsl(215, 40%, 55%);
-    --link-visited: hsl(215, 25%, 60%);
+    --link: hsl(220, 50%, 70%);
+    --link-hover: hsl(220, 55%, 78%);
+    --link-active: hsl(220, 50%, 60%);
+    --link-visited: hsl(220, 30%, 65%);
 
-    --border: hsl(0, 0%, 18%);
-    --input: hsl(0, 0%, 18%);
-    --ring: hsl(0, 0%, 80%);
-    --hover: hsl(0, 0%, 12%);
+    /* アクセントカラー（ダーク） */
+    --accent-warm: hsl(25, 65%, 55%);
+    --accent-warm-light: hsl(25, 50%, 15%);
+
+    --border: hsl(25, 8%, 20%);
+    --input: hsl(25, 8%, 20%);
+    --ring: hsl(35, 15%, 80%);
+    --hover: hsl(25, 8%, 14%);
 
     /* ダークモード用シャドウ */
-    --shadow-xs: 0 1px 2px hsl(0 0% 0% / 0.15);
-    --shadow-sm: 0 1px 3px hsl(0 0% 0% / 0.2);
-    --shadow: 0 2px 6px hsl(0 0% 0% / 0.25);
-    --shadow-md: 0 4px 12px hsl(0 0% 0% / 0.3);
-    --shadow-lg: 0 8px 24px hsl(0 0% 0% / 0.35);
-    --shadow-hover: 0 6px 16px hsl(0 0% 0% / 0.35);
+    --shadow-xs: 0 1px 2px hsl(0 0% 0% / 0.2);
+    --shadow-sm: 0 1px 3px hsl(0 0% 0% / 0.25), 0 1px 2px hsl(0 0% 0% / 0.15);
+    --shadow: 0 2px 8px hsl(0 0% 0% / 0.3), 0 1px 3px hsl(0 0% 0% / 0.2);
+    --shadow-md: 0 4px 16px hsl(0 0% 0% / 0.35), 0 2px 6px hsl(0 0% 0% / 0.2);
+    --shadow-lg: 0 8px 30px hsl(0 0% 0% / 0.4), 0 4px 12px hsl(0 0% 0% / 0.25);
+    --shadow-hover: 0 8px 25px hsl(0 0% 0% / 0.4),
+      0 4px 10px hsl(0 0% 0% / 0.25);
 
     /* ダークモード用コードハイライト */
-    --code-bg: hsl(0, 0%, 12%);
-    --code-title: hsl(0, 0%, 85%);
-    --code-title-bg: hsl(0, 0%, 15%);
-    --code-hl: hsl(0, 0%, 18%);
-    --code-hl-sign: hsl(215, 35%, 65%);
-    --code-find: hsl(0, 0%, 20%);
+    --code-bg: hsl(25, 8%, 13%);
+    --code-title: hsl(35, 12%, 85%);
+    --code-title-bg: hsl(25, 8%, 16%);
+    --code-hl: hsl(25, 10%, 20%);
+    --code-hl-sign: hsl(220, 50%, 70%);
+    --code-find: hsl(25, 8%, 22%);
   }
 }
 

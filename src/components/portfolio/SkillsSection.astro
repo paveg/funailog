@@ -12,37 +12,22 @@ interface Props {
 
 const { items, lang = 'ja' } = Astro.props;
 const t = useTranslations(lang);
-
-const categoryColors: Record<string, string> = {
-  'Programming Languages':
-    'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-  Frontend:
-    'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
-  'Backend & Infrastructure':
-    'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
-  Tools:
-    'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
-};
-
-function getCategoryColor(category: string): string {
-  return categoryColors[category] || 'bg-muted text-muted-foreground';
-}
 ---
 
-<section class="space-y-4">
-  <h2 class="font-heading text-xl font-semibold">{t('portfolio.skills')}</h2>
+<section class="space-y-4 sm:space-y-5">
+  <h2 class="font-heading text-lg font-semibold sm:text-xl">
+    {t('portfolio.skills')}
+  </h2>
   <div class="space-y-4">
     {
       items.map((category) => (
         <div>
-          <span
-            class={`inline-block rounded-full px-3 py-1 text-xs font-medium ${getCategoryColor(category.category)}`}
-          >
+          <Badge variant="category" className="text-[10px] sm:text-xs">
             {category.category}
-          </span>
-          <div class="mt-2 flex flex-wrap gap-2">
+          </Badge>
+          <div class="mt-2 flex flex-wrap gap-1.5 sm:gap-2">
             {category.items.map((skill) => (
-              <Badge variant="secondary" className="text-sm">
+              <Badge variant="tech" className="text-[10px] sm:text-xs">
                 {skill.name}
               </Badge>
             ))}
