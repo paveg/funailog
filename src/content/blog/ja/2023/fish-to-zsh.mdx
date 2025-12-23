@@ -1,12 +1,22 @@
 ---
-title: Go back to zsh from fish
-description: 2023年にfishからzshへで戻ったのでそのことについてのメモなどを書きます
+title: fishからzshに戻した理由とセットアップ方法【2023年版】
+description: POSIX非互換による問題からfishシェルを2年使用後、zshに戻しました。環境構築手順やasdf、fzfの設定方法を含む完全ガイド。
 published: 2023-09-12
+lastUpdated: 2025-12-24
 heroImage: https://funailog.imgix.net/2023/terminal.png?auto=format,compress,enhance
-tags: ['zsh', 'fish', 'shell', 'terminal']
+tags: ['zsh', 'fish', 'shell', 'terminal', '開発環境', 'dotfiles']
 isPublished: true
 category: programming
 ---
+
+約2年間使ったfishシェルからzshに戻した記録です。
+
+**この記事でわかること:**
+
+- fishからzshに戻した理由（POSIX非互換の問題）
+- zshのセットアップ手順
+- asdf、ghq、fzfの設定方法
+- dotfilesの構成例
 
 dotfiles[^1]って本来頻繁に弄るべきではないと思いつつ、いくらでも改善できるので時間を忘れて弄りがちですね。
 
