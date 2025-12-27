@@ -15,9 +15,9 @@ export const BlogDate = ({ post }: Props) => {
       <a href={`/${collection}/categories/${category}`}>
         <Badge className="capitalize">{category}</Badge>
       </a>
-      <div className="flex gap-2">
-        {lastUpdated && <DateComponent type="updated" date={lastUpdated} />}
+      <div className="flex items-center gap-2">
         {published && <DateComponent type="published" date={published} />}
+        {lastUpdated && <DateComponent type="updated" date={lastUpdated} />}
       </div>
     </div>
   );

@@ -1,6 +1,16 @@
 body {
   article {
-    @apply prose-sm max-w-none flex-grow break-words dark:prose-invert md:prose md:max-w-none;
+    /* prose (16px base) on all devices for optimal readability */
+    @apply prose max-w-none flex-grow break-words dark:prose-invert;
+
+    /* Japanese-optimized line height (1.875 = 30px at 16px base) */
+    line-height: 1.875;
+
+    & p {
+      /* Generous paragraph spacing for scanability */
+      @apply my-6;
+    }
+
     & ul {
       @apply list-disc;
     }
@@ -9,22 +19,41 @@ body {
     }
     & li {
       @apply list-inside;
+      /* Comfortable spacing between list items */
+      @apply my-2;
     }
+
+    /* Heading hierarchy with clear visual distinction */
     & h1 {
-      @apply mt-10 font-heading text-foreground;
+      @apply mb-6 mt-12 font-heading text-foreground;
+      @apply text-2xl md:text-3xl;
+      font-weight: 700;
+      letter-spacing: -0.01em;
     }
-    & h2,
-    h3 {
-      @apply mb-3 mt-6 font-heading text-foreground;
+    & h2 {
+      @apply mb-4 mt-10 font-heading text-foreground;
+      @apply text-xl md:text-2xl;
+      font-weight: 600;
+    }
+    & h3 {
+      @apply mb-3 mt-8 font-heading text-foreground;
+      @apply text-lg md:text-xl;
+      font-weight: 600;
     }
     & h4 {
-      @apply mb-2 mt-5 font-heading text-foreground;
+      @apply mb-2 mt-6 font-heading text-foreground;
+      @apply text-base md:text-lg;
+      font-weight: 600;
     }
     & h5 {
-      @apply mb-2 mt-4 font-heading text-foreground;
+      @apply mb-2 mt-5 font-heading text-foreground;
+      @apply text-base;
+      font-weight: 500;
     }
     & h6 {
-      @apply mb-1 mt-3 font-heading text-foreground;
+      @apply mb-1 mt-4 font-heading text-foreground;
+      @apply text-sm md:text-base;
+      font-weight: 500;
     }
     h2,
     h3,
@@ -47,22 +76,33 @@ body {
       }
     }
     & code {
-      @apply rounded bg-muted px-1 py-0.5 font-code text-sm;
+      @apply rounded bg-muted px-1.5 py-0.5 font-code text-sm;
     }
     & pre {
-      @apply rounded-md;
+      @apply my-6 rounded-md;
     }
     & blockquote {
-      @apply border-l-2 border-border pl-4 not-italic text-muted-foreground;
+      @apply my-6 border-l-2 border-border pl-4 not-italic text-muted-foreground;
     }
     & .footnotes {
-      @apply mt-8 border-t border-border pt-4 text-sm text-muted-foreground;
+      @apply mt-10 border-t border-border pt-6 text-sm text-muted-foreground;
       & li {
         @apply list-outside;
       }
       & .data-footnote-backref {
         text-decoration: none;
       }
+    }
+
+    /* Tables - improved spacing */
+    & table {
+      @apply my-6;
+    }
+
+    /* Images and figures - breathing room */
+    & img,
+    & figure {
+      @apply my-6;
     }
   }
 }

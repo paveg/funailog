@@ -1,13 +1,17 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 
-import { ArrowRightIcon, CalendarIcon } from '@radix-ui/react-icons';
+import {
+  ArrowRightIcon,
+  CalendarIcon,
+  ReloadIcon,
+} from '@radix-ui/react-icons';
 
 import { Badge } from '@/components/ui/badge';
 import { useTranslations, generateHreflangs } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 import { WebsiteLd } from '@/lib/rich-results';
-import { formatDate } from '@/lib/utils';
+import { formatDateEn } from '@/lib/utils';
 import { fetchZennArticles } from '@/lib/zenn';
 import {
   blogToUnified,
@@ -77,6 +81,13 @@ const recentPosts = sortUnifiedPosts([...blogPosts, ...zennArticles]).slice(
         {
           recentPosts.map((post) => {
             const isZenn = post.type === 'zenn';
+            // Compare only the date portion to ignore time differences
+            const dateOnly = post.date.toISOString().slice(0, 10);
+            const lastUpdatedOnly = post.lastUpdated
+              ?.toISOString()
+              .slice(0, 10);
+            const hasDistinctUpdate =
+              !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
             return (
               <li class="group">
                 <a
@@ -100,13 +111,20 @@ const recentPosts = sortUnifiedPosts([...blogPosts, ...zennArticles]).slice(
                             {post.category}
                           </Badge>
                         )}
-                        <time
-                          datetime={post.date.toISOString()}
-                          class="flex items-center gap-1 text-xs text-muted-foreground"
-                        >
+                        <span class="flex items-center gap-1 text-xs text-muted-foreground">
                           <CalendarIcon className="size-3" />
-                          {formatDate(post.date)}
-                        </time>
+                          <time datetime={post.date.toISOString()}>
+                            {formatDateEn(post.date)}
+                          </time>
+                          {hasDistinctUpdate && post.lastUpdated && (
+                            <>
+                              <ReloadIcon className="ml-1 size-3" />
+                              <time datetime={post.lastUpdated.toISOString()}>
+                                {formatDateEn(post.lastUpdated)}
+                              </time>
+                            </>
+                          )}
+                        </span>
                       </div>
                       <h3 class="font-heading text-foreground transition-colors duration-150 group-hover:text-link">
                         {post.title}

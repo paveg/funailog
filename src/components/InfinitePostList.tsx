@@ -1,13 +1,12 @@
 import {
   CalendarIcon,
-  ChatBubbleIcon,
   ExternalLinkIcon,
-  HeartIcon,
   ReloadIcon,
 } from '@radix-ui/react-icons';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
+import { formatDateEn } from '@/lib/utils';
 
 export type SerializedPost = {
   type: 'blog' | 'zenn';
@@ -28,17 +27,16 @@ export type SerializedPost = {
 const POSTS_PER_PAGE = 10;
 
 function formatDate(dateString: string): string {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  }).format(new Date(dateString));
+  return formatDateEn(new Date(dateString));
 }
 
 function PostItem({ post }: { post: SerializedPost }) {
   const isZenn = post.type === 'zenn';
-  const displayDate = post.lastUpdated ?? post.date;
-  const hasUpdate = !!post.lastUpdated;
+  // Compare only the date portion (YYYY-MM-DD) to ignore time differences
+  const dateOnly = post.date.slice(0, 10);
+  const lastUpdatedOnly = post.lastUpdated?.slice(0, 10);
+  const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
+  const tags = post.tags ?? [];
 
   return (
     <article className="group">
@@ -54,14 +52,18 @@ function PostItem({ post }: { post: SerializedPost }) {
             </Badge>
           </a>
         )}
-        <time className="flex items-center gap-1" dateTime={displayDate}>
-          {hasUpdate ? (
-            <ReloadIcon className="size-3" />
-          ) : (
-            <CalendarIcon className="size-3" />
+        <span className="flex items-center gap-1">
+          <CalendarIcon className="size-3" />
+          <time dateTime={post.date}>{formatDate(post.date)}</time>
+          {hasDistinctUpdate && (
+            <>
+              <ReloadIcon className="ml-1 size-3" />
+              <time dateTime={post.lastUpdated}>
+                {formatDate(post.lastUpdated!)}
+              </time>
+            </>
           )}
-          {formatDate(displayDate)}
-        </time>
+        </span>
       </div>
       <a
         href={post.url}
@@ -76,37 +78,24 @@ function PostItem({ post }: { post: SerializedPost }) {
           )}
         </h2>
       </a>
-      {isZenn ? (
-        <div className="flex items-center gap-3 pt-1 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <HeartIcon className="size-3.5" />
-            {post.likedCount}
-          </span>
-          <span className="flex items-center gap-1">
-            <ChatBubbleIcon className="size-3.5" />
-            {post.commentsCount}
-          </span>
-          <span className="text-muted-foreground/70">{post.articleType}</span>
-        </div>
-      ) : (
-        <>
-          <p className="pt-1 text-sm leading-relaxed text-muted-foreground">
-            {post.description}
-          </p>
-          {post.tags && post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 pt-2">
-              {post.tags.map((tag) => (
-                <a
-                  key={tag}
-                  href={`/blog/tags/${tag}`}
-                  className="text-xs text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  #{tag}
-                </a>
-              ))}
-            </div>
+      {tags.length > 0 && (
+        <div className="flex flex-wrap gap-2 pt-1.5">
+          {tags.map((tag) =>
+            isZenn ? (
+              <span key={tag} className="text-xs text-muted-foreground">
+                #{tag}
+              </span>
+            ) : (
+              <a
+                key={tag}
+                href={`/blog/tags/${tag}`}
+                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+              >
+                #{tag}
+              </a>
+            ),
           )}
-        </>
+        </div>
       )}
     </article>
   );
