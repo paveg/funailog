@@ -102,45 +102,50 @@ export function ShareButtons({ url, title }: ShareButtonsProps) {
   };
 
   return (
-    <div className="mt-10 border-t border-border pt-8">
-      <p className="mb-4 text-center text-sm font-medium text-muted-foreground">
-        この記事をシェア
-      </p>
-      <div className="flex items-center justify-center gap-2">
-        {sharePlatforms.map((platform) => (
-          <a
-            key={platform.name}
-            href={platform.getShareUrl(url, title)}
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="mt-12">
+      <div className="border-border/50 bg-accent/30 rounded-xl border px-6 py-5">
+        <p className="mb-4 text-center text-sm font-medium text-foreground">
+          この記事をシェア
+        </p>
+        <div className="flex items-center justify-center gap-3">
+          {sharePlatforms.map((platform) => (
+            <a
+              key={platform.name}
+              href={platform.getShareUrl(url, title)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                'group relative flex size-11 items-center justify-center rounded-full',
+                'border-border/50 border bg-background text-muted-foreground',
+                'shadow-sm transition-all duration-200',
+                'hover:border-border hover:shadow-md',
+                platform.hoverColor,
+              )}
+              aria-label={platform.ariaLabel}
+            >
+              {platform.icon}
+            </a>
+          ))}
+          <button
+            type="button"
+            onClick={handleCopyLink}
             className={cn(
-              'group relative flex size-10 items-center justify-center rounded-lg',
-              'text-muted-foreground transition-all duration-200',
-              'hover:bg-accent',
-              platform.hoverColor,
+              'group relative flex size-11 items-center justify-center rounded-full',
+              'border-border/50 border bg-background text-muted-foreground',
+              'shadow-sm transition-all duration-200',
+              'hover:border-border hover:text-foreground hover:shadow-md',
+              copied &&
+                'border-green-500/50 text-green-600 hover:text-green-600',
             )}
-            aria-label={platform.ariaLabel}
+            aria-label={copied ? 'リンクをコピーしました' : 'リンクをコピー'}
           >
-            {platform.icon}
-          </a>
-        ))}
-        <button
-          type="button"
-          onClick={handleCopyLink}
-          className={cn(
-            'group relative flex size-10 items-center justify-center rounded-lg',
-            'text-muted-foreground transition-all duration-200',
-            'hover:bg-accent hover:text-foreground',
-            copied && 'text-green-600 hover:text-green-600',
-          )}
-          aria-label={copied ? 'リンクをコピーしました' : 'リンクをコピー'}
-        >
-          {copied ? (
-            <CheckIcon className="size-4" />
-          ) : (
-            <Link2Icon className="size-4" />
-          )}
-        </button>
+            {copied ? (
+              <CheckIcon className="size-4" />
+            ) : (
+              <Link2Icon className="size-4" />
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
