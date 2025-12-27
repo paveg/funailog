@@ -1,18 +1,15 @@
 ---
 import ButtonLink from '@/components/ButtonLink.astro';
-import { defaultLang, showDefaultLang } from '@/i18n/ui';
-import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+import { useTranslations } from '@/i18n/utils';
 
-const url = Astro.url;
-const lang = getLangFromUrl(url);
-const t = useTranslations(lang);
+const t = useTranslations('ja');
 ---
 
 <div class="py-12 text-center">
   <h2>{t('content.notfound')}</h2>
 
   <ButtonLink
-    href={!showDefaultLang && lang === defaultLang ? `/blog` : `/blog/${lang}`}
+    href="/blog"
     class="mt-8"
     size="sm"
     variant="link"

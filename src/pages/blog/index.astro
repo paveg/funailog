@@ -18,10 +18,6 @@ const t = useTranslations(lang);
 // Fetch blog posts
 const blogPosts = (await getCollection('blog'))
   .filter((post) => post.data.isPublished)
-  .filter((post) => {
-    const [postLang] = post.slug.split('/');
-    return postLang === defaultLang;
-  })
   .map(blogToUnified);
 
 // Fetch Zenn articles

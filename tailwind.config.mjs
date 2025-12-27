@@ -15,6 +15,9 @@ export default {
       },
     },
     extend: {
+      fontSize: {
+        '2xs': ['0.625rem', { lineHeight: '0.875rem' }],
+      },
       fontFamily: {
         body: ['var(--font-body)'],
         heading: ['var(--font-heading)'],

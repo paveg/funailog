@@ -4,7 +4,6 @@ import satori from 'satori';
 import sharp from 'sharp';
 
 const ogImage = async (text: string, date?: Date, emoji?: string) => {
-  // TODO: Change font as I like.
   const notoFontData = readFileSync('./src/assets/NotoSansCJKjp-Bold.woff');
 
   const logoBuffer = readFileSync('./src/assets/logo_512.png');

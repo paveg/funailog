@@ -1,13 +1,17 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 
-import { ArrowRightIcon, CalendarIcon } from '@radix-ui/react-icons';
+import {
+  ArrowRightIcon,
+  CalendarIcon,
+  ReloadIcon,
+} from '@radix-ui/react-icons';
 
 import { Badge } from '@/components/ui/badge';
-import { defaultLang } from '@/i18n/ui';
 import { useTranslations, generateHreflangs } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 import { WebsiteLd } from '@/lib/rich-results';
+import { formatDateEn } from '@/lib/utils';
 import { fetchZennArticles } from '@/lib/zenn';
 import {
   blogToUnified,
@@ -25,10 +29,6 @@ if (!meta) {
 // 最新記事5件を取得
 const blogPosts = (await getCollection('blog'))
   .filter((post) => post.data.isPublished)
-  .filter((post) => {
-    const [postLang] = post.slug.split('/');
-    return postLang === defaultLang;
-  })
   .map(blogToUnified);
 
 const zennArticles = (await fetchZennArticles()).map(zennToUnified);
@@ -36,14 +36,6 @@ const recentPosts = sortUnifiedPosts([...blogPosts, ...zennArticles]).slice(
   0,
   5,
 );
-
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat('ja-JP', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  }).format(date);
-}
 ---
 
 <Layout
@@ -89,6 +81,13 @@ function formatDate(date: Date): string {
         {
           recentPosts.map((post) => {
             const isZenn = post.type === 'zenn';
+            // Compare only the date portion to ignore time differences
+            const dateOnly = post.date.toISOString().slice(0, 10);
+            const lastUpdatedOnly = post.lastUpdated
+              ?.toISOString()
+              .slice(0, 10);
+            const hasDistinctUpdate =
+              !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
             return (
               <li class="group">
                 <a
@@ -112,13 +111,20 @@ function formatDate(date: Date): string {
                             {post.category}
                           </Badge>
                         )}
-                        <time
-                          datetime={post.date.toISOString()}
-                          class="flex items-center gap-1 text-xs text-muted-foreground"
-                        >
+                        <span class="flex items-center gap-1 text-xs text-muted-foreground">
                           <CalendarIcon className="size-3" />
-                          {formatDate(post.date)}
-                        </time>
+                          <time datetime={post.date.toISOString()}>
+                            {formatDateEn(post.date)}
+                          </time>
+                          {hasDistinctUpdate && post.lastUpdated && (
+                            <>
+                              <ReloadIcon className="ml-1 size-3" />
+                              <time datetime={post.lastUpdated.toISOString()}>
+                                {formatDateEn(post.lastUpdated)}
+                              </time>
+                            </>
+                          )}
+                        </span>
                       </div>
                       <h3 class="font-heading text-foreground transition-colors duration-150 group-hover:text-link">
                         {post.title}

@@ -1,7 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 
-import { defaultLang } from '@/i18n/ui';
 import { fetchZennArticles } from '@/lib/zenn';
 import {
   blogToUnified,
@@ -13,10 +12,6 @@ export const GET: APIRoute = async () => {
   // Fetch blog posts
   const blogPosts = (await getCollection('blog'))
     .filter((post) => post.data.isPublished)
-    .filter((post) => {
-      const [lang] = post.slug.split('/');
-      return lang === defaultLang;
-    })
     .map(blogToUnified);
 
   // Fetch Zenn articles

@@ -44,7 +44,7 @@ const getAriaLabel = (name: string, type: 'site' | 'repo') => {
               <span class="text-sm font-medium sm:text-base">
                 {project.name}
               </span>
-              <Badge variant="category" className="text-[9px] sm:text-[10px]">
+              <Badge variant="category" className="text-2xs sm:text-xs">
                 {typeLabels[project.type][lang]}
               </Badge>
             </div>
@@ -78,12 +78,12 @@ const getAriaLabel = (name: string, type: 'site' | 'repo') => {
           </p>
           <div class="flex flex-wrap gap-1 sm:gap-1.5">
             {project.techStack.slice(0, 5).map((tech) => (
-              <Badge variant="tech" className="text-[9px] sm:text-[10px]">
+              <Badge variant="tech" className="text-2xs sm:text-xs">
                 {tech}
               </Badge>
             ))}
             {project.techStack.length > 5 && (
-              <span class="text-muted-foreground/60 px-1 py-0.5 text-[9px] sm:text-xs">
+              <span class="text-muted-foreground/60 px-1 py-0.5 text-2xs sm:text-xs">
                 +{project.techStack.length - 5}
               </span>
             )}
