@@ -21,5 +21,14 @@ export const metaCollection = defineCollection({
       instagram: z.string(),
       linkedin: z.string(),
     }),
+    affiliate: z
+      .object({
+        amazon: z
+          .object({
+            associateId: z.string(),
+          })
+          .optional(),
+      })
+      .optional(),
   }),
 });
