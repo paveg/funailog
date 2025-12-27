@@ -163,7 +163,7 @@ importers:
         specifier: ^15.2.10
         version: 15.5.2
       markdownlint-cli2:
-        specifier: 0.20.0
+        specifier: ^0.20.0
         version: 0.20.0
       mdast-util-to-hast:
         specifier: ^13.2.1
