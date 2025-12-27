@@ -9,6 +9,7 @@ import Link from '@/components/Link.astro';
 import { BlogDate } from '@/components/markdown/blog-date';
 import { BlogMeta } from '@/components/markdown/blog-meta';
 import Image from '@/components/markdown/Image.astro';
+import { ShareButtons } from '@/components/ShareButtons';
 import { Separator } from '@/components/ui/separator';
 import { useTranslations } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
@@ -42,6 +43,7 @@ const components = {
 };
 const site = Astro.site ?? '';
 const path = `${post.collection}/${post.slug}`;
+const fullUrl = new URL(path, site).toString();
 const t = useTranslations('ja');
 const defaultImagePath = '/first-place.jpg';
 ---
@@ -81,6 +83,7 @@ const defaultImagePath = '/first-place.jpg';
       <BlogMeta post={post} minRead={remarkPluginFrontmatter.minRead} />
       <Separator className="bg-border" />
       <Content components={components} />
+      <ShareButtons client:load url={fullUrl} title={post.data.title} />
     </article>
   </main>
 </Layout>
