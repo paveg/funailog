@@ -1,0 +1,393 @@
+---
+title: dotfilesをリニューアル：devbox + Ghosttyで爆速開発環境を構築した話
+description: dotfilesからdotsへの移行記録。devboxによるNixベースのパッケージ管理、Ghosttyターミナルの導入、fzf+ghqのキャッシュ高速化、zinit turbo modeでシェル起動時間50msを実現した最新の開発環境構築について解説します。
+published: 2025-12-27
+tags:
+  [
+    'dotfiles',
+    'devbox',
+    'ghostty',
+    'zsh',
+    'terminal',
+    '開発環境',
+    'Nix',
+    'fzf',
+    'ghq',
+  ]
+isPublished: true
+category: programming
+---
+
+dotfilesを完全にリニューアルしました。
+
+**この記事でわかること:**
+
+- dotfiles → dots への移行理由と背景
+- devboxによるNixベースのパッケージ管理の実践
+- Ghosttyターミナルの設定と使用感
+- fzf + ghqのキャッシュ機能で爆速リポジトリ検索
+- zinit turbo modeでシェル起動時間50msを実現する具体的な設定
+- alacritty/zellijからの移行ポイント
+
+## 移行の背景
+
+以前のdotfilesリポジトリでは、以下の構成で開発環境を管理していました。
+
+| カテゴリ       | 以前                                          | 現在                                  |
+| :------------- | :-------------------------------------------- | :------------------------------------ |
+| リポジトリ     | [dotfiles](https://github.com/paveg/dotfiles) | [dots](https://github.com/paveg/dots) |
+| パッケージ管理 | Homebrew + Cargo                              | **devbox (Nix)**                      |
+| ターミナル     | Alacritty                                     | **Ghostty**                           |
+| マルチプレクサ | Zellij                                        | tmux                                  |
+| dotfiles管理   | chezmoi                                       | chezmoi                               |
+| プラグイン管理 | zinit                                         | zinit (turbo mode強化)                |
+
+特に **devbox** と **Ghostty** の導入が今回の移行の核心です。
+
+## なぜdotsへ移行したのか
+
+### 1. パッケージ管理の複雑化
+
+以前はHomebrewとCargoの併用でツールを管理していました。macOSとLinuxで環境を統一しようとすると、Homebrewは`linuxbrew`が必要になり、設定が煩雑になります。
+
+また、Rustツールは`cargo install`で管理していましたが、バージョン固定やアップデート管理が手動になりがちでした。
+
+### 2. 再現性への課題
+
+チームメンバーや新しいマシンで同じ環境を再現しようとすると、Homebrewのバージョン差異やOSごとのパッケージ名の違いで問題が発生することがありました。
+
+### 3. ターミナルの進化
+
+Alacrittyは優秀なターミナルでしたが、2024年末にGhosttyが正式リリースされ、状況が変わりました。
+
+## devbox: Nixベースの開発環境管理
+
+https://www.jetify.com/devbox
+
+devboxは **Jetify** が開発する、Nixをバックエンドに持つ開発環境管理ツールです。Nixの複雑さを隠蔽しつつ、その恩恵を受けられる点が特徴です。
+
+### devboxの利点
+
+**1. 完全な再現性**
+
+devboxはNixパッケージマネージャを内部で使用しています。Nixの特徴である「宣言的なパッケージ管理」により、どのマシンでも全く同じバージョンのツールがインストールされます。
+
+```json title="devbox.json"
+{
+  "packages": [
+    "go@latest",
+    "nodejs@20",
+    "python@3.12",
+    "neovim@latest",
+    "fzf@latest",
+    "ripgrep@latest",
+    "fd@latest",
+    "lazygit@latest",
+    "delta@latest",
+    "gitleaks@latest"
+  ]
+}
+```
+
+**2. グローバル環境のサポート**
+
+devboxには「グローバルパッケージ」の概念があり、プロジェクト固有ではなくシステム全体で使いたいツールを管理できます。
+
+```bash
+# グローバルにパッケージを追加
+devbox global add fzf ripgrep fd
+
+# シェル起動時に自動読み込み
+eval "$(devbox global shellenv)"
+```
+
+**3. Homebrewとの併用も可能**
+
+完全に移行する必要はありません。GUIアプリケーション（Raycast、1Password等）はHomebrewのCaskで管理し、CLIツールはdevboxで管理する、という使い分けが可能です。
+
+### 40+のツールを一元管理
+
+現在、devboxで管理しているツールは40以上あります。主要なものを紹介します。
+
+| カテゴリ   | ツール                   | 用途                             |
+| :--------- | :----------------------- | :------------------------------- |
+| エディタ   | Neovim                   | LSP + GitHub Copilot対応         |
+| Git        | lazygit, delta, gitleaks | TUI、差分表示、シークレット検出  |
+| 検索       | fzf, ripgrep, fd         | ファジー検索、高速grep、高速find |
+| シェル     | starship, atuin          | プロンプト、履歴同期             |
+| 言語       | Go, Node.js, Python      | 開発用ランタイム                 |
+| リポジトリ | ghq                      | リポジトリ一元管理               |
+| K8s        | kubectl                  | Kubernetes操作                   |
+| タスク     | just                     | Make代替                         |
+
+## Ghostty: 次世代ターミナルエミュレータ
+
+https://ghostty.org/
+
+GhosttyはZig言語で書かれた新しいターミナルエミュレータです。開発者はHashiCorpの共同創設者であるMitchell Hashimoto氏で、2024年12月に正式リリースされました。
+
+### AlacrittyからGhosttyへ
+
+Alacrittyも高速なGPU加速ターミナルとして優秀でしたが、Ghosttyには以下の利点があります。
+
+**1. ネイティブなタブ・分割サポート**
+
+Alacrittyはタブや画面分割の機能を持たず、tmuxやzellijとの併用が前提でした。Ghosttyはネイティブでこれらをサポートしています。
+
+```ini title="ghostty/config"
+# ウィンドウ分割のキーバインド
+keybind = super+d=new_split:right
+keybind = super+shift+d=new_split:down
+
+# タブ操作
+keybind = super+t=new_tab
+keybind = super+w=close_surface
+keybind = super+shift+left_bracket=previous_tab
+keybind = super+shift+right_bracket=next_tab
+```
+
+**2. 日本語レンダリングの最適化**
+
+Ghosttyは日本語フォントのレンダリングに優れています。UDEV Gothic NFフォントとの相性も良好です。
+
+```ini title="ghostty/config"
+font-family = "UDEV Gothic NF"
+font-size = 16
+adjust-underline-position = 2
+```
+
+**3. 設定のシンプルさ**
+
+AlacrittyはTOML形式でしたが、Ghosttyはシンプルなkey=value形式です。
+
+```ini title="ghostty/config"
+# 外観
+background-opacity = 0.95
+window-padding-x = 8
+window-padding-y = 8
+
+# カラースキーム（Tokyo Night）
+background = #1a1b26
+foreground = #c0caf5
+selection-background = #33467c
+selection-foreground = #c0caf5
+```
+
+### Zellijからtmuxへの回帰
+
+Zellijは素晴らしいターミナルマルチプレクサですが、以下の理由でtmuxに戻りました。
+
+- **Ghosttyのネイティブ分割機能**により、マルチプレクサの必要性が減少
+- SSH接続先での互換性を考えるとtmuxの方が有利
+- 長年の蓄積があるtmuxの方がトラブルシューティングが容易
+
+ただし、Ghosttyのネイティブ機能だけで完結する場合も多く、tmuxは補助的な立ち位置になっています。
+
+## fzf + ghqで爆速リポジトリ検索
+
+開発効率を上げる上で、リポジトリ間の移動は非常に重要です。`ghq`でリポジトリを一元管理し、`fzf`で高速検索する組み合わせは定番ですが、**キャッシュ機能**を追加することでさらに高速化しています。
+
+### キャッシュ付きghq関数
+
+```bash title="functions.zsh"
+# ghqのリスト出力をキャッシュするための変数
+typeset -g _GHQ_CACHE=""
+
+# キャッシュを更新する関数
+_ghq_cache_update() {
+  _GHQ_CACHE="$(ghq list)"
+}
+
+# fzf + ghq でリポジトリを検索・移動
+_fzf_cd_ghq() {
+  # キャッシュが空なら初期化
+  [[ -z "$_GHQ_CACHE" ]] && _ghq_cache_update
+
+  local repo
+  repo=$(echo "$_GHQ_CACHE" | fzf \
+    --prompt="repo> " \
+    --preview="bat --color=always --style=plain $(ghq root)/{}/README.md 2>/dev/null || cat $(ghq root)/{}/README.rst 2>/dev/null || echo 'No README'" \
+    --preview-window=right:60%:wrap \
+    --bind="ctrl-r:reload(ghq list)" \
+  )
+
+  [[ -n "$repo" ]] && cd "$(ghq root)/$repo"
+}
+
+# キーバインド: Ctrl+G でリポジトリ検索
+bindkey -s '^g' '_fzf_cd_ghq\n'
+
+# エイリアス
+alias repos='_fzf_cd_ghq'
+```
+
+### ghqラッパーで自動キャッシュ更新
+
+`ghq get`や`ghq create`でリポジトリを追加した際、自動的にキャッシュを更新します。
+
+```bash title="functions.zsh"
+# ghqのラッパー関数（キャッシュ自動更新）
+ghq() {
+  command ghq "$@"
+
+  # get, create, rm の場合はキャッシュを更新
+  case "$1" in
+    get|create|rm)
+      _ghq_cache_update
+      ;;
+  esac
+}
+```
+
+この仕組みにより、**数百のリポジトリがあっても一瞬で検索**できます。初回のみ`ghq list`が実行され、以降はキャッシュから取得するためです。
+
+### READMEプレビュー
+
+fzfの`--preview`オプションで、選択中のリポジトリのREADME.mdをリアルタイムプレビューしています。これにより、リポジトリの内容を確認しながら選択できます。
+
+## シェル起動時間50msの実現
+
+新しいdots環境では、zshの起動時間が約50msまで高速化されました。
+
+### zinit turbo modeの活用
+
+プラグイン管理にはzinitを使用し、turbo modeによる遅延読み込みを徹底しています。
+
+```bash title="plugins.zsh"
+# zinitの初期化
+source "${ZINIT_HOME}/zinit.zsh"
+
+# ===== 遅延読み込みプラグイン（turbo mode） =====
+
+# 補完機能（wait"0"で最優先遅延読み込み）
+zinit ice wait"0" lucid blockf
+zinit light zsh-users/zsh-completions
+
+# シンタックスハイライト（fast-syntax-highlighting推奨）
+zinit ice wait"0" lucid atinit"zpcompinit; zpcdreplay"
+zinit light zdharma-continuum/fast-syntax-highlighting
+
+# 自動補完サジェスト
+zinit ice wait"0" lucid atload"_zsh_autosuggest_start"
+zinit light zsh-users/zsh-autosuggestions
+
+# 履歴サブストリング検索
+zinit ice wait"0" lucid
+zinit light zsh-users/zsh-history-substring-search
+```
+
+### ツール初期化もturbo modeで
+
+各種ツールの初期化も遅延読み込みすることで、起動時間を短縮しています。
+
+```bash title="plugins.zsh"
+# ===== ツール初期化（turbo mode） =====
+
+# Starship（プロンプト）
+zinit ice wait"!0" lucid atload'eval "$(starship init zsh)"'
+zinit light zdharma-continuum/null
+
+# Zoxide（ディレクトリジャンプ）
+zinit ice wait"0" lucid atload'eval "$(zoxide init zsh)"'
+zinit light zdharma-continuum/null
+
+# Atuin（シェル履歴）
+zinit ice wait"0" lucid atload'eval "$(atuin init zsh)"'
+zinit light zdharma-continuum/null
+
+# fzf（Tokyo Nightテーマ）
+zinit ice wait"0" lucid atload'
+export FZF_DEFAULT_OPTS="
+  --color=fg:#c0caf5,bg:#1a1b26,hl:#bb9af7
+  --color=fg+:#c0caf5,bg+:#292e42,hl+:#7dcfff
+  --color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff
+  --color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a
+"
+eval "$(fzf --zsh)"
+'
+zinit light zdharma-continuum/null
+```
+
+### 補完キャッシング
+
+各種CLIツールの補完生成もキャッシュすることで高速化しています。
+
+```bash title="plugins.zsh"
+# ===== 補完キャッシング =====
+
+# GitHub CLI
+zinit ice wait"1" lucid as"completion" id-as"gh-completion" \
+  atclone"gh completion -s zsh > _gh" atpull"%atclone"
+zinit light zdharma-continuum/null
+
+# chezmoi
+zinit ice wait"1" lucid as"completion" id-as"chezmoi-completion" \
+  atclone"chezmoi completion zsh > _chezmoi" atpull"%atclone"
+zinit light zdharma-continuum/null
+
+# kubectl
+zinit ice wait"1" lucid as"completion" id-as"kubectl-completion" \
+  atclone"kubectl completion zsh > _kubectl" atpull"%atclone"
+zinit light zdharma-continuum/null
+```
+
+### turbo modeの仕組み
+
+zinit turbo modeは、プロンプトが表示された**後**にプラグインを読み込む仕組みです。
+
+- `wait"0"`: プロンプト表示直後に読み込み
+- `wait"1"`: プロンプト表示から1秒後に読み込み
+- `lucid`: 読み込み時のメッセージを非表示
+- `atload`: 読み込み後に実行するコマンド
+
+これにより、ユーザーがコマンドを入力し始める頃には全てのプラグインが読み込み完了しています。
+
+## セットアップ方法
+
+新しいdots環境は、ワンライナーでセットアップできます。
+
+```bash
+# 個人環境
+curl -fsSL https://raw.githubusercontent.com/paveg/dots/main/install.sh | bash
+
+# 仕事環境（メールアドレス等が変わる）
+BUSINESS_USE=1 curl -fsSL https://raw.githubusercontent.com/paveg/dots/main/install.sh | bash
+```
+
+初回実行時に名前とメールアドレスを入力すると、Gitの設定等が自動で行われます。
+
+## gitleaksでセキュリティ強化
+
+https://github.com/gitleaks/gitleaks
+
+新しくgitleaksを導入しました。これは800以上のパターンでAPIキーやトークンなどの機密情報を検出するツールです。
+
+```bash
+# コミット前のチェック
+gitleaks protect --staged
+
+# リポジトリ全体のスキャン
+gitleaks detect
+```
+
+pre-commitフックと組み合わせることで、うっかり機密情報をコミットしてしまう事故を防げます。
+
+## まとめ
+
+dotfilesからdotsへの移行で、以下の改善を実現しました。
+
+| 改善項目       | 詳細                                      |
+| :------------- | :---------------------------------------- |
+| パッケージ管理 | **devbox**によるNixベースの再現可能な環境 |
+| ターミナル     | **Ghostty**による高速で美しい体験         |
+| シェル起動     | **zinit turbo mode**で約50ms              |
+| リポジトリ検索 | **fzf + ghq**のキャッシュで瞬時に検索     |
+| セキュリティ   | **gitleaks**で機密情報漏洩防止            |
+
+開発環境の構築は一度やると長く使い続けるものです。定期的に見直して、より良い環境を追求していくのが楽しいですね。
+
+リポジトリはこちらです。参考になれば幸いです。
+
+https://github.com/paveg/dots
+
+それでは、またね。
