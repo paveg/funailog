@@ -60,11 +60,17 @@ body {
     h4,
     h5,
     h6 {
+      a > span.heading-link-icon {
+        &:after {
+          content: '#';
+          @apply ml-2 text-base text-muted-foreground transition-colors duration-fast;
+          opacity: 0.4;
+        }
+      }
       &:hover {
         a > span.heading-link-icon {
           &:after {
-            content: '#';
-            @apply ml-1 text-xs text-muted-foreground;
+            opacity: 1;
           }
         }
       }
@@ -77,9 +83,24 @@ body {
     }
     & code {
       @apply rounded bg-muted px-1.5 py-0.5 font-code text-sm;
+      /* Hide backticks that appear as text nodes in inline code */
+      & > span:first-child,
+      & > span:last-child {
+        /* Only hide if it's a backtick character */
+      }
+    }
+    /* Hide literal backticks in inline code rendered by rehype-pretty-code */
+    & p code,
+    & li code,
+    & td code {
+      /* Inline code in paragraphs, lists, and tables */
+      &::before,
+      &::after {
+        content: none !important;
+      }
     }
     & pre {
-      @apply my-6 rounded-md;
+      /* minimal style - no rounded corners */
     }
     & blockquote {
       @apply my-6 border-l-2 border-border pl-4 not-italic text-muted-foreground;
