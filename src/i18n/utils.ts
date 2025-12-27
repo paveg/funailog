@@ -17,10 +17,6 @@ export function useTranslatedPath(_lang: SupportedLang) {
 }
 
 export function exactSlugPath(slug: string) {
-  const [lang, ...slugs] = slug.split('/');
-  if (lang === defaultLang) {
-    return slugs.join('/');
-  }
   return slug;
 }
 
@@ -49,7 +45,6 @@ export function generateHreflangs(basePath: string): Array<{
 /**
  * Extract language from a content slug
  */
-export function getLangFromSlug(slug: string): SupportedLang {
-  const [lang] = slug.split('/');
-  return lang === defaultLang ? defaultLang : defaultLang;
+export function getLangFromSlug(_slug: string): SupportedLang {
+  return defaultLang;
 }

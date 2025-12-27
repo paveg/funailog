@@ -4,7 +4,6 @@ import { getCollection, getEntry } from 'astro:content';
 import { ArrowRightIcon, CalendarIcon } from '@radix-ui/react-icons';
 
 import { Badge } from '@/components/ui/badge';
-import { defaultLang } from '@/i18n/ui';
 import { useTranslations, generateHreflangs } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 import { WebsiteLd } from '@/lib/rich-results';
@@ -25,10 +24,6 @@ if (!meta) {
 // 最新記事5件を取得
 const blogPosts = (await getCollection('blog'))
   .filter((post) => post.data.isPublished)
-  .filter((post) => {
-    const [postLang] = post.slug.split('/');
-    return postLang === defaultLang;
-  })
   .map(blogToUnified);
 
 const zennArticles = (await fetchZennArticles()).map(zennToUnified);

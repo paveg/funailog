@@ -27,10 +27,7 @@ export async function getStaticPaths({
 
   return categories.flatMap((category) => {
     const posts = publishedPosts
-      .filter((post) => {
-        const [slugLang] = post.slug.split('/');
-        return post.data.category === category && slugLang === defaultLang;
-      })
+      .filter((post) => post.data.category === category)
       .sort(
         (a, b) =>
           (a.data.lastUpdated ?? a.data.published).getTime() -

@@ -29,9 +29,6 @@ export type UnifiedPost = {
  * Convert a blog post to unified format
  */
 export function blogToUnified(post: CollectionEntry<'blog'>): UnifiedPost {
-  const [, ...slugParts] = post.slug.split('/');
-  const path = slugParts.join('/');
-
   return {
     type: 'blog',
     slug: post.slug,
@@ -41,7 +38,7 @@ export function blogToUnified(post: CollectionEntry<'blog'>): UnifiedPost {
     lastUpdated: post.data.lastUpdated,
     category: post.data.category,
     tags: post.data.tags,
-    url: `/blog/${path}`,
+    url: `/blog/${post.slug}`,
     collection: post.collection,
     originalPost: post,
   };
