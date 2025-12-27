@@ -14,8 +14,10 @@
     "check": "astro check",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "pnpm run format && eslint --cache . && astro check && tsc --noEmit",
-    "lint:fix": "eslint --cache --fix .",
+    "lint": "pnpm run format && eslint --cache . && markdownlint-cli2 && astro check && tsc --noEmit",
+    "lint:fix": "eslint --cache --fix . && markdownlint-cli2 --fix",
+    "lint:md": "markdownlint-cli2",
+    "lint:md:fix": "markdownlint-cli2 --fix",
     "prebuild": "pnpx tsx ./src/utils/clean.ts",
     "prepare": "husky",
     "cv": "tsx scripts/generate-cv.ts",
@@ -24,6 +26,9 @@
   "lint-staged": {
     "*.{ts,tsx,astro,js,mjs}": [
       "eslint --cache --fix"
+    ],
+    "*.{md,mdx}": [
+      "markdownlint-cli2 --fix"
     ],
     "*.{ts,tsx,astro,js,mjs,css,md,mdx,json}": [
       "prettier --write"
@@ -83,6 +88,7 @@
     "husky": "^9.1.7",
     "lightningcss": "^1.24.1",
     "lint-staged": "^15.2.10",
+    "markdownlint-cli2": "^0.20.0",
     "mdast-util-to-hast": "^13.2.1",
     "mdast-util-to-string": "^4.0.0",
     "prettier": "^3.2.5",

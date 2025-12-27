@@ -1,0 +1,15 @@
+{
+  "config": {
+    "extends": "./.markdownlint.jsonc",
+  },
+  "globs": ["**/*.md", "**/*.mdx"],
+  "ignores": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/.astro/**",
+    "**/CHANGELOG.md",
+  ],
+  "customRules": [],
+  "markdownItPlugins": [],
+  "fix": false,
+}

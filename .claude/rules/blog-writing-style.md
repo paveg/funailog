@@ -13,7 +13,7 @@
 
 スキルの呼び出し方法：
 
-```
+```text
 Skill: content-marketing:content-marketer
 ```
 
