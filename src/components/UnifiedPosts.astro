@@ -1,17 +1,12 @@
 ---
 import type { Page } from 'astro';
 
-import {
-  ChatBubbleIcon,
-  ExternalLinkIcon,
-  HeartIcon,
-} from '@radix-ui/react-icons';
+import { ExternalLinkIcon } from '@radix-ui/react-icons';
 
 import type { UnifiedPost } from '@/types/unified-post';
 
 import Pagination from '@/components/AstroPagination.astro';
 import { DateComponent } from '@/components/date';
-import { TagsComponent } from '@/components/markdown/tags';
 import NotFound from '@/components/NotFound.astro';
 import { Badge } from '@/components/ui/badge';
 
@@ -35,6 +30,13 @@ const { page, title } = Astro.props;
           page.data.map((post) => {
             const isZenn = post.type === 'zenn';
             const tags = post.tags ?? [];
+            // Compare only the date portion to ignore time differences
+            const dateOnly = post.date.toISOString().slice(0, 10);
+            const lastUpdatedOnly = post.lastUpdated
+              ?.toISOString()
+              .slice(0, 10);
+            const hasDistinctUpdate =
+              !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
 
             return (
               <li>
@@ -55,10 +57,9 @@ const { page, title } = Astro.props;
                         </Badge>
                       </a>
                     )}
-                    {post.lastUpdated ? (
+                    <DateComponent type="published" date={post.date} />
+                    {hasDistinctUpdate && post.lastUpdated && (
                       <DateComponent type="updated" date={post.lastUpdated} />
-                    ) : (
-                      <DateComponent type="published" date={post.date} />
                     )}
                   </span>
                   <a
@@ -73,29 +74,23 @@ const { page, title } = Astro.props;
                       )}
                     </h2>
                   </a>
-                  {isZenn ? (
-                    <div class="flex items-center gap-3 text-xs text-muted-foreground md:text-sm">
-                      <span class="flex items-center gap-1">
-                        <HeartIcon className="size-4" />
-                        {post.likedCount}
-                      </span>
-                      <span class="flex items-center gap-1">
-                        <ChatBubbleIcon className="size-4" />
-                        {post.commentsCount}
-                      </span>
-                      <Badge variant="outline" className="text-xs">
-                        {post.articleType}
-                      </Badge>
-                    </div>
-                  ) : (
-                    <>
-                      <span class="text-xs leading-4 text-muted-foreground md:text-sm">
-                        {post.originalPost?.data.description}
-                      </span>
-                      {tags.length > 0 && (
-                        <TagsComponent tags={tags} collection="blog" />
+                  {tags.length > 0 && (
+                    <div class="flex flex-wrap gap-2 pt-1">
+                      {tags.map((tag) =>
+                        isZenn ? (
+                          <span class="text-xs text-muted-foreground">
+                            #{tag}
+                          </span>
+                        ) : (
+                          <a
+                            href={`/blog/tags/${tag}`}
+                            class="text-xs text-muted-foreground transition-colors hover:text-foreground"
+                          >
+                            #{tag}
+                          </a>
+                        ),
                       )}
-                    </>
+                    </div>
                   )}
                 </article>
               </li>

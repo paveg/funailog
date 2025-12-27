@@ -1,0 +1,71 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+
+import { InfinitePostList } from '@/components/InfinitePostList';
+import { defaultLang } from '@/i18n/ui';
+import { useTranslations, generateHreflangs } from '@/i18n/utils';
+import Layout from '@/layouts/Layout.astro';
+import { blogToUnified, sortUnifiedPosts } from '@/types/unified-post';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const allPosts = await getCollection('blog');
+  const publishedPosts = allPosts.filter((post) => post.data.isPublished);
+
+  const categories = [
+    ...new Set(publishedPosts.map((post) => post.data.category)),
+  ];
+
+  return categories.map((category) => ({
+    params: { category },
+  }));
+};
+
+const { category } = Astro.params;
+if (!category || typeof category !== 'string') {
+  return Astro.redirect('/404');
+}
+const lang = defaultLang;
+const t = useTranslations(lang);
+const basePath = `blog/categories/${category}`;
+
+// Fetch and filter posts for this category
+const allPosts = await getCollection('blog');
+const categoryPosts = allPosts
+  .filter((post) => post.data.isPublished && post.data.category === category)
+  .map(blogToUnified);
+
+const sortedPosts = sortUnifiedPosts(categoryPosts);
+
+// Serialize posts for client-side component
+const serializedPosts = sortedPosts.map((post) => ({
+  type: post.type,
+  slug: post.slug,
+  title: post.title,
+  description: post.originalPost?.data.description,
+  date: post.date.toISOString(),
+  lastUpdated: post.lastUpdated?.toISOString(),
+  category: post.category,
+  tags: post.tags,
+  url: post.url,
+}));
+---
+
+<Layout
+  title={`カテゴリ: ${category} | ${t('main.title')}`}
+  description={t('categories.description')}
+  path={`/blog/categories/${category}`}
+  lang={lang}
+  og={{
+    enabled: true,
+  }}
+  hreflangs={generateHreflangs(basePath)}
+>
+  <main>
+    <InfinitePostList
+      client:load
+      initialPosts={serializedPosts}
+      title={category}
+    />
+  </main>
+</Layout>

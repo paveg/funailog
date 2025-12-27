@@ -1,5 +1,7 @@
 import type { CollectionEntry } from 'astro:content';
 
+import { cn, linkStyles } from '@/lib/utils';
+
 type Props = {
   collection: CollectionEntry<'blog'>['collection'];
   tags: string[];
@@ -11,7 +13,7 @@ export const TagsComponent = ({ tags, collection }: Props) => {
       {tags.map((tag) => (
         <span key={tag}>
           <a
-            className="text-link no-underline visited:text-link-visited hover:italic hover:text-link-hover hover:underline active:text-link-active"
+            className={cn(linkStyles.base, 'no-underline')}
             href={`/${collection}/tags/${tag}`}
           >
             #{tag}

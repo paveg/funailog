@@ -1,17 +1,11 @@
 import { CalendarIcon, ReloadIcon } from '@radix-ui/react-icons';
 
+import { formatDateEn } from '@/lib/utils';
+
 type DateTypes = 'updated' | 'published' | undefined;
 type Props = {
   type: DateTypes;
   date: Date;
-};
-
-const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  }).format(date);
 };
 
 const DateIcon = ({ type }: { type: DateTypes }) => {
@@ -32,7 +26,7 @@ export const DateComponent = ({ type, date }: Props) => {
       dateTime={date.toISOString()}
     >
       <DateIcon type={type} />
-      {formatDate(date)}
+      {formatDateEn(date)}
     </time>
   );
 };

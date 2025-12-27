@@ -56,9 +56,11 @@ const serializedPosts = allPosts.map((post) => ({
   hreflangs={generateHreflangs('blog')}
 >
   <main>
-    <div class="flex items-center justify-between py-4">
-      <h1 class="font-heading capitalize">{t('blog.index')}</h1>
-    </div>
-    <InfinitePostList client:load initialPosts={serializedPosts} />
+    <InfinitePostList
+      client:load
+      initialPosts={serializedPosts}
+      title={t('blog.index')}
+      showSearch={true}
+    />
   </main>
 </Layout>
