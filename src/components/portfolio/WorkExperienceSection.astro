@@ -94,11 +94,11 @@ const COLLAPSIBLE_THRESHOLD = 3;
                   <span class="text-sm font-semibold leading-tight sm:text-base">
                     {work.company}
                   </span>
-                  <span class="border-primary/15 bg-primary/5 rounded-md border px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                  <span class="border-primary/15 bg-primary/5 rounded-md border px-1.5 py-0.5 text-2xs font-medium text-primary">
                     {calculateYears(work.period)}
                   </span>
                 </div>
-                <span class="text-[10px] tabular-nums text-muted-foreground sm:text-xs">
+                <span class="text-2xs tabular-nums text-muted-foreground sm:text-xs">
                   {formatPeriod(work.period)}
                 </span>
               </div>
@@ -114,10 +114,7 @@ const COLLAPSIBLE_THRESHOLD = 3;
                 !work.roles && (
                   <div class="mt-2 flex flex-wrap gap-1">
                     {work.technologies.map((tech) => (
-                      <Badge
-                        variant="tech"
-                        className="text-[9px] sm:text-[10px]"
-                      >
+                      <Badge variant="tech" className="text-2xs">
                         {tech}
                       </Badge>
                     ))}

@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { useTranslations, generateHreflangs } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 import { WebsiteLd } from '@/lib/rich-results';
+import { formatDate } from '@/lib/utils';
 import { fetchZennArticles } from '@/lib/zenn';
 import {
   blogToUnified,
@@ -31,14 +32,6 @@ const recentPosts = sortUnifiedPosts([...blogPosts, ...zennArticles]).slice(
   0,
   5,
 );
-
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat('ja-JP', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  }).format(date);
-}
 ---
 
 <Layout
