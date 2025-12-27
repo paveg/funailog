@@ -62,7 +62,12 @@ const fetchWithTimeout = async (url: string): Promise<ArrayBuffer | null> => {
   }
 };
 
-const fetchSiteImage = async (src: string) => {
+const MAX_RETRIES = 2;
+
+const fetchSiteImage = async (
+  src: string,
+  retryCount = 0,
+): Promise<string | undefined> => {
   const hash = crypto.createHash('sha256').update(src).digest('hex');
   const cached = siteImageMap.get(hash);
 
@@ -73,26 +78,40 @@ const fetchSiteImage = async (src: string) => {
 
   const img = await fetchWithTimeout(src);
   if (!img) {
+    if (retryCount < MAX_RETRIES) {
+      return fetchSiteImage(src, retryCount + 1);
+    }
     return undefined;
   }
 
   const file = `/.cache/embed/${hash}.${fileExt}`;
   const filePath = path.join(process.cwd(), `./public${file}`);
-  await sharp(Buffer.from(img))
-    .resize(400)
-    .toFormat(fileExt, {
-      quality: 30,
-    })
-    .toFile(filePath);
 
-  fs.mkdirSync(path.join(process.cwd(), `./dist/.cache/embed`), {
-    recursive: true,
-  });
+  try {
+    await sharp(Buffer.from(img))
+      .resize(400)
+      .toFormat(fileExt, {
+        quality: 30,
+      })
+      .toFile(filePath);
 
-  fs.copyFileSync(filePath, path.join(process.cwd(), `./dist${file}`));
-  siteImageMap.set(hash, file);
+    fs.mkdirSync(path.join(process.cwd(), `./dist/.cache/embed`), {
+      recursive: true,
+    });
 
-  return file;
+    fs.copyFileSync(filePath, path.join(process.cwd(), `./dist${file}`));
+    siteImageMap.set(hash, file);
+
+    return file;
+  } catch (error) {
+    if (retryCount < MAX_RETRIES) {
+      return fetchSiteImage(src, retryCount + 1);
+    }
+    console.warn(
+      `Failed to process image after ${MAX_RETRIES} retries: ${src}`,
+    );
+    return undefined;
+  }
 };
 
 export const fetchLinkCard = async (href: string) => {
