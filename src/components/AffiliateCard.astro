@@ -1,0 +1,180 @@
+---
+import { getEntry } from 'astro:content';
+
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+
+export interface AffiliateLink {
+  /** 商品ページURL（Amazon以外、またはASINを使わない場合） */
+  href?: string;
+  /** Amazon ASIN（自動でアフィリエイトリンク生成） */
+  asin?: string;
+  /** 価格表示（例: "¥12,980"） */
+  price?: string;
+}
+
+export interface Props {
+  /** 商品名 */
+  title: string;
+  /** 商品説明（任意） */
+  description?: string;
+  /** 商品画像URL */
+  image?: string;
+  /** Amazonリンク情報 */
+  amazon?: AffiliateLink;
+  /** 楽天リンク情報 */
+  rakuten?: AffiliateLink;
+  /** Yahooショッピングリンク情報 */
+  yahoo?: AffiliateLink;
+  /** その他のサービス */
+  other?: AffiliateLink & { label: string };
+  /** PRバッジを非表示にする（デフォルト: false = 表示する） */
+  hidePrBadge?: boolean;
+}
+
+const {
+  title,
+  description,
+  image,
+  amazon,
+  rakuten,
+  yahoo,
+  other,
+  hidePrBadge = false,
+} = Astro.props;
+
+// サイト設定からアソシエイトIDを取得
+const meta = await getEntry('site', 'meta');
+const amazonAssociateId = meta?.data.affiliate?.amazon?.associateId || '';
+
+// AmazonリンクをASINから生成
+const generateAmazonUrl = (asin: string): string => {
+  const baseUrl = `https://www.amazon.co.jp/dp/${asin}`;
+  return amazonAssociateId ? `${baseUrl}?tag=${amazonAssociateId}` : baseUrl;
+};
+
+// 各サービスのリンク情報を整形
+interface ServiceLink {
+  label: string;
+  href: string;
+  price: string | undefined;
+  colorClass: string;
+}
+
+const services: ServiceLink[] = [];
+
+if (amazon) {
+  const href = amazon.asin
+    ? generateAmazonUrl(amazon.asin)
+    : amazon.href || '#';
+  services.push({
+    label: 'Amazon',
+    href,
+    price: amazon.price,
+    colorClass: 'bg-[#FF9900] hover:bg-[#FF9900]/90 text-black',
+  });
+}
+
+if (rakuten) {
+  services.push({
+    label: '楽天',
+    href: rakuten.href || '#',
+    price: rakuten.price,
+    colorClass: 'bg-[#BF0000] hover:bg-[#BF0000]/90 text-white',
+  });
+}
+
+if (yahoo) {
+  services.push({
+    label: 'Yahoo!',
+    href: yahoo.href || '#',
+    price: yahoo.price,
+    colorClass: 'bg-[#FF0033] hover:bg-[#FF0033]/90 text-white',
+  });
+}
+
+if (other) {
+  services.push({
+    label: other.label,
+    href: other.href || '#',
+    price: other.price,
+    colorClass: 'bg-secondary hover:bg-secondary/90 text-secondary-foreground',
+  });
+}
+---
+
+<div class="not-prose my-6">
+  <Card className="relative overflow-hidden">
+    {/* PRバッジ */}
+    {
+      !hidePrBadge && (
+        <div class="absolute right-2 top-2 z-10">
+          <Badge
+            variant="outline"
+            className="bg-background/80 text-2xs backdrop-blur-sm"
+          >
+            PR
+          </Badge>
+        </div>
+      )
+    }
+
+    <div class="flex flex-col sm:flex-row">
+      {/* 商品画像 */}
+      {
+        image && (
+          <div class="flex shrink-0 items-center justify-center bg-muted p-4 sm:w-[180px]">
+            <img
+              src={image}
+              alt={title}
+              class="m-0 max-h-[140px] w-auto object-contain"
+              loading="lazy"
+            />
+          </div>
+        )
+      }
+
+      {/* 商品情報 */}
+      <div class="flex flex-1 flex-col">
+        <CardHeader className="pb-2">
+          <h3 class="m-0 line-clamp-2 text-base font-medium text-foreground">
+            {title}
+          </h3>
+          {
+            description && (
+              <p class="m-0 line-clamp-2 text-sm text-muted-foreground">
+                {description}
+              </p>
+            )
+          }
+        </CardHeader>
+
+        <CardContent className="pt-0">
+          {/* サービスリンクボタン */}
+          <div class="flex flex-wrap gap-2">
+            {
+              services.map((service) => (
+                <a
+                  href={service.href}
+                  target="_blank"
+                  rel="noopener noreferrer sponsored"
+                  class:list={[
+                    'inline-flex items-center gap-1.5 rounded-md px-3 py-2',
+                    'text-sm font-medium no-underline',
+                    'transition-colors duration-fast',
+                    service.colorClass,
+                  ]}
+                >
+                  <span>{service.label}</span>
+                  {service.price && (
+                    <span class="text-xs opacity-90">({service.price})</span>
+                  )}
+                </a>
+              ))
+            }
+          </div>
+        </CardContent>
+      </div>
+    </div>
+  </Card>
+</div>
