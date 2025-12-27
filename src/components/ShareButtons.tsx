@@ -52,12 +52,14 @@ const LineIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const SHARE_HASHTAG = 'funailog';
+
 const sharePlatforms: SharePlatform[] = [
   {
     name: 'Twitter',
     icon: <TwitterLogoIcon className="size-4" />,
     getShareUrl: (url, title) =>
-      `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+      `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}&hashtags=${SHARE_HASHTAG}`,
     ariaLabel: 'Xでシェア',
     hoverColor: 'hover:text-[#1DA1F2]',
   },
@@ -81,7 +83,7 @@ const sharePlatforms: SharePlatform[] = [
     name: 'LINE',
     icon: <LineIcon className="size-4" />,
     getShareUrl: (url, title) =>
-      `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+      `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(`${title} #${SHARE_HASHTAG}`)}`,
     ariaLabel: 'LINEでシェア',
     hoverColor: 'hover:text-[#00B900]',
   },
