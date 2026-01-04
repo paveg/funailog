@@ -1,8 +1,8 @@
 ---
-import { ReaderIcon } from '@radix-ui/react-icons';
+import { ExternalLinkIcon } from '@radix-ui/react-icons';
 
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { fetchLinkCard } from '@/lib/api';
+
 export type Props = {
   href: string;
 };
@@ -12,6 +12,8 @@ const props = Astro.props;
 const { title, description, image } = await fetchLinkCard(props.href);
 const isInternal = props.href.startsWith('/');
 const isAnchor = props.href.startsWith('#');
+const hostname = new URL(props.href).hostname;
+const faviconUrl = `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
 ---
 
 {
@@ -20,46 +22,56 @@ const isAnchor = props.href.startsWith('#');
       target="_blank"
       rel="noopener noreferrer"
       href={props.href}
-      class="px-2 text-link after:content-['🔗'] visited:text-link-visited hover:italic hover:text-link-hover hover:underline active:text-link-active"
+      class="inline-flex items-center gap-1 text-link hover:text-link-hover hover:underline"
     >
       <slot />
+      <ExternalLinkIcon className="size-3" />
     </a>
   ) : (
-    <div>
-      <a
-        {...props}
-        target={isAnchor || isInternal ? '_self' : '_blank'}
-        rel={isAnchor || isInternal ? '' : 'noopener noreferrer'}
-        class="not-prose"
-      >
-        <Card className="hover:bg-accent/50 flex h-[100px] w-full overflow-hidden transition-colors duration-fast">
-          <CardHeader className="flex shrink grow basis-7/12 flex-col overflow-hidden whitespace-nowrap p-3 *:overflow-hidden *:text-ellipsis">
-            <span class="text-sm font-medium text-foreground">{title}</span>
-            <span class="grow text-xs leading-4 text-secondary-foreground">
+    <a
+      {...props}
+      target={isAnchor || isInternal ? '_self' : '_blank'}
+      rel={isAnchor || isInternal ? '' : 'noopener noreferrer'}
+      class="not-prose group block"
+    >
+      <div class="hover:border-primary/30 overflow-hidden rounded-lg border border-border bg-card transition-all duration-fast hover:shadow-sm sm:flex sm:flex-row">
+        {/* Content Section */}
+        <div class="flex flex-1 flex-col justify-center gap-1 overflow-hidden p-3">
+          <span class="line-clamp-2 text-sm font-medium leading-snug text-foreground transition-colors group-hover:text-primary sm:line-clamp-1">
+            {title}
+          </span>
+          {description && (
+            <span class="line-clamp-2 text-xs leading-relaxed text-muted-foreground sm:line-clamp-1">
               {description}
             </span>
-            <span class="flex items-center gap-1 text-xs leading-4 text-muted-foreground">
-              {new URL(props.href).hostname}
-            </span>
-          </CardHeader>
-          <CardContent className="max-w-[180px] shrink grow basis-5/12 p-0">
-            {image.src ? (
-              <img
-                class="m-0 h-full rounded-r-md object-cover"
-                src={image.src}
-                alt={title}
-                width={360}
-                height={100}
-                loading="lazy"
-              />
-            ) : (
-              <span class="flex size-full items-center justify-center border-l border-border">
-                <ReaderIcon className="size-6 text-muted-foreground" />
-              </span>
+          )}
+          <span class="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <img
+              src={faviconUrl}
+              alt=""
+              width="14"
+              height="14"
+              class="m-0 size-3.5 shrink-0 rounded-sm"
+              loading="lazy"
+            />
+            <span class="truncate">{hostname}</span>
+            {!isInternal && !isAnchor && (
+              <ExternalLinkIcon className="size-3 shrink-0 opacity-50" />
             )}
-          </CardContent>
-        </Card>
-      </a>
-    </div>
+          </span>
+        </div>
+        {/* Image Section - Hidden on mobile, shown on desktop */}
+        {image.src && (
+          <div class="hidden w-[140px] shrink-0 border-l border-border bg-muted sm:flex sm:items-center sm:justify-center">
+            <img
+              class="m-0 max-h-full max-w-full object-contain"
+              src={image.src}
+              alt=""
+              loading="lazy"
+            />
+          </div>
+        )}
+      </div>
+    </a>
   )
 }

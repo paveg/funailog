@@ -26,14 +26,14 @@ const badgeVariants = cva(
           'border-destructive/20 bg-destructive/10 hover:bg-destructive/15 text-destructive',
         outline:
           'border-border bg-transparent text-muted-foreground hover:bg-accent hover:text-accent-foreground',
-        // Tech tags - subtle warm tones matching the design system
+        // Tech tags - subtle primary tones matching the design system
         tech: 'border-primary/10 bg-primary/5 text-primary/80 hover:bg-primary/10 dark:border-primary/20 dark:bg-primary/10 dark:text-primary/90',
         // Project tags - slightly different tone
         project:
           'border-muted-foreground/20 dark:border-muted-foreground/25 bg-muted text-muted-foreground hover:bg-accent',
         // Category badge for blog posts
         category:
-          'border-warm/20 hover:bg-warm/15 dark:border-warm/30 dark:bg-warm/10 bg-warm-light text-warm dark:text-warm',
+          'border-primary/15 bg-primary/8 hover:bg-primary/12 text-primary',
       },
     },
     defaultVariants: {

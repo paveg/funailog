@@ -202,10 +202,11 @@ export function InfinitePostList({
               <MagnifyingGlassIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 ref={inputRef}
-                type="search"
+                type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="記事を検索..."
+                aria-label="記事を検索"
                 className={cn(
                   'h-9 w-full rounded-md border border-input bg-background py-2 pl-9 pr-9 text-sm',
                   'placeholder:text-muted-foreground',

@@ -22,14 +22,10 @@ const t = useTranslations(lang);
     {
       items.map((category) => (
         <div>
-          <Badge variant="category" className="text-2xs sm:text-xs">
-            {category.category}
-          </Badge>
+          <Badge variant="category">{category.category}</Badge>
           <div class="mt-2 flex flex-wrap gap-1.5 sm:gap-2">
             {category.items.map((skill) => (
-              <Badge variant="tech" className="text-2xs sm:text-xs">
-                {skill.name}
-              </Badge>
+              <Badge variant="tech">{skill.name}</Badge>
             ))}
           </div>
         </div>
