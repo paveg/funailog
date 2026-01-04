@@ -100,14 +100,9 @@ const recentPosts = sortUnifiedPosts([...blogPosts, ...zennArticles]).slice(
                     <div class="flex-1">
                       <div class="mb-1 flex items-center gap-2">
                         {isZenn ? (
-                          <Badge variant="outline" className="text-xs">
-                            {post.emoji} Zenn
-                          </Badge>
+                          <Badge variant="outline">{post.emoji} Zenn</Badge>
                         ) : (
-                          <Badge
-                            variant="secondary"
-                            className="text-xs capitalize"
-                          >
+                          <Badge variant="secondary" className="capitalize">
                             {post.category}
                           </Badge>
                         )}

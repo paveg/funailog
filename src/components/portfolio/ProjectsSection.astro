@@ -38,17 +38,15 @@ const getAriaLabel = (name: string, type: 'site' | 'repo') => {
   <div class="grid gap-3 sm:grid-cols-2">
     {
       items.map((project) => (
-        <div class="border-border/50 bg-card/50 group flex flex-col gap-2 rounded-xl border p-3 transition-all hover:border-border hover:shadow-sm sm:p-4">
-          <div class="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
-            <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
-              <span class="text-sm font-medium sm:text-base">
+        <div class="border-border/50 bg-card/50 group flex flex-col gap-2 rounded-lg border p-3 transition-all hover:border-border hover:shadow-sm sm:p-4">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex min-w-0 flex-wrap items-center gap-1.5 sm:gap-2">
+              <span class="truncate text-sm font-medium sm:text-base">
                 {project.name}
               </span>
-              <Badge variant="category" className="text-2xs sm:text-xs">
-                {typeLabels[project.type][lang]}
-              </Badge>
+              <Badge variant="category">{typeLabels[project.type][lang]}</Badge>
             </div>
-            <div class="flex items-center gap-1">
+            <div class="flex shrink-0 items-center gap-1">
               {project.url && (
                 <a
                   href={project.url}
@@ -78,9 +76,7 @@ const getAriaLabel = (name: string, type: 'site' | 'repo') => {
           </p>
           <div class="flex flex-wrap gap-1 sm:gap-1.5">
             {project.techStack.slice(0, 5).map((tech) => (
-              <Badge variant="tech" className="text-2xs sm:text-xs">
-                {tech}
-              </Badge>
+              <Badge variant="tech">{tech}</Badge>
             ))}
             {project.techStack.length > 5 && (
               <span class="text-muted-foreground/60 px-1 py-0.5 text-2xs sm:text-xs">

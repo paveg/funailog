@@ -105,7 +105,7 @@ export function ShareButtons({ url, title }: ShareButtonsProps) {
 
   return (
     <div className="mt-12">
-      <div className="border-border/50 bg-accent/30 rounded-xl border px-6 py-5">
+      <div className="border-border/50 bg-accent/30 rounded-lg border px-6 py-5">
         <p className="mb-4 text-center text-sm font-medium text-foreground">
           この記事をシェア
         </p>

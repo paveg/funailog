@@ -82,7 +82,7 @@ export function CollapsibleRoles({
               <div
                 className={`flex size-5 shrink-0 items-center justify-center rounded-full border-[1.5px] shadow-sm sm:size-6 ${
                   isCurrent
-                    ? 'border-warm/60 bg-warm text-white'
+                    ? 'border-primary/60 bg-primary text-primary-foreground'
                     : 'border-primary/30 bg-primary/10 text-primary'
                 }`}
               >
@@ -116,7 +116,7 @@ export function CollapsibleRoles({
               {/* Current indicator above role */}
               {isCurrent && (
                 <span className="mb-0.5 inline-flex items-center gap-1 text-2xs font-medium text-muted-foreground">
-                  <span className="size-1.5 animate-pulse rounded-full bg-warm" />
+                  <span className="size-1.5 animate-pulse rounded-full bg-primary" />
                   {t.current}
                 </span>
               )}
@@ -130,9 +130,7 @@ export function CollapsibleRoles({
                   {role.role}
                 </span>
                 {role.project && (
-                  <Badge variant="project" className="text-2xs">
-                    {role.project}
-                  </Badge>
+                  <Badge variant="project">{role.project}</Badge>
                 )}
               </div>
 
@@ -181,7 +179,7 @@ export function CollapsibleRoles({
               {role.technologies && role.technologies.length > 0 && (
                 <div className="mt-2 flex flex-wrap gap-1">
                   {role.technologies.slice(0, 5).map((tech) => (
-                    <Badge key={tech} variant="tech" className="text-2xs">
+                    <Badge key={tech} variant="tech">
                       {tech}
                     </Badge>
                   ))}

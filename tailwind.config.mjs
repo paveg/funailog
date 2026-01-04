@@ -64,10 +64,6 @@ export default {
           visited: 'var(--link-visited)',
           active: 'var(--link-active)',
         },
-        warm: {
-          DEFAULT: 'var(--accent-warm)',
-          light: 'var(--accent-warm-light)',
-        },
       },
       borderRadius: {
         xl: 'var(--radius-xl)',

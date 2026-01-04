@@ -59,7 +59,7 @@ const COLLAPSIBLE_THRESHOLD = 3;
                 class:list={[
                   'flex size-6 shrink-0 items-center justify-center rounded-full border-[1.5px] sm:size-8',
                   isCurrentCompany
-                    ? 'border-warm/60 bg-warm text-white'
+                    ? 'border-primary/60 bg-primary text-primary-foreground'
                     : 'border-primary/30 bg-primary/10 text-primary',
                 ]}
               >
@@ -114,9 +114,7 @@ const COLLAPSIBLE_THRESHOLD = 3;
                 !work.roles && (
                   <div class="mt-2 flex flex-wrap gap-1">
                     {work.technologies.map((tech) => (
-                      <Badge variant="tech" className="text-2xs">
-                        {tech}
-                      </Badge>
+                      <Badge variant="tech">{tech}</Badge>
                     ))}
                   </div>
                 )}
