@@ -307,18 +307,20 @@ projects:
       - PWA
     url: https://daily-dose.pavegy.workers.dev
 
-  - name: oura
-    type: oss
+  - name: devcard
+    type: personal
     period:
-      start: '2020-01'
+      start: '2025-12'
       end: null
     description: |
-      Unofficial Ruby API client for Oura Ring.
-      Simplifies wearable device data retrieval.
+      Web app for generating developer cards from GitHub profiles.
+      Also usable as OGP images.
     techStack:
-      - Ruby
-      - REST API
-    repository: https://github.com/paveg/oura
+      - Hono
+      - TypeScript
+      - Cloudflare Workers
+    url: https://devcard.pavegy.workers.dev/
+    repository: https://github.com/paveg/devcard
 
 skills:
   - category: Programming Languages
