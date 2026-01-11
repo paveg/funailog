@@ -1,8 +1,6 @@
 ---
 import type { Page } from 'astro';
 
-import { ExternalLinkIcon } from '@radix-ui/react-icons';
-
 import type { UnifiedPost } from '@/types/unified-post';
 
 import Pagination from '@/components/AstroPagination.astro';
@@ -28,7 +26,6 @@ const { page, title } = Astro.props;
           <NotFound />
         ) : (
           page.data.map((post) => {
-            const isZenn = post.type === 'zenn';
             const tags = post.tags ?? [];
             // Compare only the date portion to ignore time differences
             const dateOnly = post.date.toISOString().slice(0, 10);
@@ -42,54 +39,34 @@ const { page, title } = Astro.props;
               <li>
                 <article class="group">
                   <span class="flex items-center justify-start gap-2 align-middle">
-                    {isZenn ? (
-                      <Badge className="capitalize" variant="outline">
-                        <span class="mr-1">{post.emoji}</span>
-                        zenn
+                    <a
+                      class="pb-0.5"
+                      href={`/blog/categories/${post.category}`}
+                    >
+                      <Badge className="capitalize" variant="secondary">
+                        {post.category}
                       </Badge>
-                    ) : (
-                      <a
-                        class="pb-0.5"
-                        href={`/blog/categories/${post.category}`}
-                      >
-                        <Badge className="capitalize" variant="secondary">
-                          {post.category}
-                        </Badge>
-                      </a>
-                    )}
+                    </a>
                     <DateComponent type="published" date={post.date} />
                     {hasDistinctUpdate && post.lastUpdated && (
                       <DateComponent type="updated" date={post.lastUpdated} />
                     )}
                   </span>
-                  <a
-                    href={post.url}
-                    target={isZenn ? '_blank' : '_self'}
-                    rel={isZenn ? 'noopener noreferrer' : undefined}
-                  >
+                  <a href={post.url}>
                     <h2 class="font-heading transition-colors duration-normal group-hover:text-link">
                       {post.title}
-                      {isZenn && (
-                        <ExternalLinkIcon className="ml-1 inline-block size-4 opacity-50" />
-                      )}
                     </h2>
                   </a>
                   {tags.length > 0 && (
                     <div class="flex flex-wrap gap-2 pt-1">
-                      {tags.map((tag) =>
-                        isZenn ? (
-                          <span class="text-xs text-muted-foreground">
-                            #{tag}
-                          </span>
-                        ) : (
-                          <a
-                            href={`/blog/tags/${tag}`}
-                            class="text-xs text-muted-foreground transition-colors hover:text-foreground"
-                          >
-                            #{tag}
-                          </a>
-                        ),
-                      )}
+                      {tags.map((tag) => (
+                        <a
+                          href={`/blog/tags/${tag}`}
+                          class="text-xs text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                          #{tag}
+                        </a>
+                      ))}
                     </div>
                   )}
                 </article>
