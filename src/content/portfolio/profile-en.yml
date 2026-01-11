@@ -322,6 +322,23 @@ projects:
     url: https://devcard.pavegy.workers.dev/
     repository: https://github.com/paveg/devcard
 
+  - name: Tuck
+    type: personal
+    period:
+      start: '2025-01'
+      end: null
+    description: |
+      Read it later app. Efficiently search and organize saved content
+      with AI-powered semantic search and vector search.
+    techStack:
+      - React
+      - TypeScript
+      - Hono
+      - Cloudflare Workers
+      - Drizzle ORM
+      - Valibot
+    url: https://gettuck.app
+
 skills:
   - category: Programming Languages
     items:
