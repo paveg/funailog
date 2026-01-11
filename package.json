@@ -18,7 +18,7 @@
     "lint:fix": "eslint --cache --fix . && markdownlint-cli2 --fix",
     "lint:md": "markdownlint-cli2",
     "lint:md:fix": "markdownlint-cli2 --fix",
-    "prebuild": "pnpm exec playwright install chromium && pnpx tsx ./src/utils/clean.ts",
+    "prebuild": "pnpx tsx ./src/utils/clean.ts",
     "prepare": "husky",
     "cv": "tsx scripts/generate-cv.ts",
     "cv:en": "tsx scripts/generate-cv.ts --en"

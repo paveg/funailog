@@ -72,8 +72,9 @@ export default defineConfig({
       [
         rehypeMermaid,
         {
-          strategy: 'inline-svg',
-          dark: true,
+          // Use pre-mermaid strategy for client-side rendering
+          // This avoids Playwright dependency which doesn't work in Cloudflare Workers build
+          strategy: 'pre-mermaid',
         },
       ],
       [
