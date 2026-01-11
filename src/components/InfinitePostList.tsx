@@ -1,7 +1,6 @@
 import {
   CalendarIcon,
   Cross2Icon,
-  ExternalLinkIcon,
   MagnifyingGlassIcon,
   ReloadIcon,
 } from '@radix-ui/react-icons';
@@ -11,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn, formatDateEn } from '@/lib/utils';
 
 export type SerializedPost = {
-  type: 'blog' | 'zenn';
+  type: 'blog';
   slug: string;
   title: string;
   description?: string | undefined;
@@ -20,10 +19,6 @@ export type SerializedPost = {
   category?: string | undefined;
   tags?: string[] | undefined;
   url: string;
-  emoji?: string | undefined;
-  likedCount?: number | undefined;
-  commentsCount?: number | undefined;
-  articleType?: string | undefined;
 };
 
 const POSTS_PER_PAGE = 10;
@@ -33,7 +28,6 @@ function formatDate(dateString: string): string {
 }
 
 function PostItem({ post }: { post: SerializedPost }) {
-  const isZenn = post.type === 'zenn';
   // Compare only the date portion (YYYY-MM-DD) to ignore time differences
   const dateOnly = post.date.slice(0, 10);
   const lastUpdatedOnly = post.lastUpdated?.slice(0, 10);
@@ -43,17 +37,11 @@ function PostItem({ post }: { post: SerializedPost }) {
   return (
     <article className="group">
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        {isZenn ? (
-          <Badge className="capitalize" variant="outline">
-            {post.emoji} zenn
+        <a href={`/blog/categories/${post.category}`}>
+          <Badge className="capitalize" variant="secondary">
+            {post.category}
           </Badge>
-        ) : (
-          <a href={`/blog/categories/${post.category}`}>
-            <Badge className="capitalize" variant="secondary">
-              {post.category}
-            </Badge>
-          </a>
-        )}
+        </a>
         <span className="flex items-center gap-1">
           <CalendarIcon className="size-3" />
           <time dateTime={post.date}>{formatDate(post.date)}</time>
@@ -67,36 +55,22 @@ function PostItem({ post }: { post: SerializedPost }) {
           )}
         </span>
       </div>
-      <a
-        href={post.url}
-        target={isZenn ? '_blank' : '_self'}
-        rel={isZenn ? 'noopener noreferrer' : undefined}
-        className="block pt-1"
-      >
+      <a href={post.url} className="block pt-1">
         <h2 className="font-heading text-foreground transition-colors duration-fast group-hover:text-link">
           {post.title}
-          {isZenn && (
-            <ExternalLinkIcon className="ml-1 inline-block size-3.5 opacity-40" />
-          )}
         </h2>
       </a>
       {tags.length > 0 && (
         <div className="flex flex-wrap gap-2 pt-1.5">
-          {tags.map((tag) =>
-            isZenn ? (
-              <span key={tag} className="text-xs text-muted-foreground">
-                #{tag}
-              </span>
-            ) : (
-              <a
-                key={tag}
-                href={`/blog/tags/${tag}`}
-                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
-              >
-                #{tag}
-              </a>
-            ),
-          )}
+          {tags.map((tag) => (
+            <a
+              key={tag}
+              href={`/blog/tags/${tag}`}
+              className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              #{tag}
+            </a>
+          ))}
         </div>
       )}
     </article>

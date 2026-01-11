@@ -3,7 +3,6 @@ import type { Page } from 'astro';
 import type { CollectionEntry } from 'astro:content';
 
 import type { UnifiedPost } from '@/types/unified-post';
-import type { ZennArticle } from '@/types/zenn';
 
 import {
   Pagination,
@@ -15,7 +14,7 @@ import {
 import { cn } from '@/lib/utils';
 
 export type Props = {
-  page: Page<CollectionEntry<'blog'>> | Page<ZennArticle> | Page<UnifiedPost>;
+  page: Page<CollectionEntry<'blog'>> | Page<UnifiedPost>;
 };
 
 const { page } = Astro.props;

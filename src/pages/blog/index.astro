@@ -5,12 +5,7 @@ import { InfinitePostList } from '@/components/InfinitePostList';
 import { defaultLang } from '@/i18n/ui';
 import { useTranslations, generateHreflangs } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
-import { fetchZennArticles } from '@/lib/zenn';
-import {
-  blogToUnified,
-  zennToUnified,
-  sortUnifiedPosts,
-} from '@/types/unified-post';
+import { blogToUnified, sortUnifiedPosts } from '@/types/unified-post';
 
 const lang = defaultLang;
 const t = useTranslations(lang);
@@ -20,28 +15,20 @@ const blogPosts = (await getCollection('blog'))
   .filter((post) => post.data.isPublished)
   .map(blogToUnified);
 
-// Fetch Zenn articles
-const zennArticles = (await fetchZennArticles()).map(zennToUnified);
-
-// Merge and sort all posts
-const allPosts = sortUnifiedPosts([...blogPosts, ...zennArticles]);
+// Sort all posts
+const allPosts = sortUnifiedPosts(blogPosts);
 
 // Serialize posts for client-side component
 const serializedPosts = allPosts.map((post) => ({
   type: post.type,
   slug: post.slug,
   title: post.title,
-  description:
-    post.type === 'blog' ? post.originalPost?.data.description : undefined,
+  description: post.originalPost?.data.description,
   date: post.date.toISOString(),
   lastUpdated: post.lastUpdated?.toISOString(),
   category: post.category,
   tags: post.tags,
   url: post.url,
-  emoji: post.emoji,
-  likedCount: post.likedCount,
-  commentsCount: post.commentsCount,
-  articleType: post.articleType,
 }));
 ---
 
