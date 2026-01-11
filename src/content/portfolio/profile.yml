@@ -333,6 +333,23 @@ projects:
     url: https://devcard.pavegy.workers.dev/
     repository: https://github.com/paveg/devcard
 
+  - name: Tuck
+    type: personal
+    period:
+      start: '2025-01'
+      end: null
+    description: |
+      Read it later アプリ。AIを活用したセマンティック検索や
+      ベクトル検索で保存したコンテンツを効率的に検索・整理。
+    techStack:
+      - React
+      - TypeScript
+      - Hono
+      - Cloudflare Workers
+      - Drizzle ORM
+      - Valibot
+    url: https://gettuck.app
+
 skills:
   - category: Programming Languages
     items:

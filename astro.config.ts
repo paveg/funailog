@@ -7,6 +7,7 @@ import { defineConfig } from 'astro/config';
 import purgecss from 'astro-purgecss';
 import { h } from 'hastscript';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import rehypeMermaid from 'rehype-mermaid';
 import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeSlug from 'rehype-slug';
 
@@ -68,6 +69,14 @@ export default defineConfig({
     remarkPlugins: [remarkLink, remarkReadingTime],
     rehypePlugins: [
       rehypeSlug,
+      [
+        rehypeMermaid,
+        {
+          // Use pre-mermaid strategy for client-side rendering
+          // This avoids Playwright dependency which doesn't work in Cloudflare Workers build
+          strategy: 'pre-mermaid',
+        },
+      ],
       [
         rehypeAutolinkHeadings,
         {

@@ -129,5 +129,26 @@ if (!meta) {
     </main>
     <Footer />
     <TailwindIndicator />
+    <script is:inline>
+      // Initialize Mermaid.js for client-side rendering
+      (function () {
+        const mermaidElements = document.querySelectorAll('pre.mermaid');
+        if (mermaidElements.length === 0) return;
+
+        const script = document.createElement('script');
+        script.src =
+          'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js';
+        script.onload = function () {
+          const isDark = document.documentElement.classList.contains('dark');
+          window.mermaid.initialize({
+            startOnLoad: true,
+            theme: isDark ? 'dark' : 'default',
+            securityLevel: 'loose',
+          });
+          window.mermaid.run({ nodes: mermaidElements });
+        };
+        document.head.appendChild(script);
+      })();
+    </script>
   </body>
 </html>
