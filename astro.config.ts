@@ -4,6 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
 import { defineConfig } from 'astro/config';
 
+import embeds from 'astro-embed/integration';
 import purgecss from 'astro-purgecss';
 import { h } from 'hastscript';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
@@ -27,6 +28,13 @@ export default defineConfig({
       applyBaseStyles: false,
       nesting: true,
       configFile: 'tailwind.config.mjs',
+    }),
+    embeds({
+      services: {
+        // Only YouTube is handled by astro-embed
+        // Other URLs are handled by our LinkCard component
+        LinkPreview: false,
+      },
     }),
     mdx(),
     sitemap(),
@@ -52,7 +60,7 @@ export default defineConfig({
   },
   vite: {
     build: {
-      cssMinify: 'lightningcss',
+      cssMinify: 'esbuild',
     },
     css: {
       lightningcss: {

@@ -134,6 +134,11 @@ body {
     & img {
       @apply my-5 rounded-md;
     }
+
+    /* YouTube embed (astro-embed lite-youtube) */
+    & lite-youtube {
+      @apply my-8 w-full max-w-none rounded-md;
+    }
     & figure {
       @apply my-5;
       & img {
