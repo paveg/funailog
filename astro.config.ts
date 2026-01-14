@@ -18,6 +18,9 @@ import type { Element } from 'hast';
 
 // https://astro.build/config
 export default defineConfig({
+  server: {
+    host: true,
+  },
   integrations: [
     react(),
     tailwind({
