@@ -71,7 +71,9 @@ const defaultImagePath = '/first-place.jpg';
 >
   <main>
     <article>
-      <h1 class="text-center font-heading">{post.data.title}</h1>
+      <h1 class="text-center font-heading [text-wrap:wrap] [word-break:normal]">
+        {post.data.title}
+      </h1>
       <BlogDate post={post} />
       <Image
         class="my-3 rounded-md"
