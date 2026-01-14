@@ -1,58 +1,68 @@
 body {
   article {
-    /* prose (16px base) on all devices for optimal readability */
+    /* prose with responsive font size */
     @apply prose max-w-none flex-grow break-words dark:prose-invert;
+    @apply text-sm md:text-base;
 
-    /* Japanese-optimized line height (1.875 = 30px at 16px base) */
-    line-height: 1.875;
+    /* Japanese-optimized line height */
+    line-height: 1.8;
 
     & p {
-      /* Generous paragraph spacing for scanability */
-      @apply my-6;
+      /* Paragraph spacing */
+      @apply my-5;
     }
 
     & ul {
-      @apply list-disc;
+      @apply list-disc pl-5;
     }
     & ol {
-      @apply list-decimal;
+      @apply list-decimal pl-5;
     }
     & li {
-      @apply list-inside;
+      @apply list-outside;
       /* Comfortable spacing between list items */
-      @apply my-2;
+      @apply my-1.5;
     }
 
-    /* Heading hierarchy with clear visual distinction */
+    /* Heading hierarchy - mobile-first sizing */
+    & h1,
+    & h2,
+    & h3,
+    & h4,
+    & h5,
+    & h6 {
+      text-wrap: wrap;
+      word-break: normal;
+    }
     & h1 {
-      @apply mb-6 mt-12 font-heading text-foreground;
-      @apply text-2xl md:text-3xl;
+      @apply mb-5 mt-10 font-heading text-foreground;
+      @apply text-xl md:text-2xl;
       font-weight: 700;
       letter-spacing: -0.01em;
     }
     & h2 {
-      @apply mb-4 mt-10 font-heading text-foreground;
-      @apply text-xl md:text-2xl;
-      font-weight: 600;
-    }
-    & h3 {
       @apply mb-3 mt-8 font-heading text-foreground;
       @apply text-lg md:text-xl;
       font-weight: 600;
     }
-    & h4 {
+    & h3 {
       @apply mb-2 mt-6 font-heading text-foreground;
       @apply text-base md:text-lg;
       font-weight: 600;
     }
-    & h5 {
+    & h4 {
       @apply mb-2 mt-5 font-heading text-foreground;
-      @apply text-base;
+      @apply text-sm md:text-base;
+      font-weight: 600;
+    }
+    & h5 {
+      @apply mb-1 mt-4 font-heading text-foreground;
+      @apply text-sm;
       font-weight: 500;
     }
     & h6 {
-      @apply mb-1 mt-4 font-heading text-foreground;
-      @apply text-sm md:text-base;
+      @apply mb-1 mt-3 font-heading text-foreground;
+      @apply text-xs md:text-sm;
       font-weight: 500;
     }
     h2,
@@ -82,31 +92,25 @@ body {
       }
     }
     & code {
-      @apply rounded bg-muted px-1.5 py-0.5 font-code text-sm;
-      /* Hide backticks that appear as text nodes in inline code */
-      & > span:first-child,
-      & > span:last-child {
-        /* Only hide if it's a backtick character */
-      }
+      @apply rounded bg-muted px-1.5 py-0.5 font-code text-xs md:text-sm;
     }
     /* Hide literal backticks in inline code rendered by rehype-pretty-code */
     & p code,
     & li code,
     & td code {
-      /* Inline code in paragraphs, lists, and tables */
       &::before,
       &::after {
         content: none !important;
       }
     }
     & pre {
-      /* minimal style - no rounded corners */
+      @apply my-5 overflow-x-auto rounded-md text-xs md:text-sm;
     }
     & blockquote {
-      @apply my-6 border-l-2 border-border pl-4 not-italic text-muted-foreground;
+      @apply my-5 rounded-r-md border-l-2 border-border bg-muted py-3 pl-4 pr-3 not-italic text-muted-foreground;
     }
     & .footnotes {
-      @apply mt-10 border-t border-border pt-6 text-sm text-muted-foreground;
+      @apply mt-8 border-t border-border pt-5 text-xs text-muted-foreground md:text-sm;
       & li {
         @apply list-outside;
       }
@@ -115,15 +119,29 @@ body {
       }
     }
 
-    /* Tables - improved spacing */
+    /* Tables - responsive with better styling */
     & table {
-      @apply my-6;
+      @apply my-5 w-full text-xs md:text-sm;
+    }
+    & th {
+      @apply bg-muted px-2 py-2 text-left font-medium md:px-3;
+    }
+    & td {
+      @apply border-t border-border px-2 py-2 md:px-3;
     }
 
-    /* Images and figures - breathing room */
-    & img,
+    /* Images and figures */
+    & img {
+      @apply my-5 rounded-md;
+    }
     & figure {
-      @apply my-6;
+      @apply my-5;
+      & img {
+        @apply my-0;
+      }
+      & figcaption {
+        @apply mt-2 text-center text-xs text-muted-foreground;
+      }
     }
   }
 }

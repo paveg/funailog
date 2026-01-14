@@ -56,7 +56,7 @@ function PostItem({ post }: { post: SerializedPost }) {
         </span>
       </div>
       <a href={post.url} className="block pt-1">
-        <h2 className="font-heading text-foreground transition-colors duration-fast group-hover:text-link">
+        <h2 className="line-clamp-2 break-words font-heading text-base text-foreground transition-colors duration-fast group-hover:text-link md:text-lg">
           {post.title}
         </h2>
       </a>
