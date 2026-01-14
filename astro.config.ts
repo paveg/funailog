@@ -29,7 +29,13 @@ export default defineConfig({
       nesting: true,
       configFile: 'tailwind.config.mjs',
     }),
-    embeds(),
+    embeds({
+      services: {
+        // Only YouTube is handled by astro-embed
+        // Other URLs are handled by our LinkCard component
+        LinkPreview: false,
+      },
+    }),
     mdx(),
     sitemap(),
     purgecss({
