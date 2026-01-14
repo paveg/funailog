@@ -14,7 +14,7 @@ function extractVideoId(url: string): string | undefined {
   return match?.[3];
 }
 const videoId = extractVideoId(props.href);
-const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?origin=https://funailog.com`;
 const { title } = await fetchSiteMetadata(props.href, {
   suppressAdditionalRequest: true,
 }).catch(() => ({
