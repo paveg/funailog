@@ -4,6 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
 import { defineConfig } from 'astro/config';
 
+import embeds from 'astro-embed/integration';
 import purgecss from 'astro-purgecss';
 import { h } from 'hastscript';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
@@ -28,6 +29,7 @@ export default defineConfig({
       nesting: true,
       configFile: 'tailwind.config.mjs',
     }),
+    embeds(),
     mdx(),
     sitemap(),
     purgecss({
@@ -52,7 +54,7 @@ export default defineConfig({
   },
   vite: {
     build: {
-      cssMinify: 'lightningcss',
+      cssMinify: 'esbuild',
     },
     css: {
       lightningcss: {

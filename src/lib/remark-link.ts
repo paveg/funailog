@@ -23,14 +23,16 @@ const remarkLinkcard: Plugin<void[], Root> = () => {
         return;
       }
 
-      const isYoutubeLink = child.url.includes('youtube');
+      // Skip YouTube links - handled by astro-embed integration
+      if (child.url.includes('youtube') || child.url.includes('youtu.be')) {
+        return;
+      }
 
       child.data = {
         ...child.data,
         hProperties: {
           ...child.data?.hProperties,
           dataLinkcard: true,
-          dataYoutube: isYoutubeLink,
         },
       };
     });

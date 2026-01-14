@@ -2,13 +2,11 @@
 import { ExternalLinkIcon } from '@radix-ui/react-icons';
 
 import LinkCard from '@/components/LinkCard.astro';
-import YoutubeEmbed from '@/components/YoutubeEmbed.astro';
 import { cn, linkStyles } from '@/lib/utils';
 
 type Props = {
   href: string;
   ['data-linkcard']?: string;
-  ['data-youtube']?: string;
 };
 
 const props = Astro.props;
@@ -18,9 +16,7 @@ const linkClass = cn(linkStyles.base, linkStyles.inline, 'px-2');
 ---
 
 {
-  Object.hasOwn(props, 'data-youtube') ? (
-    <YoutubeEmbed {...props} />
-  ) : Object.hasOwn(props, 'data-linkcard') ? (
+  Object.hasOwn(props, 'data-linkcard') ? (
     <LinkCard {...props}>
       <slot />
     </LinkCard>
