@@ -1,0 +1,643 @@
+---
+title: 'Premature Optimization: Vercel の React Best Practices を個人開発に適用できるか試したら逆効果だった話'
+description: Vercel がリリースした React Best Practices (Agent Skills) を個人開発アプリに適用できるか試したところ、GC 負荷が 22% 増加。計測に基づかない最適化の危険性と、大規模サービス向けガイドラインの正しい適用範囲について実体験をもとに解説します。
+published: 2026-01-15
+tags:
+  [
+    'React',
+    'Performance',
+    'Premature Optimization',
+    'Vercel',
+    '個人開発',
+    'TypeScript',
+  ]
+heroImage: /premature-optimization-og.jpg
+isPublished: true
+category: programming
+---
+
+## はじめに
+
+Vercel が「React Best Practices」という Agent Skills をリリースしました。
+
+https://github.com/vercel-labs/agent-skills/tree/main/skills/react-best-practices
+
+Claude Code や Claude Desktop にインストールして使える形式で、10年以上の React/Next.js 最適化知見を AI エージェントに教え込むためのものです。紹介記事も公開されています。
+
+https://vercel.com/blog/introducing-react-best-practices
+
+40以上のルールが8つのパフォーマンスカテゴリに整理されており、非同期処理の最適化からバンドルサイズ削減、再レンダリング防止まで網羅されています。
+
+「これは便利だ」と思い、個人開発アプリに適用できるか試してみました。
+
+**結果、GC 負荷が 22% 増加しました。**
+
+この記事では、read-it-later アプリ「[Tuck](https://gettuck.app)」での実体験をもとに、**ベストプラクティスを闇雲に適用する危険性**と、**適用すべきプロジェクトの規模感**について解説します。
+
+---
+
+## 個人開発アプリに適用できるか試した
+
+### 試した対象: Tuck
+
+[Tuck](https://gettuck.app) は僕が個人開発している read-it-later アプリです。RSS フィードや Web ページを保存し、AI が記事を要約・カテゴリ分類してくれます。
+
+| 項目           | 内容                                                |
+| :------------- | :-------------------------------------------------- |
+| ユーザー規模   | 個人利用 + α                                        |
+| フロントエンド | React 19 + Vite + TanStack Router                   |
+| 主な機能       | フィード購読、記事保存、AI 要約、統計ダッシュボード |
+
+### Agent Skills の適用方法
+
+Vercel の React Best Practices は、Claude Code や Claude Desktop で使える Agent Skills として提供されています。導入は1コマンドで完了します。
+
+```bash
+npx add-skill vercel-labs/agent-skills
+```
+
+これで Claude Code が React Best Practices のルールを参照できるようになります。あとは「React Best Practices に従ってパフォーマンス最適化して」と依頼するだけ。
+
+Claude Code は `AGENTS.md` のルールに従って、以下のような最適化を提案・実装してくれました。
+
+- `memo()` でコンポーネントをラップ
+- `useMemo()` で派生値をメモ化
+- `useCallback()` でイベントハンドラを安定化
+- barrel import を直接 import に変更
+
+「Vercel のベストプラクティスに従った最適化」という安心感がありました。しかし...
+
+---
+
+## Vercel の React Best Practices とは
+
+この Agent Skills は、AI エージェントがコードレビューやリファクタリングを行う際に参照するルール集です。`npx add-skill` でインストールすると `AGENTS.md` が配置され、Claude Code が Vercel の知見に基づいた最適化提案をしてくれるようになります。
+
+ガイドラインで重要なのは**優先順位**です。
+
+| 優先度     | 最適化対象                       |
+| :--------- | :------------------------------- |
+| **最優先** | 非同期ウォーターフォールの排除   |
+| 高         | バンドルサイズの削減             |
+| 中         | サーバーサイド・クライアント取得 |
+| 低         | 再レンダリング最適化（memo等）   |
+
+Vercel が強調しているのは、「600ms の待機時間があれば、`useMemo` の最適化は意味がない」という点です。つまり、**スタック上層の問題を解決してから、下層のマイクロ最適化に取り組むべき**ということ。
+
+僕はこの「優先順位」を無視して、いきなり `memo()` を試しました。
+
+---
+
+## 技術スタック
+
+| カテゴリ       | 技術            |
+| :------------- | :-------------- |
+| フレームワーク | React 19        |
+| ルーティング   | TanStack Router |
+| 状態管理       | TanStack Query  |
+| ビルドツール   | Vite            |
+
+---
+
+## 試した最適化
+
+パフォーマンス改善のため、以下の「最適化」を試しました。
+
+- コンポーネントを `memo()` でラップ
+- 派生値を `useMemo()` で計算
+- イベントハンドラを `useCallback()` で安定化
+- barrel import を直接 import に変更
+
+「React のベストプラクティス」に従った最適化...のつもりでした。
+
+---
+
+## 試しに書いたコード
+
+### 1. memo() でコンポーネントをラップ
+
+**Before（適用前）**
+
+```tsx
+interface CategoryChartProps {
+  distribution: CategoryDistribution[];
+}
+
+export function CategoryChart({ distribution }: CategoryChartProps) {
+  if (distribution.length === 0) return null;
+
+  const maxPercentage = Math.max(...distribution.map((d) => d.percentage), 1);
+
+  return (
+    <div className="chart-container">
+      {distribution.slice(0, 6).map((item) => (
+        <div key={item.categoryId} className="bar-item">
+          <span>{item.categoryName}</span>
+          <div
+            className="bar"
+            style={{ width: `${(item.percentage / maxPercentage) * 100}%` }}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+**After（適用後）**
+
+```tsx
+import { memo, useMemo } from 'react';
+
+interface CategoryChartProps {
+  distribution: CategoryDistribution[];
+}
+
+export const CategoryChart = memo(function CategoryChart({
+  distribution,
+}: CategoryChartProps) {
+  const maxPercentage = useMemo(
+    () => Math.max(...distribution.map((d) => d.percentage), 1),
+    [distribution],
+  );
+
+  const sortedDistribution = useMemo(
+    () => distribution.slice(0, 6),
+    [distribution],
+  );
+
+  if (sortedDistribution.length === 0) return null;
+
+  return (
+    <div className="chart-container">
+      {sortedDistribution.map((item) => (
+        <div key={item.categoryId} className="bar-item">
+          <span>{item.categoryName}</span>
+          <div
+            className="bar"
+            style={{ width: `${(item.percentage / maxPercentage) * 100}%` }}
+          />
+        </div>
+      ))}
+    </div>
+  );
+});
+```
+
+**問題点:**
+
+| 観点           | 内容                                         |
+| :------------- | :------------------------------------------- |
+| データ量       | `distribution` は通常 6 件程度               |
+| 計算コスト     | `Math.max()` も `slice()` も一瞬で完了       |
+| オーバーヘッド | `memo()` の props 比較コストの方が高い可能性 |
+
+---
+
+### 2. useCallback() でハンドラを安定化
+
+**Before（適用前）**
+
+```tsx
+function FeedList({ feeds }: { feeds: Feed[] }) {
+  const handleRefresh = (feedId: string) => {
+    refreshFeed.mutate(feedId);
+  };
+
+  const handleDelete = (feedId: string) => {
+    deleteFeed.mutate(feedId);
+  };
+
+  return (
+    <div>
+      {feeds.map((feed) => (
+        <FeedItem
+          key={feed.id}
+          feed={feed}
+          onRefresh={() => handleRefresh(feed.id)}
+          onDelete={() => handleDelete(feed.id)}
+        />
+      ))}
+    </div>
+  );
+}
+```
+
+**After（適用後）**
+
+```tsx
+import { memo, useCallback } from 'react';
+
+const FeedItem = memo(function FeedItem({
+  feed,
+  onRefresh,
+  onDelete,
+}: FeedItemProps) {
+  return (
+    <div className="feed-item">
+      <span>{feed.title}</span>
+      <button onClick={onRefresh}>Refresh</button>
+      <button onClick={onDelete}>Delete</button>
+    </div>
+  );
+});
+
+function FeedList({ feeds }: { feeds: Feed[] }) {
+  const handleRefresh = useCallback((feedId: string) => {
+    refreshFeed.mutate(feedId);
+  }, []);
+
+  const handleDelete = useCallback((feedId: string) => {
+    deleteFeed.mutate(feedId);
+  }, []);
+
+  return (
+    <div>
+      {feeds.map((feed) => (
+        <FeedItem
+          key={feed.id}
+          feed={feed}
+          onRefresh={() => handleRefresh(feed.id)}
+          onDelete={() => handleDelete(feed.id)}
+        />
+      ))}
+    </div>
+  );
+}
+```
+
+**問題点:**
+
+このパターンは**よくある間違い**です。
+
+1. `() => handleRefresh(feed.id)` で毎回新しい関数が作られる
+2. `memo(FeedItem)` も毎回新しい関数を受け取るので効果なし
+3. `useCallback` のオーバーヘッドだけが増える
+
+---
+
+### 3. barrel import を直接 import に変更
+
+**Before（適用前）**
+
+```tsx
+import { Button, Card, Dialog, Skeleton, toast } from '@/components/ui';
+```
+
+**After（適用後）**
+
+```tsx
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Dialog } from '@/components/ui/dialog';
+import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from '@/components/ui/sonner';
+```
+
+**問題点:**
+
+| 観点           | 内容                                             |
+| :------------- | :----------------------------------------------- |
+| tree-shaking   | Vite は適切に行うので barrel import でも問題なし |
+| 可読性         | import 文が増えてファイルが長くなる              |
+| バンドルサイズ | ほぼ変わらない                                   |
+
+---
+
+## 計測結果
+
+Chrome DevTools の Performance タブでトレースを取得し、比較しました。
+
+### 適用前 vs 適用後
+
+| メトリクス          | 適用前 | 適用後 |       差分 |
+| :------------------ | -----: | -----: | ---------: |
+| FunctionCall 回数   |  9,192 | 10,135 | **+10.3%** |
+| FunctionCall 総時間 |  925ms |  854ms |      -7.7% |
+| Layout 回数         |     41 |     36 |     -12.2% |
+| Layout 総時間       | 15.7ms |  9.8ms |     -37.5% |
+| Paint 総時間        | 41.4ms | 43.1ms |      +4.1% |
+| GC イベント数       |  4,179 |  5,109 | **+22.3%** |
+| GC 総時間           |  482ms |  527ms |  **+9.3%** |
+
+---
+
+## 分析
+
+### 1. FunctionCall が増加 (+10.3%)
+
+`memo()` は props の浅い比較を毎回実行します。この比較処理自体が FunctionCall としてカウントされ、オーバーヘッドになっていました。
+
+```tsx
+// memo() は内部でこのような比較を毎回行う
+function shallowEqual(prevProps, nextProps) {
+  const prevKeys = Object.keys(prevProps);
+  const nextKeys = Object.keys(nextProps);
+
+  if (prevKeys.length !== nextKeys.length) return false;
+
+  for (let key of prevKeys) {
+    if (prevProps[key] !== nextProps[key]) return false;
+  }
+  return true;
+}
+```
+
+### 2. GC 負荷が増加 (+22.3%)
+
+`memo()`, `useMemo()`, `useCallback()` は内部でオブジェクトを保持します。
+
+```tsx
+// useMemo の内部イメージ
+function useMemo(factory, deps) {
+  const hook = getHook();
+
+  if (depsChanged(hook.deps, deps)) {
+    hook.value = factory(); // 新しいオブジェクトを作成
+    hook.deps = deps; // deps 配列も保持
+  }
+
+  return hook.value;
+}
+```
+
+これらの保持されたオブジェクトが GC 対象となり、GC イベントが増加しました。
+
+### 3. Layout 時間の改善 (-37.5%)
+
+唯一の改善点です。ただし絶対値は 15.7ms → 9.8ms で、ユーザーが体感できるレベルではありません（60fps = 16.67ms/frame）。
+
+---
+
+## いつ使うべきか
+
+### memo() が有効な場面
+
+親が頻繁に再レンダリングされるが、子の props は変わらない場合です。
+
+```tsx
+function Dashboard() {
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const id = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <div>
+      <Clock time={time} /> {/* 毎秒更新 */}
+      <ExpensiveChart data={data} /> {/* data は変わらない → memo() が有効 */}
+    </div>
+  );
+}
+
+const ExpensiveChart = memo(function ExpensiveChart({ data }) {
+  // 重い描画処理
+});
+```
+
+### useMemo() が有効な場面
+
+大量データの処理など、実際に重い計算がある場合です。
+
+```tsx
+function SearchResults({ items, query }) {
+  // 1000件以上のフィルタリング・ソートなど重い処理
+  const filteredItems = useMemo(() => {
+    return items
+      .filter((item) => item.name.includes(query))
+      .sort((a, b) => b.score - a.score);
+  }, [items, query]);
+
+  return <List items={filteredItems} />;
+}
+```
+
+### useCallback() が有効な場面
+
+`memo()` でラップした子コンポーネントに渡す場合です。
+
+```tsx
+function ParentWithMemoizedChild() {
+  const [count, setCount] = useState(0);
+
+  // MemoizedChild に渡すので useCallback が必要
+  const handleClick = useCallback(() => {
+    console.log('clicked');
+  }, []);
+
+  return (
+    <div>
+      <button onClick={() => setCount((c) => c + 1)}>Count: {count}</button>
+      <MemoizedChild onClick={handleClick} />
+    </div>
+  );
+}
+
+const MemoizedChild = memo(function MemoizedChild({ onClick }) {
+  return <button onClick={onClick}>Click me</button>;
+});
+```
+
+---
+
+## Vercel の推奨事項の適用範囲
+
+ここで重要なのは、**Vercel の React Best Practices がどのような文脈で書かれたか**です。
+
+Vercel が想定しているのは、以下のような環境です。
+
+- **大規模プロダクション環境**: 数百万〜数億のユーザーを抱えるサービス
+- **エッジチューニング**: 他の最適化が完了した後の、最後の数%を絞り出す段階
+- **Next.js + Vercel**: インフラとフレームワークが最適化済みの状態
+
+つまり、**すでに高度に最適化されたアプリケーションの、さらなる改善**のためのガイドラインです。
+
+### 個人開発や中小規模のプロジェクトでは
+
+僕の Tuck のような個人開発アプリでは、そもそも：
+
+- 同時接続ユーザー数は限られている
+- API のレスポンス時間の方がボトルネック
+- コンポーネントの再レンダリングは体感できるレベルではない
+
+このような状況で `memo()` を闇雲に適用しても、効果がないどころか逆効果になることがあります。
+
+---
+
+## 得られる効果 vs DX の悪化
+
+パフォーマンス改善は重要ですが、**得られる効果と開発体験（DX）のトレードオフ**を考える必要があります。
+
+### 今回得られた効果
+
+| メトリクス       | 改善幅 | ユーザー体感 |
+| :--------------- | -----: | :----------- |
+| Layout 時間      | -37.5% | ほぼなし     |
+| FunctionCall時間 |  -7.7% | ほぼなし     |
+
+**絶対値で見ると、Layout 時間は 15.7ms → 9.8ms**。60fps のフレーム時間（16.67ms）以下なので、ユーザーが体感できる改善ではありません。
+
+### 悪化した DX
+
+一方で、開発体験は明らかに悪化しました。
+
+**1. コードの冗長化**
+
+```tsx
+// Before: 3行
+const maxPercentage = Math.max(...distribution.map((d) => d.percentage), 1);
+
+// After: 6行
+const maxPercentage = useMemo(
+  () => Math.max(...distribution.map((d) => d.percentage), 1),
+  [distribution],
+);
+```
+
+単純な計算が `useMemo` でラップされ、コード量が倍増。読みにくくなりました。
+
+**2. 依存配列の管理**
+
+```tsx
+// deps 配列の管理が必要
+const handleClick = useCallback(() => {
+  doSomething(a, b, c);
+}, [a, b, c]); // ← 抜け漏れがあるとバグの原因に
+```
+
+依存配列の管理は地味に面倒で、抜け漏れがあると stale closure のバグを引き起こします。
+
+**3. レビュー・保守コストの増加**
+
+- `memo()` が本当に必要か、毎回検討が必要
+- props の参照が変わるかどうかを追跡する必要がある
+- 新しいチームメンバーへの説明コストが増える
+
+### トレードオフの判断基準
+
+| 状況                                 | 判断                 |
+| :----------------------------------- | :------------------- |
+| 計測で明確なボトルネックが見つかった | 最適化する価値あり   |
+| 「念のため」で適用しようとしている   | **やめたほうがいい** |
+| 1000件以上のリストを頻繁に再描画     | `memo()` を検討      |
+| 6件程度の配列を `slice()` している   | **不要**             |
+
+**体感できない改善のために DX を犠牲にするのは、本末転倒です。**
+
+---
+
+## 結局、適用するのをやめた
+
+計測結果を見て、最適化を適用するのをやめました。
+
+https://github.com/paveg/tuck/pull/215
+
+**削除したもの:**
+
+- `memo()`, `useMemo()`, `useCallback()` のラップ
+- barrel import → 直接 import への変更
+- 不要なコンポーネント分割
+
+**残したもの:**
+
+- 画像の `loading="lazy"` と `decoding="async"`
+- ループ処理の最適化（複数回のイテレーションを1回に統合）
+
+結果として、143行追加・185行削除。**最適化を入れるより、外す方がコード量が減りました。**
+
+---
+
+## まとめ
+
+「最適化」を試した結果、GC 負荷が 22% 増加していました。
+
+### チェックリスト
+
+最適化を適用する前に確認すべきことをまとめます。
+
+| チェック項目       | 内容                                          |
+| :----------------- | :-------------------------------------------- |
+| 計測したか         | React DevTools Profiler で実際に遅いか確認    |
+| 問題を特定したか   | 何が遅いのか具体的に把握している              |
+| 適用後に計測したか | 本当に改善したか確認                          |
+| 優先順位は正しいか | Vercel の推奨通り、上層の問題を先に解決したか |
+
+### 教訓: Premature Optimization is the Root of All Evil
+
+> "Premature optimization is the root of all evil" - Donald Knuth (1974)
+
+計算機科学の巨匠 Donald Knuth が1974年の論文 "Structured Programming with go to Statements" で述べた有名な言葉です。ただし、この引用には続きがあります。
+
+> "We should forget about small efficiencies, say about 97% of the time: premature optimization is the root of all evil. **Yet we should not pass up our opportunities in that critical 3%.**"
+
+つまり、「97% のケースでは小さな効率を気にするな。ただし、**本当に重要な 3% は見逃すな**」ということ。
+
+今回の僕の失敗は、まさにこの「97%」に `memo()` を適用してしまったケースです。6件の配列を `slice()` する処理は、最適化が必要な「3%」ではありませんでした。
+
+計測せずに適用した最適化は、最適化ではありません。むしろ逆効果になることもあります。
+
+### Vercel の React Best Practices が輝く場面
+
+Vercel のガイドラインは、以下のような場面で真価を発揮します。
+
+| 適用が有効な場面                       | 適用が逆効果な場面                 |
+| :------------------------------------- | :--------------------------------- |
+| 数百万ユーザーを抱える大規模サービス   | 個人開発・中小規模プロジェクト     |
+| すでに上層の最適化が完了している       | API レスポンス時間がボトルネック   |
+| 計測で再レンダリングが問題と特定された | 「念のため」で適用しようとしている |
+| 1000件以上のリストを頻繁に操作する     | 数件〜数十件のデータを扱う         |
+
+**要するに、Vercel の知見は「死ぬほど大きいサービスのエッジチューニング」のためのもの**です。
+
+すでに非同期ウォーターフォールを排除し、バンドルサイズを削減し、サーバーサイドレンダリングを最適化した上で、それでもあと数%のパフォーマンスを絞り出したい——そういう段階で初めて `memo()` の出番が来ます。
+
+個人開発や中小規模のプロジェクトでは、まず計測し、本当にボトルネックになっている箇所を特定してから適用しましょう。**DX を犠牲にして得られる改善がユーザーに体感できないなら、その最適化は不要です。**
+
+---
+
+## 補足: React Compiler について
+
+React 19 で導入された React Compiler は、`memo()`, `useMemo()`, `useCallback()` を自動的に適用してくれます。
+
+```tsx
+// React Compiler が有効な場合、これだけで最適化される
+function MyComponent({ data }) {
+  const processed = data.map((x) => x * 2); // 自動で useMemo 相当に
+  return <Child data={processed} />; // 自動で memo 相当に
+}
+```
+
+手動でのメモ化は、計測に基づいた本当に必要な場面だけにしましょう。
+
+---
+
+## 今回試した Tuck について
+
+この記事で題材にした [Tuck](https://gettuck.app) は、僕が個人開発している read-it-later アプリです。開発の経緯や技術スタックの詳細は別記事で紹介しています。
+
+https://funailog.com/blog/2026/tuck-read-it-later-indie-dev
+
+https://gettuck.app
+
+**主な機能:**
+
+- RSS フィードの購読・管理
+- Web ページのワンクリック保存
+- AI による記事の自動要約・カテゴリ分類
+- 読書傾向の統計ダッシュボード
+
+「あとで読む」を溜め込みがちな人におすすめです。無料で使えるので、ぜひ試してみてください。
+
+---
+
+## 参考リンク
+
+- [Vercel: Introducing React Best Practices](https://vercel.com/blog/introducing-react-best-practices)
+- [vercel-labs/agent-skills: react-best-practices](https://github.com/vercel-labs/agent-skills/tree/main/skills/react-best-practices)
+- [React 公式: memo](https://react.dev/reference/react/memo)
+- [React 公式: useMemo](https://react.dev/reference/react/useMemo)
+- [React 公式: useCallback](https://react.dev/reference/react/useCallback)
+- [React Compiler](https://react.dev/learn/react-compiler)
+- [Tuck - Read-it-later App](https://gettuck.app)
