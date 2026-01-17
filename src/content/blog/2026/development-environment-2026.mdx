@@ -52,23 +52,21 @@ Nixを直接触るのは敷居が高いので、devboxでNixの恩恵だけ受�
 ## 全体構成
 
 ```text
-┌─────────────────────────────────────────────────┐
-│  Terminal: Ghostty (Tokyo Night)                │
-│  ┌───────────────────────────────────────────┐  │
-│  │  tmux (Tokyo Night)                       │  │
-│  │  ┌─────────────────┬─────────────────────┐│  │
-│  │  │                 │                     ││  │
-│  │  │  Neovim         │  Shell (zsh)        ││  │
-│  │  │  + Copilot      │  + zinit            ││  │
-│  │  │  + lazy.nvim    │  + powerlevel10k    ││  │
-│  │  │                 │                     ││  │
-│  │  └─────────────────┴─────────────────────┘│  │
-│  └───────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────┘
-         ↓ 管理
-┌─────────────────────────────────────────────────┐
-│  chezmoi (dotfiles)  +  devbox (CLI tools)      │
-└─────────────────────────────────────────────────┘
+┌───────────────────────────────────┐
+│ Ghostty (Tokyo Night)             │
+│ ┌───────────────────────────────┐ │
+│ │ tmux                          │ │
+│ │ ┌─────────────┬─────────────┐ │ │
+│ │ │ Neovim      │ zsh         │ │ │
+│ │ │ + Copilot   │ + zinit     │ │ │
+│ │ │ + lazy.nvim │ + p10k      │ │ │
+│ │ └─────────────┴─────────────┘ │ │
+│ └───────────────────────────────┘ │
+└───────────────────────────────────┘
+              ↓ 管理
+┌───────────────────────────────────┐
+│ chezmoi + devbox                  │
+└───────────────────────────────────┘
 ```
 
 テーマはTokyo Nightで統一しています。カッコいいし目に優しいので気に入っています。
@@ -187,7 +185,7 @@ keybind = super+shift+d=new_split:down
 
 ## シェル: zsh + zinit turbo mode
 
-起動時間は約50msです。powerlevel10kのinstant promptとzinit turbo modeの組み合わせで実現しています。
+powerlevel10kのinstant promptとzinit turbo modeの組み合わせで、高速な起動を実現しています。
 
 ### Starship → Powerlevel10k への移行
 
@@ -199,11 +197,18 @@ keybind = super+shift+d=new_split:down
 
 Starshipも良いプロンプトですが、zshに特化したpowerlevel10kの方がパフォーマンスで有利でした。
 
+### 起動時間ベンチマーク
+
 ```bash
-# ベンチマーク
-$ time zsh -i -c exit
-zsh -i -c exit  0.03s user 0.02s system 92% cpu 0.054 total
+$ for i in {1..5}; do time zsh -i -c exit; done
+zsh -i -c exit  0.05s user 0.03s sys 0.08 total
+zsh -i -c exit  0.05s user 0.02s sys 0.08 total
+zsh -i -c exit  0.05s user 0.02s sys 0.08 total
+zsh -i -c exit  0.05s user 0.03s sys 0.09 total
+zsh -i -c exit  0.05s user 0.02s sys 0.08 total
 ```
+
+約80msで安定しています。体感としては一瞬です。
 
 ### 主要なプラグイン
 
@@ -222,6 +227,37 @@ zsh -i -c exit  0.03s user 0.02s system 92% cpu 0.054 total
 | `z <dir>`        | zoxide でスマートcd        |
 | `lg`             | lazygit 起動               |
 | `ll`             | eza でリスト表示           |
+
+### ghq + fzf でリポジトリ検索
+
+`Ctrl+G` でリポジトリ一覧をfzfで検索し、選択したリポジトリに移動できます。READMEのプレビュー付きです。
+
+```bash title="functions.zsh"
+_fzf_cd_ghq() {
+  local root repo
+  root="$(command ghq root)" || return 1
+
+  local preview_cmd='
+    repo_path='"$root"'/{}
+    if [[ -f $repo_path/README.md ]]; then
+      bat --color=always --style=header,grid --line-range :80 $repo_path/README.md
+    else
+      eza -la $repo_path | head -n 15
+    fi
+  '
+
+  repo="$(ghq list | fzf --reverse --height=80% \
+      --header="Ctrl+R: refresh cache" \
+      --preview="$preview_cmd" \
+      --preview-window=right:50%)"
+
+  [[ -n "$repo" ]] && cd "$root/$repo"
+}
+zle -N _fzf_cd_ghq
+bindkey '^g' _fzf_cd_ghq
+```
+
+リポジトリが多くなってくると必須の機能です。`ghq list`の結果はキャッシュして高速化しています。
 
 ## tmux
 
@@ -314,7 +350,7 @@ devboxでグローバルにインストールしているツールです。
 | アプリ      | 用途                                       |
 | :---------- | :----------------------------------------- |
 | Raycast     | ランチャー、スニペット、クリップボード履歴 |
-| Tailscale   | VPN（自宅サーバーへのアクセス）            |
+| Tailscale   | VPN（iPhone/iPadから自宅Macへアクセス）    |
 | Termius     | SSHクライアント（iPad/iPhoneからも接続）   |
 | Claude Code | AIコーディング（npm -gでインストール）     |
 | Antigravity | ウィンドウ管理（トライアル中）             |
@@ -323,7 +359,7 @@ devboxでグローバルにインストールしているツールです。
 
 **Raycast** はSpotlightの代替として使っています。クリップボード履歴、スニペット、ウィンドウ切り替えなど、これなしでは生きていけません。
 
-**Tailscale** は自宅のサーバーにアクセスするために使っています。VPNの設定が簡単で、どこからでも安全に接続できます。
+**Tailscale** は外出先からiPhone/iPadで自宅のMacBookにSSH接続し、Claude Codeを叩くために使っています。VPNの設定が簡単で、どこからでも安全に接続できます。
 
 **Antigravity** は最近試し始めたウィンドウ管理アプリです。Stage Managerより直感的に使えそうな印象です。
 
