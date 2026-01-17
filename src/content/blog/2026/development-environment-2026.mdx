@@ -1,0 +1,346 @@
+---
+title: 開発環境2026定点観測 - chezmoi + devbox + Ghosttyで構築するモダン環境
+description: 2026年の開発環境を定点観測。chezmoi + devboxによる宣言的な環境管理、Alacritty + ZellijからGhosttyへの移行、Starshipからpowerlevel10kへの移行、mise + devbox併用の理由など、再現性とポータビリティを重視した構成を解説します。
+published: 2026-01-18
+tags:
+  [
+    '開発環境',
+    'dotfiles',
+    'chezmoi',
+    'devbox',
+    'Ghostty',
+    'Neovim',
+    'tmux',
+    '2026',
+  ]
+isPublished: true
+category: programming
+---
+
+2026年の開発環境記事が流行っているようなので、僕も便乗して公開します。
+
+昨年末にdotfilesを大幅にリニューアルしたので、その延長として現在の環境をまとめました。
+
+https://github.com/paveg/dots
+
+## 前提
+
+| 項目     | 内容                          |
+| :------- | :---------------------------- |
+| マシン   | MacBook Air 13-inch, M3, 2024 |
+| OS       | macOS Sequoia 15.x            |
+| 主な用途 | Web開発（TypeScript / Go）    |
+| サブ環境 | Linux（SSH接続先のサーバー）  |
+
+メインマシンはMacBook Air M3です。メモリ16GBで開発には十分ですし、軽さは正義だと思っています。
+
+## 2026年のトレンドと自分の立ち位置
+
+最近の開発環境記事を読むと、いくつかのトレンドが見えてきます。
+
+| トレンド       | 代表例                              | 自分の選択                   |
+| :------------- | :---------------------------------- | :--------------------------- |
+| AIコーディング | Claude Code, Cursor, GitHub Copilot | Claude Code + Neovim Copilot |
+| パッケージ管理 | mise, Nix, devbox                   | **devbox**（Nixベース）      |
+| ターミナル     | Ghostty, WezTerm, Warp              | **Ghostty**                  |
+| dotfiles管理   | chezmoi, Nix home-manager           | **chezmoi**                  |
+| エディタ       | Cursor, Neovim, VS Code             | **Neovim**                   |
+
+Nixを直接触るのは敷居が高いので、devboxでNixの恩恵だけ受ける構成にしています。
+
+## 全体構成
+
+```text
+┌─────────────────────────────────────────────────┐
+│  Terminal: Ghostty (Tokyo Night)                │
+│  ┌───────────────────────────────────────────┐  │
+│  │  tmux (Tokyo Night)                       │  │
+│  │  ┌─────────────────┬─────────────────────┐│  │
+│  │  │                 │                     ││  │
+│  │  │  Neovim         │  Shell (zsh)        ││  │
+│  │  │  + Copilot      │  + zinit            ││  │
+│  │  │  + lazy.nvim    │  + powerlevel10k    ││  │
+│  │  │                 │                     ││  │
+│  │  └─────────────────┴─────────────────────┘│  │
+│  └───────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────┘
+         ↓ 管理
+┌─────────────────────────────────────────────────┐
+│  chezmoi (dotfiles)  +  devbox (CLI tools)      │
+└─────────────────────────────────────────────────┘
+```
+
+テーマはTokyo Nightで統一しています。カッコいいし目に優しいので気に入っています。
+
+## ツール管理: chezmoi + devbox
+
+### なぜこの組み合わせか
+
+| 役割           | ツール        | 理由                                       |
+| :------------- | :------------ | :----------------------------------------- |
+| dotfiles管理   | chezmoi       | テンプレート機能、マルチOS対応             |
+| CLIツール管理  | devbox        | Nixベースで再現性◎、Homebrewより高速       |
+| ランタイム管理 | mise          | Node.js / Python / Go のバージョン切り替え |
+| GUIアプリ      | Homebrew Cask | Raycast, 1Password等                       |
+
+devboxはJetifyが開発するNixのラッパーです。`devbox.json`に書いたツールが宣言的にインストールされ、どのマシンでも同じバージョンが再現されます。
+
+### なぜmiseとdevboxを併用するのか
+
+「devboxだけで完結するのでは？」と思うかもしれませんが、**仕事のプロジェクトではmiseを使う**ようにしています。
+
+理由は **ネイティブ拡張を含むパッケージのビルド問題** です。
+
+例えば`mysql2`や`pg`などのnpmパッケージは、ネイティブコードをビルドする際にシステムのライブラリパスを参照します。devbox（Nix）環境だと、これらのパスが通常と異なり、ビルドに失敗することがありました。
+
+```text
+# よく見たエラー
+gyp ERR! find Python
+gyp ERR! stack Error: Could not find any Python installation to use
+```
+
+miseは従来の`nvm`や`pyenv`に近い動作をするため、こうした問題が起きにくいです。
+
+| 環境     | ツール | 理由                     |
+| :------- | :----- | :----------------------- |
+| 個人開発 | devbox | 再現性重視、Nixの恩恵    |
+| 仕事     | mise   | ネイティブビルドの互換性 |
+
+両方入れておいて、プロジェクトに応じて使い分けるのが現状のベストプラクティスです。
+
+```json title="devbox.json"
+{
+  "packages": [
+    "neovim@0.11",
+    "tmux@latest",
+    "fzf@latest",
+    "ripgrep@latest",
+    "lazygit@latest",
+    "ghq@latest",
+    "eza@latest",
+    "bat@latest",
+    "delta@latest",
+    "gitleaks@latest"
+  ]
+}
+```
+
+### ワンライナーセットアップ
+
+新しいマシンでも、これだけで環境が再現されます。
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/paveg/dots/main/install.sh | bash
+```
+
+仕事用と個人用で設定を分けたい場合は環境変数で制御できます。
+
+```bash
+BUSINESS_USE=1 curl -fsSL ... | bash
+```
+
+## ターミナル: Ghostty
+
+### Alacritty + Zellij → Ghostty への移行
+
+以前はAlacritty + Zellijの組み合わせを使っていましたが、Ghosttyに一本化しました。
+
+**Zellijをやめた理由**
+
+Zellijは素晴らしいマルチプレクサですが、**キーバインドの競合が辛かった**のが正直なところです。Neovimとの組み合わせで、どのキーがどこに効くのか混乱することが多かったです。
+
+**Alacrittyをやめた理由**
+
+Alacritty自体に不満はありませんでした。ただ、Ghosttyの以下の点が魅力的だったので乗り換えました。
+
+- ネイティブのタブ・分割機能
+- 日本語レンダリングの美しさ
+- 新しいけど安定している印象
+
+### Ghosttyの設定
+
+```ini title="ghostty/config"
+# フォント
+font-family = "UDEV Gothic NF"
+font-size = 16
+
+# 外観
+background-opacity = 0.95
+window-padding-x = 4
+window-padding-y = 4
+
+# Tokyo Night テーマ
+background = 1a1b26
+foreground = c0caf5
+cursor-color = c0caf5
+```
+
+タブ操作はmacOS標準に近いキーバインドにしています。
+
+```ini title="ghostty/config"
+keybind = super+t=new_tab
+keybind = super+w=close_surface
+keybind = super+d=new_split:right
+keybind = super+shift+d=new_split:down
+```
+
+## シェル: zsh + zinit turbo mode
+
+起動時間は約50msです。powerlevel10kのinstant promptとzinit turbo modeの組み合わせで実現しています。
+
+### Starship → Powerlevel10k への移行
+
+以前はStarshipを使っていましたが、powerlevel10kに移行しました。
+
+- **instant prompt**: プロンプトが即座に表示され、裏で初期化が走る
+- **起動速度**: Starshipより体感で速い
+- **カスタマイズ**: `p10k configure` で対話的に設定できる
+
+Starshipも良いプロンプトですが、zshに特化したpowerlevel10kの方がパフォーマンスで有利でした。
+
+```bash
+# ベンチマーク
+$ time zsh -i -c exit
+zsh -i -c exit  0.03s user 0.02s system 92% cpu 0.054 total
+```
+
+### 主要なプラグイン
+
+| プラグイン                   | 用途                        |
+| :--------------------------- | :-------------------------- |
+| powerlevel10k                | プロンプト（Nerd Font対応） |
+| fast-syntax-highlighting     | シンタックスハイライト      |
+| zsh-autosuggestions          | コマンド補完サジェスト      |
+| zsh-history-substring-search | 履歴検索                    |
+
+### よく使う関数・エイリアス
+
+| コマンド         | 説明                       |
+| :--------------- | :------------------------- |
+| `repos` (Ctrl+G) | ghq + fzf でリポジトリ移動 |
+| `z <dir>`        | zoxide でスマートcd        |
+| `lg`             | lazygit 起動               |
+| `ll`             | eza でリスト表示           |
+
+## tmux
+
+tmuxはSSH先でも使うので残しています。テーマはGhosttyと同じくTokyo Nightで統一しています。
+
+### 主な設定
+
+- Prefix: `Ctrl+a`（Ctrl+bより押しやすい）
+- Vim風のペイン移動（h/j/k/l）
+- OSC 52でSSH先からもクリップボード連携
+
+### ネストtmux対応
+
+SSH先でtmuxを使う場合、ローカルとリモートのtmuxが衝突します。F12でパススルーモードを切り替えられるようにしています。
+
+```bash
+# F12 で「パススルーモード」に切り替え
+# すべてのキーが内側のtmuxに渡される
+bind -T root F12 \
+  set prefix None \; \
+  set key-table off \; \
+  ...
+```
+
+ステータスバーが赤くなるので、どちらのtmuxを操作しているか一目でわかります。
+
+## エディタ: Neovim
+
+kickstart.nvimをベースに、lazy.nvimでプラグイン管理しています。
+
+### 主要なプラグイン
+
+| プラグイン             | 用途                   |
+| :--------------------- | :--------------------- |
+| nvim-lspconfig + Mason | LSP管理                |
+| nvim-cmp               | 補完                   |
+| telescope.nvim         | ファジーファインダー   |
+| treesitter             | シンタックスハイライト |
+| copilot.lua            | GitHub Copilot         |
+
+### よく使うキーバインド
+
+| キー        | 説明           |
+| :---------- | :------------- |
+| `<Space>ff` | ファイル検索   |
+| `<Space>fg` | Live grep      |
+| `gd`        | 定義へジャンプ |
+| `gr`        | 参照を検索     |
+| `<Space>cc` | Copilot Chat   |
+
+## AIツール
+
+2026年のトレンドとして外せないのがAIコーディングツールです。
+
+| ツール                  | 用途                                      |
+| :---------------------- | :---------------------------------------- |
+| Claude Code             | CLIでのAIコーディング、複数タスク並列実行 |
+| GitHub Copilot (Neovim) | インライン補完                            |
+| Claude Desktop          | 調べ物、壁打ち                            |
+
+Claude Codeは最近のお気に入りです。CLIベースなのでtmuxとの相性が良く、複数のセッションで並列作業できるのが便利です。
+
+## CLIツール一覧
+
+devboxでグローバルにインストールしているツールです。
+
+| ツール   | 用途                                    |
+| :------- | :-------------------------------------- |
+| neovim   | エディタ                                |
+| tmux     | ターミナルマルチプレクサ                |
+| ghq      | リポジトリ管理                          |
+| fzf      | ファジーファインダー                    |
+| ripgrep  | 高速grep                                |
+| fd       | 高速find                                |
+| bat      | catの代替（シンタックスハイライト付き） |
+| eza      | lsの代替（アイコン・Git連携）           |
+| zoxide   | スマートcd                              |
+| lazygit  | Git TUI                                 |
+| delta    | 差分表示                                |
+| jq / yq  | JSON/YAML処理                           |
+| just     | タスクランナー                          |
+| gitleaks | シークレット検出                        |
+| atuin    | シェル履歴同期                          |
+| mise     | ランタイムバージョン管理                |
+
+## GUIアプリ
+
+開発に使っているGUIアプリです。Homebrew Caskでインストールしています。
+
+| アプリ      | 用途                                       |
+| :---------- | :----------------------------------------- |
+| Raycast     | ランチャー、スニペット、クリップボード履歴 |
+| Tailscale   | VPN（自宅サーバーへのアクセス）            |
+| Termius     | SSHクライアント（iPad/iPhoneからも接続）   |
+| Claude Code | AIコーディング（npm -gでインストール）     |
+| Antigravity | ウィンドウ管理（トライアル中）             |
+| 1Password   | パスワード管理                             |
+| Arc         | ブラウザ                                   |
+
+**Raycast** はSpotlightの代替として使っています。クリップボード履歴、スニペット、ウィンドウ切り替えなど、これなしでは生きていけません。
+
+**Tailscale** は自宅のサーバーにアクセスするために使っています。VPNの設定が簡単で、どこからでも安全に接続できます。
+
+**Antigravity** は最近試し始めたウィンドウ管理アプリです。Stage Managerより直感的に使えそうな印象です。
+
+## まとめ
+
+2026年の開発環境のポイントをまとめます。
+
+| 項目           | 選択        | 理由                       |
+| :------------- | :---------- | :------------------------- |
+| ターミナル     | Ghostty     | ネイティブ機能◎、日本語◎   |
+| パッケージ管理 | devbox      | Nixベースで再現性◎         |
+| dotfiles       | chezmoi     | テンプレート、マルチOS対応 |
+| エディタ       | Neovim      | 軽量、カスタマイズ自由     |
+| テーマ         | Tokyo Night | 統一感、目に優しい         |
+| AIツール       | Claude Code | CLI、並列作業向き          |
+
+開発環境は定期的に見直すと新しい発見があって楽しいです。dotfilesはGitHubで公開しているので、参考になれば幸いです。
+
+https://github.com/paveg/dots
+
+それでは、またね。
