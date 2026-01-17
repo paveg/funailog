@@ -44,7 +44,7 @@ const serializedPosts = allPosts.map((post) => ({
 >
   <main>
     <InfinitePostList
-      client:load
+      client:idle
       initialPosts={serializedPosts}
       title={t('blog.index')}
       showSearch={true}

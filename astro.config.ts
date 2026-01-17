@@ -60,6 +60,8 @@ export default defineConfig({
   },
   vite: {
     build: {
+      // Note: lightningcssでのミニファイは構文エラーが発生するためesbuildを使用
+      // 原因: 外部ライブラリまたはrehypeプラグインが生成するCSSに不正な構文あり
       cssMinify: 'esbuild',
     },
     css: {

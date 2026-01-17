@@ -3,16 +3,17 @@ import { readFileSync } from 'fs';
 import satori from 'satori';
 import sharp from 'sharp';
 
-const ogImage = async (text: string, date?: Date, emoji?: string) => {
-  const notoFontData = readFileSync('./src/assets/NotoSansCJKjp-Bold.woff');
+// モジュールレベルでキャッシュ（ビルド中に一度だけ読み込み）
+const notoFontData = readFileSync('./src/assets/NotoSansCJKjp-Bold.woff');
+const logoBuffer = readFileSync('./src/assets/logo_512.png');
+const logoBase64 = btoa(
+  new Uint8Array(logoBuffer).reduce(
+    (data, byte) => data + String.fromCharCode(byte),
+    '',
+  ),
+);
 
-  const logoBuffer = readFileSync('./src/assets/logo_512.png');
-  const logo = btoa(
-    new Uint8Array(logoBuffer).reduce(
-      (data, byte) => data + String.fromCharCode(byte),
-      '',
-    ),
-  );
+const ogImage = async (text: string, date?: Date, emoji?: string) => {
   const svg = await satori(
     <div
       style={{
@@ -101,7 +102,7 @@ const ogImage = async (text: string, date?: Date, emoji?: string) => {
             }}
           >
             <img
-              src={`data:image/png;base64,${logo}`}
+              src={`data:image/png;base64,${logoBase64}`}
               alt="www.funailog.com"
               width={50}
               height={50}
