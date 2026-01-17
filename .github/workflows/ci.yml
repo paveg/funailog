@@ -47,20 +47,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Check formatting
-        run: pnpm run format:check
+      # Lint系を並列実行
+      - name: Lint (parallel)
+        run: |
+          pnpm run format:check &
+          pnpm exec eslint --cache . &
+          pnpm run lint:md &
+          wait
 
-      - name: Run ESLint
-        run: pnpm exec eslint --cache .
-
-      - name: Run markdownlint
-        run: pnpm run lint:md
-
-      - name: Run Astro check
-        run: pnpm run check
-
-      - name: Type check
-        run: pnpm exec tsc --noEmit
+      # 型チェック系を並列実行
+      - name: Type check (parallel)
+        run: |
+          pnpm run check &
+          pnpm exec tsc --noEmit &
+          wait
 
       - name: Build
         run: pnpm run build

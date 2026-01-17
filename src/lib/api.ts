@@ -10,6 +10,29 @@ import type { Metadata } from 'fetch-site-metadata';
 const fileExt = 'avif';
 const publicEmbedCacheDir = './public/.cache/embed';
 
+// 同時実行数を制限するフェッチキュー
+const MAX_CONCURRENT_FETCHES = 5;
+let currentFetches = 0;
+const fetchQueue: Array<{
+  resolve: (value: string | undefined) => void;
+  src: string;
+}> = [];
+
+const processQueue = () => {
+  while (currentFetches < MAX_CONCURRENT_FETCHES && fetchQueue.length > 0) {
+    const task = fetchQueue.shift();
+    if (task) {
+      currentFetches++;
+      fetchSiteImageInternal(task.src)
+        .then(task.resolve)
+        .finally(() => {
+          currentFetches--;
+          processQueue();
+        });
+    }
+  }
+};
+
 const siteMetadataMap = new Map<string, Metadata>();
 fs.mkdirSync(path.join(process.cwd(), publicEmbedCacheDir), {
   recursive: true,
@@ -64,7 +87,8 @@ const fetchWithTimeout = async (url: string): Promise<ArrayBuffer | null> => {
 
 const MAX_RETRIES = 2;
 
-const fetchSiteImage = async (
+// キューを使わない内部実装
+const fetchSiteImageInternal = async (
   src: string,
   retryCount = 0,
 ): Promise<string | undefined> => {
@@ -79,7 +103,7 @@ const fetchSiteImage = async (
   const img = await fetchWithTimeout(src);
   if (!img) {
     if (retryCount < MAX_RETRIES) {
-      return fetchSiteImage(src, retryCount + 1);
+      return fetchSiteImageInternal(src, retryCount + 1);
     }
     return undefined;
   }
@@ -105,13 +129,30 @@ const fetchSiteImage = async (
     return file;
   } catch (error) {
     if (retryCount < MAX_RETRIES) {
-      return fetchSiteImage(src, retryCount + 1);
+      return fetchSiteImageInternal(src, retryCount + 1);
     }
     console.warn(
       `Failed to process image after ${MAX_RETRIES} retries: ${src}`,
     );
     return undefined;
   }
+};
+
+// キューを使った並列フェッチ（同時実行数制限付き）
+const fetchSiteImage = async (src: string): Promise<string | undefined> => {
+  const hash = crypto.createHash('sha256').update(src).digest('hex');
+  const cached = siteImageMap.get(hash);
+
+  // キャッシュがあれば即座に返す
+  if (cached) {
+    return cached;
+  }
+
+  // キューに追加して並列処理
+  return new Promise((resolve) => {
+    fetchQueue.push({ resolve, src });
+    processQueue();
+  });
 };
 
 export const fetchLinkCard = async (href: string) => {
