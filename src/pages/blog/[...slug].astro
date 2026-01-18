@@ -81,11 +81,13 @@ const defaultImagePath = `/api/og/article/${post.collection}/${post.slug}.png`;
         alt="A hero image of the article"
         width={1200}
         height={630}
+        loading="eager"
+        fetchpriority="high"
       />
       <BlogMeta post={post} minRead={remarkPluginFrontmatter.minRead} />
       <Separator className="bg-border" />
       <Content components={components} />
-      <ShareButtons client:load url={fullUrl} title={post.data.title} />
+      <ShareButtons client:idle url={fullUrl} title={post.data.title} />
     </article>
   </main>
 </Layout>
