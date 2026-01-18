@@ -138,6 +138,8 @@ body {
     /* YouTube embed (astro-embed lite-youtube) */
     & lite-youtube {
       @apply my-8 w-full max-w-none rounded-md;
+      /* Prevent CLS by reserving space for 16:9 video */
+      aspect-ratio: 16 / 9;
     }
     & figure {
       @apply my-5;
