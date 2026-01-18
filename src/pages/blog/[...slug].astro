@@ -87,7 +87,7 @@ const defaultImagePath = `/api/og/article/${post.collection}/${post.slug}.png`;
       <BlogMeta post={post} minRead={remarkPluginFrontmatter.minRead} />
       <Separator className="bg-border" />
       <Content components={components} />
-      <ShareButtons client:idle url={fullUrl} title={post.data.title} />
+      <ShareButtons client:visible url={fullUrl} title={post.data.title} />
     </article>
   </main>
 </Layout>

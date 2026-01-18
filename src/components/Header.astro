@@ -2,7 +2,7 @@
 import { HomeIcon, Pencil2Icon, PersonIcon } from '@radix-ui/react-icons';
 
 import ButtonLink from '@/components/ButtonLink.astro';
-import { ModeToggle } from '@/components/mode-toggle';
+import ModeToggle from '@/components/ModeToggle.astro';
 import { cn } from '@/lib/utils';
 const url = Astro.url;
 ---
@@ -14,7 +14,7 @@ const url = Astro.url;
   <nav id="global" class="mx-auto max-w-4xl py-2">
     <div class="flex w-full grow">
       <div class="mr-auto">
-        <ModeToggle client:only="react" />
+        <ModeToggle />
       </div>
       <div class="flex justify-end">
         <ButtonLink
