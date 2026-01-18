@@ -7,6 +7,7 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
+import { filterTags } from '@/lib/tags';
 import { cn, formatDateEn } from '@/lib/utils';
 
 export type SerializedPost = {
@@ -32,10 +33,13 @@ function PostItem({ post }: { post: SerializedPost }) {
   const dateOnly = post.date.slice(0, 10);
   const lastUpdatedOnly = post.lastUpdated?.slice(0, 10);
   const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
-  const tags = post.tags ?? [];
+  const tags = filterTags(post.tags ?? []);
 
   return (
-    <article className="group">
+    <article className="group relative">
+      {/* Accent line on hover */}
+      <div className="absolute -left-3 top-0 h-full w-0.5 origin-top scale-y-0 bg-accent-line transition-transform duration-200 group-hover:scale-y-100" />
+
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
         <a href={`/blog/categories/${post.category}`}>
           <Badge className="capitalize" variant="secondary">
@@ -56,21 +60,26 @@ function PostItem({ post }: { post: SerializedPost }) {
         </span>
       </div>
       <a href={post.url} className="block pt-1">
-        <h2 className="line-clamp-2 break-words font-heading text-base text-foreground transition-colors duration-fast group-hover:text-link md:text-lg">
+        <h2 className="line-clamp-2 break-words font-heading text-base text-foreground transition-colors duration-200 group-hover:text-link md:text-lg">
           {post.title}
         </h2>
       </a>
       {tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 pt-1.5">
-          {tags.map((tag) => (
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 pt-1.5">
+          {tags.slice(0, 5).map((tag) => (
             <a
               key={tag}
               href={`/blog/tags/${tag}`}
-              className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+              className="text-xs text-muted-foreground transition-colors duration-150 hover:text-foreground"
             >
               #{tag}
             </a>
           ))}
+          {tags.length > 5 && (
+            <span className="text-muted-foreground/70 text-xs">
+              +{tags.length - 5}
+            </span>
+          )}
         </div>
       )}
     </article>
@@ -179,7 +188,7 @@ export function InfinitePostList({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="記事を検索..."
+                placeholder="記事を検索…"
                 aria-label="記事を検索"
                 className={cn(
                   'h-9 w-full rounded-md border border-input bg-background py-2 pl-9 pr-9 text-sm',
@@ -211,7 +220,7 @@ export function InfinitePostList({
       )}
 
       {/* Post list */}
-      <ul className="space-y-8">
+      <ul className="space-y-8 pl-3">
         {displayedPosts.length === 0 ? (
           <li className="py-8 text-center text-muted-foreground">
             {debouncedQuery
@@ -232,7 +241,7 @@ export function InfinitePostList({
         {isLoading && (
           <div className="flex items-center gap-2 text-muted-foreground">
             <div className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-            <span className="text-sm">読み込み中...</span>
+            <span className="text-sm">読み込み中…</span>
           </div>
         )}
         {!hasMore && displayedPosts.length > 0 && !debouncedQuery && (

@@ -4,6 +4,8 @@ import '@/styles/globals.css';
 import '@fontsource/noto-sans-jp/400.css';
 import '@fontsource/noto-sans-jp/500.css';
 import '@fontsource/noto-sans-jp/700.css';
+import '@fontsource/zen-kaku-gothic-new/500.css';
+import '@fontsource/zen-kaku-gothic-new/700.css';
 import '@fontsource-variable/jetbrains-mono';
 
 import { getEntry } from 'astro:content';
@@ -122,12 +124,14 @@ if (!meta) {
     </script>
     <title>{title}</title>
   </head>
-  <body class="flex min-h-screen flex-col">
+  <body class="min-h-screen bg-background text-foreground antialiased">
     <Header />
-    <main class="grow">
-      <slot />
-    </main>
-    <Footer />
+    <div class="mx-auto max-w-4xl space-y-4 px-4 py-5">
+      <main class="grow leading-7">
+        <slot />
+      </main>
+      <Footer />
+    </div>
     <TailwindIndicator />
     <script is:inline>
       // Initialize Mermaid.js for client-side rendering
@@ -142,7 +146,7 @@ if (!meta) {
           const isDark = document.documentElement.classList.contains('dark');
           window.mermaid.initialize({
             startOnLoad: true,
-            theme: isDark ? 'dark' : 'default',
+            theme: isDark ? 'dark' : 'neutral',
             securityLevel: 'loose',
           });
           window.mermaid.run({ nodes: mermaidElements });

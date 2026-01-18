@@ -50,17 +50,20 @@
     --shadow-hover:
       0 8px 25px hsl(0 0% 0% / 0.12), 0 4px 10px hsl(0 0% 0% / 0.06);
 
-    /* リンク - インディゴ（維持） */
-    --link: hsl(230, 45%, 45%);
-    --link-hover: hsl(230, 50%, 55%);
-    --link-active: hsl(230, 50%, 40%);
-    --link-visited: hsl(230, 25%, 50%);
+    /* リンク - より深いブルー */
+    --link: hsl(225, 50%, 42%);
+    --link-hover: hsl(225, 55%, 52%);
+    --link-active: hsl(225, 50%, 37%);
+    --link-visited: hsl(225, 30%, 48%);
 
-    /* フォント - Noto Sans JP 統一 */
+    /* アクセントライン用 */
+    --accent-line: hsl(225, 45%, 45%);
+
+    /* フォント - 見出しに Zen Kaku Gothic New */
     --font-body:
       'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
     --font-heading:
-      'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+      'Zen Kaku Gothic New', 'Noto Sans JP', 'Hiragino Sans', sans-serif;
     --font-code: 'JetBrains Mono Variable', 'JetBrains Mono', monospace;
 
     /* コードシンタックスハイライト - 中性色ベース */
@@ -104,10 +107,13 @@
     --destructive: hsl(0, 62%, 45%);
     --destructive-foreground: hsl(0, 0%, 100%);
 
-    --link: hsl(220, 50%, 70%);
-    --link-hover: hsl(220, 55%, 78%);
+    --link: hsl(220, 55%, 68%);
+    --link-hover: hsl(220, 60%, 76%);
     --link-active: hsl(220, 50%, 60%);
-    --link-visited: hsl(220, 30%, 65%);
+    --link-visited: hsl(220, 35%, 62%);
+
+    /* アクセントライン用 */
+    --accent-line: hsl(220, 50%, 65%);
 
     --border: hsl(0, 0%, 18%);
     --input: hsl(0, 0%, 18%);
@@ -139,7 +145,6 @@
   }
 
   body {
-    @apply mx-auto min-h-screen max-w-4xl space-y-4 bg-background px-4 py-5 leading-7 text-foreground antialiased;
     font-family: var(--font-body);
   }
 
@@ -149,28 +154,31 @@
   h4,
   h5,
   h6 {
-    @apply font-medium leading-snug tracking-normal;
+    @apply font-medium leading-snug;
     font-family: var(--font-heading);
   }
 
   h1 {
-    @apply text-xl md:text-2xl;
+    @apply text-2xl md:text-3xl;
+    letter-spacing: -0.02em;
     text-wrap: balance;
     word-break: keep-all;
   }
 
   h2 {
-    @apply text-lg md:text-xl;
+    @apply text-xl md:text-2xl;
+    letter-spacing: -0.01em;
     text-wrap: balance;
     word-break: keep-all;
   }
 
   h3 {
-    @apply text-base md:text-lg;
+    @apply text-lg md:text-xl;
+    letter-spacing: -0.01em;
   }
 
   h4 {
-    @apply text-base;
+    @apply text-base md:text-lg;
   }
 
   h5,
@@ -191,5 +199,45 @@
 
   code {
     font-family: var(--font-code);
+  }
+}
+
+@layer utilities {
+  /* Stagger fade-in animation for page load */
+  .animate-stagger-fade {
+    animation: fade-in 0.4s var(--ease-soft) both;
+  }
+
+  .animate-stagger-fade:nth-child(1) {
+    animation-delay: 0ms;
+  }
+  .animate-stagger-fade:nth-child(2) {
+    animation-delay: 50ms;
+  }
+  .animate-stagger-fade:nth-child(3) {
+    animation-delay: 100ms;
+  }
+  .animate-stagger-fade:nth-child(4) {
+    animation-delay: 150ms;
+  }
+  .animate-stagger-fade:nth-child(5) {
+    animation-delay: 200ms;
+  }
+  .animate-stagger-fade:nth-child(6) {
+    animation-delay: 250ms;
+  }
+  .animate-stagger-fade:nth-child(7) {
+    animation-delay: 300ms;
+  }
+  .animate-stagger-fade:nth-child(8) {
+    animation-delay: 350ms;
+  }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .animate-stagger-fade {
+    animation: none;
+    opacity: 1;
   }
 }

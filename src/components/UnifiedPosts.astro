@@ -7,6 +7,7 @@ import Pagination from '@/components/AstroPagination.astro';
 import { DateComponent } from '@/components/date';
 import NotFound from '@/components/NotFound.astro';
 import { Badge } from '@/components/ui/badge';
+import { filterTags } from '@/lib/tags';
 
 export type Props = {
   page: Page<UnifiedPost>;
@@ -26,7 +27,7 @@ const { page, title } = Astro.props;
           <NotFound />
         ) : (
           page.data.map((post) => {
-            const tags = post.tags ?? [];
+            const tags = filterTags(post.tags ?? []);
             // Compare only the date portion to ignore time differences
             const dateOnly = post.date.toISOString().slice(0, 10);
             const lastUpdatedOnly = post.lastUpdated
@@ -58,8 +59,8 @@ const { page, title } = Astro.props;
                     </h2>
                   </a>
                   {tags.length > 0 && (
-                    <div class="flex flex-wrap gap-2 pt-1">
-                      {tags.map((tag) => (
+                    <div class="flex flex-wrap items-center gap-x-2 gap-y-1 pt-1">
+                      {tags.slice(0, 5).map((tag) => (
                         <a
                           href={`/blog/tags/${tag}`}
                           class="text-xs text-muted-foreground transition-colors hover:text-foreground"
@@ -67,6 +68,11 @@ const { page, title } = Astro.props;
                           #{tag}
                         </a>
                       ))}
+                      {tags.length > 5 && (
+                        <span class="text-muted-foreground/70 text-xs">
+                          +{tags.length - 5}
+                        </span>
+                      )}
                     </div>
                   )}
                 </article>

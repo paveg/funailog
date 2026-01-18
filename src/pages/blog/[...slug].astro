@@ -45,7 +45,7 @@ const site = Astro.site ?? '';
 const path = `${post.collection}/${post.slug}`;
 const fullUrl = new URL(path, site).toString();
 const t = useTranslations('ja');
-const defaultImagePath = '/first-place.jpg';
+const defaultImagePath = `/api/og/article/${post.collection}/${post.slug}.png`;
 ---
 
 <Layout
