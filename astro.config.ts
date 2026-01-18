@@ -108,8 +108,8 @@ export default defineConfig({
         rehypePrettyCode,
         {
           theme: {
-            light: 'tokyo-night',
-            dark: 'tokyo-night',
+            light: 'github-light',
+            dark: 'github-dark',
           },
           grid: false,
           defaultLang: 'plaintext',

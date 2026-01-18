@@ -64,6 +64,7 @@ export default {
           visited: 'var(--link-visited)',
           active: 'var(--link-active)',
         },
+        'accent-line': 'var(--accent-line)',
       },
       borderRadius: {
         xl: 'var(--radius-xl)',

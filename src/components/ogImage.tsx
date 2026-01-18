@@ -13,7 +13,22 @@ const logoBase64 = btoa(
   ),
 );
 
+/**
+ * Calculate dynamic font size based on title length
+ * Longer titles get smaller font sizes to fit within the OG image
+ */
+function getTitleFontSize(text: string): string {
+  const length = text.length;
+  if (length <= 25) return '4rem';
+  if (length <= 40) return '3.5rem';
+  if (length <= 55) return '3rem';
+  if (length <= 70) return '2.5rem';
+  return '2rem';
+}
+
 const ogImage = async (text: string, date?: Date, emoji?: string) => {
+  const titleFontSize = getTitleFontSize(text);
+
   const svg = await satori(
     <div
       style={{
@@ -65,13 +80,16 @@ const ogImage = async (text: string, date?: Date, emoji?: string) => {
         <h1
           style={{
             marginTop: 0,
-            fontSize: '4rem',
+            fontSize: titleFontSize,
             width: '100%',
             flexGrow: 1,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            textAlign: 'center',
             lineHeight: '1.4',
+            wordBreak: 'keep-all',
+            overflowWrap: 'break-word',
           }}
         >
           {text}
@@ -103,7 +121,7 @@ const ogImage = async (text: string, date?: Date, emoji?: string) => {
           >
             <img
               src={`data:image/png;base64,${logoBase64}`}
-              alt="www.funailog.com"
+              alt="funailog.com"
               width={50}
               height={50}
               style={{
@@ -117,7 +135,7 @@ const ogImage = async (text: string, date?: Date, emoji?: string) => {
                 fontSize: '2.25rem',
               }}
             >
-              {'www.funailog.com'}
+              {'funailog.com'}
             </h2>
           </div>
         </div>
