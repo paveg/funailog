@@ -4,6 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
 import { defineConfig } from 'astro/config';
 
+import inline from '@playform/inline';
 import embeds from 'astro-embed/integration';
 import purgecss from 'astro-purgecss';
 import { h } from 'hastscript';
@@ -49,6 +50,7 @@ export default defineConfig({
         greedy: [/animate-/, /transition-/],
       },
     }),
+    inline(),
   ],
   build: {
     // If I set 'file', Astro.url.pathname should return '/file.html'

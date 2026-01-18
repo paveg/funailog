@@ -1,7 +1,7 @@
 ---
 import { Image as AstroImage } from 'astro:assets';
 
-const { src, alt, ...props } = Astro.props;
+const { src, alt, loading = 'lazy', fetchpriority, ...props } = Astro.props;
 const imageProps = {
   src,
   alt,
@@ -13,4 +13,9 @@ const imageProps = {
 };
 ---
 
-<AstroImage loading="lazy" class="rounded" {...imageProps} />
+<AstroImage
+  loading={loading}
+  fetchpriority={fetchpriority}
+  class="rounded"
+  {...imageProps}
+/>
