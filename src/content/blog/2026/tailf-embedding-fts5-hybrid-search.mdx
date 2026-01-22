@@ -1,0 +1,352 @@
+---
+title: 好きに書いて、技術記事だけ届く仕組みを作った
+description: 個人ブログに雑記も書きたい、でも技術記事だけ読まれたい。tailfではembeddingで技術記事を自動判定し、FTS5で検索を実現。Cloudflare D1での実装詳細も紹介。
+published: 2026-01-22
+tags:
+  [
+    'Cloudflare',
+    'D1',
+    'Hono',
+    'embedding',
+    'FTS5',
+    'SQLite',
+    '個人開発',
+    '全文検索',
+  ]
+isPublished: true
+category: programming
+---
+
+## はじめに
+
+技術ブログを探すのは意外と難しいです。Google検索で過去記事を遡ったり、まとめ記事を探したり。ゼロから良質な技術ブログを見つけるのはなかなか骨が折れます。
+
+この課題に対して、すでにいくつかの先行サービスがあります。
+
+- [tech-blog-rss-feed](https://yamadashy.github.io/tech-blog-rss-feed/) - 企業テックブログのRSSをまとめたプロジェクト
+- [blog.diff](https://diff.blog/) - 技術ブログの更新を追えるサービス（海外向け）
+
+tech-blog-rss-feedは非常に便利ですが、企業ブログが中心。blog.diffは海外向けで、日本の個人ブログには対応していません。僕には一つ欲しい機能がありました。**個人ブログから技術記事だけを吸い出して読みたい**というニーズです。
+
+企業テックブログは基本的に技術記事しか投稿されませんが、個人ブログは違います。技術記事、日記、旅行記、ガジェットレビュー...様々なコンテンツが混在しています。RSSで購読すると「今日は〇〇を食べました」みたいな記事も流れてきます。
+
+ただ、僕はそういった記事を完全に排除したいわけではありません。日記や雑記も読み物として面白いですし、その人の人となりが見えてくる。でも、技術情報を効率よくキャッチアップしたいときには、技術記事だけをフィルタリングして見たい。
+
+この「全部は消したくないけど、技術記事だけ見たいときもある」という着想から生まれたのが[tailf](https://tailf.pavegy.workers.dev)です。名前の由来は `tail -f`、ファイルの変更をリアルタイムで追うUnixコマンドから取っています。
+
+個人ブログには技術記事だけでなく雑記や日記も混在しています。tailfではこの問題を解決するために、**embeddingによる技術記事の分類**と**FTS5による検索**を組み合わせています。
+
+この記事では、なぜ2つの技術を併用しているのか、そしてなぜ検索にセマンティック検索ではなくFTS5を採用したのかを解説します。
+
+---
+
+## tailfとは
+
+tailfは日本の技術ブログを集約するサービスです。[tech-blog-rss-feed](https://yamadashy.github.io/tech-blog-rss-feed/)や[blog.diff](https://and-and.net/blogdiff/)から着想を得て、個人ブログだけでなく企業テックブログにも対応しています。
+
+**ブログを書いている人へ:**
+
+- 自分のブログをRSSで登録するだけ
+- 技術記事は自動でピックアップされる
+- 雑記も自由に書ける。技術記事だけが読者に届く
+
+**技術記事を読みたい人へ:**
+
+- 個人ブログの技術記事だけを効率よくキャッチアップ
+- 企業テックブログも公式で順次追加中
+- キーワードで検索も可能
+
+https://tailf.pavegy.workers.dev
+
+---
+
+## 分類と検索は別の問題
+
+まず前提として、「分類」と「検索」は異なる問題です。
+
+| 問題 | 求められること                   | 適した技術                |
+| ---- | -------------------------------- | ------------------------- |
+| 分類 | 「この記事は技術記事か？」を判定 | embedding（意味的な理解） |
+| 検索 | 「Reactを含む記事を探す」        | FTS（キーワードマッチ）   |
+
+「全部embeddingでやればいいのでは？」と思うかもしれません。実際、検索もベクトル検索（セマンティック検索）で実現できます。しかし、tailfではあえてFTS5を採用しました。その理由は後述します。
+
+---
+
+## 技術記事スコアリング：BGE-M3 embedding
+
+### なぜembeddingを使うのか
+
+技術記事かどうかの判定は、単純なキーワードマッチでは難しいです。
+
+- 「Reactで状態管理を実装した」→ 技術記事
+- 「React製のアプリを使ってみた感想」→ ガジェットレビュー寄り
+- 「Reactエンジニアとして転職した話」→ キャリア記事
+
+どれも「React」を含みますが、技術記事度は異なります。文脈や意味を理解する必要があります。
+
+### アンカー句との比較
+
+tailfでは、Cloudflare Workers AIのBGE-M3モデルを使ってembeddingを生成し、「技術記事らしいフレーズ」と「非技術記事らしいフレーズ」との類似度を比較しています。
+
+```typescript title="アンカー句の定義"
+// 技術記事のアンカー句
+const TECH_ANCHOR_PHRASES = [
+  'React TypeScript フロントエンド開発 コンポーネント実装',
+  'Python 機械学習 データ分析 モデル構築',
+  'AWS インフラ構築 Terraform IaC デプロイ自動化',
+  'Docker Kubernetes コンテナ オーケストレーション',
+  'LLM プロンプトエンジニアリング RAG ベクトル検索',
+  // ...
+];
+
+// 非技術記事のアンカー句
+const NON_TECH_ANCHOR_PHRASES = [
+  '転職 キャリア 年収 面接対策 就職活動',
+  '日記 振り返り 感想 ポエム 雑記',
+  'ガジェット レビュー 買ってよかった デスクツアー',
+  // ...
+];
+```
+
+入力テキストのembeddingを生成し、各アンカー句とのコサイン類似度を計算します。技術記事アンカーとの最大類似度から、非技術記事アンカーとの類似度をペナルティとして引きます。
+
+```typescript title="スコア計算"
+const maxTechSim = maxSimilarity(anchors.tech);
+const maxNonTechSim = maxSimilarity(anchors.nonTech);
+
+// スコア = 技術類似度 - 非技術ペナルティ（正規化）
+const rawScore = maxTechSim - maxNonTechSim * 0.5;
+const normalizedScore = Math.max(0, Math.min(1, (rawScore + 0.3) / 0.8));
+```
+
+### キーワードベースとのハイブリッド
+
+Workers AIが利用できない場合のフォールバックとして、キーワードベースのスコアリングも実装しています。
+
+```typescript title="キーワードベースのフォールバック"
+// 高信頼キーワード（重み0.3、最大3マッチ）
+const HIGH_WEIGHT_KEYWORDS = [
+  'javascript',
+  'typescript',
+  'python',
+  'rust',
+  'react',
+  'vue',
+  'next.js',
+  'kubernetes',
+  'docker',
+  // ...
+];
+
+// 中信頼キーワード（重み0.15）
+const MEDIUM_WEIGHT_KEYWORDS = [
+  'プログラミング',
+  'エンジニア',
+  '実装',
+  'アーキテクチャ',
+  // ...
+];
+
+const score =
+  countMatches(text, HIGH_WEIGHT_KEYWORDS, 3) * 0.3 +
+  countMatches(text, MEDIUM_WEIGHT_KEYWORDS, 4) * 0.15 +
+  countMatches(text, LOW_WEIGHT_KEYWORDS, 5) * 0.05;
+```
+
+これにより、AIが使えない環境でも最低限の分類が可能になります。
+
+---
+
+## 検索にFTS5を選んだ理由
+
+ここからが本題です。分類にはembeddingを使っているのに、なぜ検索にはセマンティック検索（ベクトル検索）ではなくFTS5を採用したのでしょうか。
+
+### 1. コストとシンプルさ
+
+tailfはCloudflare D1（SQLite）をデータベースとして使っています。D1にはFTS5が組み込まれており、追加コストなしで全文検索が使えます。
+
+一方、ベクトル検索を行うにはCloudflare Vectorizeなどの別サービスが必要になります。小規模なサービスでは、この追加の複雑さとコストは避けたいところです。
+
+```sql title="FTS5テーブルの作成"
+-- D1組み込み、追加コストなし
+CREATE VIRTUAL TABLE posts_fts USING fts5(
+  title,
+  summary,
+  content='posts',
+  content_rowid='rowid',
+  tokenize='trigram'
+);
+```
+
+### 2. カーソルページネーションとの相性
+
+これが最も重要な理由です。
+
+セマンティック検索は「類似度スコア順」で結果を返します。しかし、tailfでは検索結果を「公開日順」で表示したいです。つまりリランク（並べ替え）が必要になります。
+
+```text
+# ベクトル検索の結果（類似度順）
+[スコア0.95の記事, スコア0.90の記事, スコア0.85の記事...]
+
+# でも表示は公開日順
+→ リランクが必要
+```
+
+問題は、リランク後のカーソルページネーションです。
+
+tailfではカーソルベースのページネーションを採用しています。「この日時より前の記事を20件取得」という形式です。しかし、ベクトル検索でリランクすると：
+
+1. 1ページ目を取得（ベクトル検索 → リランク → 上位20件）
+2. 2ページ目を取得するとき、同じベクトル検索結果が得られる保証がない
+3. 新しい記事が追加されると、類似度の順位が変動する
+4. カーソルの一貫性が崩壊
+
+FTS5ならこの問題は発生しません。
+
+```sql title="FTS5での検索クエリ"
+SELECT p.id FROM posts p
+JOIN posts_fts ON p.rowid = posts_fts.rowid
+WHERE posts_fts MATCH 'React'
+  AND p.published_at < :cursor  -- カーソル条件
+ORDER BY p.published_at DESC    -- 公開日順
+LIMIT 20
+```
+
+絞り込み（MATCH）と並び順（ORDER BY）が分離されているため、カーソルは `published_at` ベースで安定して動作します。
+
+### 3. 日本語対応
+
+FTS5のデフォルトトークナイザーはスペース区切りを前提としているため、日本語では機能しません。tailfでは `trigram` トークナイザーを使用しています。
+
+```sql
+tokenize='trigram'
+```
+
+trigramは3文字単位でテキストを分割します。「プログラミング」なら「プロ」「ログ」「グラ」「ラミ」「ミン」「ング」のようにインデックス化されます。
+
+これにより、日本語でも部分一致検索が可能になります。ただし、3文字未満のクエリではtrigramが機能しないため、LIKEにフォールバックしています。
+
+```typescript title="検索クエリの分岐"
+const FTS5_MIN_QUERY_LENGTH = 3;
+
+if (q.length >= FTS5_MIN_QUERY_LENGTH) {
+  // FTS5検索
+  const ftsResult = await db.all(sql`
+    SELECT p.id FROM posts p
+    JOIN posts_fts ON p.rowid = posts_fts.rowid
+    WHERE posts_fts MATCH ${q}
+    ORDER BY p.published_at DESC
+    LIMIT ${limit + 1}
+  `);
+} else {
+  // LIKEフォールバック
+  const result = await db.query.posts.findMany({
+    where: or(like(posts.title, `%${q}%`), like(posts.summary, `%${q}%`)),
+    // ...
+  });
+}
+```
+
+### 4. YAGNI：要望が出たら考える
+
+セマンティック検索が有効なのは「曖昧なクエリ」です。
+
+- 「状態管理について」→ Redux, Zustand, Jotaiなど関連記事を横断的に取得
+- 「パフォーマンス改善」→ 様々な最適化手法の記事を取得
+
+しかし、tailfの検索では、ユーザーは「React」「Next.js」「Kubernetes」など明確なキーワードで検索します。曖昧なクエリでの検索需要は今のところありません。
+
+**存在しない需要のために複雑さを増やす必要はありません。要望が出たら、その時に検討すればいいと考えています。**
+
+---
+
+## 実装詳細：FTS5のセットアップ
+
+参考までに、FTS5の実装詳細を載せておきます。
+
+### 外部コンテンツテーブル
+
+FTS5を「外部コンテンツテーブル」として設定することで、元の `posts` テーブルとデータを同期できます。
+
+```sql title="外部コンテンツテーブルの設定"
+CREATE VIRTUAL TABLE posts_fts USING fts5(
+  title,
+  summary,
+  content='posts',       -- 参照元テーブル
+  content_rowid='rowid', -- 紐付けるID
+  tokenize='trigram'
+);
+```
+
+### トリガーによる自動同期
+
+INSERT/UPDATE/DELETE時に自動でFTSテーブルを更新するトリガーを設定します。
+
+```sql title="同期用トリガー"
+-- INSERT時
+CREATE TRIGGER posts_fts_ai AFTER INSERT ON posts BEGIN
+  INSERT INTO posts_fts(rowid, title, summary)
+  VALUES (new.rowid, new.title, COALESCE(new.summary, ''));
+END;
+
+-- UPDATE時
+CREATE TRIGGER posts_fts_au AFTER UPDATE ON posts BEGIN
+  INSERT INTO posts_fts(posts_fts, rowid, title, summary)
+  VALUES('delete', old.rowid, old.title, COALESCE(old.summary, ''));
+  INSERT INTO posts_fts(rowid, title, summary)
+  VALUES (new.rowid, new.title, COALESCE(new.summary, ''));
+END;
+
+-- DELETE時
+CREATE TRIGGER posts_fts_ad AFTER DELETE ON posts BEGIN
+  INSERT INTO posts_fts(posts_fts, rowid, title, summary)
+  VALUES('delete', old.rowid, old.title, COALESCE(old.summary, ''));
+END;
+```
+
+---
+
+## まとめ
+
+tailfでは、分類にはembedding、検索にはFTS5を採用しています。
+
+| 用途 | 技術             | 理由                                 |
+| ---- | ---------------- | ------------------------------------ |
+| 分類 | BGE-M3 embedding | 意味的な理解が必要                   |
+| 検索 | FTS5 (trigram)   | コスト、ページネーション、シンプルさ |
+
+「全部AIでやる」が正解とは限りません。**適材適所で技術を選ぶことで、シンプルで保守しやすいシステムになります。**
+
+セマンティック検索が必要になったら、その時に考えればいいのです。
+
+---
+
+**tailfを使ってみてください。** ブログを書いている人は自分のRSSを登録するだけ。技術記事を読みたい人はそのまま使えます。
+
+https://tailf.pavegy.workers.dev
+
+---
+
+## 今後の展望
+
+現在、「後で読む」サービスの[Tuck](https://gettuck.app)との連携を検討しています。tailfで発見した記事をワンクリックでTuckに保存できるようになる予定です。
+
+両サービスともCloudflare Workers + Hono + D1という同じ技術スタックで構築しているため、統合はスムーズに進められそうです。進捗があれば別途記事にします。
+
+それでは、またね。
+
+---
+
+## 関連記事
+
+- [Cloudflare D1 + Hono + Reactでサプリ管理PWAを個人開発した話](/blog/2025/dailydose-pwa-development) - 同じ技術スタックでのPWA開発
+- [個人開発アプリをEdge構成で構築した技術スタック](/blog/2025/modern-edge-tech-stack) - Cloudflare Workers + D1 + Honoの詳細解説
+- [Zod から Valibot に移行してバンドルサイズを89%削減した話](/blog/2025/zod-to-valibot-migration) - Cloudflare Workers環境での最適化
+
+## 参考リンク
+
+- [tailf - 技術ブログ集約サービス](https://tailf.pavegy.workers.dev)
+- [Cloudflare D1 公式ドキュメント](https://developers.cloudflare.com/d1/)
+- [SQLite FTS5 Extension](https://www.sqlite.org/fts5.html)
+- [Cloudflare Workers AI](https://developers.cloudflare.com/workers-ai/)
