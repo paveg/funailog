@@ -1,0 +1,84 @@
+---
+/**
+ * ArticleTOC — Table of Contents with scroll spy.
+ * Extracts headings client-side from the article element.
+ */
+---
+
+<nav id="article-toc" class="hidden" aria-label="目次">
+  <p class="font-code text-muted-foreground mb-3 text-xs">contents</p>
+  <ul id="toc-list" class="border-border space-y-1 border-l pl-3 text-xs"></ul>
+</nav>
+
+<script>
+  function initTOC() {
+    const toc = document.getElementById('article-toc');
+    const list = document.getElementById('toc-list');
+    const article = document.querySelector('article');
+    if (!toc || !list || !article) return;
+
+    const headings = article.querySelectorAll('h2, h3');
+    if (headings.length < 2) return;
+
+    // Clear previous TOC items safely
+    while (list.firstChild) {
+      list.removeChild(list.firstChild);
+    }
+
+    const items: { el: Element; link: HTMLAnchorElement }[] = [];
+
+    headings.forEach((h) => {
+      const id = h.id;
+      if (!id) return;
+
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = `#${id}`;
+      // Safe: textContent only outputs plain text, no HTML parsing
+      a.textContent = h.textContent?.replace(/#$/, '').trim() ?? '';
+      a.className =
+        'block truncate text-muted-foreground transition-colors hover:text-foreground';
+
+      if (h.tagName === 'H3') {
+        li.className = 'pl-3';
+      }
+
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.getElementById(id);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          history.replaceState(null, '', `#${id}`);
+        }
+      });
+
+      li.appendChild(a);
+      list.appendChild(li);
+      items.push({ el: h, link: a });
+    });
+
+    toc.classList.remove('hidden');
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            items.forEach(({ link }) =>
+              link.classList.remove('text-foreground', 'font-medium'),
+            );
+            const active = items.find((item) => item.el === entry.target);
+            if (active) {
+              active.link.classList.add('text-foreground', 'font-medium');
+            }
+          }
+        });
+      },
+      { rootMargin: '-80px 0px -60% 0px', threshold: 0 },
+    );
+
+    headings.forEach((h) => observer.observe(h));
+  }
+
+  initTOC();
+  document.addEventListener('astro:after-swap', initTOC);
+</script>

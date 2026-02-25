@@ -1,18 +1,22 @@
 ---
-import '@/styles/articles.css';
+import '@/styles/prose.css';
+
 import type { CollectionEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
 import { getEntry } from 'astro:content';
 
+import ArticleHeader from '@/components/article/ArticleHeader.astro';
+import ArticleTOC from '@/components/article/ArticleTOC.astro';
+import ReadingProgress from '@/components/article/ReadingProgress.astro';
+import RelatedArticles from '@/components/article/RelatedArticles.astro';
 import Figure from '@/components/Figure.astro';
 import Link from '@/components/Link.astro';
-import { BlogDate } from '@/components/markdown/blog-date';
-import { BlogMeta } from '@/components/markdown/blog-meta';
 import Image from '@/components/markdown/Image.astro';
-import { ShareButtons } from '@/components/ShareButtons';
-import { Separator } from '@/components/ui/separator';
+import ScrollToTop from '@/components/ScrollToTop.astro';
+import ShareButtons from '@/components/ShareButtons.astro';
 import { useTranslations } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
+import { getRelatedPosts } from '@/lib/related-posts';
 import { ArticleLd } from '@/lib/rich-results';
 
 const meta = await getEntry('site', 'meta');
@@ -46,6 +50,9 @@ const path = `${post.collection}/${post.slug}`;
 const fullUrl = new URL(path, site).toString();
 const t = useTranslations('ja');
 const defaultImagePath = `/api/og/article/${post.collection}/${post.slug}.png`;
+
+const allPosts = await getCollection('blog');
+const relatedPosts = getRelatedPosts(post, allPosts);
 ---
 
 <Layout
@@ -69,12 +76,13 @@ const defaultImagePath = `/api/og/article/${post.collection}/${post.slug}.png`;
   ]}
   jsonLdSchema={ArticleLd(meta, post, site)}
 >
+  <ReadingProgress />
   <main>
     <article>
-      <h1 class="text-center font-heading [text-wrap:wrap] [word-break:normal]">
+      <h1 class="font-heading text-center [text-wrap:wrap] [word-break:normal]">
         {post.data.title}
       </h1>
-      <BlogDate post={post} />
+      <ArticleHeader post={post} minRead={remarkPluginFrontmatter.minRead} />
       <Image
         class="my-3 rounded-md"
         src={post.data.heroImage ?? defaultImagePath}
@@ -84,10 +92,12 @@ const defaultImagePath = `/api/og/article/${post.collection}/${post.slug}.png`;
         loading="eager"
         fetchpriority="high"
       />
-      <BlogMeta post={post} minRead={remarkPluginFrontmatter.minRead} />
-      <Separator className="bg-border" />
+      <ArticleTOC />
+      <hr class="border-border" />
       <Content components={components} />
-      <ShareButtons client:visible url={fullUrl} title={post.data.title} />
+      <ShareButtons url={fullUrl} title={post.data.title} />
+      <RelatedArticles posts={relatedPosts} />
     </article>
   </main>
+  <ScrollToTop />
 </Layout>

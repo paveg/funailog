@@ -1,0 +1,33 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+import { formatDateEn } from '@/lib/utils';
+
+export type Props = {
+  posts: CollectionEntry<'blog'>[];
+};
+
+const { posts } = Astro.props;
+---
+
+{
+  posts.length > 0 && (
+    <aside class="border-border mt-12 border-t pt-8">
+      <h2 class="font-code text-muted-foreground mb-4 text-xs">related</h2>
+      <ul class="space-y-3">
+        {posts.map((post) => (
+          <li>
+            <a href={`/blog/${post.slug}`} class="group block">
+              <span class="font-heading text-foreground group-hover:text-link text-sm transition-colors">
+                {post.data.title}
+              </span>
+              <span class="font-code text-muted-foreground ml-2 text-xs">
+                {formatDateEn(post.data.published)}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  )
+}

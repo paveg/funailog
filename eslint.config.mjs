@@ -1,6 +1,4 @@
-import { FlatCompat } from '@eslint/eslintrc';
 import eslint from '@eslint/js';
-import pluginESLint from '@typescript-eslint/eslint-plugin';
 import typescriptEslintParser from '@typescript-eslint/parser';
 import pluginAstro from 'eslint-plugin-astro';
 import pluginImport from 'eslint-plugin-import';
@@ -11,7 +9,6 @@ import pluginReactHooks from 'eslint-plugin-react-hooks';
 import pluginUnusedImports from 'eslint-plugin-unused-imports';
 import tseslint from 'typescript-eslint';
 
-const compat = new FlatCompat();
 /**
  * @type {import("eslint").Linter.FlatConfig}
  */
@@ -44,10 +41,6 @@ export default [
   ...tseslint.configs.recommended,
   ...pluginAstro.configs['flat/recommended'],
   ...pluginAstro.configs['flat/jsx-a11y-recommended'],
-  ...compat.config({
-    ...pluginESLint.configs.recommended,
-    extends: ['plugin:tailwindcss/recommended'],
-  }),
   {
     rules: {
       'import/order': [

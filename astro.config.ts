@@ -1,17 +1,15 @@
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
-import tailwind from '@astrojs/tailwind';
 import { defineConfig } from 'astro/config';
 
 import inline from '@playform/inline';
+import tailwindcss from '@tailwindcss/vite';
 import embeds from 'astro-embed/integration';
-import purgecss from 'astro-purgecss';
+import expressiveCode from 'astro-expressive-code';
 import { h } from 'hastscript';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeMermaid from 'rehype-mermaid';
-import rehypePrettyCode from 'rehype-pretty-code';
-import rehypeSlug from 'rehype-slug';
 
 import remarkLink from './src/lib/remark-link';
 import { remarkReadingTime } from './src/lib/remark-reading-time';
@@ -25,11 +23,6 @@ export default defineConfig({
   },
   integrations: [
     react(),
-    tailwind({
-      applyBaseStyles: false,
-      nesting: true,
-      configFile: 'tailwind.config.mjs',
-    }),
     embeds({
       services: {
         // Only YouTube is handled by astro-embed
@@ -37,23 +30,25 @@ export default defineConfig({
         LinkPreview: false,
       },
     }),
-    mdx(),
-    sitemap(),
-    purgecss({
-      fontFace: true,
-      safelist: {
-        // Keep all dark mode and prose classes
-        standard: [/^dark/, /^prose/, /^shiki/, /^astro-/],
-        // Keep radix-ui component classes
-        deep: [/radix/, /data-/],
-        // Keep Tailwind animation and dynamic classes
-        greedy: [/animate-/, /transition-/],
+    expressiveCode({
+      themes: ['github-light', 'github-dark'],
+      themeCssSelector: (theme) => {
+        if (theme.type === 'dark') return '.dark';
+        return ':root:not(.dark)';
+      },
+      // Inline styles to avoid Tailwind v4 Vite plugin parsing EC's generated CSS
+      emitExternalStylesheet: false,
+      styleOverrides: {
+        codeFontFamily: "var(--font-code, 'Fira Code Variable', monospace)",
+        codeFontSize: '0.875rem',
+        borderRadius: '0.5rem',
       },
     }),
+    mdx(),
+    sitemap(),
     inline(),
   ],
   build: {
-    // If I set 'file', Astro.url.pathname should return '/file.html'
     format: 'directory',
   },
   prefetch: {
@@ -61,17 +56,9 @@ export default defineConfig({
     prefetchAll: true,
   },
   vite: {
+    plugins: [tailwindcss()],
     build: {
-      // Note: lightningcssでのミニファイは構文エラーが発生するためesbuildを使用
-      // 原因: 外部ライブラリまたはrehypeプラグインが生成するCSSに不正な構文あり
       cssMinify: 'esbuild',
-    },
-    css: {
-      lightningcss: {
-        drafts: {
-          customMedia: true,
-        },
-      },
     },
   },
   markdown: {
@@ -83,12 +70,10 @@ export default defineConfig({
     },
     remarkPlugins: [remarkLink, remarkReadingTime],
     rehypePlugins: [
-      rehypeSlug,
       [
         rehypeMermaid,
         {
-          // Use pre-mermaid strategy for client-side rendering
-          // This avoids Playwright dependency which doesn't work in Cloudflare Workers build
+          // pre-mermaid: client-side rendering, no Playwright dependency
           strategy: 'pre-mermaid',
         },
       ],
@@ -104,17 +89,6 @@ export default defineConfig({
           content: h('span.heading-link-icon', {
             title: 'link',
           }),
-        },
-      ],
-      [
-        rehypePrettyCode,
-        {
-          theme: {
-            light: 'github-light',
-            dark: 'github-dark',
-          },
-          grid: false,
-          defaultLang: 'plaintext',
         },
       ],
     ],

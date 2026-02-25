@@ -1,0 +1,54 @@
+---
+/**
+ * ScrollToTop — appears after scrolling past the fold.
+ * Pure Astro, no React hydration needed.
+ */
+---
+
+<button
+  id="scroll-to-top"
+  type="button"
+  class="border-border bg-background/80 font-code text-muted-foreground hover:bg-accent hover:text-foreground fixed right-6 bottom-6 z-40 hidden size-9 items-center justify-center rounded-md border text-xs shadow-sm backdrop-blur-sm transition-all"
+  aria-label="ページ上部へ戻る"
+>
+  &uarr;
+</button>
+
+<script>
+  function initScrollToTop() {
+    const btn = document.getElementById('scroll-to-top');
+    if (!btn) return;
+
+    const sentinel = document.createElement('div');
+    sentinel.setAttribute('aria-hidden', 'true');
+    sentinel.style.position = 'absolute';
+    sentinel.style.top = '100vh';
+    sentinel.style.height = '1px';
+    sentinel.style.width = '1px';
+    document.body.prepend(sentinel);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (!entry) return;
+        if (entry.isIntersecting) {
+          btn.classList.add('hidden');
+          btn.classList.remove('flex');
+        } else {
+          btn.classList.remove('hidden');
+          btn.classList.add('flex');
+        }
+      },
+      { threshold: 0 },
+    );
+
+    observer.observe(sentinel);
+
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  initScrollToTop();
+  document.addEventListener('astro:after-swap', initScrollToTop);
+</script>

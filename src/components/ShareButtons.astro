@@ -1,0 +1,88 @@
+---
+export type Props = {
+  url: string;
+  title: string;
+};
+
+const { url, title } = Astro.props;
+const hashtag = 'funailog';
+
+const platforms = [
+  {
+    name: 'X',
+    href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}&hashtags=${hashtag}`,
+    label: 'Xでシェア',
+  },
+  {
+    name: 'Facebook',
+    href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+    label: 'Facebookでシェア',
+  },
+  {
+    name: 'Hatena',
+    href: `https://b.hatena.ne.jp/entry/s/${url.replace(/^https?:\/\//, '')}`,
+    label: 'はてなブックマークに追加',
+  },
+  {
+    name: 'LINE',
+    href: `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(`${title} #${hashtag}`)}`,
+    label: 'LINEでシェア',
+  },
+];
+---
+
+<div class="border-border mt-12 border-t pt-8">
+  <p class="font-code text-muted-foreground mb-4 text-center text-xs">share</p>
+  <div class="flex items-center justify-center gap-2">
+    {
+      platforms.map((p) => (
+        <a
+          href={p.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="border-border font-code text-muted-foreground hover:bg-accent hover:text-foreground rounded-md border px-3 py-1.5 text-xs transition-colors"
+          aria-label={p.label}
+        >
+          {p.name}
+        </a>
+      ))
+    }
+    <button
+      id="copy-link-btn"
+      type="button"
+      class="border-border font-code text-muted-foreground hover:bg-accent hover:text-foreground rounded-md border px-3 py-1.5 text-xs transition-colors"
+      aria-label="リンクをコピー"
+      data-url={url}
+    >
+      Copy
+    </button>
+  </div>
+</div>
+
+<script>
+  function initCopyLink() {
+    const btn = document.getElementById('copy-link-btn');
+    if (!btn) return;
+
+    btn.addEventListener('click', async () => {
+      const url = btn.getAttribute('data-url');
+      if (!url) return;
+
+      try {
+        await navigator.clipboard.writeText(url);
+        const original = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('text-foreground');
+        setTimeout(() => {
+          btn.textContent = original;
+          btn.classList.remove('text-foreground');
+        }, 2000);
+      } catch {
+        console.warn('Failed to copy to clipboard');
+      }
+    });
+  }
+
+  initCopyLink();
+  document.addEventListener('astro:after-swap', initCopyLink);
+</script>

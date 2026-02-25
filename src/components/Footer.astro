@@ -1,89 +1,107 @@
 ---
 import { getEntry } from 'astro:content';
 
-import {
-  GitHubLogoIcon,
-  InstagramLogoIcon,
-  TwitterLogoIcon,
-} from '@radix-ui/react-icons';
-import { RssIcon } from 'lucide-react';
-
 const meta = await getEntry('site', 'meta');
 if (!meta) {
   throw new Error('Site meta configuration not found');
 }
-const today = new Date();
-const currentYear = today.getFullYear();
+const currentYear = new Date().getFullYear();
 const startYear = 2023;
 ---
 
-<footer class="mt-auto pb-8 pt-16">
-  <!-- 繊細な区切り線 -->
-  <div class="mb-8 flex items-center justify-center gap-4">
-    <div class="to-border/60 h-px w-12 bg-gradient-to-r from-transparent"></div>
-    <div class="bg-border/40 size-1.5 rounded-full"></div>
-    <div class="to-border/60 h-px w-12 bg-gradient-to-l from-transparent"></div>
-  </div>
-
-  <div class="flex flex-col items-center gap-6">
-    <!-- ソーシャルアイコン -->
-    <nav aria-label="Social links" class="flex items-center gap-2">
-      <a
-        href="/rss.xml"
-        class="group relative flex size-9 items-center justify-center rounded-lg transition-all duration-200 hover:bg-accent"
-        aria-label="RSSフィードを購読"
-      >
-        <RssIcon
-          className="size-4 text-muted-foreground transition-colors duration-200 group-hover:text-foreground"
-        />
-      </a>
-      <a
-        href={meta.data.links.github}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="group relative flex size-9 items-center justify-center rounded-lg transition-all duration-200 hover:bg-accent"
-        aria-label="GitHubプロフィール"
-      >
-        <GitHubLogoIcon
-          className="size-4 text-muted-foreground transition-colors duration-200 group-hover:text-foreground"
-        />
-      </a>
-      <a
-        href={meta.data.links.twitter}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="group relative flex size-9 items-center justify-center rounded-lg transition-all duration-200 hover:bg-accent"
-        aria-label="X (Twitter)"
-      >
-        <TwitterLogoIcon
-          className="size-4 text-muted-foreground transition-colors duration-200 group-hover:text-foreground"
-        />
-      </a>
-      <a
-        href={meta.data.links.instagram}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="group relative flex size-9 items-center justify-center rounded-lg transition-all duration-200 hover:bg-accent"
-        aria-label="Instagram"
-      >
-        <InstagramLogoIcon
-          className="size-4 text-muted-foreground transition-colors duration-200 group-hover:text-foreground"
-        />
-      </a>
-    </nav>
-
-    <!-- コピーライトとリンク -->
-    <div class="flex flex-col items-center gap-2 text-center">
-      <a
-        href="/privacy"
-        class="text-xs text-muted-foreground transition-colors duration-200 hover:text-foreground"
-      >
-        Privacy Policy
-      </a>
-      <p class="text-muted-foreground/60 text-2xs tracking-wider">
-        &copy; {startYear}&ndash;{currentYear}
-        {meta.data.author.name}
+<footer class="border-border mt-auto border-t pt-12 pb-10">
+  <div
+    class="font-code text-muted-foreground grid gap-8 text-xs sm:grid-cols-3"
+  >
+    {/* Column 1: Site identity */}
+    <div class="space-y-2">
+      <p class="text-foreground font-medium">funailog.com</p>
+      <p class="leading-relaxed">
+        ガジェット・仕事道具・乗り物、<br />
+        そして技術について綴る個人メディア。
       </p>
     </div>
+
+    {/* Column 2: Navigation */}
+    <div class="space-y-2">
+      <p class="text-foreground font-medium">nav</p>
+      <ul class="space-y-1">
+        <li>
+          <a href="/" class="hover:text-foreground transition-colors">home</a>
+        </li>
+        <li>
+          <a href="/blog" class="hover:text-foreground transition-colors"
+            >blog</a
+          >
+        </li>
+        <li>
+          <a href="/portfolio" class="hover:text-foreground transition-colors"
+            >portfolio</a
+          >
+        </li>
+        <li>
+          <a href="/privacy" class="hover:text-foreground transition-colors"
+            >privacy</a
+          >
+        </li>
+        <li>
+          <a href="/rss.xml" class="hover:text-foreground transition-colors"
+            >rss</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    {/* Column 3: Links */}
+    <div class="space-y-2">
+      <p class="text-foreground font-medium">elsewhere</p>
+      <ul class="space-y-1">
+        <li>
+          <a
+            href={meta.data.links.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-foreground transition-colors"
+          >
+            github
+          </a>
+        </li>
+        <li>
+          <a
+            href={meta.data.links.twitter}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-foreground transition-colors"
+          >
+            x / twitter
+          </a>
+        </li>
+        <li>
+          <a
+            href={meta.data.links.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-foreground transition-colors"
+          >
+            instagram
+          </a>
+        </li>
+        <li>
+          <a
+            href={meta.data.links.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-foreground transition-colors"
+          >
+            linkedin
+          </a>
+        </li>
+      </ul>
+    </div>
   </div>
+
+  <p class="font-code text-2xs text-muted-foreground/50 mt-10">
+    &copy; {startYear}&ndash;{currentYear}
+    {meta.data.author.name}
+  </p>
 </footer>

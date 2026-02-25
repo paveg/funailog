@@ -1,14 +1,15 @@
+@reference "./tokens.css";
+
 body {
   article {
     /* prose with responsive font size */
-    @apply prose max-w-none flex-grow break-words dark:prose-invert;
+    @apply prose dark:prose-invert max-w-none flex-grow break-words;
     @apply text-sm md:text-base;
 
     /* Japanese-optimized line height */
     line-height: 1.8;
 
     & p {
-      /* Paragraph spacing */
       @apply my-5;
     }
 
@@ -20,11 +21,10 @@ body {
     }
     & li {
       @apply list-outside;
-      /* Comfortable spacing between list items */
       @apply my-1.5;
     }
 
-    /* Heading hierarchy - mobile-first sizing */
+    /* Heading hierarchy */
     & h1,
     & h2,
     & h3,
@@ -35,33 +35,33 @@ body {
       word-break: normal;
     }
     & h1 {
-      @apply mb-5 mt-10 font-heading text-foreground;
+      @apply font-heading text-foreground mt-10 mb-5;
       @apply text-xl md:text-2xl;
       font-weight: 700;
       letter-spacing: -0.01em;
     }
     & h2 {
-      @apply mb-3 mt-8 font-heading text-foreground;
+      @apply font-heading text-foreground mt-8 mb-3;
       @apply text-lg md:text-xl;
       font-weight: 600;
     }
     & h3 {
-      @apply mb-2 mt-6 font-heading text-foreground;
+      @apply font-heading text-foreground mt-6 mb-2;
       @apply text-base md:text-lg;
       font-weight: 600;
     }
     & h4 {
-      @apply mb-2 mt-5 font-heading text-foreground;
+      @apply font-heading text-foreground mt-5 mb-2;
       @apply text-sm md:text-base;
       font-weight: 600;
     }
     & h5 {
-      @apply mb-1 mt-4 font-heading text-foreground;
+      @apply font-heading text-foreground mt-4 mb-1;
       @apply text-sm;
       font-weight: 500;
     }
     & h6 {
-      @apply mb-1 mt-3 font-heading text-foreground;
+      @apply font-heading text-foreground mt-3 mb-1;
       @apply text-xs md:text-sm;
       font-weight: 500;
     }
@@ -73,7 +73,8 @@ body {
       a > span.heading-link-icon {
         &:after {
           content: '#';
-          @apply ml-2 text-base text-muted-foreground transition-colors duration-fast;
+          @apply text-muted-foreground ml-2 text-base transition-colors;
+          transition-duration: var(--duration-fast);
           opacity: 0.4;
         }
       }
@@ -86,15 +87,15 @@ body {
       }
     }
     & a {
-      @apply text-link underline-offset-2 transition-colors duration-fast;
+      @apply text-link underline-offset-2 transition-colors;
+      transition-duration: var(--duration-fast);
       &:hover {
         @apply text-link-hover;
       }
     }
     & code {
-      @apply rounded bg-muted px-1.5 py-0.5 font-code text-xs md:text-sm;
+      @apply bg-muted font-code rounded px-1.5 py-0.5 text-xs md:text-sm;
     }
-    /* Hide literal backticks in inline code rendered by rehype-pretty-code */
     & p code,
     & li code,
     & td code {
@@ -107,10 +108,10 @@ body {
       @apply my-5 overflow-x-auto rounded-md text-xs md:text-sm;
     }
     & blockquote {
-      @apply my-5 rounded-r-md border-l-2 border-border bg-muted py-3 pl-4 pr-3 not-italic text-muted-foreground;
+      @apply border-border bg-muted text-muted-foreground my-5 rounded-r-md border-l-2 py-3 pr-3 pl-4 not-italic;
     }
     & .footnotes {
-      @apply mt-8 border-t border-border pt-5 text-xs text-muted-foreground md:text-sm;
+      @apply border-border text-muted-foreground mt-8 border-t pt-5 text-xs md:text-sm;
       & li {
         @apply list-outside;
       }
@@ -119,7 +120,7 @@ body {
       }
     }
 
-    /* Tables - responsive with better styling */
+    /* Tables */
     & table {
       @apply my-5 w-full text-xs md:text-sm;
     }
@@ -127,7 +128,7 @@ body {
       @apply bg-muted px-2 py-2 text-left font-medium md:px-3;
     }
     & td {
-      @apply border-t border-border px-2 py-2 md:px-3;
+      @apply border-border border-t px-2 py-2 md:px-3;
     }
 
     /* Images and figures */
@@ -138,7 +139,6 @@ body {
     /* YouTube embed (astro-embed lite-youtube) */
     & lite-youtube {
       @apply my-8 w-full max-w-none rounded-md;
-      /* Prevent CLS by reserving space for 16:9 video */
       aspect-ratio: 16 / 9;
     }
     & figure {
@@ -147,7 +147,7 @@ body {
         @apply my-0;
       }
       & figcaption {
-        @apply mt-2 text-center text-xs text-muted-foreground;
+        @apply text-muted-foreground mt-2 text-center text-xs;
       }
     }
   }

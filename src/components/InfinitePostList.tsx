@@ -38,9 +38,9 @@ function PostItem({ post }: { post: SerializedPost }) {
   return (
     <article className="group relative">
       {/* Accent line on hover */}
-      <div className="absolute -left-3 top-0 h-full w-0.5 origin-top scale-y-0 bg-accent-line transition-transform duration-200 group-hover:scale-y-100" />
+      <div className="bg-accent-line absolute top-0 -left-3 h-full w-0.5 origin-top scale-y-0 transition-transform duration-200 group-hover:scale-y-100" />
 
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+      <div className="text-muted-foreground flex items-center gap-2 text-xs">
         <a href={`/blog/categories/${post.category}`}>
           <Badge className="capitalize" variant="secondary">
             {post.category}
@@ -60,7 +60,7 @@ function PostItem({ post }: { post: SerializedPost }) {
         </span>
       </div>
       <a href={post.url} className="block pt-1">
-        <h2 className="line-clamp-2 break-words font-heading text-base text-foreground transition-colors duration-200 group-hover:text-link md:text-lg">
+        <h2 className="font-heading text-foreground group-hover:text-link line-clamp-2 text-base break-words transition-colors duration-200 md:text-lg">
           {post.title}
         </h2>
       </a>
@@ -70,7 +70,7 @@ function PostItem({ post }: { post: SerializedPost }) {
             <a
               key={tag}
               href={`/blog/tags/${tag}`}
-              className="text-xs text-muted-foreground transition-colors duration-150 hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground text-xs transition-colors duration-150"
             >
               #{tag}
             </a>
@@ -182,7 +182,7 @@ export function InfinitePostList({
           {title && <h1 className="font-heading capitalize">{title}</h1>}
           {showSearch && (
             <div className="relative w-full sm:w-64">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <MagnifyingGlassIcon className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
               <input
                 ref={inputRef}
                 type="text"
@@ -191,17 +191,17 @@ export function InfinitePostList({
                 placeholder="記事を検索…"
                 aria-label="記事を検索"
                 className={cn(
-                  'h-9 w-full rounded-md border border-input bg-background py-2 pl-9 pr-9 text-sm',
+                  'border-input bg-background h-9 w-full rounded-md border py-2 pr-9 pl-9 text-sm',
                   'placeholder:text-muted-foreground',
-                  'focus:outline-none focus:ring-1 focus:ring-ring',
-                  'transition-colors duration-fast',
+                  'focus:ring-ring focus:ring-1 focus:outline-none',
+                  'duration-fast transition-colors',
                 )}
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={handleClearSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                  className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 transition-colors"
                   aria-label="検索をクリア"
                 >
                   <Cross2Icon className="size-4" />
@@ -214,7 +214,7 @@ export function InfinitePostList({
 
       {/* Search results info */}
       {showSearch && debouncedQuery && (
-        <p className="pb-4 text-sm text-muted-foreground">
+        <p className="text-muted-foreground pb-4 text-sm">
           「{debouncedQuery}」の検索結果: {filteredPosts.length}件
         </p>
       )}
@@ -222,7 +222,7 @@ export function InfinitePostList({
       {/* Post list */}
       <ul className="space-y-8 pl-3">
         {displayedPosts.length === 0 ? (
-          <li className="py-8 text-center text-muted-foreground">
+          <li className="text-muted-foreground py-8 text-center">
             {debouncedQuery
               ? '検索結果が見つかりませんでした'
               : '記事がありません'}
@@ -239,13 +239,13 @@ export function InfinitePostList({
       {/* Load more indicator */}
       <div ref={loadMoreRef} className="flex justify-center py-8">
         {isLoading && (
-          <div className="flex items-center gap-2 text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-2">
             <div className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
             <span className="text-sm">読み込み中…</span>
           </div>
         )}
         {!hasMore && displayedPosts.length > 0 && !debouncedQuery && (
-          <span className="text-sm text-muted-foreground">
+          <span className="text-muted-foreground text-sm">
             すべての記事を表示しました
           </span>
         )}
