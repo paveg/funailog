@@ -53,6 +53,7 @@ jobs:
           pnpm run format:check &
           pnpm exec eslint --cache . &
           pnpm run lint:md &
+          pnpm run validate:content &
           wait
 
       # 型チェック系を並列実行
