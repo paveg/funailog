@@ -4,6 +4,7 @@ import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 
 import Figure from '@/components/Figure.astro';
 import Link from '@/components/Link.astro';
+import { defaultLang } from '@/i18n/ui';
 import { useTranslations } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 import { BreadcrumbLd, WebPageLd } from '@/lib/rich-results';
@@ -33,7 +34,7 @@ const components = {
   figure: Figure,
   a: Link,
 };
-const t = useTranslations('ja');
+const t = useTranslations(defaultLang);
 const site = Astro.site ?? '';
 const meta = await getEntry('site', 'meta');
 if (!meta) {
@@ -47,6 +48,7 @@ const homeUrl = new URL('/', site).toString();
   title={`${page.data.title} | ${t('main.title')}`}
   description={page.data.description}
   path={`/${page.slug}`}
+  lang={defaultLang}
   og={{
     enabled: true,
   }}

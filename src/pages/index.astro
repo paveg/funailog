@@ -2,12 +2,13 @@
 import { getCollection, getEntry } from 'astro:content';
 
 import PostCard from '@/components/PostCard.astro';
+import { defaultLang } from '@/i18n/ui';
 import { useTranslations, generateHreflangs } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 import { WebsiteLd } from '@/lib/rich-results';
 import { blogToUnified, sortUnifiedPosts } from '@/types/unified-post';
 
-const t = useTranslations('ja');
+const t = useTranslations(defaultLang);
 const site = Astro.site ?? '';
 const meta = await getEntry('site', 'meta');
 if (!meta) {
@@ -31,6 +32,7 @@ const otherPosts = recentPosts.slice(1);
   og={{
     enabled: true,
   }}
+  lang={defaultLang}
   hreflangs={generateHreflangs('')}
   jsonLdSchema={WebsiteLd(meta, site)}
 >
@@ -43,6 +45,8 @@ const otherPosts = recentPosts.slice(1);
         <img
           src="/profile.jpg"
           alt={meta.data.author.name}
+          width={112}
+          height={112}
           class="size-24 rounded-full object-cover shadow-md md:size-28"
           loading="eager"
         />
@@ -50,19 +54,19 @@ const otherPosts = recentPosts.slice(1);
       <div class="space-y-3">
         <h1 class="font-heading text-2xl md:text-3xl">{t('main.title')}</h1>
         <p class="text-muted-foreground text-lg font-medium">
-          買わない後悔のほうがきっと大きい
+          {t('index.tagline')}
         </p>
         <p class="text-muted-foreground max-w-lg text-sm leading-relaxed">
-          ガジェット・仕事道具・乗り物、そして技術についても綴る個人メディア。<br
-            class="hidden sm:inline"
-          />シンプルで気分を上げるモノやエンジニアリングの知見を紹介しています。
+          {t('index.heroLine1')}<br class="hidden sm:inline" />{
+            t('index.heroLine2')
+          }
         </p>
       </div>
     </section>
 
     <!-- 最新記事セクション -->
     <section>
-      <h2 class="font-heading mb-6 text-lg">最新の記事</h2>
+      <h2 class="font-heading mb-6 text-lg">{t('index.latestPosts')}</h2>
 
       {/* Featured post - Card style if has heroImage */}
       {
@@ -89,7 +93,7 @@ const otherPosts = recentPosts.slice(1);
           href="/blog"
           class="group font-code text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-xs transition-colors"
         >
-          すべての記事を見る
+          {t('index.viewAllPosts')}
           <span class="transition-transform group-hover:translate-x-0.5"
             >&rarr;</span
           >

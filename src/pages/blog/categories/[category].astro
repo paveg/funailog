@@ -61,7 +61,7 @@ const serializedPosts = sortedPosts.map((post) => ({
 ---
 
 <Layout
-  title={`カテゴリ: ${category} | ${t('main.title')}`}
+  title={`${t('categories.prefix')}${category} | ${t('main.title')}`}
   description={t('categories.description')}
   path={`/blog/categories/${category}`}
   lang={lang}
@@ -71,7 +71,7 @@ const serializedPosts = sortedPosts.map((post) => ({
   hreflangs={generateHreflangs(basePath)}
   jsonLdSchema={[
     CollectionPageLd({
-      name: `カテゴリ: ${category}`,
+      name: `${t('categories.prefix')}${category}`,
       description: t('categories.description'),
       url: pageUrl,
       meta,

@@ -61,7 +61,7 @@ const serializedPosts = sortedPosts.map((post) => ({
 ---
 
 <Layout
-  title={`タグ: #${tag} | ${t('main.title')}`}
+  title={`${t('tags.prefix')}${tag} | ${t('main.title')}`}
   description={t('tags.description')}
   path={`/blog/tags/${tag}`}
   lang={lang}

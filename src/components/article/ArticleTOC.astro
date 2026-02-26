@@ -3,24 +3,30 @@
  * ArticleTOC — mode="mobile" renders collapsible details,
  * mode="desktop" renders sidebar nav. Scroll spy shared via class selectors.
  */
+import { defaultLang } from '@/i18n/ui';
+import { useTranslations } from '@/i18n/utils';
+
 export type Props = {
   mode: 'mobile' | 'desktop';
 };
 
 const { mode } = Astro.props;
+const t = useTranslations(defaultLang);
 ---
 
 {
   mode === 'mobile' ? (
     <details class="toc-root border-border mb-6 rounded-md border lg:hidden">
       <summary class="font-code text-muted-foreground cursor-pointer px-4 py-2.5 text-xs select-none">
-        contents
+        {t('toc.title')}
       </summary>
       <ul class="toc-list text-muted-foreground space-y-0.5 px-4 pb-3 text-xs" />
     </details>
   ) : (
-    <nav class="toc-root" aria-label="目次">
-      <p class="font-code text-muted-foreground mb-3 text-xs">contents</p>
+    <nav class="toc-root" aria-label={t('toc.ariaLabel')}>
+      <p class="font-code text-muted-foreground mb-3 text-xs">
+        {t('toc.title')}
+      </p>
       <ul class="toc-list space-y-0.5 text-xs" />
     </nav>
   )

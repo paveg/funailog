@@ -3,6 +3,10 @@
  * ReadingProgress — thin progress bar at the top of the page.
  * Shows how far the user has scrolled through the article.
  */
+import { defaultLang } from '@/i18n/ui';
+import { useTranslations } from '@/i18n/utils';
+
+const t = useTranslations(defaultLang);
 ---
 
 <div
@@ -10,7 +14,7 @@
   class="bg-foreground/20 fixed top-0 left-0 z-50 h-0.5 transition-[width] duration-75"
   style="width: 0%"
   role="progressbar"
-  aria-label="読了率"
+  aria-label={t('a11y.readingProgress')}
   aria-valuemin="0"
   aria-valuemax="100"
   aria-valuenow="0"

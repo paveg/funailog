@@ -1,5 +1,7 @@
 ---
 import LinkCard from '@/components/LinkCard.astro';
+import { defaultLang } from '@/i18n/ui';
+import { useTranslations } from '@/i18n/utils';
 import { cn, linkStyles } from '@/lib/utils';
 
 type Props = {
@@ -8,6 +10,7 @@ type Props = {
 };
 
 const props = Astro.props;
+const t = useTranslations(defaultLang);
 const isInternal = props.href.startsWith('/');
 const isAnchor = props.href.startsWith('#');
 const linkClass = cn(linkStyles.base, linkStyles.inline);
@@ -28,7 +31,7 @@ const linkClass = cn(linkStyles.base, linkStyles.inline);
       rel="noopener noreferrer"
       href={props.href}
       class:list={[linkClass, 'external-link']}
-      aria-label={`${props.href} (外部リンク)`}
+      aria-label={`${props.href} (${t('a11y.externalLink')})`}
     >
       <slot />
     </a>

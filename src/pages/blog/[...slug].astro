@@ -12,6 +12,7 @@ import Link from '@/components/Link.astro';
 import Image from '@/components/markdown/Image.astro';
 import ScrollToTop from '@/components/ScrollToTop.astro';
 import ShareButtons from '@/components/ShareButtons.astro';
+import { defaultLang } from '@/i18n/ui';
 import { useTranslations } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 import { getRelatedPosts } from '@/lib/related-posts';
@@ -46,7 +47,7 @@ const components = {
 const site = Astro.site ?? '';
 const path = `${post.collection}/${post.slug}`;
 const fullUrl = new URL(path, site).toString();
-const t = useTranslations('ja');
+const t = useTranslations(defaultLang);
 const defaultImagePath = `/api/og/article/${post.collection}/${post.slug}.png`;
 
 const allPosts = await getCollection('blog');
@@ -57,6 +58,7 @@ const relatedPosts = getRelatedPosts(post, allPosts);
   title={`${post.data.title} | ${t('main.title')}`}
   description={post.data.description}
   path={path}
+  lang={defaultLang}
   og={{
     enabled: true,
     width: 1200,

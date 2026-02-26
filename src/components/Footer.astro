@@ -1,10 +1,14 @@
 ---
 import { getEntry } from 'astro:content';
 
+import { defaultLang } from '@/i18n/ui';
+import { useTranslations } from '@/i18n/utils';
+
 const meta = await getEntry('site', 'meta');
 if (!meta) {
   throw new Error('Site meta configuration not found');
 }
+const t = useTranslations(defaultLang);
 const currentYear = new Date().getFullYear();
 const startYear = 2023;
 ---
@@ -17,8 +21,7 @@ const startYear = 2023;
     <div class="space-y-2">
       <p class="text-foreground font-medium">funailog.com</p>
       <p class="leading-relaxed">
-        ガジェット・仕事道具・乗り物、<br />
-        そして技術について綴る個人メディア。
+        {t('footer.description')}
       </p>
     </div>
 

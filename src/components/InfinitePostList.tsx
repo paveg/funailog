@@ -7,8 +7,12 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
+import { defaultLang } from '@/i18n/ui';
+import { useTranslations } from '@/i18n/utils';
 import { filterTags } from '@/lib/tags';
 import { cn, formatDateEn } from '@/lib/utils';
+
+const t = useTranslations(defaultLang);
 
 export type SerializedPost = {
   type: 'blog';
@@ -188,8 +192,8 @@ export function InfinitePostList({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="記事を検索…"
-                aria-label="記事を検索"
+                placeholder={t('postList.searchPlaceholder')}
+                aria-label={t('postList.searchAriaLabel')}
                 className={cn(
                   'border-input bg-background h-9 w-full rounded-md border py-2 pr-9 pl-9 text-sm',
                   'placeholder:text-muted-foreground',
@@ -202,7 +206,7 @@ export function InfinitePostList({
                   type="button"
                   onClick={handleClearSearch}
                   className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 transition-colors"
-                  aria-label="検索をクリア"
+                  aria-label={t('postList.clearSearch')}
                 >
                   <Cross2Icon className="size-4" />
                 </button>
@@ -215,7 +219,9 @@ export function InfinitePostList({
       {/* Search results info */}
       {showSearch && debouncedQuery && (
         <p className="text-muted-foreground pb-4 text-sm">
-          「{debouncedQuery}」の検索結果: {filteredPosts.length}件
+          {t('postList.searchResults')
+            .replace('{query}', debouncedQuery)
+            .replace('{count}', String(filteredPosts.length))}
         </p>
       )}
 
@@ -223,9 +229,7 @@ export function InfinitePostList({
       <ul className="space-y-8 pl-3">
         {displayedPosts.length === 0 ? (
           <li className="text-muted-foreground py-8 text-center">
-            {debouncedQuery
-              ? '検索結果が見つかりませんでした'
-              : '記事がありません'}
+            {debouncedQuery ? t('postList.noResults') : t('postList.noPosts')}
           </li>
         ) : (
           displayedPosts.map((post) => (
@@ -241,12 +245,12 @@ export function InfinitePostList({
         {isLoading && (
           <div className="text-muted-foreground flex items-center gap-2">
             <div className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-            <span className="text-sm">読み込み中…</span>
+            <span className="text-sm">{t('postList.loading')}</span>
           </div>
         )}
         {!hasMore && displayedPosts.length > 0 && !debouncedQuery && (
           <span className="text-muted-foreground text-sm">
-            すべての記事を表示しました
+            {t('postList.allShown')}
           </span>
         )}
       </div>

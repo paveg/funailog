@@ -3,13 +3,17 @@
  * ScrollToTop — appears after scrolling past the fold.
  * Pure Astro, no React hydration needed.
  */
+import { defaultLang } from '@/i18n/ui';
+import { useTranslations } from '@/i18n/utils';
+
+const t = useTranslations(defaultLang);
 ---
 
 <button
   id="scroll-to-top"
   type="button"
   class="border-border bg-background/80 font-code text-muted-foreground hover:bg-accent hover:text-foreground fixed right-6 bottom-6 z-40 hidden size-9 items-center justify-center rounded-md border text-xs shadow-sm backdrop-blur-sm transition-all"
-  aria-label="ページ上部へ戻る"
+  aria-label={t('a11y.scrollToTop')}
 >
   &uarr;
 </button>
