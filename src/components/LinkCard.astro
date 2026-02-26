@@ -30,10 +30,9 @@ const faviconUrl = `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`
       {...props}
       target={isAnchor || isInternal ? '_self' : '_blank'}
       rel={isAnchor || isInternal ? '' : 'noopener noreferrer'}
-      class="not-prose group my-4 block"
+      class="not-prose group my-3 block"
     >
-      <div class="border-border bg-card hover:border-foreground/20 flex items-center gap-3 overflow-hidden rounded-md border px-3.5 py-3 transition-all duration-200 hover:shadow-sm">
-        {/* Favicon */}
+      <span class="border-border bg-card hover:border-foreground/20 flex items-center gap-2.5 overflow-hidden rounded border px-3 py-2 leading-none transition-all duration-200 hover:shadow-sm">
         <img
           src={faviconUrl}
           alt=""
@@ -42,24 +41,20 @@ const faviconUrl = `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`
           class="m-0 size-4 shrink-0 rounded-sm opacity-50 grayscale transition-all duration-200 group-hover:opacity-100 group-hover:grayscale-0"
           loading="lazy"
         />
-
-        {/* Title + domain */}
-        <div class="flex min-w-0 flex-1 items-baseline gap-2">
-          <span class="text-foreground group-hover:text-link truncate text-sm font-medium transition-colors duration-150">
+        <span class="flex min-w-0 flex-1 items-baseline gap-2">
+          <span class="text-foreground group-hover:text-link truncate text-xs font-medium transition-colors duration-150">
             {title}
           </span>
           <span class="font-code text-2xs text-muted-foreground/50 shrink-0">
             {hostname}
           </span>
-        </div>
-
-        {/* Arrow */}
+        </span>
         {!isInternal && !isAnchor && (
           <span class="text-muted-foreground/30 group-hover:text-muted-foreground/70 shrink-0 text-xs transition-all duration-150 group-hover:translate-x-0.5">
             &nearr;
           </span>
         )}
-      </div>
+      </span>
     </a>
   )
 }

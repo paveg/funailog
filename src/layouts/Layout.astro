@@ -118,9 +118,15 @@ if (!meta) {
     <title>{title}</title>
   </head>
   <body class="bg-background text-foreground min-h-screen antialiased">
+    <a
+      href="#main-content"
+      class="bg-background text-foreground focus-visible:ring-ring fixed top-2 left-2 z-[100] -translate-y-full rounded-md px-4 py-2 text-sm font-medium opacity-0 transition-transform focus-visible:translate-y-0 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:outline-none"
+    >
+      コンテンツへスキップ
+    </a>
     <Header />
     <div class="mx-auto max-w-4xl space-y-4 px-4 py-5">
-      <main class="grow leading-7">
+      <main id="main-content" class="grow leading-7">
         <slot />
       </main>
       <Footer />

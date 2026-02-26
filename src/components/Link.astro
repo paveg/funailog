@@ -10,7 +10,7 @@ type Props = {
 const props = Astro.props;
 const isInternal = props.href.startsWith('/');
 const isAnchor = props.href.startsWith('#');
-const linkClass = cn(linkStyles.base, linkStyles.inline, 'px-2');
+const linkClass = cn(linkStyles.base, linkStyles.inline);
 ---
 
 {
@@ -27,10 +27,19 @@ const linkClass = cn(linkStyles.base, linkStyles.inline, 'px-2');
       target="_blank"
       rel="noopener noreferrer"
       href={props.href}
-      class={linkClass}
+      class:list={[linkClass, 'external-link']}
+      aria-label={`${props.href} (外部リンク)`}
     >
       <slot />
-      <span class="text-2xs ml-0.5 opacity-50">&nearr;</span>
     </a>
   )
 }
+
+<style>
+  .external-link::after {
+    content: '\2197';
+    font-size: 0.65em;
+    margin-left: 0.15em;
+    opacity: 0.5;
+  }
+</style>

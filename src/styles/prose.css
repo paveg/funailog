@@ -1,5 +1,11 @@
 @reference "./tokens.css";
 
+/* WCAG 2.1 focus indicators */
+:focus-visible {
+  @apply ring-ring ring-2 ring-offset-2 outline-none;
+  ring-offset-color: var(--color-background);
+}
+
 body {
   article {
     /* prose with responsive font size */
@@ -87,10 +93,10 @@ body {
       }
     }
     & a {
-      @apply text-link underline-offset-2 transition-colors;
+      @apply text-link underline decoration-transparent underline-offset-3 transition-[color,text-decoration-color];
       transition-duration: var(--duration-fast);
       &:hover {
-        @apply text-link-hover;
+        @apply text-link-hover decoration-current;
       }
     }
     & code {
