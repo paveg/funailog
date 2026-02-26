@@ -1,0 +1,513 @@
+---
+title: APIエラーを構造化するRFC 9457ミドルウェアをHono向けに作った
+description: RFC 9457 Problem Detailsに準拠したHonoミドルウェア「hono-problem-details」の設計と実装を解説。app.onError一行でapplication/problem+json形式のエラーレスポンスを返し、Zod・Valibot・OpenAPIとの統合、型安全なエラーレジストリ、ローカライズまでをカバー。
+published: 2026-02-26
+tags:
+  [
+    'Hono',
+    'RFC 9457',
+    'Problem Details',
+    'TypeScript',
+    'API設計',
+    'エラーハンドリング',
+    'OpenAPI',
+  ]
+isPublished: true
+category: programming
+---
+
+## はじめに
+
+APIのエラーレスポンスは、書く人によってバラバラになりがちです。
+
+```json
+{"error": "not found"}
+{"message": "Invalid email", "code": 422}
+{"errors": [{"field": "email", "msg": "required"}]}
+```
+
+同じアプリ内でもエンドポイントごとに形式が違う。クライアント側はエラーの種類ごとに分岐を書く羽目になり、フロントエンドの同僚から「エラーのパースどうすればいいの」と聞かれます。
+
+[RFC 9457 "Problem Details for HTTP APIs"](https://www.rfc-editor.org/rfc/rfc9457.html)はまさにこの問題のための標準仕様です。すべてのHTTPエラーを5つのフィールド + 拡張メンバーの統一フォーマットで表現します。
+
+Honoにはこの仕様のミドルウェアがなかったので、**hono-problem-details**として作りました。
+
+https://github.com/paveg/hono-problem-details
+
+## TL;DR
+
+- `app.onError`に一行追加するだけで、全エラーが`application/problem+json`形式になる
+- `throw`するだけでRFC 9457準拠のレスポンスが返る
+- Zod / Valibot / Standard Schema のバリデーションエラーを自動変換
+- `@hono/zod-openapi`連携でAPIドキュメントにも反映
+- 型安全なエラーレジストリで、エラー型を事前定義
+- ゼロ外部依存。`hono`のみがpeer dependency
+
+```ts
+import { Hono } from 'hono';
+import { problemDetailsHandler } from 'hono-problem-details';
+
+const app = new Hono();
+app.onError(problemDetailsHandler());
+```
+
+---
+
+## RFC 9457とは
+
+RFC 9457（旧RFC 7807）は、HTTPエラーレスポンスの標準フォーマットです。Content-Typeに`application/problem+json`を使います。
+
+```json
+{
+  "type": "https://api.example.com/problems/out-of-credit",
+  "status": 403,
+  "title": "You do not have enough credit",
+  "detail": "Your current balance is 30, but the item costs 50",
+  "instance": "/account/12345/transactions/abc"
+}
+```
+
+標準フィールドは5つ。
+
+| フィールド | 意味                  | 必須                         |
+| ---------- | --------------------- | ---------------------------- |
+| `type`     | 問題の種類を示すURI   | ✓（デフォルト`about:blank`） |
+| `status`   | HTTPステータスコード  | ✓                            |
+| `title`    | 問題の短い要約        | ✓                            |
+| `detail`   | この発生固有の説明    |                              |
+| `instance` | この発生を識別するURI |                              |
+
+さらに**拡張メンバー**（Extension Members）を自由に追加できます。バリデーションエラーの詳細配列、リトライまでの秒数など、アプリ固有の情報を載せる場所です。
+
+仕様上のポイントとして、**拡張メンバーは標準フィールドを上書きできません**（Section 3.1）。`extensions`に`status`を入れても、標準フィールドが常に勝ちます。
+
+---
+
+## なぜ作ったのか
+
+Honoの`HTTPException`は手軽ですが、`throw new HTTPException(404)`するとプレーンテキストの`"Not Found"`が返ります。JSON APIなのにContent-Typeが`text/plain`では、クライアント側でパースの分岐が必要になります。
+
+他のフレームワークには既に実装があります。
+
+- **Express**: http-errors + エラーハンドラー
+- **Fastify**: @fastify/sensible（RFC 7807対応）
+- **NestJS / Spring Boot**: フレームワーク組み込み
+
+Honoは軽量さが魅力のフレームワークなので、こうした仕組みは内蔵していません。`app.onError`にフックする形のProblem Detailsミドルウェアが必要でした。
+
+hono-problem-detailsは**`app.onError`に渡すだけで、全エラーが構造化される**ことを最優先に設計しています。
+
+---
+
+## 設計思想
+
+### 1. app.onError一行で導入できる
+
+既存コードを一切変更せずに導入できることを重視しました。
+
+```ts
+app.onError(problemDetailsHandler());
+```
+
+これだけで、`HTTPException`も通常の`Error`も、すべて`application/problem+json`形式になります。既存の`throw new HTTPException(404)`はそのまま動きます。
+
+ハンドラー内部の処理順序:
+
+1. `ProblemDetailsError` → そのまま変換
+2. `mapError`が設定されていれば → カスタムマッピング
+3. `HTTPException` → ステータスコードとメッセージから変換
+4. その他の`Error` → 500 Internal Server Error
+
+### 2. 拡張メンバーのspread順序
+
+RFC 9457 Section 3.1に従って、拡張メンバーを先にspreadし、標準フィールドで上書きしています。
+
+```ts
+const body = { ...sanitizeExtensions(extensions), ...standard };
+```
+
+`extensions: { status: "custom" }`を渡しても、レスポンスの`status`は常にHTTPステータスコードです。この順序は仕様準拠のために意図的にこうしています。
+
+### 3. セキュリティ
+
+エラーレスポンスは外部に公開されるので、防御的に作っています。
+
+**プロトタイプ汚染防止**: 拡張メンバーから`__proto__`、`constructor`、`prototype`を除去します。
+
+```ts
+const DANGEROUS_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
+function sanitizeExtensions(extensions) {
+  if (!extensions) return extensions;
+  let filtered;
+  for (const key of Object.keys(extensions)) {
+    if (DANGEROUS_KEYS.has(key)) {
+      if (!filtered) filtered = { ...extensions };
+      delete filtered[key];
+    }
+  }
+  return filtered ?? extensions;
+}
+```
+
+危険なキーがなければオブジェクトのコピーは発生しません。通常パスのコストはゼロです。
+
+**安全なJSON.stringify**: 循環参照やBigIntで`JSON.stringify`が飛んでも、500のフォールバックレスポンスを返します。
+
+```ts
+const FALLBACK_BODY = JSON.stringify({
+  type: 'about:blank',
+  status: 500,
+  title: 'Internal Server Error',
+});
+
+function safeStringify(body) {
+  try {
+    return { json: JSON.stringify(body), fallback: false };
+  } catch {
+    return { json: FALLBACK_BODY, fallback: true };
+  }
+}
+```
+
+フォールバックボディはモジュールロード時に一度だけ生成するので、エラーパスでもアロケーションがありません。
+
+**ステータスコードのクランプ**: WHATWG Fetch APIの`Response`コンストラクタは200-599しか受け付けません。範囲外が来たら500にフォールバックします。
+
+---
+
+## エラーの投げ方
+
+### 基本: problemDetails()
+
+`problemDetails()`でエラーオブジェクトを作って`throw`するだけです。
+
+```ts
+import { problemDetails } from 'hono-problem-details';
+
+app.post('/orders', (c) => {
+  const existing = await findOrder(id);
+  if (existing) {
+    throw problemDetails({
+      status: 409,
+      detail: `Order ${id} already exists`,
+      type: 'https://api.example.com/problems/order-conflict',
+      instance: `/orders/${id}`,
+    });
+  }
+  // ...
+});
+```
+
+`type`と`title`は省略できます。`type`のデフォルトは`about:blank`、`title`はステータスコードから自動導出されます（409 → "Conflict"）。
+
+### 応用: Problem Type Registry
+
+APIのエラー型を事前定義しておくと、型安全に生成できます。
+
+```ts
+import { createProblemTypeRegistry } from 'hono-problem-details';
+
+const problems = createProblemTypeRegistry({
+  ORDER_CONFLICT: {
+    type: 'https://api.example.com/problems/order-conflict',
+    status: 409,
+    title: 'Order Conflict',
+  },
+  RATE_LIMITED: {
+    type: 'https://api.example.com/problems/rate-limited',
+    status: 429,
+    title: 'Too Many Requests',
+  },
+  INSUFFICIENT_BALANCE: {
+    type: 'https://api.example.com/problems/insufficient-balance',
+    status: 403,
+    title: 'Insufficient Balance',
+  },
+});
+```
+
+`create()`の第一引数は登録済みキーのunion型なので、タイポはコンパイル時に弾かれます。
+
+```ts
+// ✅ 型安全
+throw problems.create('ORDER_CONFLICT', {
+  detail: `Order ${id} already exists`,
+  instance: `/orders/${id}`,
+});
+
+// ❌ コンパイルエラー
+throw problems.create('ORDOR_CONFLICT'); // typo
+```
+
+`get()`と`types()`でレジストリの中身を取り出せるので、ドキュメント生成にも流用できます。
+
+---
+
+## バリデーター連携
+
+### Zod
+
+`@hono/zod-validator`のhook引数に`zodProblemHook()`を渡すだけです。
+
+```ts
+import { zValidator } from '@hono/zod-validator';
+import { zodProblemHook } from 'hono-problem-details/zod';
+import { z } from 'zod';
+
+const schema = z.object({
+  email: z.string().email(),
+  age: z.number().positive(),
+});
+
+app.post('/users', zValidator('json', schema, zodProblemHook()), (c) => {
+  const data = c.req.valid('json');
+  return c.json(data, 201);
+});
+```
+
+バリデーション失敗時のレスポンス:
+
+```json
+{
+  "type": "about:blank",
+  "status": 422,
+  "title": "Validation Error",
+  "detail": "Request validation failed",
+  "errors": [
+    { "field": "email", "message": "Invalid email", "code": "invalid_string" },
+    {
+      "field": "age",
+      "message": "Number must be greater than 0",
+      "code": "too_small"
+    }
+  ]
+}
+```
+
+`errors`配列が拡張メンバーとしてトップレベルに入ります。`title`と`detail`はオプションで変更可能です。
+
+### Valibot
+
+使い勝手はZodと同じです。バンドルサイズを気にするなら、Valibotとの組み合わせが有効です。
+
+```ts
+import { vValidator } from '@hono/valibot-validator';
+import { valibotProblemHook } from 'hono-problem-details/valibot';
+import * as v from 'valibot';
+
+const schema = v.object({
+  email: v.pipe(v.string(), v.email()),
+  age: v.pipe(v.number(), v.minValue(1)),
+});
+
+app.post('/users', vValidator('json', schema, valibotProblemHook()), (c) => {
+  const data = c.req.valid('json');
+  return c.json(data, 201);
+});
+```
+
+### Standard Schema
+
+[Standard Schema](https://standardschema.dev/)対応のライブラリ（Zod、Valibot、ArkTypeなど）ならどれでも使えます。
+
+```ts
+import { sValidator } from '@hono/standard-validator';
+import { standardSchemaProblemHook } from 'hono-problem-details/standard-schema';
+
+app.post(
+  '/users',
+  sValidator('json', schema, standardSchemaProblemHook()),
+  (c) => c.json(c.req.valid('json'), 201),
+);
+```
+
+バリデーションライブラリを乗り換えてもhookの変更は不要です。
+
+---
+
+## OpenAPI連携
+
+`@hono/zod-openapi`と組み合わせると、エラーレスポンスのスキーマもOpenAPIドキュメントに反映できます。
+
+```ts
+import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi';
+import { problemDetailsHandler } from 'hono-problem-details';
+import { problemDetailsResponse, createProblemDetailsSchema } from 'hono-problem-details/openapi';
+
+const app = new OpenAPIHono();
+app.onError(problemDetailsHandler());
+
+const route = createRoute({
+  method: 'get',
+  path: '/users/{id}',
+  request: {
+    params: z.object({ id: z.string() }),
+  },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: UserSchema } },
+      description: 'User found',
+    },
+    404: problemDetailsResponse(404),
+    422: problemDetailsResponse(422, 'Validation Error'),
+  },
+});
+```
+
+`problemDetailsResponse()`はステータスコードから`description`を自動導出します。拡張メンバーを含むスキーマも定義できます。
+
+```ts
+const ValidationErrorSchema = createProblemDetailsSchema(
+  z.object({
+    errors: z.array(
+      z.object({ field: z.string(), message: z.string() }),
+    ),
+  }),
+);
+
+// responses内で使用
+422: problemDetailsResponse(422, 'Validation Error', ValidationErrorSchema),
+```
+
+ScalarなどのAPIドキュメントUIで、拡張メンバーのスキーマまで正確に表示されます。
+
+---
+
+## ローカライズ
+
+`localize`コールバックで、リクエストに応じて`title`や`detail`を翻訳できます。
+
+```ts
+const translations = {
+  ja: { 'Not Found': '見つかりません', 'Bad Request': '不正なリクエスト' },
+  // ...
+};
+
+app.onError(
+  problemDetailsHandler({
+    localize: (pd, c) => {
+      const lang = c.req.header('Accept-Language')?.split(',')[0];
+      const dict = translations[lang];
+      if (!dict) return pd;
+      return {
+        ...pd,
+        title: dict[pd.title] ?? pd.title,
+      };
+    },
+  }),
+);
+```
+
+コールバックには組み立て済みの`ProblemDetails`とHonoの`Context`が渡されます。`Accept-Language`以外にも、認証情報やURLパスで分岐できます。
+
+---
+
+## ハンドラーオプション
+
+```ts
+problemDetailsHandler({
+  // type URIのプレフィックス。設定するとステータスコードベースのsuffixが付く
+  // 例: "https://api.example.com/problems" + "/not-found"
+  typePrefix: 'https://api.example.com/problems',
+
+  // デフォルトのtype URI（デフォルト: "about:blank"）
+  defaultType: 'about:blank',
+
+  // スタックトレースをdetailに含める（開発環境用）
+  includeStack: process.env.NODE_ENV === 'development',
+
+  // カスタムエラーのマッピング
+  mapError: (error) => {
+    if (error instanceof DatabaseError) {
+      return { status: 503, title: 'Service Unavailable', detail: 'Database is down' };
+    }
+    return undefined; // デフォルト処理にフォールバック
+  },
+
+  // ローカライズ
+  localize: (pd, c) => pd,
+});
+```
+
+`typePrefix`を設定すると、ステータスコードからslugを自動生成します。404 → `not-found`、422 → `unprocessable-content`のように、RFC 9110のフレーズをkebab-caseに変換したものです。
+
+`mapError`は既存のカスタムエラークラスを段階的にProblem Detailsへ移行するときに重宝します。`undefined`を返せばデフォルトのHTTPException/Error処理にフォールバックするので、一度に全部書き換える必要はありません。
+
+---
+
+## エコシステム
+
+hono-problem-detailsは、以下のHonoミドルウェアでoptional peer dependencyとして使われています。
+
+- [hono-idempotency](https://github.com/paveg/hono-idempotency) — 冪等性キーミドルウェア。エラーをProblem Details形式で返す
+- [hono-webhook-verify](https://github.com/paveg/hono-webhook-verify) — Webhook署名検証ミドルウェア。署名エラーをProblem Details形式で返す
+
+どちらもhono-problem-detailsなしで動作します。インストールされていれば自動的にProblem Details形式に切り替わる仕組みです。
+
+---
+
+## 始め方
+
+```bash
+pnpm add hono-problem-details
+```
+
+最小構成:
+
+```ts
+import { Hono } from 'hono';
+import { HTTPException } from 'hono/http-exception';
+import { problemDetailsHandler } from 'hono-problem-details';
+
+const app = new Hono();
+app.onError(problemDetailsHandler());
+
+app.get('/users/:id', (c) => {
+  const user = findUser(c.req.param('id'));
+  if (!user) {
+    throw new HTTPException(404, { message: 'User not found' });
+  }
+  return c.json(user);
+});
+```
+
+Zodバリデーション付き:
+
+```bash
+pnpm add hono-problem-details @hono/zod-validator zod
+```
+
+```ts
+import { zValidator } from '@hono/zod-validator';
+import { zodProblemHook } from 'hono-problem-details/zod';
+
+app.post(
+  '/users',
+  zValidator('json', CreateUserSchema, zodProblemHook()),
+  (c) => {
+    const data = c.req.valid('json');
+    return c.json(createUser(data), 201);
+  },
+);
+```
+
+---
+
+## まとめ
+
+hono-problem-detailsは、HonoのエラーレスポンスをRFC 9457で統一するミドルウェアです。
+
+- **一行で導入**: `app.onError(problemDetailsHandler())`で全エラーが構造化
+- **RFC 9457準拠**: 5つの標準フィールド + 拡張メンバー
+- **バリデーター統合**: Zod / Valibot / Standard Schema / OpenAPI
+- **型安全**: Problem Type Registryでタイポをコンパイル時に検出
+- **ゼロ外部依存**: peer dependencyは`hono`だけ
+- **防御的な実装**: プロトタイプ汚染防止、安全なシリアライズ、ステータスコードクランプ
+- **100%テストカバレッジ**
+
+GitHub: https://github.com/paveg/hono-problem-details
+
+npm: https://www.npmjs.com/package/hono-problem-details
+
+Issue/PRは歓迎です。気になった点があればお気軽にどうぞ。
