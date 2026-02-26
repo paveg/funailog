@@ -3,7 +3,7 @@ import '@/styles/tokens.css';
 
 import { getEntry } from 'astro:content';
 
-import type { Article, WebSite, WithContext } from 'schema-dts';
+import type { JsonLdSchema } from '@/lib/rich-results';
 
 import CloudflareAnalytics from '@/components/analytics/CloudflareAnalytics.astro';
 import Footer from '@/components/Footer.astro';
@@ -30,12 +30,17 @@ export type Props = {
     path: string;
     hreflang: keyof typeof ui | 'x-default';
   }[];
-  jsonLdSchema?: WithContext<Article> | WithContext<WebSite>;
+  jsonLdSchema?: JsonLdSchema | JsonLdSchema[];
 };
 
 const { title, description, path, og, lang, noindex, hreflangs, jsonLdSchema } =
   Astro.props;
 const site = Astro.site ?? '';
+const schemas = jsonLdSchema
+  ? Array.isArray(jsonLdSchema)
+    ? jsonLdSchema
+    : [jsonLdSchema]
+  : [];
 const isProd = import.meta.env.PROD;
 const meta = await getEntry('site', 'meta');
 if (!meta) {
@@ -121,16 +126,16 @@ if (!meta) {
     }
     {isProd && <CloudflareAnalytics />}
     {
-      jsonLdSchema && (
+      schemas.map((schema) => (
         <script
           is:inline
           type="application/ld+json"
-          set:html={JSON.stringify(jsonLdSchema).replace(
+          set:html={JSON.stringify(schema).replace(
             /<\/script>/gi,
             '<\\/script>',
           )}
         />
-      )
+      ))
     }
     <script is:inline>
       if (typeof window.localStorage.getItem('theme') === 'string') {

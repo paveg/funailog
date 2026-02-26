@@ -15,7 +15,7 @@ import ShareButtons from '@/components/ShareButtons.astro';
 import { useTranslations } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 import { getRelatedPosts } from '@/lib/related-posts';
-import { ArticleLd } from '@/lib/rich-results';
+import { ArticleLd, BreadcrumbLd } from '@/lib/rich-results';
 
 const meta = await getEntry('site', 'meta');
 if (!meta) {
@@ -74,7 +74,14 @@ const relatedPosts = getRelatedPosts(post, allPosts);
     { path: `${path}`, hreflang: 'ja' },
     { path: `${path}`, hreflang: 'x-default' },
   ]}
-  jsonLdSchema={ArticleLd(meta, post, site)}
+  jsonLdSchema={[
+    ArticleLd(meta, post, site),
+    BreadcrumbLd([
+      { name: t('main.title'), url: new URL('/', site).toString() },
+      { name: t('blog.index'), url: new URL('/blog', site).toString() },
+      { name: post.data.title, url: fullUrl },
+    ]),
+  ]}
 >
   <ReadingProgress />
   <div>

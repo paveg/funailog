@@ -10,9 +10,17 @@ import SkillsSection from '@/components/portfolio/SkillsSection.astro';
 import WorkExperienceSection from '@/components/portfolio/WorkExperienceSection.astro';
 import { useTranslations } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
+import { BreadcrumbLd, ProfilePageLd } from '@/lib/rich-results';
 
 const t = useTranslations('en');
+const site = Astro.site ?? '';
+const meta = await getEntry('site', 'meta');
+if (!meta) {
+  throw new Error('Site meta configuration not found');
+}
 const portfolio = await getEntry('portfolio', 'profile-en');
+const pageUrl = new URL('/en/portfolio', site).toString();
+const homeUrl = new URL('/', site).toString();
 
 if (!portfolio) {
   throw new Error('Portfolio data not found');
@@ -29,6 +37,20 @@ if (!portfolio) {
     { path: '/portfolio', hreflang: 'ja' },
     { path: '/en/portfolio', hreflang: 'en' },
     { path: '/portfolio', hreflang: 'x-default' },
+  ]}
+  jsonLdSchema={[
+    ProfilePageLd({
+      name: t('portfolio.title'),
+      description: t('portfolio.description'),
+      url: pageUrl,
+      meta,
+      site,
+      lang: 'en',
+    }),
+    BreadcrumbLd([
+      { name: t('main.title'), url: homeUrl },
+      { name: t('portfolio.title'), url: pageUrl },
+    ]),
   ]}
 >
   <div class="space-y-12">

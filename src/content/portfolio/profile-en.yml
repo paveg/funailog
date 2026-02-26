@@ -1,9 +1,9 @@
 # Portfolio profile data (English) - Updated: 2024-12-21
 profile:
   name: Ryota Ikezawa
-  title: Senior Architect / Full Stack Engineer
+  title: Senior Architect / Software Engineer
   summary: |
-    Full-stack engineer with over 8 years of experience.
+    Software engineer with over 8 years of experience.
     Currently serving as a Senior Architect in the HR/Payroll Integration Platform team at freee K.K.,
     responsible for microservices design/operations, cross-team architecture, and technical leadership.
     Proficient in Ruby, Rails, Go, TypeScript, React.js, AWS, and Docker.
@@ -12,7 +12,7 @@ profile:
 workExperience:
   # === freee K.K. (approximately 10 years) ===
   - company: freee K.K.
-    role: Senior Architect / Full Stack Engineer
+    role: Senior Architect / Software Engineer
     period:
       start: '2015-11'
       end: null
@@ -31,7 +31,7 @@ workExperience:
       - Docker
       - Kubernetes
     roles:
-      - role: Senior Architect / Full Stack Engineer
+      - role: Senior Architect / Software Engineer
         period:
           start: '2025-01'
           end: null
@@ -151,7 +151,7 @@ workExperience:
           - Docker
           - Vite
 
-      - role: Full Stack Engineer / Tech Lead
+      - role: Software Engineer / Tech Lead
         period:
           start: '2019-07'
           end: '2022-06'

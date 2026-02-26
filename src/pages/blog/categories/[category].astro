@@ -1,11 +1,12 @@
 ---
 import type { GetStaticPaths } from 'astro';
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 
 import { InfinitePostList } from '@/components/InfinitePostList';
 import { defaultLang } from '@/i18n/ui';
 import { useTranslations, generateHreflangs } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
+import { BreadcrumbLd, CollectionPageLd } from '@/lib/rich-results';
 import { blogToUnified, sortUnifiedPosts } from '@/types/unified-post';
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -27,7 +28,15 @@ if (!category || typeof category !== 'string') {
 }
 const lang = defaultLang;
 const t = useTranslations(lang);
+const site = Astro.site ?? '';
+const meta = await getEntry('site', 'meta');
+if (!meta) {
+  throw new Error('Site meta configuration not found');
+}
 const basePath = `blog/categories/${category}`;
+const pageUrl = new URL(`/${basePath}`, site).toString();
+const homeUrl = new URL('/', site).toString();
+const blogUrl = new URL('/blog', site).toString();
 
 // Fetch and filter posts for this category
 const allPosts = await getCollection('blog');
@@ -60,6 +69,20 @@ const serializedPosts = sortedPosts.map((post) => ({
     enabled: true,
   }}
   hreflangs={generateHreflangs(basePath)}
+  jsonLdSchema={[
+    CollectionPageLd({
+      name: `カテゴリ: ${category}`,
+      description: t('categories.description'),
+      url: pageUrl,
+      meta,
+      site,
+    }),
+    BreadcrumbLd([
+      { name: t('main.title'), url: homeUrl },
+      { name: t('blog.index'), url: blogUrl },
+      { name: category, url: pageUrl },
+    ]),
+  ]}
 >
   <div>
     <InfinitePostList

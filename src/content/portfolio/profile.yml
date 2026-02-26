@@ -2,9 +2,9 @@
 profile:
   name: Ryota Ikezawa
   nameKana: イケザワ リョウタ
-  title: Senior Architect / Full Stack Engineer
+  title: Senior Architect / Software Engineer
   summary: |
-    8年以上の経験を持つフルスタックエンジニア。
+    8年以上の経験を持つソフトウェアエンジニア。
     freee株式会社にて人事労務統合基盤チームのシニアアーキテクトとして、
     マイクロサービスの設計・運用、クロスチームアーキテクチャ、テクニカルリードを担当。
     Ruby, Rails, Go, TypeScript, React.js, AWS, Dockerに精通。
@@ -13,7 +13,7 @@ profile:
 workExperience:
   # === freee株式会社（約10年在籍） ===
   - company: freee株式会社
-    role: Senior Architect / Full Stack Engineer
+    role: Senior Architect / Software Engineer
     period:
       start: '2015-11'
       end: null
@@ -33,7 +33,7 @@ workExperience:
       - Kubernetes
     # 役職変遷
     roles:
-      - role: Senior Architect / Full Stack Engineer
+      - role: Senior Architect / Software Engineer
         period:
           start: '2025-01'
           end: null
@@ -161,7 +161,7 @@ workExperience:
             action: '[TODO: 実施したアクションを記載]'
             result: '[TODO: 成果・数値を記載]'
 
-      - role: Full Stack Engineer / Tech Lead
+      - role: Software Engineer / Tech Lead
         period:
           start: '2019-07'
           end: '2022-06'
