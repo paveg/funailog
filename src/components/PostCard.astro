@@ -1,9 +1,6 @@
 ---
-import { CalendarIcon, ReloadIcon } from '@radix-ui/react-icons';
-
 import type { UnifiedPost } from '@/types/unified-post';
 
-import { Badge } from '@/components/ui/badge';
 import { formatDateEn } from '@/lib/utils';
 
 export type Props = {
@@ -13,17 +10,14 @@ export type Props = {
 
 const { post, variant = 'list' } = Astro.props;
 
-// Get heroImage from originalPost if available, or use Satori-generated OG image
 const heroImage =
   post.originalPost?.data.heroImage ??
   (post.collection && post.slug
     ? `/api/og/article/${post.collection}/${post.slug}.png`
     : undefined);
 
-// Determine variant: use card if variant is card (now always has heroImage fallback)
 const effectiveVariant = variant === 'card' && heroImage ? 'card' : 'list';
 
-// Compare only the date portion to ignore time differences
 const dateOnly = post.date.toISOString().slice(0, 10);
 const lastUpdatedOnly = post.lastUpdated?.toISOString().slice(0, 10);
 const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
@@ -33,44 +27,41 @@ const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
   effectiveVariant === 'card' ? (
     <article class="group">
       <a href={post.url} class="block">
-        <div class="overflow-hidden rounded-lg border border-border bg-card transition-shadow duration-200 hover:shadow-md">
-          {/* Hero Image */}
+        <div class="border-border bg-card overflow-hidden rounded-lg border transition-shadow duration-200 hover:shadow-md">
           {heroImage && (
-            <div class="aspect-[16/9] overflow-hidden bg-muted">
+            <div class="bg-muted aspect-[16/9] overflow-hidden">
               <img
                 src={heroImage}
-                alt=""
+                alt={post.title}
+                width={1200}
+                height={630}
                 class="size-full object-cover transition-transform duration-300 group-hover:scale-105"
                 loading="lazy"
               />
             </div>
           )}
-          {/* Content */}
           <div class="p-4">
-            <div class="mb-2 flex items-center gap-2">
-              <Badge variant="secondary" className="capitalize">
+            <div class="font-code text-muted-foreground mb-2 flex items-center gap-2 text-xs">
+              <span class="bg-muted rounded px-1.5 py-0.5 capitalize">
                 {post.category}
-              </Badge>
-              <span class="flex items-center gap-1 text-xs text-muted-foreground">
-                <CalendarIcon className="size-3" />
-                <time datetime={post.date.toISOString()}>
-                  {formatDateEn(post.date)}
-                </time>
-                {hasDistinctUpdate && post.lastUpdated && (
-                  <>
-                    <ReloadIcon className="ml-1 size-3" />
-                    <time datetime={post.lastUpdated.toISOString()}>
-                      {formatDateEn(post.lastUpdated)}
-                    </time>
-                  </>
-                )}
               </span>
+              <time datetime={post.date.toISOString()}>
+                {formatDateEn(post.date)}
+              </time>
+              {hasDistinctUpdate && post.lastUpdated && (
+                <time
+                  datetime={post.lastUpdated.toISOString()}
+                  class="text-muted-foreground/60"
+                >
+                  updated {formatDateEn(post.lastUpdated)}
+                </time>
+              )}
             </div>
-            <h3 class="line-clamp-2 font-heading text-lg text-foreground transition-colors duration-150 group-hover:text-link">
+            <h3 class="font-heading text-foreground group-hover:text-link line-clamp-2 text-lg transition-colors duration-150">
               {post.title}
             </h3>
             {post.description && (
-              <p class="mt-2 line-clamp-2 text-sm text-muted-foreground">
+              <p class="text-muted-foreground mt-2 line-clamp-2 text-sm">
                 {post.description}
               </p>
             )}
@@ -83,26 +74,23 @@ const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
       <a href={post.url} class="block">
         <div class="flex items-start gap-3">
           <div class="flex-1">
-            <div class="mb-1 flex items-center gap-2">
-              <Badge variant="secondary" className="capitalize">
+            <div class="font-code text-muted-foreground mb-1 flex items-center gap-2 text-xs">
+              <span class="bg-muted rounded px-1.5 py-0.5 capitalize">
                 {post.category}
-              </Badge>
-              <span class="flex items-center gap-1 text-xs text-muted-foreground">
-                <CalendarIcon className="size-3" />
-                <time datetime={post.date.toISOString()}>
-                  {formatDateEn(post.date)}
-                </time>
-                {hasDistinctUpdate && post.lastUpdated && (
-                  <>
-                    <ReloadIcon className="ml-1 size-3" />
-                    <time datetime={post.lastUpdated.toISOString()}>
-                      {formatDateEn(post.lastUpdated)}
-                    </time>
-                  </>
-                )}
               </span>
+              <time datetime={post.date.toISOString()}>
+                {formatDateEn(post.date)}
+              </time>
+              {hasDistinctUpdate && post.lastUpdated && (
+                <time
+                  datetime={post.lastUpdated.toISOString()}
+                  class="text-muted-foreground/60"
+                >
+                  updated {formatDateEn(post.lastUpdated)}
+                </time>
+              )}
             </div>
-            <h3 class="font-heading text-foreground transition-colors duration-150 group-hover:text-link">
+            <h3 class="font-heading text-foreground group-hover:text-link transition-colors duration-150">
               {post.title}
             </h3>
           </div>

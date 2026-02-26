@@ -1,0 +1,65 @@
+---
+/**
+ * ScrollToTop — appears after scrolling past the fold.
+ * Pure Astro, no React hydration needed.
+ */
+import { defaultLang } from '@/i18n/ui';
+import { useTranslations } from '@/i18n/utils';
+
+const t = useTranslations(defaultLang);
+---
+
+<button
+  id="scroll-to-top"
+  type="button"
+  class="border-border bg-background/80 font-code text-muted-foreground hover:bg-accent hover:text-foreground fixed right-6 bottom-6 z-40 hidden size-9 items-center justify-center rounded-md border text-xs shadow-sm backdrop-blur-sm transition-all"
+  aria-label={t('a11y.scrollToTop')}
+>
+  &uarr;
+</button>
+
+<script>
+  let _scrollTopObserver: IntersectionObserver | undefined;
+  let _scrollTopSentinel: HTMLElement | undefined;
+  let _scrollTopController: AbortController | undefined;
+
+  function initScrollToTop() {
+    _scrollTopObserver?.disconnect();
+    _scrollTopSentinel?.remove();
+    _scrollTopController?.abort();
+
+    const btn = document.getElementById('scroll-to-top');
+    if (!btn) return;
+
+    _scrollTopController = new AbortController();
+    const { signal } = _scrollTopController;
+
+    _scrollTopSentinel = document.createElement('div');
+    _scrollTopSentinel.setAttribute('aria-hidden', 'true');
+    _scrollTopSentinel.style.cssText =
+      'position:absolute;top:100vh;height:1px;width:1px';
+    document.body.prepend(_scrollTopSentinel);
+
+    _scrollTopObserver = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (!entry) return;
+        btn.classList.toggle('hidden', entry.isIntersecting);
+        btn.classList.toggle('flex', !entry.isIntersecting);
+      },
+      { threshold: 0 },
+    );
+    _scrollTopObserver.observe(_scrollTopSentinel);
+
+    btn.addEventListener(
+      'click',
+      () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+      { signal },
+    );
+  }
+
+  initScrollToTop();
+  document.addEventListener('astro:after-swap', initScrollToTop);
+</script>

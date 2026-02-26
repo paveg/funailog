@@ -1,0 +1,129 @@
+---
+/**
+ * ArticleTOC — mode="mobile" renders collapsible details,
+ * mode="desktop" renders sidebar nav. Scroll spy shared via class selectors.
+ */
+import { defaultLang } from '@/i18n/ui';
+import { useTranslations } from '@/i18n/utils';
+
+export type Props = {
+  mode: 'mobile' | 'desktop';
+};
+
+const { mode } = Astro.props;
+const t = useTranslations(defaultLang);
+---
+
+{
+  mode === 'mobile' ? (
+    <details class="toc-root border-border mb-6 rounded-md border lg:hidden">
+      <summary class="font-code text-muted-foreground cursor-pointer px-4 py-2.5 text-xs select-none">
+        {t('toc.title')}
+      </summary>
+      <ul class="toc-list text-muted-foreground space-y-0.5 px-4 pb-3 text-xs" />
+    </details>
+  ) : (
+    <nav class="toc-root" aria-label={t('toc.ariaLabel')}>
+      <p class="font-code text-muted-foreground mb-3 text-xs">
+        {t('toc.title')}
+      </p>
+      <ul class="toc-list space-y-0.5 text-xs" />
+    </nav>
+  )
+}
+
+<script>
+  let _tocObserver: IntersectionObserver | undefined;
+
+  function initTOC() {
+    _tocObserver?.disconnect();
+
+    const article = document.querySelector('article');
+    if (!article) return;
+
+    const headings = article.querySelectorAll('h2, h3');
+    if (headings.length < 2) {
+      document
+        .querySelectorAll('.toc-root')
+        .forEach((el) => ((el as HTMLElement).style.display = 'none'));
+      return;
+    }
+
+    const allLinks: { el: Element; links: HTMLAnchorElement[] }[] = [];
+
+    document.querySelectorAll('.toc-list').forEach((list) => {
+      while (list.firstChild) list.removeChild(list.firstChild);
+
+      headings.forEach((h) => {
+        const id = h.id;
+        if (!id) return;
+
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = `#${id}`;
+        a.textContent = h.textContent?.replace(/#$/, '').trim() ?? '';
+        a.className =
+          'toc-link block truncate py-1 pl-3 border-l-2 border-transparent text-muted-foreground transition-all duration-150 hover:text-foreground';
+
+        if (h.tagName === 'H3') {
+          li.className = 'pl-3';
+        }
+
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = document.getElementById(id);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            history.replaceState(null, '', `#${id}`);
+          }
+        });
+
+        li.appendChild(a);
+        list.appendChild(li);
+
+        const existing = allLinks.find((item) => item.el === h);
+        if (existing) {
+          existing.links.push(a);
+        } else {
+          allLinks.push({ el: h, links: [a] });
+        }
+      });
+    });
+
+    _tocObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            allLinks.forEach(({ links }) =>
+              links.forEach((link) => {
+                link.classList.remove(
+                  'text-foreground',
+                  'font-medium',
+                  'border-foreground',
+                );
+                link.classList.add('border-transparent');
+              }),
+            );
+            const active = allLinks.find((item) => item.el === entry.target);
+            if (active) {
+              active.links.forEach((link) => {
+                link.classList.add(
+                  'text-foreground',
+                  'font-medium',
+                  'border-foreground',
+                );
+                link.classList.remove('border-transparent');
+              });
+            }
+          }
+        });
+      },
+      { rootMargin: '-80px 0px -60% 0px', threshold: 0 },
+    );
+
+    headings.forEach((h) => _tocObserver!.observe(h));
+  }
+
+  initTOC();
+  document.addEventListener('astro:after-swap', initTOC);
+</script>

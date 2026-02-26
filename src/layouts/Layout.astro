@@ -1,22 +1,16 @@
 ---
-import '@/styles/globals.css';
-
-import '@fontsource/noto-sans-jp/400.css';
-import '@fontsource/noto-sans-jp/500.css';
-import '@fontsource/noto-sans-jp/700.css';
-import '@fontsource/zen-kaku-gothic-new/500.css';
-import '@fontsource/zen-kaku-gothic-new/700.css';
-import '@fontsource-variable/jetbrains-mono';
+import '@/styles/tokens.css';
 
 import { getEntry } from 'astro:content';
 
-import type { Article, WebSite, WithContext } from 'schema-dts';
+import type { JsonLdSchema } from '@/lib/rich-results';
 
 import CloudflareAnalytics from '@/components/analytics/CloudflareAnalytics.astro';
 import Footer from '@/components/Footer.astro';
 import Header from '@/components/Header.astro';
 import { TailwindIndicator } from '@/components/tailwind-indicator';
-import { ui, defaultLang } from '@/i18n/ui';
+import { ui, defaultLang, type SupportedLang } from '@/i18n/ui';
+import { useTranslations } from '@/i18n/utils';
 
 export type Props = {
   title: string;
@@ -28,18 +22,29 @@ export type Props = {
     width?: number;
     height?: number;
     type?: 'article' | 'website';
+    publishedTime?: string;
+    tags?: string[] | undefined;
   };
   lang?: string;
+  noindex?: boolean;
   hreflangs: {
     path: string;
     hreflang: keyof typeof ui | 'x-default';
   }[];
-  jsonLdSchema?: WithContext<Article> | WebSite;
+  jsonLdSchema?: JsonLdSchema | JsonLdSchema[];
 };
 
-const { title, description, path, og, lang, hreflangs, jsonLdSchema } =
+const { title, description, path, og, lang, noindex, hreflangs, jsonLdSchema } =
   Astro.props;
+const tLayout = useTranslations(
+  (lang && lang in ui ? lang : defaultLang) as SupportedLang,
+);
 const site = Astro.site ?? '';
+const schemas = jsonLdSchema
+  ? Array.isArray(jsonLdSchema)
+    ? jsonLdSchema
+    : [jsonLdSchema]
+  : [];
 const isProd = import.meta.env.PROD;
 const meta = await getEntry('site', 'meta');
 if (!meta) {
@@ -52,6 +57,8 @@ if (!meta) {
     <meta charset="utf-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="canonical" href={new URL(path, site).toString()} />
+    {noindex && <meta name="robots" content="noindex" />}
     <link
       rel="alternate"
       type="application/rss+xml"
@@ -68,6 +75,16 @@ if (!meta) {
     }
     <link rel="sitemap" href="/sitemap-index.xml" type="application/xml" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="48x48" />
+    <meta
+      name="theme-color"
+      content="#ffffff"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#0a0a0a"
+      media="(prefers-color-scheme: dark)"
+    />
     <meta name="generator" content={Astro.generator} />
     <meta name="author" content="Ryota Ikezawa" />
     <link rel="author" href={site} />
@@ -76,7 +93,7 @@ if (!meta) {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={new URL(path, site).toString()} />
-    <meta property="og:site_name" content={title} />
+    <meta property="og:site_name" content={meta.data.rss.title} />
     <meta name="twitter:site" content="@paveg_" />
     <meta name="twitter:creator" content="@paveg_" />
     <meta name="twitter:title" content={title} />
@@ -95,18 +112,34 @@ if (!meta) {
             name="twitter:card"
             content={og.type === 'article' ? 'summary_large_image' : 'summary'}
           />
+          <meta
+            name="twitter:image"
+            content={`${og.image ?? new URL(meta.data.main.defaultImage)}`}
+          />
+          {og.publishedTime && (
+            <meta
+              property="article:published_time"
+              content={og.publishedTime}
+            />
+          )}
+          {og.tags?.map((tag) => (
+            <meta property="article:tag" content={tag} />
+          ))}
         </>
       )
     }
     {isProd && <CloudflareAnalytics />}
     {
-      jsonLdSchema && (
+      schemas.map((schema) => (
         <script
           is:inline
           type="application/ld+json"
-          set:html={JSON.stringify(jsonLdSchema)}
+          set:html={JSON.stringify(schema).replace(
+            /<\/script>/gi,
+            '<\\/script>',
+          )}
         />
-      )
+      ))
     }
     <script is:inline>
       if (typeof window.localStorage.getItem('theme') === 'string') {
@@ -124,35 +157,21 @@ if (!meta) {
     </script>
     <title>{title}</title>
   </head>
-  <body class="min-h-screen bg-background text-foreground antialiased">
+  <body class="bg-background text-foreground min-h-screen antialiased">
+    <a
+      href="#main-content"
+      class="bg-background text-foreground focus-visible:ring-ring fixed top-2 left-2 z-[100] -translate-y-full rounded-md px-4 py-2 text-sm font-medium opacity-0 transition-transform focus-visible:translate-y-0 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:outline-none"
+    >
+      {tLayout('a11y.skipToContent')}
+    </a>
     <Header />
     <div class="mx-auto max-w-4xl space-y-4 px-4 py-5">
-      <main class="grow leading-7">
+      <main id="main-content" class="grow leading-7">
         <slot />
       </main>
       <Footer />
     </div>
-    <TailwindIndicator />
-    <script is:inline>
-      // Initialize Mermaid.js for client-side rendering
-      (function () {
-        const mermaidElements = document.querySelectorAll('pre.mermaid');
-        if (mermaidElements.length === 0) return;
-
-        const script = document.createElement('script');
-        script.src =
-          'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js';
-        script.onload = function () {
-          const isDark = document.documentElement.classList.contains('dark');
-          window.mermaid.initialize({
-            startOnLoad: true,
-            theme: isDark ? 'dark' : 'neutral',
-            securityLevel: 'loose',
-          });
-          window.mermaid.run({ nodes: mermaidElements });
-        };
-        document.head.appendChild(script);
-      })();
-    </script>
+    {import.meta.env.DEV && <TailwindIndicator />}
+    <slot name="page-scripts" />
   </body>
 </html>

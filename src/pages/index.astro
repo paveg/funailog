@@ -1,15 +1,14 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 
-import { ArrowRightIcon } from '@radix-ui/react-icons';
-
 import PostCard from '@/components/PostCard.astro';
+import { defaultLang } from '@/i18n/ui';
 import { useTranslations, generateHreflangs } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
 import { WebsiteLd } from '@/lib/rich-results';
 import { blogToUnified, sortUnifiedPosts } from '@/types/unified-post';
 
-const t = useTranslations('ja');
+const t = useTranslations(defaultLang);
 const site = Astro.site ?? '';
 const meta = await getEntry('site', 'meta');
 if (!meta) {
@@ -33,10 +32,11 @@ const otherPosts = recentPosts.slice(1);
   og={{
     enabled: true,
   }}
+  lang={defaultLang}
   hreflangs={generateHreflangs('')}
   jsonLdSchema={WebsiteLd(meta, site)}
 >
-  <main class="space-y-12 py-8">
+  <div class="space-y-12 py-8">
     <!-- ヒーローセクション -->
     <section
       class="flex flex-col items-center gap-6 text-center md:flex-row md:text-left"
@@ -45,26 +45,28 @@ const otherPosts = recentPosts.slice(1);
         <img
           src="/profile.jpg"
           alt={meta.data.author.name}
+          width={112}
+          height={112}
           class="size-24 rounded-full object-cover shadow-md md:size-28"
           loading="eager"
         />
       </div>
       <div class="space-y-3">
         <h1 class="font-heading text-2xl md:text-3xl">{t('main.title')}</h1>
-        <p class="text-lg font-medium text-muted-foreground">
-          買わない後悔のほうがきっと大きい
+        <p class="text-muted-foreground text-lg font-medium">
+          {t('index.tagline')}
         </p>
-        <p class="max-w-lg text-sm leading-relaxed text-muted-foreground">
-          ガジェット・仕事道具・乗り物、そして技術についても綴る個人メディア。<br
-            class="hidden sm:inline"
-          />シンプルで気分を上げるモノやエンジニアリングの知見を紹介しています。
+        <p class="text-muted-foreground max-w-lg text-sm leading-relaxed">
+          {t('index.heroLine1')}<br class="hidden sm:inline" />{
+            t('index.heroLine2')
+          }
         </p>
       </div>
     </section>
 
     <!-- 最新記事セクション -->
     <section>
-      <h2 class="mb-6 font-heading text-lg">最新の記事</h2>
+      <h2 class="font-heading mb-6 text-lg">{t('index.latestPosts')}</h2>
 
       {/* Featured post - Card style if has heroImage */}
       {
@@ -89,14 +91,14 @@ const otherPosts = recentPosts.slice(1);
       <div class="mt-8">
         <a
           href="/blog"
-          class="group inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          class="group font-code text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-xs transition-colors"
         >
-          すべての記事を見る
-          <ArrowRightIcon
-            className="size-4 transition-transform group-hover:translate-x-1"
-          />
+          {t('index.viewAllPosts')}
+          <span class="transition-transform group-hover:translate-x-0.5"
+            >&rarr;</span
+          >
         </a>
       </div>
     </section>
-  </main>
+  </div>
 </Layout>

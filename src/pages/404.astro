@@ -11,21 +11,23 @@ const t = useTranslations(lang);
   title={`${t('404.title')} | ${t('main.title')}`}
   description={t('404.description')}
   path="/404"
+  lang={defaultLang}
   og={{
     enabled: false,
   }}
+  noindex
   hreflangs={[
     { path: '/404', hreflang: defaultLang },
     { path: '/404', hreflang: 'x-default' },
   ]}
 >
-  <main class="mx-auto py-12 text-center">
+  <div class="mx-auto py-12 text-center">
     <h1>{t('404.title')}</h1>
-    <p class="text-sm text-secondary-foreground">
+    <p class="text-secondary-foreground text-sm">
       {t('404.description')}
     </p>
     <p>
       <Link href="/">{t('404.back')}</Link>
     </p>
-  </main>
+  </div>
 </Layout>

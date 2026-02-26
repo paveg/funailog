@@ -105,7 +105,7 @@ export function CollapsibleRoles({
               </div>
               {/* Connecting Line - visible solid line */}
               {(!isLast || (hasHiddenRoles && !isExpanded)) && (
-                <div className="my-1 min-h-6 w-px flex-1 bg-border" />
+                <div className="bg-border my-1 min-h-6 w-px flex-1" />
               )}
             </div>
 
@@ -115,15 +115,15 @@ export function CollapsibleRoles({
             >
               {/* Current indicator above role */}
               {isCurrent && (
-                <span className="mb-0.5 inline-flex items-center gap-1 text-2xs font-medium text-muted-foreground">
-                  <span className="size-1.5 animate-pulse rounded-full bg-primary" />
+                <span className="text-2xs text-muted-foreground mb-0.5 inline-flex items-center gap-1 font-medium">
+                  <span className="bg-primary size-1.5 animate-pulse rounded-full" />
                   {t.current}
                 </span>
               )}
               {/* Role Header */}
               <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                 <span
-                  className={`text-xs font-semibold leading-tight sm:text-sm ${
+                  className={`text-xs leading-tight font-semibold sm:text-sm ${
                     isCurrent ? 'text-foreground' : 'text-foreground/80'
                   }`}
                 >
@@ -135,12 +135,12 @@ export function CollapsibleRoles({
               </div>
 
               {/* Period */}
-              <span className="mt-0.5 block text-2xs tabular-nums text-muted-foreground sm:text-xs">
+              <span className="text-2xs text-muted-foreground mt-0.5 block tabular-nums sm:text-xs">
                 {formatPeriod(role.period, lang)}
               </span>
 
               {/* Role Description */}
-              <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+              <p className="text-muted-foreground mt-1.5 text-xs leading-relaxed sm:text-sm">
                 {role.description}
               </p>
 
@@ -153,7 +153,7 @@ export function CollapsibleRoles({
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:border-primary/20 hover:bg-primary/5 inline-flex items-center gap-1 rounded-md border border-transparent px-1.5 py-0.5 text-2xs text-primary transition-colors sm:text-xs"
+                      className="hover:border-primary/20 hover:bg-primary/5 text-2xs text-primary inline-flex items-center gap-1 rounded-md border border-transparent px-1.5 py-0.5 transition-colors sm:text-xs"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -184,7 +184,7 @@ export function CollapsibleRoles({
                     </Badge>
                   ))}
                   {role.technologies.length > 5 && (
-                    <span className="text-muted-foreground/70 inline-flex items-center px-1.5 py-0.5 text-2xs">
+                    <span className="text-muted-foreground/70 text-2xs inline-flex items-center px-1.5 py-0.5">
                       +{role.technologies.length - 5}
                     </span>
                   )}
@@ -205,7 +205,7 @@ export function CollapsibleRoles({
           <button
             type="button"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="border-muted-foreground/30 bg-muted/30 hover:border-primary/40 hover:bg-primary/5 group mt-1 inline-flex items-center gap-1.5 rounded-full border border-dashed px-3 py-1 text-2xs font-medium text-muted-foreground transition-all hover:text-primary sm:text-xs"
+            className="border-muted-foreground/30 bg-muted/30 hover:border-primary/40 hover:bg-primary/5 group text-2xs text-muted-foreground hover:text-primary mt-1 inline-flex items-center gap-1.5 rounded-full border border-dashed px-3 py-1 font-medium transition-all sm:text-xs"
           >
             {isExpanded ? (
               <>

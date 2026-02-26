@@ -25,7 +25,10 @@ export async function GET(context: APIContext) {
         categories: post.data.tags,
         link: url,
         enclosure: {
-          url: `/api/og/article/${post.collection}/${post.slug}.png`,
+          url: new URL(
+            `/api/og/article/${post.collection}/${post.slug}.png`,
+            context.site,
+          ).toString(),
           type: 'image/png',
           length: 65535,
         },

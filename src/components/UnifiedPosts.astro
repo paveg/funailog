@@ -54,7 +54,7 @@ const { page, title } = Astro.props;
                     )}
                   </span>
                   <a href={post.url}>
-                    <h2 class="font-heading transition-colors duration-normal group-hover:text-link">
+                    <h2 class="font-heading duration-normal group-hover:text-link transition-colors">
                       {post.title}
                     </h2>
                   </a>
@@ -63,7 +63,7 @@ const { page, title } = Astro.props;
                       {tags.slice(0, 5).map((tag) => (
                         <a
                           href={`/blog/tags/${tag}`}
-                          class="text-xs text-muted-foreground transition-colors hover:text-foreground"
+                          class="text-muted-foreground hover:text-foreground text-xs transition-colors"
                         >
                           #{tag}
                         </a>

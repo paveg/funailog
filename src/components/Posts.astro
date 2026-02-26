@@ -33,7 +33,7 @@ const { page, title } = Astro.props;
             return (
               <li>
                 <article class="group">
-                  <div class="flex items-center gap-2 text-xs text-muted-foreground">
+                  <div class="text-muted-foreground flex items-center gap-2 text-xs">
                     <a href={`/${collection}/categories/${data.category}`}>
                       <Badge className="capitalize" variant="secondary">
                         {data.category}
@@ -52,11 +52,11 @@ const { page, title } = Astro.props;
                     )}
                   </div>
                   <a href={`/${collection}/${path}`} class="block pt-1">
-                    <h2 class="font-heading text-foreground transition-colors duration-fast group-hover:text-link">
+                    <h2 class="font-heading text-foreground duration-fast group-hover:text-link transition-colors">
                       {data.title}
                     </h2>
                   </a>
-                  <p class="pt-1 text-sm leading-relaxed text-muted-foreground">
+                  <p class="text-muted-foreground pt-1 text-sm leading-relaxed">
                     {data.description}
                   </p>
                   {tags.length > 0 && (

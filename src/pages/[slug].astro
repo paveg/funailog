@@ -1,11 +1,13 @@
 ---
-import '@/styles/articles.css';
-import { getCollection, type CollectionEntry } from 'astro:content';
+import '@/styles/prose.css';
+import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 
 import Figure from '@/components/Figure.astro';
 import Link from '@/components/Link.astro';
+import { defaultLang } from '@/i18n/ui';
 import { useTranslations } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
+import { BreadcrumbLd, WebPageLd } from '@/lib/rich-results';
 
 export type Props = {
   page: CollectionEntry<'page'>;
@@ -32,13 +34,21 @@ const components = {
   figure: Figure,
   a: Link,
 };
-const t = useTranslations('ja');
+const t = useTranslations(defaultLang);
+const site = Astro.site ?? '';
+const meta = await getEntry('site', 'meta');
+if (!meta) {
+  throw new Error('Site meta configuration not found');
+}
+const pageUrl = new URL(`/${page.slug}`, site).toString();
+const homeUrl = new URL('/', site).toString();
 ---
 
 <Layout
   title={`${page.data.title} | ${t('main.title')}`}
   description={page.data.description}
   path={`/${page.slug}`}
+  lang={defaultLang}
   og={{
     enabled: true,
   }}
@@ -46,11 +56,22 @@ const t = useTranslations('ja');
     { path: `/${page.slug}`, hreflang: 'ja' },
     { path: `/${page.slug}`, hreflang: 'x-default' },
   ]}
+  jsonLdSchema={[
+    WebPageLd({
+      name: page.data.title,
+      description: page.data.description,
+      url: pageUrl,
+      meta,
+      site,
+    }),
+    BreadcrumbLd([
+      { name: t('main.title'), url: homeUrl },
+      { name: page.data.title, url: pageUrl },
+    ]),
+  ]}
 >
-  <main>
-    <article>
-      <h1>{page.data.title}</h1>
-      <Content components={components} />
-    </article>
-  </main>
+  <article>
+    <h1>{page.data.title}</h1>
+    <Content components={components} />
+  </article>
 </Layout>

@@ -1,14 +1,22 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 
 import { InfinitePostList } from '@/components/InfinitePostList';
 import { defaultLang } from '@/i18n/ui';
 import { useTranslations, generateHreflangs } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
+import { BreadcrumbLd, CollectionPageLd } from '@/lib/rich-results';
 import { blogToUnified, sortUnifiedPosts } from '@/types/unified-post';
 
 const lang = defaultLang;
 const t = useTranslations(lang);
+const site = Astro.site ?? '';
+const meta = await getEntry('site', 'meta');
+if (!meta) {
+  throw new Error('Site meta configuration not found');
+}
+const pageUrl = new URL('/blog', site).toString();
+const homeUrl = new URL('/', site).toString();
 
 // Fetch blog posts
 const blogPosts = (await getCollection('blog'))
@@ -41,13 +49,26 @@ const serializedPosts = allPosts.map((post) => ({
     enabled: true,
   }}
   hreflangs={generateHreflangs('blog')}
+  jsonLdSchema={[
+    CollectionPageLd({
+      name: t('blog.index'),
+      description: t('blog.description'),
+      url: pageUrl,
+      meta,
+      site,
+    }),
+    BreadcrumbLd([
+      { name: t('main.title'), url: homeUrl },
+      { name: t('blog.index'), url: pageUrl },
+    ]),
+  ]}
 >
-  <main>
+  <div>
     <InfinitePostList
       client:idle
       initialPosts={serializedPosts}
       title={t('blog.index')}
       showSearch={true}
     />
-  </main>
+  </div>
 </Layout>

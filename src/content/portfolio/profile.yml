@@ -2,9 +2,9 @@
 profile:
   name: Ryota Ikezawa
   nameKana: イケザワ リョウタ
-  title: Senior Architect / Full Stack Engineer
+  title: Senior Architect / Software Engineer
   summary: |
-    8年以上の経験を持つフルスタックエンジニア。
+    8年以上の経験を持つソフトウェアエンジニア。
     freee株式会社にて人事労務統合基盤チームのシニアアーキテクトとして、
     マイクロサービスの設計・運用、クロスチームアーキテクチャ、テクニカルリードを担当。
     Ruby, Rails, Go, TypeScript, React.js, AWS, Dockerに精通。
@@ -13,7 +13,7 @@ profile:
 workExperience:
   # === freee株式会社（約10年在籍） ===
   - company: freee株式会社
-    role: Senior Architect / Full Stack Engineer
+    role: Senior Architect / Software Engineer
     period:
       start: '2015-11'
       end: null
@@ -33,7 +33,7 @@ workExperience:
       - Kubernetes
     # 役職変遷
     roles:
-      - role: Senior Architect / Full Stack Engineer
+      - role: Senior Architect / Software Engineer
         period:
           start: '2025-01'
           end: null
@@ -161,7 +161,7 @@ workExperience:
             action: '[TODO: 実施したアクションを記載]'
             result: '[TODO: 成果・数値を記載]'
 
-      - role: Full Stack Engineer / Tech Lead
+      - role: Software Engineer / Tech Lead
         period:
           start: '2019-07'
           end: '2022-06'
@@ -244,6 +244,58 @@ workExperience:
       - オンプレミス移行
 
 projects:
+  - name: hono-problem-details
+    type: oss
+    period:
+      start: '2026-01'
+      end: null
+    description: RFC 9457 Problem Details準拠のHono向けエラーレスポンスミドルウェア。
+    techStack:
+      - Hono
+      - TypeScript
+    repository: https://github.com/paveg/hono-problem-details
+
+  - name: hono-webhook-verify
+    type: oss
+    period:
+      start: '2026-01'
+      end: null
+    description: |
+      Hono向けWebhook署名検証ミドルウェア。
+      Stripe、GitHub、Slack、Shopify、Twilioなど複数プロバイダに対応。
+    techStack:
+      - Hono
+      - TypeScript
+    repository: https://github.com/paveg/hono-webhook-verify
+
+  - name: hono-idempotency
+    type: oss
+    period:
+      start: '2026-01'
+      end: null
+    description: Hono向け冪等性ミドルウェア。リクエストの重複実行を防止する。
+    techStack:
+      - Hono
+      - TypeScript
+    repository: https://github.com/paveg/hono-idempotency
+
+  - name: Tuck
+    type: personal
+    period:
+      start: '2025-01'
+      end: null
+    description: |
+      Read it later アプリ。AIを活用したセマンティック検索や
+      ベクトル検索で保存したコンテンツを効率的に検索・整理。
+    techStack:
+      - React
+      - TypeScript
+      - Hono
+      - Cloudflare Workers
+      - Drizzle ORM
+      - Valibot
+    url: https://gettuck.app
+
   - name: funailog
     type: personal
     period:
@@ -258,6 +310,51 @@ projects:
       - Cloudflare Workers
     url: https://funailog.com
     repository: https://github.com/paveg/funailog
+
+  - name: devcard
+    type: personal
+    period:
+      start: '2025-12'
+      end: null
+    description: |
+      GitHubプロフィールからデベロッパーカードを生成するWebアプリ。
+      OGP画像としても利用可能。
+    techStack:
+      - Hono
+      - TypeScript
+      - Cloudflare Workers
+    url: https://devcard.pavegy.workers.dev/
+    repository: https://github.com/paveg/devcard
+
+  - name: DailyDose
+    type: personal
+    period:
+      start: '2024-01'
+      end: null
+    description: |
+      サプリメント管理アプリ。バーコードスキャン、
+      AI摂取タイミング提案、リマインダー機能を搭載。
+    techStack:
+      - React
+      - TypeScript
+      - Cloudflare Workers
+      - PWA
+    url: https://daily-dose.pavegy.workers.dev
+
+  - name: Attain
+    type: personal
+    period:
+      start: '2024-01'
+      end: null
+    description: |
+      データドリブンなフィットネストラッキングアプリ。
+      AIコーチングでトレーニングを最適化。
+    techStack:
+      - React
+      - TypeScript
+      - iOS
+      - Android
+    url: https://attain-app.com/lp
 
   - name: dots
     type: personal
@@ -287,68 +384,6 @@ projects:
       - Vercel
     url: https://bibgen.vercel.app/
 
-  - name: Attain
-    type: personal
-    period:
-      start: '2024-01'
-      end: null
-    description: |
-      データドリブンなフィットネストラッキングアプリ。
-      AIコーチングでトレーニングを最適化。
-    techStack:
-      - React
-      - TypeScript
-      - iOS
-      - Android
-    url: https://attain-app.com/lp
-
-  - name: DailyDose
-    type: personal
-    period:
-      start: '2024-01'
-      end: null
-    description: |
-      サプリメント管理アプリ。バーコードスキャン、
-      AI摂取タイミング提案、リマインダー機能を搭載。
-    techStack:
-      - React
-      - TypeScript
-      - Cloudflare Workers
-      - PWA
-    url: https://daily-dose.pavegy.workers.dev
-
-  - name: devcard
-    type: personal
-    period:
-      start: '2025-12'
-      end: null
-    description: |
-      GitHubプロフィールからデベロッパーカードを生成するWebアプリ。
-      OGP画像としても利用可能。
-    techStack:
-      - Hono
-      - TypeScript
-      - Cloudflare Workers
-    url: https://devcard.pavegy.workers.dev/
-    repository: https://github.com/paveg/devcard
-
-  - name: Tuck
-    type: personal
-    period:
-      start: '2025-01'
-      end: null
-    description: |
-      Read it later アプリ。AIを活用したセマンティック検索や
-      ベクトル検索で保存したコンテンツを効率的に検索・整理。
-    techStack:
-      - React
-      - TypeScript
-      - Hono
-      - Cloudflare Workers
-      - Drizzle ORM
-      - Valibot
-    url: https://gettuck.app
-
 skills:
   - category: Programming Languages
     items:
@@ -377,7 +412,7 @@ skills:
         level: advanced
         yearsOfExperience: 2
 
-  - category: Backend & Infrastructure
+  - category: Frameworks & Runtime
     items:
       - name: Ruby on Rails
         level: expert
@@ -385,12 +420,21 @@ skills:
       - name: Node.js
         level: advanced
         yearsOfExperience: 4
+      - name: Hono
+        level: advanced
+        yearsOfExperience: 1
+
+  - category: Databases
+    items:
       - name: MySQL
         level: advanced
         yearsOfExperience: 8
       - name: PostgreSQL
         level: intermediate
         yearsOfExperience: 3
+
+  - category: Infrastructure
+    items:
       - name: Docker
         level: advanced
         yearsOfExperience: 5
@@ -400,6 +444,9 @@ skills:
       - name: AWS
         level: advanced
         yearsOfExperience: 5
+      - name: Cloudflare Workers
+        level: advanced
+        yearsOfExperience: 2
 
 # 現在有効な資格なし（過去の資格は記載しない）
 # certifications:

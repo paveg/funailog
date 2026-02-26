@@ -10,9 +10,17 @@ import SkillsSection from '@/components/portfolio/SkillsSection.astro';
 import WorkExperienceSection from '@/components/portfolio/WorkExperienceSection.astro';
 import { useTranslations } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
+import { BreadcrumbLd, ProfilePageLd } from '@/lib/rich-results';
 
 const t = useTranslations('en');
+const site = Astro.site ?? '';
+const meta = await getEntry('site', 'meta');
+if (!meta) {
+  throw new Error('Site meta configuration not found');
+}
 const portfolio = await getEntry('portfolio', 'profile-en');
+const pageUrl = new URL('/en/portfolio', site).toString();
+const homeUrl = new URL('/', site).toString();
 
 if (!portfolio) {
   throw new Error('Portfolio data not found');
@@ -24,36 +32,34 @@ if (!portfolio) {
   description={t('portfolio.description')}
   path="/en/portfolio"
   og={{ enabled: true }}
+  lang="en"
   hreflangs={[
     { path: '/portfolio', hreflang: 'ja' },
     { path: '/en/portfolio', hreflang: 'en' },
     { path: '/portfolio', hreflang: 'x-default' },
   ]}
+  jsonLdSchema={[
+    ProfilePageLd({
+      name: t('portfolio.title'),
+      description: t('portfolio.description'),
+      url: pageUrl,
+      meta,
+      site,
+      lang: 'en',
+    }),
+    BreadcrumbLd([
+      { name: t('main.title'), url: homeUrl },
+      { name: t('portfolio.title'), url: pageUrl },
+    ]),
+  ]}
 >
-  <main class="space-y-12">
-    <div class="flex items-center justify-between">
-      <div></div>
+  <div class="space-y-12">
+    <div class="flex justify-end">
       <a
         href="/portfolio"
-        class="border-border/60 inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+        class="font-code text-muted-foreground hover:text-foreground text-xs transition-colors"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="size-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <circle cx="12" cy="12" r="10"></circle>
-          <path
-            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
-          ></path>
-          <path d="M2 12h20"></path>
-        </svg>
-        日本語
+        日本語 &rarr;
       </a>
     </div>
 
@@ -82,5 +88,5 @@ if (!portfolio) {
         <EducationSection items={portfolio.data.education} lang="en" />
       )
     }
-  </main>
+  </div>
 </Layout>

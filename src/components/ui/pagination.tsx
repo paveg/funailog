@@ -72,7 +72,7 @@ const PaginationPrevious = ({
     size="default"
     className={cn(
       'gap-1 pl-2.5',
-      disabled && 'cursor-not-allowed text-muted-foreground',
+      disabled && 'text-muted-foreground cursor-not-allowed',
       className,
     )}
     {...props}
@@ -93,7 +93,7 @@ const PaginationNext = ({
     size="default"
     className={cn(
       'gap-1 pr-2.5',
-      disabled && 'cursor-not-allowed text-muted-foreground',
+      disabled && 'text-muted-foreground cursor-not-allowed',
       className,
     )}
     {...props}

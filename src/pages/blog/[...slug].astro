@@ -1,19 +1,22 @@
 ---
-import '@/styles/articles.css';
-import type { CollectionEntry } from 'astro:content';
-import { getCollection } from 'astro:content';
-import { getEntry } from 'astro:content';
+import '@/styles/prose.css';
 
+import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+
+import ArticleHeader from '@/components/article/ArticleHeader.astro';
+import ArticleTOC from '@/components/article/ArticleTOC.astro';
+import ReadingProgress from '@/components/article/ReadingProgress.astro';
+import RelatedArticles from '@/components/article/RelatedArticles.astro';
 import Figure from '@/components/Figure.astro';
 import Link from '@/components/Link.astro';
-import { BlogDate } from '@/components/markdown/blog-date';
-import { BlogMeta } from '@/components/markdown/blog-meta';
 import Image from '@/components/markdown/Image.astro';
-import { ShareButtons } from '@/components/ShareButtons';
-import { Separator } from '@/components/ui/separator';
+import ScrollToTop from '@/components/ScrollToTop.astro';
+import ShareButtons from '@/components/ShareButtons.astro';
+import { defaultLang } from '@/i18n/ui';
 import { useTranslations } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
-import { ArticleLd } from '@/lib/rich-results';
+import { getRelatedPosts } from '@/lib/related-posts';
+import { ArticleLd, BreadcrumbLd } from '@/lib/rich-results';
 
 const meta = await getEntry('site', 'meta');
 if (!meta) {
@@ -44,14 +47,18 @@ const components = {
 const site = Astro.site ?? '';
 const path = `${post.collection}/${post.slug}`;
 const fullUrl = new URL(path, site).toString();
-const t = useTranslations('ja');
+const t = useTranslations(defaultLang);
 const defaultImagePath = `/api/og/article/${post.collection}/${post.slug}.png`;
+
+const allPosts = await getCollection('blog');
+const relatedPosts = getRelatedPosts(post, allPosts);
 ---
 
 <Layout
   title={`${post.data.title} | ${t('main.title')}`}
   description={post.data.description}
   path={path}
+  lang={defaultLang}
   og={{
     enabled: true,
     width: 1200,
@@ -62,32 +69,76 @@ const defaultImagePath = `/api/og/article/${post.collection}/${post.slug}.png`;
       site,
     ),
     type: 'article',
+    publishedTime: post.data.published.toISOString(),
+    tags: post.data.tags,
   }}
   hreflangs={[
     { path: `${path}`, hreflang: 'ja' },
     { path: `${path}`, hreflang: 'x-default' },
   ]}
-  jsonLdSchema={ArticleLd(meta, post, site)}
+  jsonLdSchema={[
+    ArticleLd(meta, post, site),
+    BreadcrumbLd([
+      { name: t('main.title'), url: new URL('/', site).toString() },
+      { name: t('blog.index'), url: new URL('/blog', site).toString() },
+      { name: post.data.title, url: fullUrl },
+    ]),
+  ]}
 >
-  <main>
-    <article>
-      <h1 class="text-center font-heading [text-wrap:wrap] [word-break:normal]">
+  <ReadingProgress />
+  <div>
+    {/* Header section: full-width, centered */}
+    <header class="mb-6">
+      <h1 class="font-heading text-center [text-wrap:wrap] [word-break:normal]">
         {post.data.title}
       </h1>
-      <BlogDate post={post} />
+      <ArticleHeader post={post} minRead={remarkPluginFrontmatter.minRead} />
       <Image
         class="my-3 rounded-md"
         src={post.data.heroImage ?? defaultImagePath}
-        alt="A hero image of the article"
+        alt={`${post.data.title} のヒーロー画像`}
         width={1200}
         height={630}
         loading="eager"
         fetchpriority="high"
       />
-      <BlogMeta post={post} minRead={remarkPluginFrontmatter.minRead} />
-      <Separator className="bg-border" />
-      <Content components={components} />
-      <ShareButtons client:visible url={fullUrl} title={post.data.title} />
-    </article>
-  </main>
+    </header>
+
+    {/* Mobile TOC */}
+    <ArticleTOC mode="mobile" />
+
+    {/* Content + sidebar TOC */}
+    <div class="lg:grid lg:grid-cols-[1fr_200px] lg:gap-8">
+      <article>
+        <Content components={components} />
+        <ShareButtons url={fullUrl} title={post.data.title} />
+        <RelatedArticles posts={relatedPosts} />
+      </article>
+      <aside class="hidden lg:block">
+        <div class="sticky top-20">
+          <ArticleTOC mode="desktop" />
+        </div>
+      </aside>
+    </div>
+  </div>
+  <ScrollToTop />
+  <script is:inline slot="page-scripts">
+    (function () {
+      const els = document.querySelectorAll('pre.mermaid');
+      if (els.length === 0) return;
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js';
+      s.crossOrigin = 'anonymous';
+      s.onload = function () {
+        const isDark = document.documentElement.classList.contains('dark');
+        window.mermaid.initialize({
+          startOnLoad: true,
+          theme: isDark ? 'dark' : 'neutral',
+          securityLevel: 'strict',
+        });
+        window.mermaid.run({ nodes: els });
+      };
+      document.head.appendChild(s);
+    })();
+  </script>
 </Layout>

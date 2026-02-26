@@ -1,11 +1,12 @@
 ---
 import type { GetStaticPaths } from 'astro';
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 
 import { InfinitePostList } from '@/components/InfinitePostList';
 import { defaultLang } from '@/i18n/ui';
 import { useTranslations, generateHreflangs } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
+import { BreadcrumbLd, CollectionPageLd } from '@/lib/rich-results';
 import { blogToUnified, sortUnifiedPosts } from '@/types/unified-post';
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -27,7 +28,15 @@ if (!tag || typeof tag !== 'string') {
 }
 const lang = defaultLang;
 const t = useTranslations(lang);
+const site = Astro.site ?? '';
+const meta = await getEntry('site', 'meta');
+if (!meta) {
+  throw new Error('Site meta configuration not found');
+}
 const basePath = `blog/tags/${tag}`;
+const pageUrl = new URL(`/${basePath}`, site).toString();
+const homeUrl = new URL('/', site).toString();
+const blogUrl = new URL('/blog', site).toString();
 
 // Fetch and filter posts for this tag
 const allPosts = await getCollection('blog');
@@ -52,7 +61,7 @@ const serializedPosts = sortedPosts.map((post) => ({
 ---
 
 <Layout
-  title={`タグ: #${tag} | ${t('main.title')}`}
+  title={`${t('tags.prefix')}${tag} | ${t('main.title')}`}
   description={t('tags.description')}
   path={`/blog/tags/${tag}`}
   lang={lang}
@@ -60,12 +69,26 @@ const serializedPosts = sortedPosts.map((post) => ({
     enabled: true,
   }}
   hreflangs={generateHreflangs(basePath)}
+  jsonLdSchema={[
+    CollectionPageLd({
+      name: `#${tag}`,
+      description: t('tags.description'),
+      url: pageUrl,
+      meta,
+      site,
+    }),
+    BreadcrumbLd([
+      { name: t('main.title'), url: homeUrl },
+      { name: t('blog.index'), url: blogUrl },
+      { name: `#${tag}`, url: pageUrl },
+    ]),
+  ]}
 >
-  <main>
+  <div>
     <InfinitePostList
       client:load
       initialPosts={serializedPosts}
       title={`#${tag}`}
     />
-  </main>
+  </div>
 </Layout>

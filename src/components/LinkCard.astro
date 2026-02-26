@@ -1,6 +1,4 @@
 ---
-import { ExternalLinkIcon } from '@radix-ui/react-icons';
-
 import { fetchLinkCard } from '@/lib/api';
 
 export type Props = {
@@ -9,7 +7,7 @@ export type Props = {
 
 const props = Astro.props;
 
-const { title, description, image } = await fetchLinkCard(props.href);
+const { title } = await fetchLinkCard(props.href);
 const isInternal = props.href.startsWith('/');
 const isAnchor = props.href.startsWith('#');
 const hostname = new URL(props.href).hostname;
@@ -22,62 +20,63 @@ const faviconUrl = `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`
       target="_blank"
       rel="noopener noreferrer"
       href={props.href}
-      class="inline-flex items-center gap-1 text-link hover:text-link-hover hover:underline"
+      class="text-link hover:text-link-hover inline-flex items-center gap-1 underline-offset-2 hover:underline"
     >
       <slot />
-      <ExternalLinkIcon className="size-3" />
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="size-3 opacity-50"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M7 17L17 7" />
+        <path d="M7 7h10v10" />
+      </svg>
     </a>
   ) : (
     <a
       {...props}
       target={isAnchor || isInternal ? '_self' : '_blank'}
       rel={isAnchor || isInternal ? '' : 'noopener noreferrer'}
-      class="not-prose group relative block"
+      class="not-prose group my-3 block"
     >
-      <div class="relative overflow-hidden rounded-lg border border-border bg-card transition-shadow duration-200 hover:shadow-md sm:flex sm:flex-row">
-        {/* Accent line on hover */}
-        <div class="absolute left-0 top-0 h-full w-0.5 origin-top scale-y-0 bg-accent-line transition-transform duration-200 group-hover:scale-y-100" />
-
-        {/* Content Section */}
-        <div class="flex flex-1 flex-col justify-center gap-1.5 overflow-hidden p-4 transition-[padding] duration-200 group-hover:pl-5">
-          <span class="line-clamp-2 text-sm font-medium leading-snug text-foreground transition-colors duration-150 group-hover:text-primary sm:line-clamp-1">
+      <span class="border-border bg-card hover:border-foreground/20 flex items-center gap-2.5 overflow-hidden rounded border px-3 py-2 leading-none transition-all duration-200 hover:shadow-sm">
+        <img
+          src={faviconUrl}
+          alt=""
+          width="16"
+          height="16"
+          class="m-0 size-4 shrink-0 rounded-sm opacity-50 grayscale transition-all duration-200 group-hover:opacity-100 group-hover:grayscale-0"
+          loading="lazy"
+        />
+        <span class="flex min-w-0 flex-1 items-baseline gap-2">
+          <span class="text-foreground group-hover:text-link truncate text-xs font-medium transition-colors duration-150">
             {title}
           </span>
-          {description && (
-            <span class="line-clamp-2 text-xs leading-relaxed text-muted-foreground sm:line-clamp-1">
-              {description}
-            </span>
-          )}
-          <span class="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <img
-              src={faviconUrl}
-              alt=""
-              width="14"
-              height="14"
-              class="m-0 size-3.5 shrink-0 rounded-sm"
-              loading="lazy"
-            />
-            <span class="truncate">{hostname}</span>
-            {!isInternal && !isAnchor && (
-              <ExternalLinkIcon className="size-3 shrink-0 opacity-40 transition-opacity duration-150 group-hover:opacity-70" />
-            )}
+          <span class="font-code text-2xs text-muted-foreground/50 shrink-0">
+            {hostname}
           </span>
-        </div>
-
-        {/* Image Section - Hidden on mobile, shown on desktop */}
-        {image.src && (
-          <div class="hidden h-[100px] w-[160px] shrink-0 overflow-hidden border-l border-border bg-muted sm:flex sm:items-center sm:justify-center">
-            <img
-              class="m-0 max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
-              src={image.src}
-              alt=""
-              width="160"
-              height="100"
-              loading="lazy"
-            />
-          </div>
+        </span>
+        {!isInternal && !isAnchor && (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="text-muted-foreground/30 group-hover:text-muted-foreground/70 size-3 shrink-0 transition-all duration-150 group-hover:translate-x-0.5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M7 17L17 7" />
+            <path d="M7 7h10v10" />
+          </svg>
         )}
-      </div>
+      </span>
     </a>
   )
 }

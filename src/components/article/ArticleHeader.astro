@@ -1,0 +1,62 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+import { filterTags } from '@/lib/tags';
+import { formatDateEn } from '@/lib/utils';
+
+export type Props = {
+  post: CollectionEntry<'blog'>;
+  minRead: string;
+};
+
+const { post, minRead } = Astro.props;
+const { published, lastUpdated, category, tags: rawTags } = post.data;
+const tags = filterTags(rawTags ?? []);
+const { collection } = post;
+
+const dateOnly = published.toISOString().slice(0, 10);
+const lastUpdatedOnly = lastUpdated?.toISOString().slice(0, 10);
+const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
+---
+
+<div class="font-code text-muted-foreground my-4 space-y-3 text-xs">
+  {/* Date + Category + Reading time */}
+  <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+    <a
+      href={`/${collection}/categories/${category}`}
+      class="bg-muted hover:bg-accent hover:text-foreground rounded px-1.5 py-0.5 capitalize transition-colors"
+    >
+      {category}
+    </a>
+    <time datetime={published.toISOString()}>
+      {formatDateEn(published)}
+    </time>
+    {
+      hasDistinctUpdate && lastUpdated && (
+        <span class="flex items-center gap-1">
+          <span class="text-muted-foreground/60">updated</span>
+          <time datetime={lastUpdated.toISOString()}>
+            {formatDateEn(lastUpdated)}
+          </time>
+        </span>
+      )
+    }
+    <span class="text-muted-foreground/60">{minRead}</span>
+  </div>
+
+  {/* Tags */}
+  {
+    tags.length > 0 && (
+      <div class="flex flex-wrap gap-x-2 gap-y-1">
+        {tags.map((tag) => (
+          <a
+            href={`/${collection}/tags/${tag}`}
+            class="hover:text-foreground transition-colors"
+          >
+            #{tag}
+          </a>
+        ))}
+      </div>
+    )
+  }
+</div>
