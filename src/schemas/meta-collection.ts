@@ -4,8 +4,6 @@ export const metaCollection = defineCollection({
   type: 'data',
   schema: z.object({
     main: z.object({
-      title: z.string(),
-      description: z.string(),
       defaultImage: z.string(),
     }),
     rss: z.object({

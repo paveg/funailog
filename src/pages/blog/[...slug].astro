@@ -1,9 +1,7 @@
 ---
 import '@/styles/prose.css';
 
-import type { CollectionEntry } from 'astro:content';
-import { getCollection } from 'astro:content';
-import { getEntry } from 'astro:content';
+import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 
 import ArticleHeader from '@/components/article/ArticleHeader.astro';
 import ArticleTOC from '@/components/article/ArticleTOC.astro';
@@ -69,6 +67,8 @@ const relatedPosts = getRelatedPosts(post, allPosts);
       site,
     ),
     type: 'article',
+    publishedTime: post.data.published.toISOString(),
+    tags: post.data.tags,
   }}
   hreflangs={[
     { path: `${path}`, hreflang: 'ja' },
@@ -77,7 +77,7 @@ const relatedPosts = getRelatedPosts(post, allPosts);
   jsonLdSchema={ArticleLd(meta, post, site)}
 >
   <ReadingProgress />
-  <main>
+  <div>
     {/* Header section: full-width, centered */}
     <header class="mb-6">
       <h1 class="font-heading text-center [text-wrap:wrap] [word-break:normal]">
@@ -87,7 +87,7 @@ const relatedPosts = getRelatedPosts(post, allPosts);
       <Image
         class="my-3 rounded-md"
         src={post.data.heroImage ?? defaultImagePath}
-        alt="A hero image of the article"
+        alt={`${post.data.title} のヒーロー画像`}
         width={1200}
         height={630}
         loading="eager"
@@ -111,6 +111,25 @@ const relatedPosts = getRelatedPosts(post, allPosts);
         </div>
       </aside>
     </div>
-  </main>
+  </div>
   <ScrollToTop />
+  <script is:inline slot="page-scripts">
+    (function () {
+      const els = document.querySelectorAll('pre.mermaid');
+      if (els.length === 0) return;
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js';
+      s.crossOrigin = 'anonymous';
+      s.onload = function () {
+        const isDark = document.documentElement.classList.contains('dark');
+        window.mermaid.initialize({
+          startOnLoad: true,
+          theme: isDark ? 'dark' : 'neutral',
+          securityLevel: 'strict',
+        });
+        window.mermaid.run({ nodes: els });
+      };
+      document.head.appendChild(s);
+    })();
+  </script>
 </Layout>

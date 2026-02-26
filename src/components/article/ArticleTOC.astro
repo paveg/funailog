@@ -27,7 +27,11 @@ const { mode } = Astro.props;
 }
 
 <script>
+  let _tocObserver: IntersectionObserver | undefined;
+
   function initTOC() {
+    _tocObserver?.disconnect();
+
     const article = document.querySelector('article');
     if (!article) return;
 
@@ -80,7 +84,7 @@ const { mode } = Astro.props;
       });
     });
 
-    const observer = new IntersectionObserver(
+    _tocObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
@@ -111,7 +115,7 @@ const { mode } = Astro.props;
       { rootMargin: '-80px 0px -60% 0px', threshold: 0 },
     );
 
-    headings.forEach((h) => observer.observe(h));
+    headings.forEach((h) => _tocObserver!.observe(h));
   }
 
   initTOC();

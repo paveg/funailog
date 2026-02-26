@@ -47,10 +47,8 @@ const t = useTranslations('ja');
     { path: `/${page.slug}`, hreflang: 'x-default' },
   ]}
 >
-  <main>
-    <article>
-      <h1>{page.data.title}</h1>
-      <Content components={components} />
-    </article>
-  </main>
+  <article>
+    <h1>{page.data.title}</h1>
+    <Content components={components} />
+  </article>
 </Layout>

@@ -22,8 +22,7 @@ const badgeVariants = cva(
           'border-primary/15 bg-primary/8 hover:bg-primary/12 text-primary',
         secondary:
           'border-border bg-secondary text-secondary-foreground hover:bg-accent',
-        destructive:
-          'border-destructive/20 bg-destructive/10 hover:bg-destructive/15 text-destructive',
+
         outline:
           'border-border bg-transparent text-muted-foreground hover:bg-accent hover:text-accent-foreground',
         // Tech tags - subtle primary tones matching the design system
@@ -31,9 +30,6 @@ const badgeVariants = cva(
         // Project tags - slightly different tone
         project:
           'border-muted-foreground/20 dark:border-muted-foreground/25 bg-muted text-muted-foreground hover:bg-accent',
-        // Category badge for blog posts
-        category:
-          'border-primary/15 bg-primary/8 hover:bg-primary/12 text-primary',
       },
     },
     defaultVariants: {

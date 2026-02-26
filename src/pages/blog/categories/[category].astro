@@ -61,11 +61,11 @@ const serializedPosts = sortedPosts.map((post) => ({
   }}
   hreflangs={generateHreflangs(basePath)}
 >
-  <main>
+  <div>
     <InfinitePostList
       client:load
       initialPosts={serializedPosts}
       title={category}
     />
-  </main>
+  </div>
 </Layout>

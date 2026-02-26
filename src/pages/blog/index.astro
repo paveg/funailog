@@ -42,12 +42,12 @@ const serializedPosts = allPosts.map((post) => ({
   }}
   hreflangs={generateHreflangs('blog')}
 >
-  <main>
+  <div>
     <InfinitePostList
       client:idle
       initialPosts={serializedPosts}
       title={t('blog.index')}
       showSearch={true}
     />
-  </main>
+  </div>
 </Layout>

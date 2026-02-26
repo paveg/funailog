@@ -14,17 +14,6 @@ export const linkStyles = {
 } as const;
 
 /**
- * Format date for display (Japanese locale)
- */
-export function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat('ja-JP', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  }).format(date);
-}
-
-/**
  * Format date for display (English locale)
  */
 export function formatDateEn(date: Date): string {

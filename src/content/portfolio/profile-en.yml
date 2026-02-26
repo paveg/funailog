@@ -234,6 +234,58 @@ workExperience:
       - On-premises Migration
 
 projects:
+  - name: hono-problem-details
+    type: oss
+    period:
+      start: '2026-01'
+      end: null
+    description: RFC 9457 Problem Details middleware for Hono.
+    techStack:
+      - Hono
+      - TypeScript
+    repository: https://github.com/paveg/hono-problem-details
+
+  - name: hono-webhook-verify
+    type: oss
+    period:
+      start: '2026-01'
+      end: null
+    description: |
+      Webhook signature verification middleware for Hono.
+      Supports Stripe, GitHub, Slack, Shopify, Twilio and custom providers.
+    techStack:
+      - Hono
+      - TypeScript
+    repository: https://github.com/paveg/hono-webhook-verify
+
+  - name: hono-idempotency
+    type: oss
+    period:
+      start: '2026-01'
+      end: null
+    description: Idempotency middleware for Hono. Prevents duplicate request execution.
+    techStack:
+      - Hono
+      - TypeScript
+    repository: https://github.com/paveg/hono-idempotency
+
+  - name: Tuck
+    type: personal
+    period:
+      start: '2025-01'
+      end: null
+    description: |
+      Read it later app. Efficiently search and organize saved content
+      with AI-powered semantic search and vector search.
+    techStack:
+      - React
+      - TypeScript
+      - Hono
+      - Cloudflare Workers
+      - Drizzle ORM
+      - Valibot
+    url: https://gettuck.app
+
   - name: funailog
     type: personal
     period:
@@ -248,6 +300,51 @@ projects:
       - Cloudflare Workers
     url: https://funailog.com
     repository: https://github.com/paveg/funailog
+
+  - name: devcard
+    type: personal
+    period:
+      start: '2025-12'
+      end: null
+    description: |
+      Web app for generating developer cards from GitHub profiles.
+      Also usable as OGP images.
+    techStack:
+      - Hono
+      - TypeScript
+      - Cloudflare Workers
+    url: https://devcard.pavegy.workers.dev/
+    repository: https://github.com/paveg/devcard
+
+  - name: DailyDose
+    type: personal
+    period:
+      start: '2024-01'
+      end: null
+    description: |
+      Supplement management app with barcode scanning,
+      AI-powered intake timing suggestions, and reminder features.
+    techStack:
+      - React
+      - TypeScript
+      - Cloudflare Workers
+      - PWA
+    url: https://daily-dose.pavegy.workers.dev
+
+  - name: Attain
+    type: personal
+    period:
+      start: '2024-01'
+      end: null
+    description: |
+      A data-driven fitness tracking app.
+      Optimize training with AI coaching.
+    techStack:
+      - React
+      - TypeScript
+      - iOS
+      - Android
+    url: https://attain-app.com/lp
 
   - name: dots
     type: personal
@@ -277,68 +374,6 @@ projects:
       - Vercel
     url: https://bibgen.vercel.app/
 
-  - name: Attain
-    type: personal
-    period:
-      start: '2024-01'
-      end: null
-    description: |
-      A data-driven fitness tracking app.
-      Optimize training with AI coaching.
-    techStack:
-      - React
-      - TypeScript
-      - iOS
-      - Android
-    url: https://attain-app.com/lp
-
-  - name: DailyDose
-    type: personal
-    period:
-      start: '2024-01'
-      end: null
-    description: |
-      Supplement management app with barcode scanning,
-      AI-powered intake timing suggestions, and reminder features.
-    techStack:
-      - React
-      - TypeScript
-      - Cloudflare Workers
-      - PWA
-    url: https://daily-dose.pavegy.workers.dev
-
-  - name: devcard
-    type: personal
-    period:
-      start: '2025-12'
-      end: null
-    description: |
-      Web app for generating developer cards from GitHub profiles.
-      Also usable as OGP images.
-    techStack:
-      - Hono
-      - TypeScript
-      - Cloudflare Workers
-    url: https://devcard.pavegy.workers.dev/
-    repository: https://github.com/paveg/devcard
-
-  - name: Tuck
-    type: personal
-    period:
-      start: '2025-01'
-      end: null
-    description: |
-      Read it later app. Efficiently search and organize saved content
-      with AI-powered semantic search and vector search.
-    techStack:
-      - React
-      - TypeScript
-      - Hono
-      - Cloudflare Workers
-      - Drizzle ORM
-      - Valibot
-    url: https://gettuck.app
-
 skills:
   - category: Programming Languages
     items:
@@ -367,7 +402,7 @@ skills:
         level: advanced
         yearsOfExperience: 2
 
-  - category: Backend & Infrastructure
+  - category: Frameworks & Runtime
     items:
       - name: Ruby on Rails
         level: expert
@@ -375,12 +410,21 @@ skills:
       - name: Node.js
         level: advanced
         yearsOfExperience: 4
+      - name: Hono
+        level: advanced
+        yearsOfExperience: 1
+
+  - category: Databases
+    items:
       - name: MySQL
         level: advanced
         yearsOfExperience: 8
       - name: PostgreSQL
         level: intermediate
         yearsOfExperience: 3
+
+  - category: Infrastructure
+    items:
       - name: Docker
         level: advanced
         yearsOfExperience: 5
@@ -390,6 +434,9 @@ skills:
       - name: AWS
         level: advanced
         yearsOfExperience: 5
+      - name: Cloudflare Workers
+        level: advanced
+        yearsOfExperience: 2
 
 education:
   - institution: Senshu University

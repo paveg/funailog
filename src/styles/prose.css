@@ -118,9 +118,6 @@ body {
     }
     & .footnotes {
       @apply border-border text-muted-foreground mt-8 border-t pt-5 text-xs md:text-sm;
-      & li {
-        @apply list-outside;
-      }
       & .data-footnote-backref {
         text-decoration: none;
       }

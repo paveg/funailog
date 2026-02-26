@@ -39,10 +39,11 @@ const publisher = (site: URL | ''): Organization => {
 export const WebsiteLd = (
   meta: CollectionEntry<'site'>,
   site: URL | '',
-): WebSite => {
+): WithContext<WebSite> => {
   const t = useTranslations('ja');
   const url = new URL('/', site).toString();
   return {
+    '@context': 'https://schema.org',
     '@type': 'WebSite',
     '@id': url,
     name: t('main.title'),
@@ -58,10 +59,14 @@ export const ArticleLd = (
   blog: CollectionEntry<'blog'>,
   site: URL | '',
 ): WithContext<Article> => {
+  const articleUrl = new URL(
+    `${blog.collection}/${blog.slug}`,
+    site,
+  ).toString();
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    '@id': blog.id,
+    '@id': articleUrl,
     headline: blog.data.title,
     description: blog.data.description,
     image: new URL(

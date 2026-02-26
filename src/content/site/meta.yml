@@ -1,6 +1,4 @@
 main:
-  title: main.title
-  description: main.description
   defaultImage: https://funailog.imgix.net/defaultImage.png?auto=format,compress,enhance
 rss:
   title: フナイログ

@@ -52,7 +52,7 @@ export default defineConfig({
     format: 'directory',
   },
   prefetch: {
-    defaultStrategy: 'viewport',
+    defaultStrategy: 'hover',
     prefetchAll: true,
   },
   vite: {

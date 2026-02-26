@@ -12,30 +12,23 @@ const platforms = [
     name: 'X',
     href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}&hashtags=${hashtag}`,
     label: 'Xでシェア',
-    // X (Twitter) logo
-    icon: '<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>',
-    viewBox: '0 0 24 24',
-  },
-  {
-    name: 'Hatena',
-    href: `https://b.hatena.ne.jp/entry/s/${url.replace(/^https?:\/\//, '')}`,
-    label: 'はてなブックマークに追加',
-    // Hatena bookmark "B!" simplified
-    icon: '<text x="12" y="17" text-anchor="middle" font-size="16" font-weight="bold" font-family="system-ui" fill="currentColor">B!</text>',
-    viewBox: '0 0 24 24',
+    pathD:
+      'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z',
   },
   {
     name: 'Facebook',
     href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
     label: 'Facebookでシェア',
-    // Facebook "f" icon
-    icon: '<path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 1.09.07 1.373.14v3.324c-.149-.015-.408-.024-.732-.024-1.04 0-1.44.394-1.44 1.42v2.698h4.059l-.696 3.667h-3.363v8.173C19.395 23.262 24 18.16 24 12.044 24 5.431 18.627 0 12.001 0S0 5.431 0 12.044c0 5.628 3.874 10.35 9.101 11.647Z"/>',
-    viewBox: '0 0 24 24',
+    pathD:
+      'M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 1.09.07 1.373.14v3.324c-.149-.015-.408-.024-.732-.024-1.04 0-1.44.394-1.44 1.42v2.698h4.059l-.696 3.667h-3.363v8.173C19.395 23.262 24 18.16 24 12.044 24 5.431 18.627 0 12.001 0S0 5.431 0 12.044c0 5.628 3.874 10.35 9.101 11.647Z',
   },
 ];
+
+const hatenaHref = `https://b.hatena.ne.jp/entry/${encodeURIComponent(url)}`;
 ---
 
 <div class="border-border mt-12 border-t pt-6">
+  <p class="font-code text-muted-foreground mb-3 text-center text-xs">share</p>
   <div class="flex items-center justify-center gap-3">
     {
       platforms.map((p) => (
@@ -50,13 +43,40 @@ const platforms = [
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="size-4"
-            viewBox={p.viewBox}
+            viewBox="0 0 24 24"
             fill="currentColor"
-            set:html={p.icon}
-          />
+          >
+            <path d={p.pathD} />
+          </svg>
         </a>
       ))
     }
+    {/* Hatena Bookmark */}
+    <a
+      href={hatenaHref}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="text-muted-foreground hover:text-foreground inline-flex size-8 items-center justify-center rounded-md transition-colors"
+      aria-label="はてなブックマークに追加"
+      title="Hatena"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="size-4"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+      >
+        <text
+          x="12"
+          y="17"
+          text-anchor="middle"
+          font-size="16"
+          font-weight="bold"
+          font-family="system-ui">B!</text
+        >
+      </svg>
+    </a>
+    {/* Copy link */}
     <button
       id="copy-link-btn"
       type="button"
@@ -65,7 +85,6 @@ const platforms = [
       title="Copy link"
       data-url={url}
     >
-      {/* Copy/Link icon */}
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="size-4"
@@ -86,24 +105,35 @@ const platforms = [
 </div>
 
 <script>
+  let _copyLinkController: AbortController | undefined;
+
   function initCopyLink() {
+    _copyLinkController?.abort();
+
     const btn = document.getElementById('copy-link-btn');
     if (!btn) return;
 
-    btn.addEventListener('click', async () => {
-      const url = btn.getAttribute('data-url');
-      if (!url) return;
+    _copyLinkController = new AbortController();
+    const { signal } = _copyLinkController;
 
-      try {
-        await navigator.clipboard.writeText(url);
-        btn.classList.add('text-foreground');
-        setTimeout(() => {
-          btn.classList.remove('text-foreground');
-        }, 2000);
-      } catch {
-        console.warn('Failed to copy to clipboard');
-      }
-    });
+    btn.addEventListener(
+      'click',
+      async () => {
+        const url = btn.getAttribute('data-url');
+        if (!url) return;
+
+        try {
+          await navigator.clipboard.writeText(url);
+          btn.classList.add('text-foreground');
+          setTimeout(() => {
+            btn.classList.remove('text-foreground');
+          }, 2000);
+        } catch {
+          console.warn('Failed to copy to clipboard');
+        }
+      },
+      { signal },
+    );
   }
 
   initCopyLink();

@@ -21,16 +21,19 @@ export type Props = {
     width?: number;
     height?: number;
     type?: 'article' | 'website';
+    publishedTime?: string;
+    tags?: string[] | undefined;
   };
   lang?: string;
+  noindex?: boolean;
   hreflangs: {
     path: string;
     hreflang: keyof typeof ui | 'x-default';
   }[];
-  jsonLdSchema?: WithContext<Article> | WebSite;
+  jsonLdSchema?: WithContext<Article> | WithContext<WebSite>;
 };
 
-const { title, description, path, og, lang, hreflangs, jsonLdSchema } =
+const { title, description, path, og, lang, noindex, hreflangs, jsonLdSchema } =
   Astro.props;
 const site = Astro.site ?? '';
 const isProd = import.meta.env.PROD;
@@ -45,6 +48,8 @@ if (!meta) {
     <meta charset="utf-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="canonical" href={new URL(path, site).toString()} />
+    {noindex && <meta name="robots" content="noindex" />}
     <link
       rel="alternate"
       type="application/rss+xml"
@@ -61,6 +66,16 @@ if (!meta) {
     }
     <link rel="sitemap" href="/sitemap-index.xml" type="application/xml" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="48x48" />
+    <meta
+      name="theme-color"
+      content="#ffffff"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#0a0a0a"
+      media="(prefers-color-scheme: dark)"
+    />
     <meta name="generator" content={Astro.generator} />
     <meta name="author" content="Ryota Ikezawa" />
     <link rel="author" href={site} />
@@ -69,7 +84,7 @@ if (!meta) {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={new URL(path, site).toString()} />
-    <meta property="og:site_name" content={title} />
+    <meta property="og:site_name" content={meta.data.rss.title} />
     <meta name="twitter:site" content="@paveg_" />
     <meta name="twitter:creator" content="@paveg_" />
     <meta name="twitter:title" content={title} />
@@ -88,6 +103,19 @@ if (!meta) {
             name="twitter:card"
             content={og.type === 'article' ? 'summary_large_image' : 'summary'}
           />
+          <meta
+            name="twitter:image"
+            content={`${og.image ?? new URL(meta.data.main.defaultImage)}`}
+          />
+          {og.publishedTime && (
+            <meta
+              property="article:published_time"
+              content={og.publishedTime}
+            />
+          )}
+          {og.tags?.map((tag) => (
+            <meta property="article:tag" content={tag} />
+          ))}
         </>
       )
     }
@@ -97,7 +125,10 @@ if (!meta) {
         <script
           is:inline
           type="application/ld+json"
-          set:html={JSON.stringify(jsonLdSchema)}
+          set:html={JSON.stringify(jsonLdSchema).replace(
+            /<\/script>/gi,
+            '<\\/script>',
+          )}
         />
       )
     }
@@ -131,27 +162,7 @@ if (!meta) {
       </main>
       <Footer />
     </div>
-    <TailwindIndicator />
-    <script is:inline>
-      // Initialize Mermaid.js for client-side rendering
-      (function () {
-        const mermaidElements = document.querySelectorAll('pre.mermaid');
-        if (mermaidElements.length === 0) return;
-
-        const script = document.createElement('script');
-        script.src =
-          'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js';
-        script.onload = function () {
-          const isDark = document.documentElement.classList.contains('dark');
-          window.mermaid.initialize({
-            startOnLoad: true,
-            theme: isDark ? 'dark' : 'neutral',
-            securityLevel: 'loose',
-          });
-          window.mermaid.run({ nodes: mermaidElements });
-        };
-        document.head.appendChild(script);
-      })();
-    </script>
+    {import.meta.env.DEV && <TailwindIndicator />}
+    <slot name="page-scripts" />
   </body>
 </html>

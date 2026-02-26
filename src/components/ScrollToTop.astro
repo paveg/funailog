@@ -15,38 +15,45 @@
 </button>
 
 <script>
+  let _scrollTopObserver: IntersectionObserver | undefined;
+  let _scrollTopSentinel: HTMLElement | undefined;
+  let _scrollTopController: AbortController | undefined;
+
   function initScrollToTop() {
+    _scrollTopObserver?.disconnect();
+    _scrollTopSentinel?.remove();
+    _scrollTopController?.abort();
+
     const btn = document.getElementById('scroll-to-top');
     if (!btn) return;
 
-    const sentinel = document.createElement('div');
-    sentinel.setAttribute('aria-hidden', 'true');
-    sentinel.style.position = 'absolute';
-    sentinel.style.top = '100vh';
-    sentinel.style.height = '1px';
-    sentinel.style.width = '1px';
-    document.body.prepend(sentinel);
+    _scrollTopController = new AbortController();
+    const { signal } = _scrollTopController;
 
-    const observer = new IntersectionObserver(
+    _scrollTopSentinel = document.createElement('div');
+    _scrollTopSentinel.setAttribute('aria-hidden', 'true');
+    _scrollTopSentinel.style.cssText =
+      'position:absolute;top:100vh;height:1px;width:1px';
+    document.body.prepend(_scrollTopSentinel);
+
+    _scrollTopObserver = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
         if (!entry) return;
-        if (entry.isIntersecting) {
-          btn.classList.add('hidden');
-          btn.classList.remove('flex');
-        } else {
-          btn.classList.remove('hidden');
-          btn.classList.add('flex');
-        }
+        btn.classList.toggle('hidden', entry.isIntersecting);
+        btn.classList.toggle('flex', !entry.isIntersecting);
       },
       { threshold: 0 },
     );
+    _scrollTopObserver.observe(_scrollTopSentinel);
 
-    observer.observe(sentinel);
-
-    btn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    btn.addEventListener(
+      'click',
+      () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+      { signal },
+    );
   }
 
   initScrollToTop();
