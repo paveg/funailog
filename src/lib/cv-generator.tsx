@@ -27,9 +27,9 @@ export interface PrivateData {
 
 export interface CVOptions {
   lang?: 'ja' | 'en';
-  /** Only show roles from the last N years (default: 3) */
+  /** Only show roles from the last N years (default: 15) */
   recentYears?: number;
-  /** Maximum number of roles to show per company (default: 3) */
+  /** Maximum number of roles to show per company (default: 10) */
   maxRoles?: number;
 }
 
@@ -72,6 +72,9 @@ Font.register({
     },
   ],
 });
+
+// ハイフネーションを無効化（単語を分割しない）
+Font.registerHyphenationCallback((word) => [word]);
 
 // Professional "Refined Editorial" CV design
 // Accent color: Deep Navy (#1a365d) for trust and professionalism
@@ -535,8 +538,8 @@ export async function generateCV(
 ): Promise<Uint8Array> {
   const fullOptions: Required<CVOptions> = {
     lang: options.lang ?? 'ja',
-    recentYears: options.recentYears ?? 3,
-    maxRoles: options.maxRoles ?? 3,
+    recentYears: options.recentYears ?? 15,
+    maxRoles: options.maxRoles ?? 10,
   };
 
   return await renderToBuffer(

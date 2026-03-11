@@ -3,7 +3,7 @@
  * CV Generator CLI Script
  *
  * Usage:
- *   pnpm cv            # Generate Japanese CV (default: last 2 years, max 2 roles)
+ *   pnpm cv            # Generate Japanese CV (default: all roles)
  *   pnpm cv:en         # Generate English CV
  *   pnpm cv --en       # Generate English CV
  *   pnpm cv --years=3  # Include last 3 years of experience
@@ -62,8 +62,8 @@ function parseArgs(): CVOptions {
 async function main() {
   const options = parseArgs();
   const isEnglish = options.lang === 'en';
-  const years = options.recentYears ?? 3;
-  const maxRoles = options.maxRoles ?? 3;
+  const years = options.recentYears ?? 15;
+  const maxRoles = options.maxRoles ?? 10;
 
   console.log(`📄 Generating ${isEnglish ? 'English' : 'Japanese'} CV...\n`);
   console.log(

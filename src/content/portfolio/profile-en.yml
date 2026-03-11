@@ -123,11 +123,9 @@ workExperience:
           end: '2024-06'
         project: freee Advisor Client Management
         description: |
-          A service for tax accountants (a key customer segment) to manage client companies —
-          including member assignment, permission management, and bulk plan allocation.
-          The legacy system managed contract relationships via user status, causing structural issues
-          when accountants had multiple affiliations or contracts. Led data model remodeling through
-          beta release as a playing manager in the global team.
+          Client management service for tax accountants, a key customer segment.
+          The legacy contract management model had structural issues, requiring data model remodeling.
+          Led through beta release as a playing manager in the global team.
         links:
           - url: https://corp.freee.co.jp/news/20231108freee_advisor.html
             label: freee Advisor Beta Release
@@ -244,11 +242,9 @@ workExperience:
           end: '2019-06'
         project: Data Aggregation Feature
         description: |
-          Worked on development and operations of data aggregation features in the Sync team.
-          Developed transaction retrieval features via scraping and API integration with banks and credit card companies,
-          implementing data model and transaction model conversion processing.
-          Also handled related web UI and feature development.
-          From May 2017, participated as a member in the scraping engine re-architecture project,
+          Developed and operated transaction retrieval features via API integration with financial institutions.
+          Participated in multiple integration projects with major banks as PjM and player.
+          Also joined the scraping engine re-architecture project,
           driving the transition to a multi-layered architecture.
         links:
           - url: https://corp.freee.co.jp/news/freee-amex-api-8458.html
@@ -268,6 +264,23 @@ workExperience:
           - CoffeeScript
           - MySQL
           - Selenium WebDriver
+        star:
+          - situation: |
+              The data aggregation feature retrieved transactions from banks and credit card companies
+              via scraping and API integration. Multiple API integration projects with major financial
+              institutions were running in parallel. The existing scraping engine required architectural
+              overhaul to handle growing scale.
+            task: |
+              Participated as PjM and player in API integration projects (American Express, MUFG Bank,
+              Shinkin Banks, GMO Aozora Net Bank, JCB, etc.). Led domain abstraction for credit card
+              transactions and implemented key layers of the multi-layered architecture.
+            action: |
+              Managed projects while driving specification alignment and implementation with major financial institutions.
+              Designed and implemented scraping and data persistence layers within the multi-layered architecture
+              (task kick → data retrieval → backup → retry → parsing → persistence).
+            result: |
+              Delivered API integrations with multiple major financial institutions, expanding service coverage.
+              Improved maintainability and extensibility of the scraping engine through multi-layered architecture migration.
 
   # === Other Experience ===
   - company: ACALL Inc.
