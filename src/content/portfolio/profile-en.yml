@@ -1,25 +1,28 @@
 # Portfolio profile data (English) - Updated: 2024-12-21
 profile:
   name: Ryota Ikezawa
-  title: Senior Architect / Software Engineer
+  title: Architect / Software Engineer
   summary: |
-    Software engineer with over 8 years of experience.
-    Currently serving as a Senior Architect in the HR/Payroll Integration Platform team at freee K.K.,
-    responsible for microservices design/operations, cross-team architecture, and technical leadership.
-    Proficient in Ruby, Rails, Go, TypeScript, React.js, AWS, and Docker.
+    Software engineer with over 10 years of experience.
+    Joined freee K.K. when the company was ~100 employees, supporting growth to 2,000+ across both
+    technology and organization. Experienced in legacy system remodeling, microservices design,
+    global team management, and 0→1 product launches. Continuously contributed to hiring and incident response.
+    Proficient in Ruby, Rails, Go, TypeScript, React, AWS, Docker, and Kubernetes.
   avatar: /profile.jpg
 
 workExperience:
   # === freee K.K. (approximately 10 years) ===
   - company: freee K.K.
-    role: Senior Architect / Software Engineer
+    role: Architect / Software Engineer
     period:
       start: '2015-11'
       end: null
     description: |
-      Approximately 10 years at freee K.K., a cloud accounting software provider.
+      Approximately 10 years at freee K.K., a cloud accounting software provider (100 → 2,000+ employees).
       Started with data aggregation feature development, progressed through Tech Lead
-      and Engineering Manager roles, currently serving as Senior Architect.
+      and Engineering Manager roles, currently serving as Architect.
+      Continuously involved in hiring and incident response.
+      Leveraging tenure from early stage, contributed to multiple legacy system remodeling and re-architecture efforts.
     technologies:
       - Ruby
       - Rails
@@ -31,15 +34,34 @@ workExperience:
       - Docker
       - Kubernetes
     roles:
-      - role: Senior Architect / Software Engineer
+      - role: Architect / Software Engineer
         period:
           start: '2025-01'
           end: null
         project: HR/Payroll Integration Platform
         description: |
-          Serving as Senior Architect in the HR/Payroll Integration Platform team.
-          Responsible for legacy system remodeling, microservices design, feature development,
-          and migrations. Also involved in cross-team architecture initiatives.
+          Serving as Architect in the HR/Payroll Integration Platform team.
+          Driving master data decomposition and microservices design to address a structural issue
+          where customers had to go through unrelated product registration flows in a multi-product environment.
+          Information to be extracted was tightly coupled with the HR product (a large-scale monolith),
+          requiring cross-team coordination with feature owners, auth platform, and QA teams.
+        star:
+          - situation: |
+              In a multi-product environment, customers had to go through unrelated product registration flows.
+              Tight coupling of master data and authorization management caused performance issues and
+              reduced development productivity. Information to be extracted was tightly coupled with
+              the HR product (a large-scale monolith), requiring coordination with feature owner teams.
+            task: |
+              As Architect, led domain boundary definition, technical strategy and roadmap planning.
+              Drove consensus building across auth platform team, feature owner teams, QA team, and business stakeholders.
+            action: |
+              Defined domain boundaries collaboratively with PdM, determining decomposition units based on data usage patterns.
+              Considering business constraints (cost/ROI), selected a pragmatic architecture of logical vertical partitioning
+              with transaction isolation. Re-planned roadmap multiple times in response to evolving feature requirements.
+              Transitioned from architect to implementation phase, taking ownership of a specific microservice.
+            result: |
+              Established collaboration framework with feature owner teams, improving new feature development productivity.
+              Defined technical strategy for incremental decomposition of the large-scale monolith.
         technologies:
           - Go
           - Ruby
@@ -59,8 +81,11 @@ workExperience:
           end: '2024-12'
         project: Employee Portal
         description: |
-          Led a portion of the global team to deliver the Employee Portal feature from planning to release.
-          Served as a playing manager in an English-speaking environment, leading both team operations and development.
+          Built a Japan/Philippines hybrid team (4 engineers + 2 QA) from scratch as a playing manager,
+          starting from an undefined planning stage. Wrote 40-50% of the code while delivering service
+          release in 6 months alongside planning. Managed onboarding of mobile app team (2) and
+          contract developers (4) in the latter half. Drove Schema-driven development using
+          OpenAPI Generator, Orval, and TanStack Query to improve development productivity.
         technologies:
           - Go
           - Ruby
@@ -76,16 +101,21 @@ workExperience:
               The existing freee HR product had an admin-focused UI that didn't prioritize employee experience.
               Initiated the Employee Portal project to improve employee experience.
               Also aimed to replace an external task request tool with an in-house solution.
+              Started as a brand new team with nothing defined.
             task: |
-              As global team lead, responsible for team operations, technical design/architecture,
-              and project management.
+              As lead of a Japan/Philippines hybrid global team (4 engineers + 2 QA),
+              responsible for team operations, technical design/architecture, and project management.
+              Served as playing manager writing 40-50% of the code while leading technically.
             action: |
-              Managed team operations in English while balancing technical leadership and member development.
-              With significant release constraints and frequent interaction with Japanese-speaking teams,
-              actively facilitated communication to minimize misunderstandings.
+              Managed team operations in English while prioritizing delegation of responsibility and authority.
+              Delegated SLI/SLO definition to a team member, including SRE coordination, fostering team autonomy.
+              Navigated cross-cultural people management (performance feedback, promotion/demotion decisions).
+              Promoted high-performing members.
+              Drove Schema-driven development using OpenAPI Generator, Orval, and TanStack Query.
             result: |
-              Successfully released on schedule with improved team performance.
-              Replaced external task request tool with in-house solution, achieving cost reduction.
+              Delivered on schedule within 6 months from planning.
+              Achieved cost reduction through in-house replacement of external tools.
+              Established team quality metrics (SLI/SLO).
 
       - role: Engineering Manager / Tech Lead
         period:
@@ -93,9 +123,11 @@ workExperience:
           end: '2024-06'
         project: freee Advisor Client Management
         description: |
-          Led the development of the Advisor Client Management feature as a playing manager in the global team.
-          Engaged in team member development, project management, and technical strategy while actively participating in development.
-          Contributed to the beta release of freee Advisor Client Management.
+          A service for tax accountants (a key customer segment) to manage client companies —
+          including member assignment, permission management, and bulk plan allocation.
+          The legacy system managed contract relationships via user status, causing structural issues
+          when accountants had multiple affiliations or contracts. Led data model remodeling through
+          beta release as a playing manager in the global team.
         links:
           - url: https://corp.freee.co.jp/news/20231108freee_advisor.html
             label: freee Advisor Beta Release
@@ -111,19 +143,23 @@ workExperience:
           - Vite
         star:
           - situation: |
-              Existing data model had technical debt with insufficient contract representation between companies.
-              The legacy advisor management feature was unmaintained and needed renewal.
+              The existing freee Accounting system managed contract relationships between business offices
+              and tax accountant firms via user status, causing contract traceability issues when accountants
+              had multiple affiliations or contracts. A previously envisioned re-architecture model remained
+              half-implemented, and the existing multi-tenant platform needed a cross-tenant mechanism.
             task: |
-              In a dual-lead team structure, responsible for technical design, project management, and stakeholder coordination.
-              Built a structure where team members could independently own responsibilities and develop in parallel.
+              Designed a new data model placing a "contract" entity between business offices and accountant firms.
+              Ensured safe data migration in an environment where migration failure would directly lead to
+              a security incident. In a dual-lead team, responsible for technical design, project management,
+              and stakeholder coordination.
             action: |
-              Redesigned data model including contract model normalization.
+              Assessed existing data and defined migration strategy, executing zero-downtime migration.
               Provided technical leadership while coordinating with other teams and business units.
+              Drove Schema-driven frontend development using OpenAPI Generator, Orval, and TanStack Query.
             result: |
-              Released freee Advisor Client Management beta on schedule.
-              Subsequently achieved 1,000 accountant client offices, successfully completing 0→1 product launch.
-              Improved data model enabled accurate contract representation.
-              Successfully deprecated legacy system and achieved team growth.
+              Replaced the legacy advisor service, scaling to 1,000 tax accountants.
+              Successfully completed 0→1 product launch.
+              Deprecated legacy system and achieved team member growth.
 
       - role: Senior Software Engineer / Tech Lead
         period:
@@ -132,9 +168,23 @@ workExperience:
         project: freee Data Entry Service
         description: |
           Served as Tech Lead for freee Data Entry Service in the global team.
-          Responsible for development, maintenance, and technology selection for a service that
-          scans paper receipts and converts them to journal entry data.
-          Contributed to the official release in February 2023.
+          Responsible for development and maintenance of a service that scans paper receipts
+          and converts them to journal entry data. Focused on domain design for Japan-specific
+          tax processing. Contributed to the official release in February 2023.
+        star:
+          - situation: |
+              The service required domain design for Japan-specific tax processing
+              (consumption tax categories, chart of accounts, etc.).
+              Working in a global team, Japan-specific tax domain knowledge needed to be communicated
+              to English-speaking team members.
+            task: |
+              Led domain design as Tech Lead, building an environment where the team could develop
+              with proper understanding of the tax domain.
+            action: |
+              Organized Japan-specific tax processing into domain models, driving design through
+              English discussion and knowledge sharing. Documented domain knowledge for team adoption.
+            result: |
+              Established development practices for Japan-specific domains in a global team. Contributed to the official release in February 2023.
         links:
           - url: https://adv.freee.co.jp/service/receipt-data-entry
             label: freee Data Entry Service
@@ -159,6 +209,19 @@ workExperience:
         description: |
           Led development of the online lending platform at the financial subsidiary (freee Finance Lab Inc.).
           Supervised 3 engineers and managed the entire service lifecycle.
+          Navigated specification misalignments with external financial institutions during integration.
+        star:
+          - situation: |
+              Developed an online lending platform at the financial subsidiary.
+              External financial institution integrations required compliance with institution-specific specifications.
+            task: |
+              As Tech Lead, supervised 3 engineers and managed the full service lifecycle.
+              Drove specification alignment and implementation with external partners.
+            action: |
+              Implemented with consideration for financial institution specifications,
+              bridging misalignments with external partners through active communication.
+            result: |
+              Stabilized operations of freee Financing and Cash Flow Management Navi services.
         links:
           - url: https://www.freee.co.jp/financing/
             label: freee Financing
