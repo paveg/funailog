@@ -7,7 +7,7 @@ profile:
     Joined freee K.K. when the company was ~100 employees, supporting growth to 2,000+ across both
     technology and organization. Experienced in legacy system remodeling, microservices design,
     global team management, and 0→1 product launches. Continuously contributed to hiring and incident response.
-    Proficient in Ruby, Rails, Go, TypeScript, React, AWS, Docker, and Kubernetes.
+    Primarily developing with Ruby, Rails, Go, TypeScript, React, Docker, and Kubernetes.
   avatar: /profile.jpg
 
 workExperience:
@@ -508,7 +508,7 @@ skills:
         level: advanced
         yearsOfExperience: 4
       - name: AWS
-        level: advanced
+        level: intermediate
         yearsOfExperience: 5
       - name: Cloudflare Workers
         level: advanced
