@@ -7,7 +7,7 @@ profile:
     10年以上の経験を持つソフトウェアエンジニア。
     freee株式会社に100名規模の時期から在籍し、2000名規模への成長を技術・組織の両面で支える。
     レガシーシステムのリモデリング・マイクロサービス設計から、グローバルチームのマネジメント、0→1のプロダクト立ち上げまで幅広く経験。
-    採用、障害対応にも継続的に貢献。Ruby, Rails, Go, TypeScript, React, AWS, Docker, Kubernetesに精通。
+    採用、障害対応にも継続的に貢献。Ruby, Rails, Go, TypeScript, React, Docker, Kubernetesを中心に開発。
   avatar: /profile.jpg
 
 workExperience:
@@ -502,7 +502,7 @@ skills:
         level: advanced
         yearsOfExperience: 4
       - name: AWS
-        level: advanced
+        level: intermediate
         yearsOfExperience: 5
       - name: Cloudflare Workers
         level: advanced
