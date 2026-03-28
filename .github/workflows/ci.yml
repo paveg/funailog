@@ -7,7 +7,6 @@ on:
       - '*.md'
       - 'LICENSE'
       - '.gitignore'
-      - '.claude/**'
       - '.cursor/**'
   pull_request:
     branches: [main]
@@ -15,7 +14,6 @@ on:
       - '*.md'
       - 'LICENSE'
       - '.gitignore'
-      - '.claude/**'
       - '.cursor/**'
 
 concurrency:
