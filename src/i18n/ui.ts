@@ -49,6 +49,7 @@ export const ui = {
     // Footer
     'footer.description':
       'ガジェット・仕事道具・乗り物、そして技術について綴る個人メディア。',
+    'footer.descriptionShort': 'ガジェット・道具・乗り物・技術の個人メディア。',
     // Post list / Search
     'postList.searchPlaceholder': '記事を検索…',
     'postList.searchAriaLabel': '記事を検索',
@@ -116,6 +117,7 @@ export const ui = {
     // Footer
     'footer.description':
       'A personal media about gadgets, work tools, vehicles, and technology.',
+    'footer.descriptionShort': 'Gadgets, tools, vehicles, and tech.',
     // Post list / Search
     'postList.searchPlaceholder': 'Search posts…',
     'postList.searchAriaLabel': 'Search posts',
