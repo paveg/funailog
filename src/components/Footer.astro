@@ -20,8 +20,11 @@ const startYear = 2023;
     {/* Column 1: Site identity */}
     <div class="space-y-2">
       <p class="text-foreground font-medium">funailog.com</p>
-      <p class="leading-relaxed">
+      <p class="hidden leading-relaxed sm:block">
         {t('footer.description')}
+      </p>
+      <p class="leading-relaxed sm:hidden">
+        {t('footer.descriptionShort')}
       </p>
     </div>
 
