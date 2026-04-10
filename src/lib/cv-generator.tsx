@@ -456,7 +456,7 @@ const CVDocument: React.FC<CVDocumentProps> = ({
                 </Text>
               </View>
 
-              {work.roles && work.roles.length > 0 && (
+              {work.roles && work.roles.length > 0 ? (
                 <View style={styles.roleContainer}>
                   {work.roles.map((role, roleIndex) => (
                     <View key={roleIndex} style={styles.roleItem}>
@@ -492,6 +492,18 @@ const CVDocument: React.FC<CVDocumentProps> = ({
                       )}
                     </View>
                   ))}
+                </View>
+              ) : (
+                <View style={styles.roleContainer}>
+                  <View style={styles.roleHeader}>
+                    <Text style={styles.roleTitle}>{work.role}</Text>
+                  </View>
+                  <Text style={styles.description}>{work.description}</Text>
+                  {work.technologies && work.technologies.length > 0 && (
+                    <Text style={styles.technologies}>
+                      {t.technologies}: {work.technologies.join(', ')}
+                    </Text>
+                  )}
                 </View>
               )}
             </View>
