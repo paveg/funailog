@@ -1,6 +1,11 @@
 ---
 import '@/styles/prose.css';
-import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+import {
+  getCollection,
+  getEntry,
+  render,
+  type CollectionEntry,
+} from 'astro:content';
 
 import Figure from '@/components/Figure.astro';
 import Link from '@/components/Link.astro';
@@ -17,7 +22,7 @@ export async function getStaticPaths() {
   const pages = await getCollection('page');
 
   return pages.map((page) => {
-    const slug = page.slug;
+    const slug = page.id;
     return {
       params: {
         slug,
@@ -29,7 +34,7 @@ export async function getStaticPaths() {
   });
 }
 const { page } = Astro.props;
-const { Content } = await page.render();
+const { Content } = await render(page);
 const components = {
   figure: Figure,
   a: Link,
@@ -40,21 +45,21 @@ const meta = await getEntry('site', 'meta');
 if (!meta) {
   throw new Error('Site meta configuration not found');
 }
-const pageUrl = new URL(`/${page.slug}`, site).toString();
+const pageUrl = new URL(`/${page.id}`, site).toString();
 const homeUrl = new URL('/', site).toString();
 ---
 
 <Layout
   title={`${page.data.title} | ${t('main.title')}`}
   description={page.data.description}
-  path={`/${page.slug}`}
+  path={`/${page.id}`}
   lang={defaultLang}
   og={{
     enabled: true,
   }}
   hreflangs={[
-    { path: `/${page.slug}`, hreflang: 'ja' },
-    { path: `/${page.slug}`, hreflang: 'x-default' },
+    { path: `/${page.id}`, hreflang: 'ja' },
+    { path: `/${page.id}`, hreflang: 'x-default' },
   ]}
   jsonLdSchema={[
     WebPageLd({

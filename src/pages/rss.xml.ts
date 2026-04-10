@@ -17,7 +17,7 @@ export async function GET(context: APIContext) {
     description: meta.data.rss.description,
     site: context.site ?? '',
     items: posts.map((post) => {
-      const url = `/${post.collection}/${post.slug}`;
+      const url = `/${post.collection}/${post.id}`;
       return {
         title: post.data.title,
         description: post.data.description,
@@ -26,7 +26,7 @@ export async function GET(context: APIContext) {
         link: url,
         enclosure: {
           url: new URL(
-            `/api/og/article/${post.collection}/${post.slug}.png`,
+            `/api/og/article/${post.collection}/${post.id}.png`,
             context.site,
           ).toString(),
           type: 'image/png',

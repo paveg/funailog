@@ -17,7 +17,7 @@ const { posts } = Astro.props;
       <ul class="space-y-3">
         {posts.map((post) => (
           <li>
-            <a href={`/blog/${post.slug}`} class="group block">
+            <a href={`/blog/${post.id}`} class="group block">
               <span class="font-heading text-foreground group-hover:text-link text-sm transition-colors">
                 {post.data.title}
               </span>

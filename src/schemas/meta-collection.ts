@@ -1,7 +1,9 @@
-import { z, defineCollection } from 'astro:content';
+import { glob } from 'astro/loaders';
+import { z } from 'astro/zod';
+import { defineCollection } from 'astro:content';
 
 export const metaCollection = defineCollection({
-  type: 'data',
+  loader: glob({ base: './src/content/site', pattern: '*.yml' }),
   schema: z.object({
     main: z.object({
       defaultImage: z.string(),

@@ -16,7 +16,7 @@ export const GET: APIRoute = async ({ params }) => {
   const { type, key } = params;
   if (type === 'article') {
     const article = articles.find(
-      (post) => `${post.collection}/${post.slug}` === key,
+      (post) => `${post.collection}/${post.id}` === key,
     );
 
     if (article) {
@@ -37,7 +37,7 @@ export const GET: APIRoute = async ({ params }) => {
 export async function getStaticPaths() {
   const ogEntries = [
     ...articles.map((article) => ({
-      params: { type: 'article', key: `${article.collection}/${article.slug}` },
+      params: { type: 'article', key: `${article.collection}/${article.id}` },
     })),
   ];
   return ogEntries;
