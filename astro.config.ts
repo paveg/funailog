@@ -18,9 +18,10 @@ import type { Element } from 'hast';
 
 // https://astro.build/config
 export default defineConfig({
-  server: {
-    host: true,
-  },
+  // Dev server binds to localhost only (Astro default).
+  // Do NOT set `server.host: true` without explicit intent — exposing
+  // the Vite dev server on 0.0.0.0 lets anyone on the same LAN read
+  // arbitrary project files via known Vite CVEs.
   integrations: [
     react(),
     embeds({
