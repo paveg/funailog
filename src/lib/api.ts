@@ -5,6 +5,8 @@ import path from 'path';
 import fetchSiteMetadata from 'fetch-site-metadata';
 import sharp from 'sharp';
 
+import { assertPublicUrl } from './ssrf-guard';
+
 import type { Metadata } from 'fetch-site-metadata';
 
 const fileExt = 'avif';
@@ -49,28 +51,51 @@ const siteImageMap = new Map<string, string | undefined>(
   ]),
 );
 
+const metadataFallback = {
+  description: 'page not found',
+  image: { src: undefined },
+  title: 'Not found',
+};
+
 const siteMetadata = async (url: string) => {
   const cached = siteMetadataMap.get(url);
   if (cached) {
     return cached;
-  } else {
-    const { description, image, title } = await fetchSiteMetadata(url, {
-      suppressAdditionalRequest: true,
-    }).catch(() => ({
-      description: 'page not found',
-      image: {
-        src: undefined,
-      },
-      title: 'Not found',
-    }));
-
-    return { description, image, title };
   }
+
+  // SSRF guard: reject private/loopback/link-local/reserved targets
+  // before any outbound request. On block, warn and return fallback so
+  // the build does not fail; the author can fix the URL in the MDX.
+  try {
+    await assertPublicUrl(url);
+  } catch (e) {
+    console.warn(
+      `[LinkCard] blocked non-public URL: ${url} (${e instanceof Error ? e.message : String(e)})`,
+    );
+    return metadataFallback;
+  }
+
+  const { description, image, title } = await fetchSiteMetadata(url, {
+    suppressAdditionalRequest: true,
+  }).catch(() => metadataFallback);
+
+  return { description, image, title };
 };
 
 const FETCH_TIMEOUT_MS = 5000;
 
 const fetchWithTimeout = async (url: string): Promise<ArrayBuffer | null> => {
+  // SSRF guard: og:image URLs originate from attacker-controlled HTML,
+  // so the second-stage fetch must be validated independently.
+  try {
+    await assertPublicUrl(url);
+  } catch (e) {
+    console.warn(
+      `[LinkCard] blocked non-public image URL: ${url} (${e instanceof Error ? e.message : String(e)})`,
+    );
+    return null;
+  }
+
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 

@@ -18,6 +18,8 @@
     "lint:fix": "eslint --cache --fix . && markdownlint-cli2 --fix",
     "lint:md": "markdownlint-cli2",
     "lint:md:fix": "markdownlint-cli2 --fix",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "validate:content": "tsx scripts/validate-content.ts",
     "prebuild": "pnpx tsx ./src/utils/clean.ts",
     "prepare": "husky",
@@ -119,6 +121,7 @@
     "typescript-eslint": "^8.50.1",
     "unified": "^11.0.5",
     "unist-util-visit": "^5.0.0",
+    "vitest": "4.1.2",
     "yaml": "^2.8.2"
   }
 }
