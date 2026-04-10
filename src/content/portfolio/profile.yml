@@ -2,23 +2,27 @@
 profile:
   name: Ryota Ikezawa
   nameKana: イケザワ リョウタ
-  title: Architect / Software Engineer
+  title: Senior Software Engineer / Architect
   summary: |
-    10年以上の経験を持つソフトウェアエンジニア。
-    freee株式会社に100名規模の時期から在籍し、2000名規模への成長を技術・組織の両面で支える。
-    レガシーシステムのリモデリング・マイクロサービス設計から、グローバルチームのマネジメント、0→1のプロダクト立ち上げまで幅広く経験。
-    採用、障害対応にも継続的に貢献。Ruby, Rails, Go, TypeScript, React, Docker, Kubernetesを中心に開発。
+    10年以上の経験を持つシニアソフトウェアエンジニア / アーキテクト。
+    freee株式会社に2015年11月より在籍し、100名から2000名規模への成長期を経験。
+    データ集約機能の開発からテックリード、EM、アーキテクトまで役割を広げてきた。
+    レガシーシステムのリモデリング・マイクロサービス設計・マルチテナント環境でのデータ分離境界設計を主導。
+    EMロールも手を挙げて約1年経験した後、人より技術に責任を持つTL/ICトラックに復帰。
+    現在はアーキテクトとして人事労務統合基盤の設計・実装を担当。
+    日本・フィリピン混成のグローバルチームでの開発・リードを継続的に経験。
+    Core stack: Go, TypeScript, Ruby, Rails, React, Kubernetes, gRPC, MySQL, ArgoCD, Datadog.
   avatar: /profile.jpg
 
 workExperience:
   # === freee株式会社（約10年在籍） ===
   - company: freee株式会社
-    role: Architect / Software Engineer
+    role: Senior Software Engineer / Architect
     period:
       start: '2015-11'
       end: null
     description: |
-      クラウド会計ソフトを提供するfreee株式会社にて約10年在籍（100名→2000名規模の成長期）。
+      クラウド会計ソフトを提供するfreee株式会社にて2015年11月より10年以上在籍（100名→2000名規模の成長期）。
       データ集約機能の開発からスタートし、テックリード、エンジニアリングマネージャーを経て現在はアーキテクトとして従事。
       採用活動、障害対応にも継続的に関与。
       初期から在籍していたことで、負債化したサービスのリモデリング・リアーキテクチャに複数回関与。
@@ -34,16 +38,15 @@ workExperience:
       - Kubernetes
     # 役職変遷
     roles:
-      - role: Architect / Software Engineer
+      - role: Senior Software Engineer / Architect
         period:
           start: '2025-01'
           end: null
         project: 人事労務統合基盤
         description: |
-          人事労務統合基盤チームにてアーキテクトとして従事。
-          マルチプロダクト環境の構造的課題に対し、マスタデータの分割・マイクロサービス設計を推進。
-          基盤から切り出す情報が人事労務プロダクト（大規模モノリス）に密結合しており、
-          各機能のオーナーチーム・認証基盤・品質チームとの横断的な調整・設計にも関与。
+          gRPC API 再設計とアプリケーション責任境界の仕切り直しをメインに、マスタデータ分割・マイクロサービス設計を推進。
+          大規模モノリスに密結合する基盤情報について、各機能オーナー・認証基盤・品質チーム横断の調整にも関与。
+          ArgoCD GitOps デプロイ・クラスタアップグレード、Datadog (APM/Logs/Infra) による observability 運用にも継続関与。
         technologies:
           - Go
           - Ruby
@@ -70,7 +73,10 @@ workExperience:
               PdMと壁打ちしながらドメイン境界を定義し、データの利用形態に基づいて分割単位を決定。
               ビジネス制約（コスト・ROI）を踏まえ、論理的垂直分割によるトランザクション分離という
               現実的なアーキテクチャを選定。並走する機能企画の変更に応じてロードマップを複数回再策定。
-              アーキテクトから実装フェーズに移行後、特定マイクロサービスのオーナーシップを持ち開発を推進。
+              メイン業務は gRPC API の再設計とアプリケーション責任境界の仕切り直しで、
+              アーキテクトから実装フェーズに移行後は特定マイクロサービスのオーナーシップを持ち開発・運用を推進。
+              ArgoCD による GitOps デプロイやクラスタアップグレードを含む運用タスクにも関与し、
+              Datadog (APM / Logs / Infra) を用いた observability 運用を継続的に実施。
             result: |
               各機能オーナーチームとの連携体制を構築し、新機能開発における生産性向上の基盤を整備。
               大規模モノリスに対する段階的分割の技術戦略を確立。
@@ -108,8 +114,6 @@ workExperience:
             action: |
               英語でのチーム運営を実施しながら、メンバーへの責任・権限移譲を重視。
               SLI/SLO定義をメンバーに委任しSREとの連携も担わせることでチームの自律性を促進。
-              多文化環境でのピープルマネジメント（評価フィードバック、昇格・降格の判断）にも対峙。
-              成長したメンバーのプロモーションも実施。
               OpenAPI Generator、Orval、TanStack QueryによるSchema駆動開発を推進。
             result: |
               企画並走で6ヶ月のリリースを予定通り達成。
@@ -194,7 +198,7 @@ workExperience:
               日本固有の税務処理をドメインモデルとして整理し、英語で共有・議論しながら設計を推進。
               ドメイン知識のドキュメント化とチーム内への浸透を実施。
             result: |
-              グローバルチームでの日本特有ドメインの開発体制を確立し、2023年2月の正式版リリースに貢献。
+              グローバルチーム（7名）での日本特有ドメインの開発体制を確立し、2023年2月の正式版リリースに貢献。
 
       - role: Software Engineer / Tech Lead
         period:
@@ -202,9 +206,9 @@ workExperience:
           end: '2022-06'
         project: オンラインレンディングプラットフォーム
         description: |
-          金融子会社にてオンラインレンディングプラットフォームの開発をリード。
-          3名のエンジニアを監督し、サービスライフサイクル全体を管理。外部金融機関との連携において、
-          仕様の認識不一致を埋めながら実装を推進。
+          金融子会社にてオンラインレンディングプラットフォームの開発に参画。
+          外部金融機関との連携において、仕様の認識不一致を埋めながら実装を推進。
+          新規プロダクトのプロトタイプ開発と GTM 検証も並行で進めるフェーズだった。
         links:
           - url: https://www.freee.co.jp/financing/
             label: freee資金調達
@@ -222,16 +226,19 @@ workExperience:
           - Docker
         star:
           - situation: |
-              金融子会社にてオンラインレンディングプラットフォームを開発。
-              外部金融機関との連携が必要であり、金融機関固有の仕様への対応が求められた。
+              金融子会社にてオンラインレンディングプラットフォームの開発に参画。
+              外部金融機関との連携を前提としつつ、新規プロダクトのプロトタイプ開発と
+              GTM 検証を並行で進めるフェーズだった。
             task: |
-              テックリードとして3名のエンジニアを監督し、サービスライフサイクル全体を管理。
-              外部連携先との仕様調整と実装を推進。
+              プラットフォームと新規プロダクトの開発・検証サイクルに貢献。
+              外部連携先との仕様調整・実装も推進。
             action: |
-              金融機関の仕様を考慮した実装を行い、外部連携先との認識不一致を
-              コミュニケーションを通じて埋めながら開発を推進。
+              金融機関固有の仕様への対応を進めつつ、
+              外部連携先との認識不一致をコミュニケーションを通じて埋めながら開発を推進。
+              新規プロダクトについては顧客検証 (GTM) を通じた仮説検証にも携わった。
             result: |
-              freee資金調達・資金繰り改善ナビのサービス運用を安定化。
+              外部金融機関連携の基盤開発に貢献。
+              新規プロダクトはサービス状況を踏まえクローズに至ったが、0→1 の仮説検証プロセスと外部ステークホルダー調整の経験を蓄積。
 
       - role: Software Engineer
         period:
@@ -314,6 +321,20 @@ projects:
       - Hono
       - TypeScript
     repository: https://github.com/paveg/hono-problem-details
+
+  - name: hono-cf-access
+    type: oss
+    period:
+      start: '2026-03'
+      end: null
+    description: |
+      Cloudflare Workers の request.cf プロパティを利用した
+      Hono 向けアクセスコントロールミドルウェア。
+    techStack:
+      - Hono
+      - TypeScript
+      - Cloudflare Workers
+    repository: https://github.com/paveg/hono-cf-access
 
   - name: hono-webhook-verify
     type: oss
@@ -447,15 +468,15 @@ projects:
 skills:
   - category: Programming Languages
     items:
-      - name: Ruby
-        level: expert
-        yearsOfExperience: 8
-      - name: TypeScript
-        level: expert
-        yearsOfExperience: 5
       - name: Go
         level: advanced
         yearsOfExperience: 3
+      - name: TypeScript
+        level: expert
+        yearsOfExperience: 5
+      - name: Ruby
+        level: expert
+        yearsOfExperience: 8
       - name: Python
         level: intermediate
         yearsOfExperience: 2
@@ -477,12 +498,12 @@ skills:
       - name: Ruby on Rails
         level: expert
         yearsOfExperience: 8
-      - name: Node.js
-        level: advanced
-        yearsOfExperience: 4
       - name: Hono
         level: advanced
         yearsOfExperience: 1
+      - name: Node.js
+        level: advanced
+        yearsOfExperience: 4
 
   - category: Databases
     items:
@@ -493,14 +514,17 @@ skills:
         level: intermediate
         yearsOfExperience: 3
 
-  - category: Infrastructure
+  - category: Infrastructure & Tooling
     items:
-      - name: Docker
-        level: advanced
-        yearsOfExperience: 5
       - name: Kubernetes
         level: advanced
         yearsOfExperience: 4
+      - name: Docker
+        level: advanced
+        yearsOfExperience: 5
+      - name: ArgoCD
+      - name: Datadog
+      - name: gRPC
       - name: AWS
         level: intermediate
         yearsOfExperience: 5
