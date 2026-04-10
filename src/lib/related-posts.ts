@@ -12,7 +12,7 @@ export function getRelatedPosts(
   const currentTags = new Set(current.data.tags ?? []);
 
   return allPosts
-    .filter((p) => p.slug !== current.slug && p.data.isPublished)
+    .filter((p) => p.id !== current.id && p.data.isPublished)
     .map((post) => {
       let score = 0;
       if (post.data.category === current.data.category) score += 2;

@@ -1,7 +1,12 @@
 ---
 import '@/styles/prose.css';
 
-import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+import {
+  getCollection,
+  getEntry,
+  render,
+  type CollectionEntry,
+} from 'astro:content';
 
 import ArticleHeader from '@/components/article/ArticleHeader.astro';
 import ArticleTOC from '@/components/article/ArticleTOC.astro';
@@ -32,23 +37,23 @@ export async function getStaticPaths() {
   );
 
   const paths = posts.map((post) => ({
-    params: { slug: post.slug },
+    params: { slug: post.id },
     props: { post },
   }));
   return paths;
 }
-const { Content, remarkPluginFrontmatter } = await Astro.props.post.render();
 const { post } = Astro.props;
+const { Content, remarkPluginFrontmatter } = await render(post);
 const components = {
   figure: Figure,
   a: Link,
   img: Image,
 };
 const site = Astro.site ?? '';
-const path = `${post.collection}/${post.slug}`;
+const path = `${post.collection}/${post.id}`;
 const fullUrl = new URL(path, site).toString();
 const t = useTranslations(defaultLang);
-const defaultImagePath = `/api/og/article/${post.collection}/${post.slug}.png`;
+const defaultImagePath = `/api/og/article/${post.collection}/${post.id}.png`;
 
 const allPosts = await getCollection('blog');
 const relatedPosts = getRelatedPosts(post, allPosts);
@@ -65,7 +70,7 @@ const relatedPosts = getRelatedPosts(post, allPosts);
     height: 630,
     image: new URL(
       post.data.heroImage ??
-        `/api/og/article/${post.collection}/${post.slug}.png`,
+        `/api/og/article/${post.collection}/${post.id}.png`,
       site,
     ),
     type: 'article',

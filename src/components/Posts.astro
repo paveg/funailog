@@ -27,9 +27,9 @@ const { page, title } = Astro.props;
           <NotFound />
         ) : (
           page.data.map((post) => {
-            const { slug, data, collection } = post;
+            const { id, data, collection } = post;
             const tags = data.tags ?? [];
-            const path = exactSlugPath(slug);
+            const path = exactSlugPath(id);
             return (
               <li>
                 <article class="group">

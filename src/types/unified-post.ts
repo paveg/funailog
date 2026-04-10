@@ -23,14 +23,14 @@ export type UnifiedPost = {
 export function blogToUnified(post: CollectionEntry<'blog'>): UnifiedPost {
   return {
     type: 'blog',
-    slug: post.slug,
+    slug: post.id,
     title: post.data.title,
     description: post.data.description,
     date: post.data.published,
     lastUpdated: post.data.lastUpdated,
     category: post.data.category,
     tags: post.data.tags,
-    url: `/blog/${post.slug}`,
+    url: `/blog/${post.id}`,
     collection: post.collection,
     originalPost: post,
   };

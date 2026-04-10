@@ -63,10 +63,7 @@ export const ArticleLd = (
   blog: CollectionEntry<'blog'>,
   site: URL | '',
 ): WithContext<Article> => {
-  const articleUrl = new URL(
-    `${blog.collection}/${blog.slug}`,
-    site,
-  ).toString();
+  const articleUrl = new URL(`${blog.collection}/${blog.id}`, site).toString();
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -75,7 +72,7 @@ export const ArticleLd = (
     description: blog.data.description,
     image: new URL(
       blog.data.heroImage ??
-        `/api/og/article/${blog.collection}/${blog.slug}.png`,
+        `/api/og/article/${blog.collection}/${blog.id}.png`,
       site,
     ).toString(),
     keywords: blog.data.tags ?? [],

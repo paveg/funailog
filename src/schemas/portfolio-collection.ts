@@ -1,4 +1,6 @@
-import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
+import { z } from 'astro/zod';
+import { defineCollection } from 'astro:content';
 
 // STARメソッド（Situation, Task, Action, Result）スキーマ
 const starSchema = z.object({
@@ -10,7 +12,7 @@ const starSchema = z.object({
 
 // リンクスキーマ（外部リンク）
 const linkSchema = z.object({
-  url: z.string().url(),
+  url: z.url(),
   label: z.string(),
 });
 
@@ -55,8 +57,8 @@ const projectSchema = z.object({
   role: z.string().optional(),
   techStack: z.array(z.string()),
   outcomes: z.array(z.string()).optional(),
-  url: z.string().url().optional(),
-  repository: z.string().url().optional(),
+  url: z.url().optional(),
+  repository: z.url().optional(),
 });
 
 const skillSchema = z.object({
@@ -78,7 +80,7 @@ const certificationSchema = z.object({
   date: z.string(),
   expirationDate: z.string().optional(),
   credentialId: z.string().optional(),
-  url: z.string().url().optional(),
+  url: z.url().optional(),
 });
 
 const educationSchema = z.object({
@@ -109,7 +111,7 @@ const portfolioSchema = z.object({
 });
 
 export const portfolioCollection = defineCollection({
-  type: 'data',
+  loader: glob({ base: './src/content/portfolio', pattern: '*.yml' }),
   schema: portfolioSchema,
 });
 
