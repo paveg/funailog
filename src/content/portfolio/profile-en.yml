@@ -1,24 +1,27 @@
 # Portfolio profile data (English) - Updated: 2024-12-21
 profile:
   name: Ryota Ikezawa
-  title: Architect / Software Engineer
+  title: Senior Software Engineer / Architect
   summary: |
-    Software engineer with over 10 years of experience.
-    Joined freee K.K. when the company was ~100 employees, supporting growth to 2,000+ across both
-    technology and organization. Experienced in legacy system remodeling, microservices design,
-    global team management, and 0→1 product launches. Continuously contributed to hiring and incident response.
-    Primarily developing with Ruby, Rails, Go, TypeScript, React, Docker, and Kubernetes.
+    Senior software engineer and architect with 10+ years of experience.
+    At freee K.K. since November 2015, experiencing the company's growth from ~100 to 2,000+ employees.
+    Progressed through data aggregation engineer, tech lead, EM, to current architect.
+    Led legacy system remodeling, microservice design, and multi-tenant data isolation boundary design.
+    Volunteered for an EM role for about a year, then returned to the TL/IC track to take responsibility for technology rather than people.
+    Currently serving as architect on freee's HR/Payroll Integration Platform team.
+    Continuous experience leading and delivering within globally distributed teams (Japan / Philippines).
+    Core stack: Go, TypeScript, Ruby, Rails, React, Kubernetes, gRPC, MySQL, ArgoCD, Datadog.
   avatar: /profile.jpg
 
 workExperience:
   # === freee K.K. (approximately 10 years) ===
   - company: freee K.K.
-    role: Architect / Software Engineer
+    role: Senior Software Engineer / Architect
     period:
       start: '2015-11'
       end: null
     description: |
-      Approximately 10 years at freee K.K., a cloud accounting software provider (100 → 2,000+ employees).
+      10+ years at freee K.K. since November 2015, a cloud accounting software provider (100 → 2,000+ employees).
       Started with data aggregation feature development, progressed through Tech Lead
       and Engineering Manager roles, currently serving as Architect.
       Continuously involved in hiring and incident response.
@@ -34,17 +37,15 @@ workExperience:
       - Docker
       - Kubernetes
     roles:
-      - role: Architect / Software Engineer
+      - role: Senior Software Engineer / Architect
         period:
           start: '2025-01'
           end: null
         project: HR/Payroll Integration Platform
         description: |
-          Serving as Architect in the HR/Payroll Integration Platform team.
-          Driving master data decomposition and microservices design to address a structural issue
-          where customers had to go through unrelated product registration flows in a multi-product environment.
-          Information to be extracted was tightly coupled with the HR product (a large-scale monolith),
-          requiring cross-team coordination with feature owners, auth platform, and QA teams.
+          Main focus: gRPC API redesign and re-delineation of application responsibility boundaries. Driving master data decomposition and microservice design in a multi-product environment where data and auth are tightly coupled with a large-scale monolith.
+          Cross-team coordination with feature owners, auth platform, and QA teams.
+          Also involved in ArgoCD GitOps deployment, cluster upgrade operations, and Datadog (APM / Logs / Infra) observability operations.
         star:
           - situation: |
               In a multi-product environment, customers had to go through unrelated product registration flows.
@@ -58,7 +59,11 @@ workExperience:
               Defined domain boundaries collaboratively with PdM, determining decomposition units based on data usage patterns.
               Considering business constraints (cost/ROI), selected a pragmatic architecture of logical vertical partitioning
               with transaction isolation. Re-planned roadmap multiple times in response to evolving feature requirements.
-              Transitioned from architect to implementation phase, taking ownership of a specific microservice.
+              Main focus: gRPC API redesign and re-delineation of application responsibility boundaries.
+              After transitioning from architect to implementation phase, took ownership of a specific microservice,
+              driving development and operations.
+              Also involved in ArgoCD GitOps deployment, cluster upgrade operations,
+              and ongoing observability operations with Datadog (APM / Logs / Infra).
             result: |
               Established collaboration framework with feature owner teams, improving new feature development productivity.
               Defined technical strategy for incremental decomposition of the large-scale monolith.
@@ -81,11 +86,8 @@ workExperience:
           end: '2024-12'
         project: Employee Portal
         description: |
-          Built a Japan/Philippines hybrid team (4 engineers + 2 QA) from scratch as a playing manager,
-          starting from an undefined planning stage. Wrote 40-50% of the code while delivering service
-          release in 6 months alongside planning. Managed onboarding of mobile app team (2) and
-          contract developers (4) in the latter half. Drove Schema-driven development using
-          OpenAPI Generator, Orval, and TanStack Query to improve development productivity.
+          Built a Japan/Philippines hybrid team (4 engineers + 2 QA) from scratch as a playing manager, writing 40-50% of the code to deliver release in 6 months alongside planning. Later managed onboarding of mobile app team (2) and contract developers (4).
+          Drove Schema-driven development using OpenAPI Generator, Orval, and TanStack Query.
         technologies:
           - Go
           - Ruby
@@ -109,8 +111,6 @@ workExperience:
             action: |
               Managed team operations in English while prioritizing delegation of responsibility and authority.
               Delegated SLI/SLO definition to a team member, including SRE coordination, fostering team autonomy.
-              Navigated cross-cultural people management (performance feedback, promotion/demotion decisions).
-              Promoted high-performing members.
               Drove Schema-driven development using OpenAPI Generator, Orval, and TanStack Query.
             result: |
               Delivered on schedule within 6 months from planning.
@@ -165,10 +165,7 @@ workExperience:
           end: '2023-12'
         project: freee Data Entry Service
         description: |
-          Served as Tech Lead for freee Data Entry Service in the global team.
-          Responsible for development and maintenance of a service that scans paper receipts
-          and converts them to journal entry data. Focused on domain design for Japan-specific
-          tax processing. Contributed to the official release in February 2023.
+          Tech Lead for freee Data Entry Service (paper receipt → journal entry data) in the global team. Focused on domain design for Japan-specific tax processing, contributing to the official release in February 2023.
         star:
           - situation: |
               The service required domain design for Japan-specific tax processing
@@ -182,7 +179,7 @@ workExperience:
               Organized Japan-specific tax processing into domain models, driving design through
               English discussion and knowledge sharing. Documented domain knowledge for team adoption.
             result: |
-              Established development practices for Japan-specific domains in a global team. Contributed to the official release in February 2023.
+              Established development practices for Japan-specific domains in a 7-member global team, contributing to the official release in February 2023.
         links:
           - url: https://adv.freee.co.jp/service/receipt-data-entry
             label: freee Data Entry Service
@@ -205,21 +202,24 @@ workExperience:
           end: '2022-06'
         project: Online Lending Platform
         description: |
-          Led development of the online lending platform at the financial subsidiary (freee Finance Lab Inc.).
-          Supervised 3 engineers and managed the entire service lifecycle.
+          Participated in development of the online lending platform at the financial subsidiary (freee Finance Lab Inc.).
           Navigated specification misalignments with external financial institutions during integration.
+          A parallel effort was prototyping and GTM validation of new lending products.
         star:
           - situation: |
-              Developed an online lending platform at the financial subsidiary.
-              External financial institution integrations required compliance with institution-specific specifications.
+              Participated in the online lending platform development at the financial subsidiary.
+              External financial institution integrations required compliance with institution-specific specifications,
+              while new products were in prototype and GTM validation phase.
             task: |
-              As Tech Lead, supervised 3 engineers and managed the full service lifecycle.
+              Contributed to the development and validation cycles for both the platform and new products.
               Drove specification alignment and implementation with external partners.
             action: |
-              Implemented with consideration for financial institution specifications,
+              Worked through financial institution-specific specifications,
               bridging misalignments with external partners through active communication.
+              For new products, participated in hypothesis testing via customer (GTM) validation.
             result: |
-              Stabilized operations of freee Financing and Cash Flow Management Navi services.
+              Contributed to the foundational development of external financial institution integrations.
+              Some new products were eventually closed based on service status, while accumulating 0→1 hypothesis-testing and external stakeholder coordination experience.
         links:
           - url: https://www.freee.co.jp/financing/
             label: freee Financing
@@ -243,9 +243,7 @@ workExperience:
         project: Data Aggregation Feature
         description: |
           Developed and operated transaction retrieval features via API integration with financial institutions.
-          Participated in multiple integration projects with major banks as PjM and player.
-          Also joined the scraping engine re-architecture project,
-          driving the transition to a multi-layered architecture.
+          Participated in multiple major bank integration projects as PjM and player, and joined the scraping engine re-architecture project driving transition to a multi-layered architecture.
         links:
           - url: https://corp.freee.co.jp/news/freee-amex-api-8458.html
             label: American Express API Integration
@@ -320,6 +318,19 @@ projects:
       - Hono
       - TypeScript
     repository: https://github.com/paveg/hono-problem-details
+
+  - name: hono-cf-access
+    type: oss
+    period:
+      start: '2026-03'
+      end: null
+    description: |
+      Access control middleware for Hono leveraging Cloudflare Workers request.cf properties.
+    techStack:
+      - Hono
+      - TypeScript
+      - Cloudflare Workers
+    repository: https://github.com/paveg/hono-cf-access
 
   - name: hono-webhook-verify
     type: oss
@@ -453,15 +464,15 @@ projects:
 skills:
   - category: Programming Languages
     items:
-      - name: Ruby
-        level: expert
-        yearsOfExperience: 8
-      - name: TypeScript
-        level: expert
-        yearsOfExperience: 5
       - name: Go
         level: advanced
         yearsOfExperience: 3
+      - name: TypeScript
+        level: expert
+        yearsOfExperience: 5
+      - name: Ruby
+        level: expert
+        yearsOfExperience: 8
       - name: Python
         level: intermediate
         yearsOfExperience: 2
@@ -483,12 +494,12 @@ skills:
       - name: Ruby on Rails
         level: expert
         yearsOfExperience: 8
-      - name: Node.js
-        level: advanced
-        yearsOfExperience: 4
       - name: Hono
         level: advanced
         yearsOfExperience: 1
+      - name: Node.js
+        level: advanced
+        yearsOfExperience: 4
 
   - category: Databases
     items:
@@ -499,14 +510,17 @@ skills:
         level: intermediate
         yearsOfExperience: 3
 
-  - category: Infrastructure
+  - category: Infrastructure & Tooling
     items:
-      - name: Docker
-        level: advanced
-        yearsOfExperience: 5
       - name: Kubernetes
         level: advanced
         yearsOfExperience: 4
+      - name: Docker
+        level: advanced
+        yearsOfExperience: 5
+      - name: ArgoCD
+      - name: Datadog
+      - name: gRPC
       - name: AWS
         level: intermediate
         yearsOfExperience: 5
