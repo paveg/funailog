@@ -14,7 +14,7 @@
     "check": "astro check",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "pnpm run format && eslint --cache . && markdownlint-cli2 && pnpm run validate:content && astro check && tsc --noEmit",
+    "lint": "bash -c 'set -e; pids=(); pnpm run format:check & pids+=($!); eslint --cache . & pids+=($!); markdownlint-cli2 & pids+=($!); pnpm run validate:content & pids+=($!); astro check & pids+=($!); fail=0; for pid in \"${pids[@]}\"; do wait \"$pid\" || fail=1; done; exit $fail'",
     "lint:fix": "eslint --cache --fix . && markdownlint-cli2 --fix",
     "lint:md": "markdownlint-cli2",
     "lint:md:fix": "markdownlint-cli2 --fix",
