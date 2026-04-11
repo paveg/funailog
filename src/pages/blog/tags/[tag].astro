@@ -86,7 +86,7 @@ const serializedPosts = sortedPosts.map((post) => ({
 >
   <div>
     <InfinitePostList
-      client:load
+      client:idle
       initialPosts={serializedPosts}
       title={`#${tag}`}
     />
