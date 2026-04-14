@@ -8,15 +8,27 @@ type Preset = {
   readonly label: string;
   readonly tokens: readonly RpnToken[];
   readonly note: string;
+  readonly reference?: (x: number) => number;
 };
 
 const presets: readonly Preset[] = [
-  { label: 'exp(x)', tokens: ['x', '1', 'E'], note: 'eml(x, 1)' },
-  { label: 'e', tokens: ['1', '1', 'E'], note: 'eml(1, 1) = e' },
+  {
+    label: 'exp(x)',
+    tokens: ['x', '1', 'E'],
+    note: 'eml(x, 1) — 3 presses',
+    reference: (x) => Math.exp(x),
+  },
+  {
+    label: 'e (constant)',
+    tokens: ['1', '1', 'E'],
+    note: 'eml(1, 1) — Eulerʼs e from pure 1 + EML',
+    reference: () => Math.E,
+  },
   {
     label: 'ln(x)',
     tokens: ['1', '1', 'x', 'E', '1', 'E', 'E'],
     note: 'paper Eq.(5), K=7',
+    reference: (x) => Math.log(x),
   },
 ];
 
@@ -54,12 +66,14 @@ const fmt = (z: Complex): string => {
 
 export const RpnCalculator = () => {
   const [tokens, setTokens] = useState<readonly RpnToken[]>([]);
-  const [xStr, setXStr] = useState('1.5');
+  const [xStr, setXStr] = useState('2.5');
+  const [activePreset, setActivePreset] = useState<string | null>(null);
 
-  const env = useMemo<Record<string, Complex>>(() => {
-    const n = Number.parseFloat(xStr);
-    return { x: Number.isFinite(n) ? c(n) : c(0) };
-  }, [xStr]);
+  const xNum = Number.parseFloat(xStr);
+  const env = useMemo<Record<string, Complex>>(
+    () => ({ x: Number.isFinite(xNum) ? c(xNum) : c(0) }),
+    [xNum],
+  );
 
   const live = useMemo(() => stackAfter(tokens, env), [tokens, env]);
 
@@ -73,15 +87,46 @@ export const RpnCalculator = () => {
     }
   }, [tokens, env]);
 
-  const push = (t: RpnToken) => setTokens((prev) => [...prev, t]);
-  const pop = () => setTokens((prev) => prev.slice(0, -1));
-  const clear = () => setTokens([]);
+  const preset = presets.find((p) => p.label === activePreset);
+  const refValue =
+    preset?.reference && Number.isFinite(xNum)
+      ? preset.reference(xNum)
+      : undefined;
+  const match =
+    result !== null &&
+    refValue !== undefined &&
+    Math.abs(result.re - refValue) < 1e-6 &&
+    Math.abs(result.im) < 1e-6;
+
+  const push = (t: RpnToken) => {
+    setTokens((prev) => [...prev, t]);
+    setActivePreset(null);
+  };
+  const pop = () => {
+    setTokens((prev) => prev.slice(0, -1));
+    setActivePreset(null);
+  };
+  const clear = () => {
+    setTokens([]);
+    setActivePreset(null);
+  };
+  const loadPreset = (p: Preset) => {
+    setTokens(p.tokens);
+    setActivePreset(p.label);
+  };
 
   return (
     <div className="rounded-lg border border-neutral-300 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-900">
-      <div className="mb-3 flex items-center gap-3 font-mono text-sm">
+      <div className="mb-3 text-xs text-neutral-600 dark:text-neutral-300">
+        Only three symbols exist: <code className="font-mono">1</code>,{' '}
+        <code className="font-mono">x</code>, and{' '}
+        <code className="font-mono">EML</code>. Load a preset to see the paperʼs
+        programs, or build your own.
+      </div>
+
+      <div className="mb-3 flex flex-wrap items-center gap-3 font-mono text-sm">
         <label className="flex items-center gap-1">
-          x=
+          input x=
           <input
             className="w-20 rounded border px-2 py-1 dark:bg-neutral-800"
             value={xStr}
@@ -89,14 +134,18 @@ export const RpnCalculator = () => {
             inputMode="decimal"
           />
         </label>
-        <div className="ml-auto flex gap-1">
+        <div className="ml-auto flex flex-wrap gap-1">
           {presets.map((p) => (
             <button
               key={p.label}
               type="button"
               title={p.note}
-              className="rounded border border-neutral-300 px-2 py-1 text-xs hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
-              onClick={() => setTokens(p.tokens)}
+              className={`rounded border px-2 py-1 text-xs ${
+                activePreset === p.label
+                  ? 'border-orange-400 bg-orange-100 dark:bg-orange-950'
+                  : 'border-neutral-300 hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800'
+              }`}
+              onClick={() => loadPreset(p)}
             >
               {p.label}
             </button>
@@ -104,8 +153,15 @@ export const RpnCalculator = () => {
         </div>
       </div>
 
-      <div className="mb-3 min-h-[64px] rounded border border-neutral-200 bg-neutral-50 p-2 font-mono text-sm dark:border-neutral-800 dark:bg-neutral-950">
-        <div className="text-xs text-neutral-500">program</div>
+      <div className="mb-3 rounded border border-neutral-200 bg-neutral-50 p-2 font-mono text-sm dark:border-neutral-800 dark:bg-neutral-950">
+        <div className="flex items-baseline justify-between">
+          <span className="text-xs text-neutral-500">
+            program ({tokens.length} token{tokens.length === 1 ? '' : 's'})
+          </span>
+          {preset && (
+            <span className="text-xs text-neutral-500">{preset.note}</span>
+          )}
+        </div>
         <code className="block break-all">
           {tokens.length === 0 ? (
             <span className="opacity-40">empty</span>
@@ -142,6 +198,17 @@ export const RpnCalculator = () => {
               <span className="opacity-40">—</span>
             )}
           </div>
+          {preset && refValue !== undefined && result && (
+            <div className="mt-1 text-xs">
+              Math.{preset.label.replace(/\(.*/, '')}(x) ={' '}
+              {refValue.toPrecision(6)}{' '}
+              {match ? (
+                <span className="text-green-600 dark:text-green-400">✓</span>
+              ) : (
+                <span className="text-amber-600 dark:text-amber-400">✗</span>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

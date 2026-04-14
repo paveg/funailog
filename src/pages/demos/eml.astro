@@ -19,18 +19,32 @@ import Layout from '@/layouts/Layout.astro';
 >
   <div class="mx-auto max-w-4xl py-8">
     <h1 class="text-2xl font-bold">EML operator demo</h1>
-    <p class="mt-2 text-sm text-neutral-600 dark:text-neutral-300">
-      eml(x, y) = exp(x) − ln(y). All elementary functions compile to binary
-      trees over this single operator and the constant 1.
+    <p class="mt-2 text-sm text-neutral-700 dark:text-neutral-300">
+      Odrzywołek (arXiv:2603.21852) showed that a single binary operator
+      <code class="font-mono">eml(x, y) = exp(x) − ln(y)</code> plus the constant
+      <code class="font-mono">1</code> can build every elementary function — the continuous
+      analogue of NAND. These demos let you check the claim by hand.
     </p>
 
     <section class="mt-8">
-      <h2 class="mb-3 text-lg font-semibold">Tree visualizer</h2>
+      <h2 class="mb-2 text-lg font-semibold">① Same operator, 12 functions</h2>
+      <p class="mb-3 text-sm text-neutral-600 dark:text-neutral-300">
+        Pick any function from the dropdown. Itʼs built entirely out of
+        <code class="font-mono">eml</code> and <code class="font-mono">1</code>.
+        The green ✓ confirms the tree evaluates to the same value as
+        <code class="font-mono">Math.*</code>.
+      </p>
       <TreeVisualizer client:visible />
     </section>
 
-    <section class="mt-8">
-      <h2 class="mb-3 text-lg font-semibold">RPN calculator</h2>
+    <section class="mt-10">
+      <h2 class="mb-2 text-lg font-semibold">② Three-symbol calculator</h2>
+      <p class="mb-3 text-sm text-neutral-600 dark:text-neutral-300">
+        A pocket calculator with only <code class="font-mono">1</code>,
+        <code class="font-mono">x</code>, and <code class="font-mono">EML</code>
+        is Turing-complete over the elementary functions. Load a preset to see the
+        paperʼs RPN programs run.
+      </p>
       <RpnCalculator client:visible />
     </section>
   </div>
