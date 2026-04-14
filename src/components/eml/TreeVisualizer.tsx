@@ -136,7 +136,9 @@ export const TreeVisualizer = () => {
       </div>
 
       <div className="overflow-auto rounded border border-neutral-200 bg-neutral-50 p-2 dark:border-neutral-800 dark:bg-neutral-950">
-        {laidOut && <TreeSvg laidOut={laidOut} env={env} />}
+        {laidOut && (
+          <TreeSvg laidOut={laidOut} env={env} signature={selected} />
+        )}
       </div>
 
       <details className="mt-3 font-mono text-xs">

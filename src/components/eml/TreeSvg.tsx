@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo } from 'react';
 
 import type { Complex } from '@/lib/eml/complex';
@@ -8,12 +9,14 @@ import { evaluate, type Env } from '@/lib/eml/tree';
 type Props = {
   readonly laidOut: LaidOutTree;
   readonly env: Env;
-  readonly unit?: number; // pixels per grid unit
+  readonly unit?: number;
   readonly nodeRadius?: number;
+  readonly signature?: string;
 };
 
-const defaultUnit = 48;
-const defaultRadius = 16;
+const targetWidth = 720;
+const maxUnit = 40;
+const minUnit = 14;
 
 const formatValue = (z: Complex): string => {
   if (!Number.isFinite(z.re) || !Number.isFinite(z.im)) {
@@ -32,16 +35,25 @@ const formatValue = (z: Complex): string => {
 export const TreeSvg = ({
   laidOut,
   env,
-  unit = defaultUnit,
-  nodeRadius = defaultRadius,
+  unit: unitOverride,
+  nodeRadius: radiusOverride,
+  signature = '',
 }: Props) => {
+  const unit =
+    unitOverride ??
+    Math.max(
+      minUnit,
+      Math.min(maxUnit, targetWidth / Math.max(1, laidOut.width)),
+    );
+  const nodeRadius = radiusOverride ?? Math.max(8, Math.min(16, unit * 0.35));
+
   const values = useMemo(() => {
     const map = new Map<string, Complex>();
     for (const n of laidOut.nodes) {
       try {
         map.set(n.id, evaluate(n.tree, env));
       } catch {
-        // variable unbound; skip
+        // unbound variable; skip
       }
     }
     return map;
@@ -57,67 +69,129 @@ export const TreeSvg = ({
   const w = laidOut.width * unit + padX * 2;
   const h = laidOut.height * unit + padY * 2;
 
+  const maxDepth = Math.max(1, ...laidOut.nodes.map((n) => n.depth));
+  const staggerFor = (depth: number) =>
+    (depth / maxDepth) * Math.min(0.6, laidOut.nodes.length * 0.008);
+
+  const tooltipFont = 11;
+  const charW = tooltipFont * 0.62;
+
   return (
     <svg
       viewBox={`0 0 ${w} ${h}`}
-      className="h-auto w-full font-mono"
+      className="eml-tree h-auto w-full font-mono"
       role="img"
       aria-label="EML tree"
     >
-      {laidOut.nodes.map((n) => {
-        if (!n.parentId) return null;
-        const parent = byId.get(n.parentId);
-        if (!parent) return null;
-        return (
-          <line
-            key={`edge-${n.id}`}
-            x1={parent.x * unit + padX}
-            y1={parent.y * unit + padY}
-            x2={n.x * unit + padX}
-            y2={n.y * unit + padY}
-            stroke="currentColor"
-            strokeWidth={1}
-            className="text-neutral-400 dark:text-neutral-600"
-          />
-        );
-      })}
-      {laidOut.nodes.map((n) => {
-        const cx = n.x * unit + padX;
-        const cy = n.y * unit + padY;
-        const value = values.get(n.id);
-        const fill =
-          n.kind === 'eml'
-            ? 'rgb(251 146 60)' // orange-400
-            : n.kind === 'const'
-              ? 'rgb(148 163 184)' // slate-400
-              : 'rgb(96 165 250)'; // blue-400
-        return (
-          <g key={n.id}>
-            <circle cx={cx} cy={cy} r={nodeRadius} fill={fill} />
-            <text
-              x={cx}
-              y={cy + 4}
-              textAnchor="middle"
-              fontSize={12}
-              fontWeight={600}
-              fill="white"
-            >
-              {n.label}
-            </text>
-            {value && (
-              <text
-                x={cx}
-                y={cy + nodeRadius + 12}
-                textAnchor="middle"
-                fontSize={10}
-                className="fill-neutral-700 dark:fill-neutral-300"
+      <style>{`
+        .eml-tree .eml-tip { opacity: 0; transition: opacity 120ms ease-out; pointer-events: none; }
+        .eml-tree .eml-node:hover .eml-tip,
+        .eml-tree .eml-node:focus-within .eml-tip { opacity: 1; }
+        .eml-tree .eml-node circle { cursor: pointer; outline: none; }
+      `}</style>
+      <AnimatePresence mode="wait">
+        <motion.g key={signature}>
+          {laidOut.nodes.map((n) => {
+            if (!n.parentId) return null;
+            const parent = byId.get(n.parentId);
+            if (!parent) return null;
+            return (
+              <motion.line
+                key={`edge-${n.id}`}
+                x1={parent.x * unit + padX}
+                y1={parent.y * unit + padY}
+                x2={n.x * unit + padX}
+                y2={n.y * unit + padY}
+                stroke="currentColor"
+                strokeWidth={1}
+                className="text-neutral-400 dark:text-neutral-600"
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 1 }}
+                transition={{
+                  duration: 0.25,
+                  delay: staggerFor(n.depth),
+                }}
+              />
+            );
+          })}
+          {laidOut.nodes.map((n) => {
+            const cx = n.x * unit + padX;
+            const cy = n.y * unit + padY;
+            const fill =
+              n.kind === 'eml'
+                ? 'rgb(251 146 60)'
+                : n.kind === 'const'
+                  ? 'rgb(148 163 184)'
+                  : 'rgb(96 165 250)';
+            const value = values.get(n.id);
+            const display = value
+              ? n.kind === 'eml'
+                ? `eml(…) = ${formatValue(value)}`
+                : `${n.label} = ${formatValue(value)}`
+              : null;
+            const tipW = display ? display.length * charW + 12 : 0;
+            const tipH = tooltipFont + 10;
+            const tipX = Math.max(2, Math.min(w - tipW - 2, cx - tipW / 2));
+            const above = cy - nodeRadius - 6 - tipH > 0;
+            const tipY = above
+              ? cy - nodeRadius - 6 - tipH
+              : cy + nodeRadius + 6;
+            return (
+              <motion.g
+                key={n.id}
+                className="eml-node"
+                initial={{ opacity: 0, scale: 0.6 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  duration: 0.3,
+                  delay: staggerFor(n.depth) + 0.08,
+                }}
+                style={{ transformOrigin: `${cx}px ${cy}px` }}
               >
-                {formatValue(value)}
-              </text>
-            )}
-          </g>
-        );
-      })}
+                <circle
+                  cx={cx}
+                  cy={cy}
+                  r={nodeRadius}
+                  fill={fill}
+                  tabIndex={0}
+                />
+                <text
+                  x={cx}
+                  y={cy + nodeRadius * 0.3}
+                  textAnchor="middle"
+                  fontSize={nodeRadius * 0.85}
+                  fontWeight={600}
+                  fill="white"
+                  pointerEvents="none"
+                >
+                  {n.label}
+                </text>
+                {display && (
+                  <g className="eml-tip">
+                    <rect
+                      x={tipX}
+                      y={tipY}
+                      width={tipW}
+                      height={tipH}
+                      rx={4}
+                      className="fill-neutral-900 dark:fill-neutral-100"
+                    />
+                    <text
+                      x={tipX + tipW / 2}
+                      y={tipY + tipH / 2 + tooltipFont * 0.35}
+                      textAnchor="middle"
+                      fontSize={tooltipFont}
+                      className="fill-white dark:fill-neutral-900"
+                    >
+                      {display}
+                    </text>
+                  </g>
+                )}
+              </motion.g>
+            );
+          })}
+        </motion.g>
+      </AnimatePresence>
     </svg>
   );
 };
