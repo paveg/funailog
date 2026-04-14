@@ -1,7 +1,13 @@
+import {
+  hierarchy,
+  tree as d3tree,
+  type HierarchyPointNode,
+} from 'd3-hierarchy';
+
 import type { EMLTree } from './tree';
 
 export type LaidOutNode = {
-  readonly id: string; // path-based unique key, e.g. "0L", "0LR"
+  readonly id: string;
   readonly kind: 'const' | 'var' | 'eml';
   readonly label: string;
   readonly x: number;
@@ -17,70 +23,59 @@ export type LaidOutTree = {
   readonly height: number;
 };
 
-// Node and layout constants in abstract grid units.
-const X_STEP = 1;
-const Y_STEP = 1;
-
-type Placed = {
-  readonly node: LaidOutNode;
-  readonly width: number;
+type Annotated = {
+  readonly id: string;
+  readonly tree: EMLTree;
+  readonly children: readonly Annotated[];
 };
 
-// Simple bottom-up layout: x = center of subtree, subtree width = sum of
-// children widths (leaf width = 1). Deterministic and dependency-free.
-// Good enough for binary trees up to a few hundred nodes.
-const layoutRec = (
-  tree: EMLTree,
-  depth: number,
-  xOffset: number,
-  id: string,
-  parentId: string | null,
-  out: LaidOutNode[],
-): Placed => {
-  if (tree.kind !== 'eml') {
-    const label = tree.kind === 'const' ? '1' : tree.name;
-    const node: LaidOutNode = {
-      id,
-      kind: tree.kind,
-      label,
-      x: xOffset + X_STEP / 2,
-      y: depth * Y_STEP,
-      depth,
-      parentId,
-      tree,
-    };
-    out.push(node);
-    return { node, width: X_STEP };
+const annotate = (tree: EMLTree, id: string): Annotated => {
+  if (tree.kind !== 'eml') return { id, tree, children: [] };
+  return {
+    id,
+    tree,
+    children: [annotate(tree.left, id + 'L'), annotate(tree.right, id + 'R')],
+  };
+};
+
+const labelOf = (tree: EMLTree): string =>
+  tree.kind === 'const' ? '1' : tree.kind === 'var' ? tree.name : 'E';
+
+// Reingold–Tilford tidy tree via d3-hierarchy. Node separation scales down
+// slightly for siblings under the same parent, so deep chains stay narrow
+// while fan-outs still breathe.
+export const layoutTree = (tree: EMLTree): LaidOutTree => {
+  const root = hierarchy<Annotated>(annotate(tree, '0'), (d) => [
+    ...d.children,
+  ]);
+  // Tight horizontal spacing: siblings under the same parent sit 1 unit apart
+  // and cousins only get a small extra gap. Vertical (y) is 0.8 so deep trees
+  // stay compact; pad comes from the caller's viewBox.
+  const layout = d3tree<Annotated>()
+    .nodeSize([1, 0.8])
+    .separation((a, b) => (a.parent === b.parent ? 1 : 1.1));
+  layout(root);
+
+  const points = root.descendants() as HierarchyPointNode<Annotated>[];
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let maxY = 0;
+  for (const p of points) {
+    if (p.x < minX) minX = p.x;
+    if (p.x > maxX) maxX = p.x;
+    if (p.y > maxY) maxY = p.y;
   }
 
-  const left = layoutRec(tree.left, depth + 1, xOffset, id + 'L', id, out);
-  const right = layoutRec(
-    tree.right,
-    depth + 1,
-    xOffset + left.width,
-    id + 'R',
-    id,
-    out,
-  );
-  const width = left.width + right.width;
-  const node: LaidOutNode = {
-    id,
-    kind: 'eml',
-    label: 'E',
-    x: xOffset + width / 2,
-    y: depth * Y_STEP,
-    depth,
-    parentId,
-    tree,
-  };
-  out.push(node);
-  return { node, width };
-};
+  const nodes: LaidOutNode[] = points.map((p) => ({
+    id: p.data.id,
+    kind: p.data.tree.kind,
+    label: labelOf(p.data.tree),
+    x: p.x - minX + 0.5,
+    y: p.y,
+    depth: p.depth,
+    parentId: p.parent?.data.id ?? null,
+    tree: p.data.tree,
+  }));
 
-export const layoutTree = (tree: EMLTree): LaidOutTree => {
-  const nodes: LaidOutNode[] = [];
-  const { width } = layoutRec(tree, 0, 0, '0', null, nodes);
-  let maxDepth = 0;
-  for (const n of nodes) if (n.depth > maxDepth) maxDepth = n.depth;
-  return { nodes, width, height: (maxDepth + 1) * Y_STEP };
+  return { nodes, width: maxX - minX + 1, height: maxY + 1 };
 };
