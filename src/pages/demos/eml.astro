@@ -1,0 +1,37 @@
+---
+import { RpnCalculator } from '@/components/eml/RpnCalculator';
+import { TreeVisualizer } from '@/components/eml/TreeVisualizer';
+import { defaultLang } from '@/i18n/ui';
+import Layout from '@/layouts/Layout.astro';
+---
+
+<Layout
+  title="EML operator demo"
+  description="Interactive demos for the EML operator from arXiv:2603.21852"
+  path="/demos/eml"
+  lang={defaultLang}
+  og={{ enabled: false }}
+  noindex
+  hreflangs={[
+    { path: '/demos/eml', hreflang: defaultLang },
+    { path: '/demos/eml', hreflang: 'x-default' },
+  ]}
+>
+  <div class="mx-auto max-w-4xl py-8">
+    <h1 class="text-2xl font-bold">EML operator demo</h1>
+    <p class="mt-2 text-sm text-neutral-600 dark:text-neutral-300">
+      eml(x, y) = exp(x) − ln(y). All elementary functions compile to binary
+      trees over this single operator and the constant 1.
+    </p>
+
+    <section class="mt-8">
+      <h2 class="mb-3 text-lg font-semibold">Tree visualizer</h2>
+      <TreeVisualizer client:visible />
+    </section>
+
+    <section class="mt-8">
+      <h2 class="mb-3 text-lg font-semibold">RPN calculator</h2>
+      <RpnCalculator client:visible />
+    </section>
+  </div>
+</Layout>
