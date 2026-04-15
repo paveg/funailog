@@ -1,0 +1,181 @@
+---
+title: 連続数学のNANDゲート「EML演算子」の論文をClaude Codeで実装してみた
+description: exp(x) − ln(y) という単一の二項演算子と定数1だけで全ての初等関数が構成できる、という論文（arXiv:2603.21852）の主張を、Claude CodeでTypeScriptに移植し、ブラウザで触れるデモまで作った記録。
+published: 2026-04-15
+tags:
+  - 論文実装
+  - TypeScript
+  - Astro
+  - Claude Code
+  - EML
+  - 数学
+isPublished: true
+category: programming
+emoji: 🧮
+---
+
+import { RpnCalculator } from '@/components/eml/RpnCalculator';
+import { TreeVisualizer } from '@/components/eml/TreeVisualizer';
+
+## はじめに
+
+2026年3月、[twitter](x.com) を眺めていると面白そうな論文が流れてきました。
+
+https://arxiv.org/abs/2603.21852
+
+主張はこれです。
+
+> A single binary operator `eml(x, y) = exp(x) − ln(y)`, together with the constant `1`, suffices to construct every elementary function — including `sin`, `cos`, `√`, `log`, `π`, `e`, and `i`.
+
+正直、タイトルと要旨を見て「えっ、本当に？」と思いました。数学の素養はちょっとしかないので、論文本文の証明を読んでも半分くらい雰囲気で追いかけている感じです。でも「`sin` も `π` もこれひとつで作れる」という部分だけは、なんで？って興味を持ちました。
+
+わからないならわからないなりに、**動かしてみれば何か見えるはず**と思って、Claude Codeに実装させてみました。
+
+## 先に触れるやつを置いておきます
+
+文章より触ったほうが早いので、成果物から貼ります。
+
+### ① 同じ演算子で12関数
+
+<TreeVisualizer client:visible />
+
+プルダウンで関数を切り替えると、その関数が `eml` 演算子（オレンジ丸）と定数 `1`（グレー丸）、変数（青丸）の二分木として表示されます。緑の ✓ は「この木の評価値が本当に `Math.*`（例えば `Math.log`）と一致している」証拠です。
+
+`ln(x)` を選ぶと K=7 のコンパクトな木。`-x` に切り替えると K=57 の巨大な木が出てきます。**同じ演算子しか使っていないのに、関数によって木の大きさがこんなに違う**、というのが見どころです。
+
+### ② 3記号しかない電卓
+
+<RpnCalculator client:visible />
+
+ボタンは `1`、`x`、`EML` の3種類（+ 取り消しとクリア）しかありません。プリセットを押すと、論文に載っているRPN（逆ポーランド記法）プログラムが読み込まれて実行されます。
+
+`ln(x)` プリセットの正体は `1,1,x,E,1,E,E` のたった7手。これで自然対数が計算できて、`Math.log(x)` とちゃんと一致する。これが個人的にいちばん感動したポイントでした。
+
+## なんでこれがすごいのか（Claude Code に説明してもらった）
+
+ここからは正直にいうと、**僕も論文を読みながら「え、何で？」となっていた**ので、Claude Code に噛み砕いて説明してもらった内容です。噛み砕きすぎて数学の人には怒られそうですが、感覚としてはこんな感じでした。
+
+### 例えるなら NAND ゲート
+
+デジタル回路には **NAND ゲート1個だけで、AND / OR / NOT / XOR / ……あらゆる論理回路が作れる**という有名な事実があります。「これひとつあれば全部作れる」という万能ブロックです。
+
+EML演算子はその**連続数学版**です。`eml(x, y) = exp(x) − ln(y)` だけあれば、理屈の上では `sin` でも `√` でも `π` でも、必要な初等関数は全部組み立てられる。そういう万能ブロックが存在する、というのが論文の主張です。
+
+### なぜ `exp` と `ln` の組み合わせなの？
+
+ここが僕にはさっぱりでした。Claude Code の説明を自分の言葉で書くと:
+
+- **`exp` は「足し算の世界」を「かけ算の世界」に翻訳する関数**（`exp(a+b) = exp(a) × exp(b)`）
+- **`ln` は逆向きに「かけ算の世界」を「足し算の世界」に翻訳する関数**（`ln(a×b) = ln(a) + ln(b)`）
+- この2つはペアで「2つの世界を行き来する翻訳機」になっている
+- そして **マイナス**（引き算）は、どちらの世界でも「差」を取れる万能の繋ぎ手
+
+だから `exp(x) − ln(y)` という形は、「片方は翻訳して持ち上げる」「もう片方は翻訳して降ろす」「結果を引き算で繋ぐ」という、**2つの世界を1発で跨ぐ最小セット**になっている。言われてみれば確かに絶妙な組み合わせだな、と思いました。
+
+### なんで定数が `1` で足りるの？
+
+これは実装してみるとハッキリしました。`ln(1) = 0` という事実を使うと、`eml(x, 1) = exp(x) − ln(1) = exp(x) − 0 = exp(x)` になります。つまり **`1` を右側に置くだけで `ln` を「消す」ことができる**。
+
+この「消す」が効くから、演算子ひとつとスイッチ役の `1` ひとつだけでいい。他の定数（`e`、`π`、`i`）は全部、`1` と `eml` から組み立てられます。例えば上のビジュアライザで `e` を選ぶと、木がたった3ノード（`eml(1, 1)`）で描かれます。`eml(1, 1) = exp(1) − ln(1) = e` というわけです。
+
+これを初めて動かしたとき、「お〜〜〜」って小さい声が出ました。
+
+## Claude Code Codeに実装させる流れ
+
+仕様書（論文URL、成果物のゴール、技術スタック、配置規約）をまとめてClaude Codeに渡したら、以下の順で進んでいきました。
+
+- **Phase 1**: `Complex` 型・`EMLTree` 型・`eml(x,y)` 評価器・RPN変換をTDDで実装
+- **Phase 1.5**: 著者の参照実装から compiler primitive を移植して12関数を再現
+- **Phase 2**: Astro + React islands でブラウザデモを実装
+
+全体の実装時間は**1時間強**。僕の作業は仕様書を書くのと、途中で何度か判断を求められたときに返事するのが主で、手でコードを書いた時間はほぼゼロです。
+
+### いちばん助けられたのは参照実装
+
+著者の Odrzywołek 氏は、論文と一緒に Python と Mathematica の参照実装を公開してくれています。
+
+https://github.com/VA00/SymbolicRegressionPackage
+
+これが**本当に助かりました**。論文のTable 4に「`-x` のEML木は K=57」と数字は書いてあるのですが、**具体的にどういう構造の木なのかは論文本文には書かれていません**（Fig.2に一部が画像で載っているだけ）。
+
+そこで参照実装の `eml_compiler_v4.py` を覗いてみたら、たった20行くらいに答えが凝縮されていました。
+
+```python
+def EML(a, b):        return f"EML[{a},{b}]"
+def eml_exp(z):       return EML(z, "1")                          # Exp[z]
+def eml_log(z):       return EML("1", eml_exp(EML("1", z)))       # Log[z]
+def eml_sub(a, b):    return EML(eml_log(a), eml_exp(b))          # a - b
+def eml_neg(z):       return eml_sub(eml_log("1"), z)             # -z
+def eml_add(a, b):    return eml_sub(a, eml_neg(b))               # a + b
+def eml_inv(z):       return eml_exp(eml_neg(eml_log(z)))         # 1/z
+def eml_mul(a, b):    return eml_exp(eml_add(eml_log(a), eml_log(b))) # a*b
+# ...
+```
+
+これを1:1でTypeScriptに移し替えると、Table 4のK値が完全再現できました。12関数すべてについて vitest で自動検証しています。
+
+```ts title="src/lib/eml/library.test.ts（抜粋）"
+const expected = [
+  ['exp(x)', 3], ['e', 3], ['ln(x)', 7],
+  ['x+1', 27], ['x-1', 43], ['-x', 57], ['1/x', 65], ['x²', 75],
+  ['x+y', 27], ['x×y', 41], ['x-y', 83], ['x/y', 105],
+];
+```
+
+## 地味にハマったところ
+
+ここは実装の話なので、数学パートより自信を持って書けます。
+
+### JavaScript だと論文と同じバグを踏む
+
+論文の §4.1 にこんな話が出てきます。「Lean 4 という証明支援系は `Complex.log 0 = 0` というjunk値を返す仕様なので、EMLを素朴に定式化すると証明が通らない」。読んだときは「へー」くらいだったのですが、**JavaScriptでも似たことが起きました**。
+
+EMLのcompiler経路は途中で `log(0) = -∞` を通ります。TypeScriptで計算させたら結果が全部 `NaN` になりました。
+
+犯人はこの1行:
+
+```ts
+// 元の実装
+const r = Math.exp(z.re);              // Infinity
+return {
+  re: r * Math.cos(z.im),              // Infinity * 1 = Infinity
+  im: r * Math.sin(z.im),              // Infinity * 0 = NaN ⚠
+};
+```
+
+`Math.sin(0)` がピッタリ `0` を返すせいで、`Infinity * 0 = NaN` というIEEE 754の仕様に撃たれて虚部が壊れていました。修正は実数軸だけ特別扱いする1行です。
+
+```ts
+if (z.im === 0) return { re: Math.exp(z.re), im: 0 };
+```
+
+論文が Lean で引っかかっているのと**根っこが同じバグ**というのが、この実装で一番「ああ、論文の言っていることが実感できた」と思った瞬間でした。
+
+## 技術スタック
+
+- **言語**: TypeScript (strictest)
+- **フレームワーク**: Astro 6 + React 19（既存のfunailogに相乗り）
+- **テスト**: vitest
+- **スタイリング**: Tailwind v4
+- **ツリーレイアウト**: d3-hierarchy（Reingold–Tilford）
+- **アニメーション**: framer-motion
+
+コードは `src/lib/eml/` に600行程度、`src/components/eml/` に400行程度でした。
+
+## さいごに、リスペクトを込めて
+
+論文を読んでも半分くらいしか分からなかった僕が、**ブラウザで触って「おお〜」と感動できる状態まで1時間で辿り着けた**のは、Odrzywołek 氏が論文と一緒に参照実装を公開してくれていたおかげです。
+
+Python compiler は100行未満、Mathematica のノートブック、PyTorchの学習スクリプト、CUDAのrecognizerまで揃っていて、「読者が自分の手で確かめられる」状態が整っています。これは本当に丁寧な仕事だと思いました。
+
+論文はこちら:
+
+https://arxiv.org/abs/2603.21852
+
+参照実装はこちら:
+
+https://github.com/VA00/SymbolicRegressionPackage
+
+僕の実装は「論文を読むときに手元で触れるおもちゃ」くらいの位置付けなので、興味を持った方はぜひ元論文と著者の実装をあたってみてください。こちらのほうがずっと深いところまで書かれていますし、僕が拾いきれていないニュアンスもいっぱい詰まっているはずです。
+
+それでは、またね。

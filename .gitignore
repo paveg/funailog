@@ -21,6 +21,9 @@ pnpm-debug.log*
 .DS_Store
 .eslintcache
 
+# scratch cache for research tools
+.firecrawl/
+
 .playwright-mcp
 CV_*
 
