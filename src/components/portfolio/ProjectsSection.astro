@@ -4,6 +4,7 @@ import { ExternalLinkIcon, GitHubLogoIcon } from '@radix-ui/react-icons';
 import type { SupportedLang } from '@/config/site';
 import type { Project } from '@/schemas/portfolio-collection';
 
+import Budoux from '@/components/Budoux.astro';
 import { Badge } from '@/components/ui/badge';
 import { useTranslations } from '@/i18n/utils';
 
@@ -83,8 +84,11 @@ const collapseLabel = lang === 'en' ? 'Collapse' : '折りたたむ';
               )}
             </div>
           </div>
-          <p class="text-muted-foreground text-xs leading-relaxed sm:text-sm">
-            {project.description}
+          <p
+            class="text-muted-foreground text-xs leading-relaxed sm:text-sm"
+            data-budoux
+          >
+            <Budoux text={project.description} />
           </p>
           <div class="flex flex-wrap gap-1 sm:gap-1.5">
             {project.techStack.slice(0, 5).map((tech) => (

@@ -1,6 +1,7 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 
+import Budoux from '@/components/Budoux.astro';
 import PostCard from '@/components/PostCard.astro';
 import { defaultLang } from '@/i18n/ui';
 import { useTranslations, generateHreflangs } from '@/i18n/utils';
@@ -53,13 +54,15 @@ const otherPosts = recentPosts.slice(1);
       </div>
       <div class="space-y-3">
         <h1 class="font-heading text-2xl md:text-3xl">{t('main.title')}</h1>
-        <p class="text-muted-foreground text-lg font-medium">
-          {t('index.tagline')}
+        <p class="text-muted-foreground text-lg font-medium" data-budoux>
+          <Budoux text={t('index.tagline')} />
         </p>
-        <p class="text-muted-foreground max-w-lg text-sm leading-relaxed">
-          {t('index.heroLine1')}<br class="hidden sm:inline" />{
-            t('index.heroLine2')
-          }
+        <p
+          class="text-muted-foreground max-w-lg text-sm leading-relaxed"
+          data-budoux
+        >
+          <Budoux text={t('index.heroLine1')} /><br class="hidden sm:inline" />
+          <Budoux text={t('index.heroLine2')} />
         </p>
       </div>
     </section>

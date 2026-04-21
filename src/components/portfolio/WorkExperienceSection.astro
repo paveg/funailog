@@ -4,6 +4,7 @@ import { CollapsibleRoles } from './CollapsibleRoles';
 import type { SupportedLang } from '@/config/site';
 import type { WorkExperience } from '@/schemas/portfolio-collection';
 
+import Budoux from '@/components/Budoux.astro';
 import { Badge } from '@/components/ui/badge';
 import { useTranslations } from '@/i18n/utils';
 
@@ -104,8 +105,11 @@ const COLLAPSIBLE_THRESHOLD = 3;
               </div>
 
               {/* Company Summary */}
-              <p class="text-muted-foreground mt-1 text-xs leading-relaxed sm:mt-1.5 sm:text-sm">
-                {work.description}
+              <p
+                class="text-muted-foreground mt-1 text-xs leading-relaxed sm:mt-1.5 sm:text-sm"
+                data-budoux
+              >
+                <Budoux text={work.description} />
               </p>
 
               {/* Technologies (company level) - shown only for companies without roles */}

@@ -3,6 +3,8 @@ import { CodeIcon } from '@radix-ui/react-icons';
 
 import type { SupportedLang } from '@/config/site';
 
+import Budoux from '@/components/Budoux.astro';
+
 interface Props {
   lang?: SupportedLang;
 }
@@ -31,13 +33,19 @@ const t = texts[lang];
 {
   isDev && (
     <div class="border-border rounded-md border border-dashed p-4">
-      <p class="text-foreground mb-2 text-sm font-medium">{t.title}</p>
-      <p class="text-muted-foreground mb-3 text-sm">{t.description}</p>
+      <p class="text-foreground mb-2 text-sm font-medium" data-budoux>
+        <Budoux text={t.title} />
+      </p>
+      <p class="text-muted-foreground mb-3 text-sm" data-budoux>
+        <Budoux text={t.description} />
+      </p>
       <div class="bg-muted flex items-center gap-2 rounded-md p-3 font-mono text-sm">
         <CodeIcon className="text-muted-foreground size-4 shrink-0" />
         <code class="text-foreground">pnpm cv</code>
       </div>
-      <p class="text-muted-foreground/80 mt-2 text-xs">{t.note}</p>
+      <p class="text-muted-foreground/80 mt-2 text-xs" data-budoux>
+        <Budoux text={t.note} />
+      </p>
     </div>
   )
 }
