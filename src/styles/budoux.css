@@ -2,8 +2,7 @@
 
 /* WCAG 2.4.7 Focus Visible — global because Layout loads this file */
 :focus-visible {
-  @apply ring-ring ring-2 ring-offset-2 outline-none;
-  ring-offset-color: var(--color-background);
+  @apply ring-ring ring-2 ring-offset-2 ring-offset-background outline-none;
 }
 
 /* Japanese mixed-script foundation (jp-ui-contracts inspired) */
