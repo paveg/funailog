@@ -41,4 +41,15 @@ describe('rehypeBudoux', () => {
     expect(anchorInner).not.toContain('<wbr>');
     expect(anchorInner).toBe('公式ドキュメントを読みます');
   });
+
+  it('does not insert <wbr> inside <a> with nested inline elements', async () => {
+    const output = await process(
+      '<p>まずは<a href="https://example.com"><strong>公式ドキュメントを読みます</strong></a>の続き。</p>',
+    );
+    // Everything between <a ...> and </a> must be <wbr>-free
+    const anchorMatch = output.match(/<a[^>]*>([\s\S]*?)<\/a>/);
+    expect(anchorMatch).not.toBeNull();
+    const anchorInner = anchorMatch![1];
+    expect(anchorInner).not.toContain('<wbr>');
+  });
 });
