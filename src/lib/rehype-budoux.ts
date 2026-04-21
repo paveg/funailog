@@ -10,7 +10,7 @@ interface Options {
   excludeTagNames?: string[];
 }
 
-const defaultExcludeTagNames = ['pre', 'code'];
+const defaultExcludeTagNames = ['pre', 'code', 'a'];
 
 let parser: HTMLProcessingParser | null = null;
 
