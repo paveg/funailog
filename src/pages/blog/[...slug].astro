@@ -12,6 +12,7 @@ import ArticleHeader from '@/components/article/ArticleHeader.astro';
 import ArticleTOC from '@/components/article/ArticleTOC.astro';
 import ReadingProgress from '@/components/article/ReadingProgress.astro';
 import RelatedArticles from '@/components/article/RelatedArticles.astro';
+import Budoux from '@/components/Budoux.astro';
 import Figure from '@/components/Figure.astro';
 import Link from '@/components/Link.astro';
 import Image from '@/components/markdown/Image.astro';
@@ -93,8 +94,8 @@ const relatedPosts = getRelatedPosts(post, publishedPosts);
   <div>
     {/* Header section: full-width, centered */}
     <header class="mb-6">
-      <h1 class="font-heading text-center [text-wrap:wrap] [word-break:normal]">
-        {post.data.title}
+      <h1 class="font-heading text-center [text-wrap:wrap]" data-budoux>
+        <Budoux text={post.data.title} />
       </h1>
       <ArticleHeader post={post} minRead={remarkPluginFrontmatter.minRead} />
       <Image

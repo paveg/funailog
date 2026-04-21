@@ -4,7 +4,15 @@ import {
   MagnifyingGlassIcon,
   ReloadIcon,
 } from '@radix-ui/react-icons';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { loadDefaultJapaneseParser } from 'budoux';
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { defaultLang } from '@/i18n/ui';
@@ -13,6 +21,7 @@ import { filterTags } from '@/lib/tags';
 import { cn, formatDateEn } from '@/lib/utils';
 
 const t = useTranslations(defaultLang);
+const budouxParser = loadDefaultJapaneseParser();
 
 export type SerializedPost = {
   type: 'blog';
@@ -64,8 +73,16 @@ function PostItem({ post }: { post: SerializedPost }) {
         </span>
       </div>
       <a href={post.url} className="block pt-1">
-        <h2 className="font-heading text-foreground group-hover:text-link line-clamp-2 text-base break-words transition-colors duration-200 md:text-lg">
-          {post.title}
+        <h2
+          className="font-heading text-foreground group-hover:text-link line-clamp-2 text-base transition-colors duration-200 md:text-lg"
+          data-budoux
+        >
+          {budouxParser
+            .parse(post.title)
+            .flatMap((segment, i) => [
+              ...(i > 0 ? [<wbr key={`wbr-${i}`} />] : []),
+              <Fragment key={`seg-${i}`}>{segment}</Fragment>,
+            ])}
         </h2>
       </a>
       {tags.length > 0 && (

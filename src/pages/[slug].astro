@@ -7,6 +7,7 @@ import {
   type CollectionEntry,
 } from 'astro:content';
 
+import Budoux from '@/components/Budoux.astro';
 import Figure from '@/components/Figure.astro';
 import Link from '@/components/Link.astro';
 import { defaultLang } from '@/i18n/ui';
@@ -76,7 +77,7 @@ const homeUrl = new URL('/', site).toString();
   ]}
 >
   <article>
-    <h1>{page.data.title}</h1>
+    <h1 data-budoux><Budoux text={page.data.title} /></h1>
     <Content components={components} />
   </article>
 </Layout>

@@ -1,6 +1,7 @@
 ---
 import { getEntry } from 'astro:content';
 
+import Budoux from '@/components/Budoux.astro';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
@@ -137,13 +138,19 @@ if (other) {
       {/* 商品情報 */}
       <div class="flex flex-1 flex-col">
         <CardHeader className="pb-2">
-          <h3 class="text-foreground m-0 line-clamp-2 text-base font-medium">
-            {title}
+          <h3
+            class="text-foreground m-0 line-clamp-2 text-base font-medium"
+            data-budoux
+          >
+            <Budoux text={title} />
           </h3>
           {
             description && (
-              <p class="text-muted-foreground m-0 line-clamp-2 text-sm">
-                {description}
+              <p
+                class="text-muted-foreground m-0 line-clamp-2 text-sm"
+                data-budoux
+              >
+                <Budoux text={description} />
               </p>
             )
           }

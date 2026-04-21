@@ -1,0 +1,5 @@
+/* BudouX: keep Japanese phrases together at <wbr> boundaries */
+[data-budoux] {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}

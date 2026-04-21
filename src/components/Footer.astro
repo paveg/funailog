@@ -1,6 +1,7 @@
 ---
 import { getEntry } from 'astro:content';
 
+import Budoux from '@/components/Budoux.astro';
 import { defaultLang } from '@/i18n/ui';
 import { useTranslations } from '@/i18n/utils';
 
@@ -20,11 +21,11 @@ const startYear = 2023;
     {/* Column 1: Site identity */}
     <div class="space-y-2">
       <p class="text-foreground font-medium">funailog.com</p>
-      <p class="hidden leading-relaxed sm:block">
-        {t('footer.description')}
+      <p class="hidden leading-relaxed sm:block" data-budoux>
+        <Budoux text={t('footer.description')} />
       </p>
-      <p class="leading-relaxed sm:hidden">
-        {t('footer.descriptionShort')}
+      <p class="leading-relaxed sm:hidden" data-budoux>
+        <Budoux text={t('footer.descriptionShort')} />
       </p>
     </div>
 

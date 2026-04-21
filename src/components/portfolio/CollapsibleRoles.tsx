@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { loadDefaultJapaneseParser } from 'budoux';
+import { Fragment, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
+
+const budouxParser = loadDefaultJapaneseParser();
 
 interface RoleLink {
   url: string;
@@ -140,8 +143,16 @@ export function CollapsibleRoles({
               </span>
 
               {/* Role Description */}
-              <p className="text-muted-foreground mt-1.5 text-xs leading-relaxed sm:text-sm">
-                {role.description}
+              <p
+                className="text-muted-foreground mt-1.5 text-xs leading-relaxed sm:text-sm"
+                data-budoux
+              >
+                {budouxParser
+                  .parse(role.description)
+                  .flatMap((segment, i) => [
+                    ...(i > 0 ? [<wbr key={`wbr-${i}`} />] : []),
+                    <Fragment key={`seg-${i}`}>{segment}</Fragment>,
+                  ])}
               </p>
 
               {/* Role Links */}

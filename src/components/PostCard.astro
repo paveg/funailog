@@ -1,6 +1,7 @@
 ---
 import type { UnifiedPost } from '@/types/unified-post';
 
+import Budoux from '@/components/Budoux.astro';
 import { formatDateEn } from '@/lib/utils';
 
 export type Props = {
@@ -57,12 +58,18 @@ const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
                 </time>
               )}
             </div>
-            <h3 class="font-heading text-foreground group-hover:text-link line-clamp-2 text-lg transition-colors duration-150">
-              {post.title}
+            <h3
+              class="font-heading text-foreground group-hover:text-link line-clamp-2 text-lg transition-colors duration-150"
+              data-budoux
+            >
+              <Budoux text={post.title} />
             </h3>
             {post.description && (
-              <p class="text-muted-foreground mt-2 line-clamp-2 text-sm">
-                {post.description}
+              <p
+                class="text-muted-foreground mt-2 line-clamp-2 text-sm"
+                data-budoux
+              >
+                <Budoux text={post.description} />
               </p>
             )}
           </div>
@@ -90,8 +97,11 @@ const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
                 </time>
               )}
             </div>
-            <h3 class="font-heading text-foreground group-hover:text-link transition-colors duration-150">
-              {post.title}
+            <h3
+              class="font-heading text-foreground group-hover:text-link transition-colors duration-150"
+              data-budoux
+            >
+              <Budoux text={post.title} />
             </h3>
           </div>
         </div>

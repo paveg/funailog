@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 
+import Budoux from '@/components/Budoux.astro';
 import { formatDateEn } from '@/lib/utils';
 
 export type Props = {
@@ -18,8 +19,11 @@ const { posts } = Astro.props;
         {posts.map((post) => (
           <li>
             <a href={`/blog/${post.id}`} class="group block">
-              <span class="font-heading text-foreground group-hover:text-link text-sm transition-colors">
-                {post.data.title}
+              <span
+                class="font-heading text-foreground group-hover:text-link text-sm transition-colors"
+                data-budoux
+              >
+                <Budoux text={post.data.title} />
               </span>
               <span class="font-code text-muted-foreground ml-2 text-xs">
                 {formatDateEn(post.data.published)}
