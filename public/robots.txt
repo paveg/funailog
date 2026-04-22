@@ -1,3 +1,5 @@
+# No AI training crawl (Google-Extended covers Gemini/Vertex training).
+# llms.txt below is for LLMs citing/referencing pages at query time, not training.
 User-Agent: Google-Extended
 Disallow: /
 
@@ -6,3 +8,4 @@ Allow: /
 
 Host: https://www.funailog.com
 Sitemap: https://www.funailog.com/sitemap-index.xml
+# LLM guide: https://www.funailog.com/llms.txt
