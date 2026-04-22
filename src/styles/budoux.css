@@ -30,3 +30,8 @@ html:lang(ja) {
   word-break: keep-all;
   overflow-wrap: anywhere;
 }
+
+/* External links get a dashed underline to distinguish from internal links */
+a[target='_blank'] {
+  text-decoration-style: dashed;
+}
