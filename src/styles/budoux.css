@@ -17,14 +17,6 @@ html:lang(ja) {
   word-break: auto-phrase;
 }
 
-/* Links, product names, and inline emphasis stay atomic with fallback breaking */
-:lang(ja) a,
-:lang(ja) em,
-:lang(ja) strong {
-  word-break: normal;
-  overflow-wrap: anywhere;
-}
-
 /* BudouX: keep Japanese phrases together at <wbr> boundaries */
 [data-budoux] {
   word-break: keep-all;
