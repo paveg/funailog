@@ -131,6 +131,8 @@
     "prettier-plugin-tailwindcss": "^0.7.2",
     "reading-time": "^1.5.0",
     "rehype-autolink-headings": "^7.1.0",
+    "rehype-parse": "9.0.1",
+    "rehype-stringify": "10.0.1",
     "satori": "^0.18.3",
     "sharp": "^0.34.5",
     "tsx": "^4.21.0",
@@ -138,6 +140,7 @@
     "typescript-eslint": "^8.50.1",
     "unified": "^11.0.5",
     "unist-util-visit": "^5.0.0",
+    "unist-util-visit-parents": "6.0.2",
     "vitest": "4.1.2",
     "yaml": "^2.8.2"
   }

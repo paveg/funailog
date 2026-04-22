@@ -1,22 +1,27 @@
 @reference "./tokens.css";
 
-/* WCAG 2.1 focus indicators */
-:focus-visible {
-  @apply ring-ring ring-2 ring-offset-2 outline-none;
-  ring-offset-color: var(--color-background);
-}
-
 body {
   article {
     /* prose with responsive font size */
     @apply prose dark:prose-invert max-w-none flex-grow break-words;
     @apply text-sm md:text-base;
 
-    /* Japanese-optimized line height */
-    line-height: 1.8;
+    /* Japanese-optimized line height — slightly tighter on mobile
+       so a higher character count fits in view without feeling cramped */
+    line-height: 1.7;
+
+    @media (min-width: 48rem) {
+      line-height: 1.8;
+    }
+
+    /* Let JA punctuation hang at line end for cleaner right edges
+       (Safari only) and opt into browser's default JA spacing trim */
+    hanging-punctuation: allow-end;
+    text-spacing-trim: normal;
 
     & p {
       @apply my-5;
+      text-wrap: pretty;
     }
 
     & ul {
@@ -28,6 +33,7 @@ body {
     & li {
       @apply list-outside;
       @apply my-1.5;
+      text-wrap: pretty;
     }
 
     /* Heading hierarchy */
@@ -37,7 +43,7 @@ body {
     & h4,
     & h5,
     & h6 {
-      text-wrap: wrap;
+      text-wrap: balance;
       word-break: normal;
     }
     & h1 {
@@ -93,10 +99,15 @@ body {
       }
     }
     & a {
-      @apply text-link underline decoration-transparent underline-offset-3 transition-[color,text-decoration-color];
+      @apply text-link underline underline-offset-3 transition-[color,text-decoration-color];
+      /* Fallback for browsers without color-mix() (Safari < 16.2) */
+      text-decoration-color: var(--color-link);
+      /* Modern browsers: 40% opacity via color-mix */
+      text-decoration-color: color-mix(in oklab, currentColor 40%, transparent);
       transition-duration: var(--duration-fast);
       &:hover {
-        @apply text-link-hover decoration-current;
+        @apply text-link-hover;
+        text-decoration-color: currentColor;
       }
     }
     & code {

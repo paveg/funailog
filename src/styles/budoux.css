@@ -1,5 +1,27 @@
-/* BudouX: keep Japanese phrases together at <wbr> boundaries */
+@reference "./tokens.css";
+
+/* WCAG 2.4.7 Focus Visible — global because Layout loads this file */
+:focus-visible {
+  @apply ring-ring ring-offset-background ring-2 ring-offset-2 outline-none;
+}
+
+/* Japanese mixed-script foundation (jp-ui-contracts inspired) */
+html:lang(ja) {
+  text-autospace: normal;
+}
+
+:lang(ja) h1,
+:lang(ja) h2,
+:lang(ja) h3,
+:lang(ja) h4 {
+  word-break: auto-phrase;
+}
+
+/* BudouX-segmented text: prefer browser-native phrase wrapping
+   on Chrome 119+, with <wbr> as a break hint. Falls back to
+   word-break: normal in Safari — pretty line-wrap + wbr hints
+   still produce reasonable results. */
 [data-budoux] {
-  word-break: keep-all;
+  word-break: auto-phrase;
   overflow-wrap: anywhere;
 }
