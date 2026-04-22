@@ -6,8 +6,13 @@ body {
     @apply prose dark:prose-invert max-w-none flex-grow break-words;
     @apply text-sm md:text-base;
 
-    /* Japanese-optimized line height */
-    line-height: 1.8;
+    /* Japanese-optimized line height — slightly tighter on mobile
+       so a higher character count fits in view without feeling cramped */
+    line-height: 1.7;
+
+    @media (min-width: 48rem) {
+      line-height: 1.8;
+    }
 
     /* Let JA punctuation hang at line end for cleaner right edges
        (Safari only) and opt into browser's default JA spacing trim */
