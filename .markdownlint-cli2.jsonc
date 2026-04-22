@@ -10,6 +10,7 @@
     "**/.firecrawl/**",
     "NOTES.md",
     "src/content/blog/2026/review-benq-screenbar-halo.mdx",
+    "docs/superpowers/**",
     "**/CHANGELOG.md",
   ],
   "customRules": [],
