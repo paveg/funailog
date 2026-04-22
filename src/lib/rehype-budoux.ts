@@ -12,6 +12,27 @@ interface Options {
 
 const defaultExcludeTagNames = ['pre', 'code', 'a', 'svg'];
 
+// Matches both regular hast elements and MDX JSX elements. MDX preserves
+// author-written JSX (e.g. inline <svg>) as mdxJsxFlowElement /
+// mdxJsxTextElement nodes at the rehype stage, so a raw tagName check misses
+// them. BudouX must skip anything inside <svg>, otherwise it wraps SVG
+// <text> content in <p> and emits invalid SVG that browsers don't render.
+const matchesExcluded = (
+  node: { type: string; tagName?: string; name?: string | null },
+  names: string[],
+): boolean => {
+  if (node.type === 'element' && typeof node.tagName === 'string') {
+    return names.includes(node.tagName);
+  }
+  if (
+    (node.type === 'mdxJsxFlowElement' || node.type === 'mdxJsxTextElement') &&
+    typeof node.name === 'string'
+  ) {
+    return names.includes(node.name);
+  }
+  return false;
+};
+
 let parser: HTMLProcessingParser | null = null;
 
 const rehypeBudoux: Plugin<[Options?], Root> = ({
@@ -28,12 +49,8 @@ const rehypeBudoux: Plugin<[Options?], Root> = ({
         index === -1 ||
         !parent ||
         parent.type !== 'element' ||
-        excludeTagNames.includes((parent as Element).tagName) ||
-        ancestors.some(
-          (a): a is Element =>
-            a.type === 'element' &&
-            excludeTagNames.includes((a as Element).tagName),
-        ) ||
+        matchesExcluded(parent, excludeTagNames) ||
+        ancestors.some((a) => matchesExcluded(a, excludeTagNames)) ||
         node.value.trim().length === 0
       ) {
         return;
