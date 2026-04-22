@@ -31,7 +31,9 @@ html:lang(ja) {
   overflow-wrap: anywhere;
 }
 
-/* External links get a dashed underline to distinguish from internal links */
+/* External links get a dotted underline to distinguish from internal links */
 a[target='_blank'] {
-  text-decoration-style: dashed;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
 }
