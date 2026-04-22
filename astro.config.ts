@@ -12,6 +12,7 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeMermaid from 'rehype-mermaid';
 
 import rehypeBudoux from './src/lib/rehype-budoux';
+import rehypeUnwrapSvgP from './src/lib/rehype-unwrap-svg-p';
 import remarkLink from './src/lib/remark-link';
 import { remarkReadingTime } from './src/lib/remark-reading-time';
 
@@ -93,6 +94,7 @@ export default defineConfig({
           }),
         },
       ],
+      rehypeUnwrapSvgP,
       rehypeBudoux,
     ],
   },
