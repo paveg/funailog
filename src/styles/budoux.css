@@ -17,8 +17,11 @@ html:lang(ja) {
   word-break: auto-phrase;
 }
 
-/* BudouX: keep Japanese phrases together at <wbr> boundaries */
+/* BudouX-segmented text: prefer browser-native phrase wrapping
+   on Chrome 119+, with <wbr> as a break hint. Falls back to
+   word-break: normal in Safari — pretty line-wrap + wbr hints
+   still produce reasonable results. */
 [data-budoux] {
-  word-break: keep-all;
+  word-break: auto-phrase;
   overflow-wrap: anywhere;
 }

@@ -9,6 +9,11 @@ body {
     /* Japanese-optimized line height */
     line-height: 1.8;
 
+    /* Let JA punctuation hang at line end for cleaner right edges
+       (Safari only) and opt into browser's default JA spacing trim */
+    hanging-punctuation: allow-end;
+    text-spacing-trim: normal;
+
     & p {
       @apply my-5;
       text-wrap: pretty;
