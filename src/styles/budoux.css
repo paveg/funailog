@@ -20,8 +20,13 @@ html:lang(ja) {
 /* BudouX-segmented text: prefer browser-native phrase wrapping
    on Chrome 119+, with <wbr> as a break hint. Falls back to
    word-break: normal in Safari — pretty line-wrap + wbr hints
-   still produce reasonable results. */
+   still produce reasonable results.
+
+   text-wrap: pretty reduces orphans and short last lines. Heading-
+   level balance lives in prose.css (article scope) and per-element
+   text-balance utilities (hero tagline, footer descriptions). */
 [data-budoux] {
   word-break: auto-phrase;
   overflow-wrap: anywhere;
+  text-wrap: pretty;
 }
