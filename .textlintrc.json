@@ -1,0 +1,8 @@
+{
+  "plugins": ["mdx"],
+  "rules": {
+    "@textlint-ja/preset-ai-writing": {
+      "no-ai-colon-continuation": false
+    }
+  }
+}
