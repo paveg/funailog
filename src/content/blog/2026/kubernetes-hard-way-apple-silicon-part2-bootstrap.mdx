@@ -1,0 +1,379 @@
+---
+title: 'Apple Silicon Mac で Kubernetes The Hard Way 2026年版 - PKI から Smoke Test まで完走編'
+description: 'シリーズ Part 2。Chapter 4 (PKI で CA + 8 証明書発行) から Chapter 12 (Smoke Test 6 種パス) までを通しで進める。kube-apiserver が無言で死ぬ、port-forward が全部 Forbidden になるなど、進行中に踏んだ 4 個のハマり (G20-G23) も含めて記録する。'
+published: 2026-04-29
+tags:
+  - Kubernetes
+  - Kubernetes The Hard Way
+  - Apple Silicon
+  - PKI
+  - etcd
+  - kube-apiserver
+  - インフラ
+isPublished: true
+category: programming
+emoji: ☸️
+---
+
+## はじめに
+
+[Part 1](/blog/2026/kubernetes-hard-way-apple-silicon-part1-environment) で `lima + socket_vmnet` の 4 VM (jumpbox / server / node-0 / node-1) が立ち上がりました。Part 2 では Hard Way の本編、**PKI から Smoke Test まで** を一気に進めます。
+
+具体的には:
+
+- Chapter 4: CA + 8 つの証明書発行
+- Chapter 5: kubeconfig 5 種
+- Chapter 6: Encryption Config
+- Chapter 7: etcd bootstrap (★ 最初の実コンポーネント起動)
+- Chapter 8: Control plane (apiserver / scheduler / controller-manager)
+- Chapter 9-11: Worker bootstrap + Pod ネットワーク (static route)
+- Chapter 12: Smoke Test 6 種
+
+Chapter 4-6 は公式手順がきれいに書かれていて躓きほぼ無し。一方 Chapter 7-12 は **大物** で、ここから本格的に詰まり始めます (4 個のハマりを発見)。
+
+完走までの所要時間は Chapter 4-6 で 1.5 時間、Chapter 7-12 で 2.5 時間、合計 4 時間。Part 1 の環境構築 4 時間と合わせて、**Hard Way 全体で延べ 8 時間** という計算でした。
+
+## Chapter 4: PKI で CA と 8 証明書を発行
+
+最初に CA を作って、その下に 8 個の証明書を発行します。Hard Way が用意する `ca.conf` には各証明書の Subject や SAN が詰まっていて、**Bash の for ループ 1 発で 8 個まとめて発行**できる設計になっているのが気持ちいいです。
+
+```bash
+# CA 自己署名
+openssl genrsa -out ca.key 4096
+openssl req -x509 -new -sha512 -noenc \
+  -key ca.key -days 3653 -config ca.conf -out ca.crt
+
+# 8 cert を一括発行
+certs=(admin node-0 node-1 kube-proxy kube-scheduler \
+       kube-controller-manager kube-api-server service-accounts)
+for i in ${certs[*]}; do
+  openssl genrsa -out "${i}.key" 4096
+  openssl req -new -key "${i}.key" -sha256 \
+    -config ca.conf -section ${i} -out "${i}.csr"
+  openssl x509 -req -days 3653 -in "${i}.csr" \
+    -copy_extensions copyall -sha256 \
+    -CA ca.crt -CAkey ca.key -CAcreateserial \
+    -out "${i}.crt"
+done
+```
+
+各証明書の `Subject` (`CN` と `O`) が **K8s の RBAC に直結している**のがこの章でいちばん面白いところです:
+
+| 証明書           | Subject                                 | 効果                                                         |
+| ---------------- | --------------------------------------- | ------------------------------------------------------------ |
+| admin            | `CN=admin, O=system:masters`            | built-in `cluster-admin` 権限が紐付く特殊グループ            |
+| node-0 / node-1  | `CN=system:node:<name>, O=system:nodes` | **Node Authorizer** がこの形式を検出して認可                 |
+| kube-proxy       | `O=system:node-proxier`                 | ClusterRole `system:node-proxier` 自動付与                   |
+| service-accounts | (他とは別物)                            | apiserver が **ServiceAccount token (JWT)** に署名する鍵ペア |
+
+最後の `service-accounts` だけ役割がまったく違って、これは TLS 用ではなく ServiceAccount token (JWT) の署名用です。同じ `openssl genrsa` で作っているのに用途は別物、というのが少しトリッキーです（僕は最初混乱しました）。
+
+配布のところで一つ細かい工夫があって、`node-0.crt` を `kubelet.crt` に**リネームして配布**します:
+
+```bash
+for host in node-0 node-1; do
+  ssh root@${host} mkdir -p /var/lib/kubelet/
+  scp ca.crt root@${host}:/var/lib/kubelet/
+  scp ${host}.crt root@${host}:/var/lib/kubelet/kubelet.crt
+  scp ${host}.key root@${host}:/var/lib/kubelet/kubelet.key
+done
+```
+
+kubelet の systemd unit は `--tls-cert-file=/var/lib/kubelet/kubelet.crt` を期待しているので、ホスト名を含むファイル名のままだとノードごとに別 unit が必要になってしまう。リネームのおかげで全 worker で同じ unit を使い回せる、という地味に賢い設計です。
+
+## Chapter 5: kubeconfig を 5 つ作る
+
+各コンポーネント (kubelet × 2 / kube-proxy / kube-controller-manager / kube-scheduler / admin) が apiserver にアクセスするための kubeconfig を生成します。
+
+```bash
+for host in node-0 node-1; do
+  kubectl config set-cluster kubernetes-the-hard-way \
+    --certificate-authority=ca.crt --embed-certs=true \
+    --server=https://server.kubernetes.local:6443 \
+    --kubeconfig=${host}.kubeconfig
+  kubectl config set-credentials system:node:${host} \
+    --client-certificate=${host}.crt --client-key=${host}.key \
+    --embed-certs=true \
+    --kubeconfig=${host}.kubeconfig
+  kubectl config set-context default \
+    --cluster=kubernetes-the-hard-way \
+    --user=system:node:${host} \
+    --kubeconfig=${host}.kubeconfig
+  kubectl config use-context default --kubeconfig=${host}.kubeconfig
+done
+```
+
+ここで気になったのが **admin だけ `127.0.0.1:6443` を server に指定する**設計です。他の kubeconfig は `https://server.kubernetes.local:6443` を向いていますが、admin だけ `https://127.0.0.1:6443`。
+
+これは「server VM 上で localhost 接続前提」という意味で、`admin.kubeconfig` を jumpbox にコピーしても**動きません** (jumpbox の 127.0.0.1 に繋ぎにいくため)。Chapter 10 で remote 用の admin kubeconfig を別途作る伏線になっています。
+
+もう一つ `--embed-certs=true` の指定。これがないと kubeconfig 内に `certificate-authority: /root/.../ca.crt` のようにファイルパス参照になり、配布先で同じパスに ca.crt が無いと壊れます。`true` にすれば base64 化されて **YAML 1 ファイル完結**で持ち運べる。地味だけど大事。
+
+## Chapter 6: Encryption Config と隠れていた G20
+
+Chapter 6 はあっという間です:
+
+```bash
+export ENCRYPTION_KEY=$(head -c 32 /dev/urandom | base64)
+envsubst < configs/encryption-config.yaml > encryption-config.yaml
+scp encryption-config.yaml root@server:~/
+```
+
+中身は `aescbc` (AES-CBC 暗号化) → `identity` (平文) の順に並んだ provider list:
+
+```yaml
+kind: EncryptionConfiguration
+apiVersion: apiserver.config.k8s.io/v1
+resources:
+  - resources:
+      - secrets
+    providers:
+      - aescbc:
+          keys:
+            - name: key1
+              secret: <base64 32 bytes>
+      - identity: {}
+```
+
+**provider の順序が key rotation メカニズム**そのものです:
+
+- 書き込み: 先頭 (`aescbc`) で暗号化
+- 読み込み: 順に試行 → 最後の `identity` (平文) にフォールバック
+- 順序を逆にすると**復号不能化 (データロス)** するので絶対やってはいけない
+
+ここまで詰まり所なく流れてきたな、と思った後、server VM の `/etc/hosts` をなんとなく確認したら:
+
+```text
+127.0.1.1     server.kubernetes.local server   ← Debian の hostnamectl 自動更新
+192.168.105.3 server.kubernetes.local server  ← Hard Way hosts ファイルが append
+```
+
+`server.kubernetes.local` が **2 つの IP に紐付いている** 状態。`getent hosts` は 127.0.1.1 を先に返すので、server 上で `server.kubernetes.local` を引くと 127.0.1.1 が返ってきてしまいます (これを G20 と命名)。
+
+TLS 検証は名前ベースなので動いてはいるんですが、server 上の `kube-controller-manager` が `127.0.1.1` 経由で apiserver に繋ぐ、という隠れ負債が残ります。
+
+修正は単純で、127.0.1.1 から FQDN を外しておく:
+
+```bash
+ssh root@server "sed -i 's|^127.0.1.1.*|127.0.1.1\tserver|' /etc/hosts"
+```
+
+これで「FQDN は 192.168.105.3 だけが返す」状態になりました。動いていても**動いている理由が想定通りでない**のは気持ち悪いので、こういう違和感は早めに潰しておきたいところです。
+
+## Chapter 7: etcd Bootstrap で SSH host key が変わっていた (G21)
+
+セッションを 2 日空けて Chapter 7 に入ろうとしたら、scp の段階で死にました:
+
+```text
+WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
+The fingerprint for the ED25519 key sent by the remote host is SHA256:dsBktxt/...
+Offending ECDSA key in /root/.ssh/known_hosts:3
+Host key verification failed.
+```
+
+lima の VMTYPE が `qemu` から `vz` に切り替わった (or 長期放置で再生成された) のが原因と推定。`/root/.ssh/known_hosts` を全 VM 分削除 → `ssh-keyscan -H` で再登録して解決:
+
+```bash
+for HOST in server node-0 node-1; do
+  IP=$(grep $HOST machines.txt | cut -d ' ' -f 1)
+  FQDN=$(grep $HOST machines.txt | cut -d ' ' -f 2)
+  ssh-keygen -R $IP 2>/dev/null
+  ssh-keygen -R $FQDN 2>/dev/null
+  ssh-keygen -R $HOST 2>/dev/null
+  ssh-keyscan -H $IP $FQDN $HOST 2>/dev/null >> /root/.ssh/known_hosts
+done
+```
+
+ここを抜けると etcd 起動は素直です:
+
+```bash
+scp downloads/controller/etcd downloads/client/etcdctl units/etcd.service root@server:~/
+ssh root@server bash <<'EOF'
+mkdir -p /etc/etcd /var/lib/etcd
+chmod 700 /var/lib/etcd
+cp ca.crt kube-api-server.key kube-api-server.crt /etc/etcd/
+mv etcd etcdctl /usr/local/bin/
+mv etcd.service /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable --now etcd
+EOF
+
+ssh root@server etcdctl member list
+# 6702b0a34e2cfd39, started, controller, http://127.0.0.1:2380, http://127.0.0.1:2379, false
+```
+
+これで K8s の最下層 = **状態の永続化レイヤ** が動き始めました。
+
+## Chapter 8: kube-apiserver が無言で死ぬ (G22)
+
+Chapter 8 は control plane の 3 コンポーネント (apiserver / scheduler / controller-manager) を server 上で起動させる章。素直に systemd を叩いたんですが、`kube-apiserver` だけが `activating (auto-restart)` ループに入って起動しません (無言で)。
+
+`journalctl -u kube-apiserver -f` を見ると、起動時の **flag dump (200 行超)** で画面が埋まり、本当のエラーが流れていく:
+
+```text
+--advertise-address=192.168.105.3
+--allow-privileged=true
+--apiserver-count=3
+... (flag が延々と続く) ...
+exit code: 1
+```
+
+これは初見で結構きつい。`grep -iE "error|failed|cannot|no such"` でエラー本体を抽出すると:
+
+```text
+no such file or directory: /var/lib/kubernetes/kube-api-server.crt
+```
+
+要するに `mv ca.crt ca.key kube-api-server.{crt,key} service-accounts.{crt,key} encryption-config.yaml /var/lib/kubernetes/` を**やり忘れていた** だけでした。
+
+```bash
+ssh root@server mv ca.crt ca.key \
+  kube-api-server.crt kube-api-server.key \
+  service-accounts.crt service-accounts.key \
+  encryption-config.yaml \
+  /var/lib/kubernetes/
+
+ssh root@server systemctl restart kube-apiserver
+```
+
+本質的なエラーが 200 行の flag dump に埋もれて見えなくなる、というのは K8s の systemd ベースのコンポーネントで普遍的に起きる罠で、**`grep -iE "error|failed|cannot|no such"` を癖にする** だけで突破速度が一気に上がります。CKA の Troubleshooting (配点 30%) でも同じパターンが頻出します。
+
+apiserver が立ち上がった瞬間のログには、Kubernetes の core を支える小さな魔法が見えます:
+
+```text
+allocated clusterIPs service="default/kubernetes" clusterIPs={"IPv4":"10.0.0.1"}
+Resetting endpoints for master service "kubernetes" to [192.168.105.3]
+```
+
+これは「**`default/kubernetes` という Service を apiserver 自身が自動生成**」している瞬間です。Pod から `kubernetes.default.svc.cluster.local` で apiserver に繋ぐあの仕組みが、ここで初めて記録されています。なお Service IP `10.0.0.1` は、あとで Part 3 で **上流バグ G25** を踏み抜くトリガーになります。
+
+## Chapter 9-11: Worker は tmux sync で並列、Pod ネットワークは static route
+
+worker のセットアップは node-0 と node-1 にまったく同じコマンドを打つので、**tmux の `synchronize-panes`** で並列化すると気持ちいいです:
+
+```bash
+tmux new-session -s hardway \; \
+  send-keys 'ssh root@node-0' C-m \; \
+  split-window -h \; \
+  send-keys 'ssh root@node-1' C-m \; \
+  setw synchronize-panes on
+```
+
+両ペインで同時に `apt-get install ...`、`mv ... /usr/local/bin/`、`systemctl enable --now containerd kubelet kube-proxy` を流す。30 秒くらいで両ノード Ready。
+
+```bash
+kubectl get nodes
+# NAME     STATUS   ROLES    AGE   VERSION
+# node-0   Ready    <none>   46s   v1.32.3
+# node-1   Ready    <none>   51s   v1.32.3
+```
+
+ここで Pod 同士が通信するための **static route** を Chapter 11 で各ノードに足します:
+
+```bash
+ssh root@server <<EOF
+ip route add ${NODE_0_SUBNET} via ${NODE_0_IP}
+ip route add ${NODE_1_SUBNET} via ${NODE_1_IP}
+EOF
+ssh root@node-0 ip route add ${NODE_1_SUBNET} via ${NODE_1_IP}
+ssh root@node-1 ip route add ${NODE_0_SUBNET} via ${NODE_0_IP}
+```
+
+Hard Way は CNI plugin (Cilium / Flannel / Calico) を入れない代わりに **手動で route を書く**設計です。再起動で消えるので本番なら systemd-networkd で永続化が必要ですが、学習用にはこの方が「Pod 間通信の正体は ip route」と素直に見えて分かりやすい。Part 3 で `tcpdump` で実際にパケットを追いかける予定です。
+
+## Chapter 12: Smoke Test と port-forward Forbidden 事件 (G23)
+
+最後の Chapter 12 は 6 種類の Smoke Test。1 つずつ通すんですが、Test 3 (port-forward) で詰まりました:
+
+```bash
+kubectl port-forward $POD_NAME 8080:80
+# error: error upgrading connection: unable to upgrade connection:
+#   Forbidden (user=kubernetes, verb=create, resource=nodes, subresource(s)=[proxy])
+```
+
+`Forbidden`。RBAC が効いている。原因は Chapter 8 の最後で `kube-apiserver-to-kubelet.yaml` を **apply し忘れていた** こと。これは apiserver がユーザー名 `kubernetes` で kubelet に subrequest (port-forward / logs / exec) するための ClusterRole + ClusterRoleBinding です。
+
+```bash
+ssh root@server cat kube-apiserver-to-kubelet.yaml | kubectl apply -f -
+# clusterrole.rbac.authorization.k8s.io/system:kube-apiserver-to-kubelet created
+# clusterrolebinding.rbac.authorization.k8s.io/system:kube-apiserver created
+```
+
+apply 後、port-forward / logs / exec すべて成功するように:
+
+```bash
+kubectl port-forward $POD_NAME 8080:80 &
+curl -I http://127.0.0.1:8080
+# HTTP/1.1 200 OK, Server: nginx/1.29.8
+
+kubectl exec -it $POD_NAME -- nginx -v
+# nginx version: nginx/1.29.8
+```
+
+`kubeadm` で立てたクラスタなら自動でこの RBAC が入るので意識せずに済みますが、Hard Way は**意図的に手動 apply を要求**してきます。`kubeadm` の便利さの正体がここに隠れていることが分かる、いい題材です。
+
+最後の Test 6 (NodePort Service) では:
+
+```bash
+kubectl expose deployment nginx --port 80 --type NodePort
+NODE_PORT=$(kubectl get svc nginx -o jsonpath='{range .spec.ports[0]}{.nodePort}')
+NODE_NAME=$(kubectl get pods -l app=nginx -o jsonpath='{.items[0].spec.nodeName}')
+curl -I http://${NODE_NAME}:${NODE_PORT}
+# HTTP/1.1 200 OK
+```
+
+Chapter 9 で仕込んだ `br_netfilter` + `bridge-nf-call-iptables=1` がここで初めて目に見える形で結実します (kube-proxy の iptables ルールが NodePort を Pod IP に DNAT する経路で必須)。
+
+これで **Smoke Test 6 種すべてパス** ✅、Hard Way Chapter 1-12 完走です。
+
+## まとめと次回予告
+
+Chapter 4-12 の所要時間:
+
+| 章         | 内容                           | 時間          |
+| ---------- | ------------------------------ | ------------- |
+| Chapter 4  | PKI 8 cert 発行 + 配布         | 約 30 分      |
+| Chapter 5  | kubeconfig 5 種                | 約 25 分      |
+| Chapter 6  | Encryption Config + G20 修正   | 約 20 分      |
+| Chapter 7  | etcd bootstrap + G21 修正      | 約 30 分      |
+| Chapter 8  | Control plane + G22 ハマり込み | 約 45 分      |
+| Chapter 9  | Workers (tmux sync)            | 約 25 分      |
+| Chapter 10 | Remote kubectl                 | 約 5 分       |
+| Chapter 11 | Pod routes                     | 約 10 分      |
+| Chapter 12 | Smoke Test + G23 修正          | 約 30 分      |
+| **合計**   |                                | **約 4 時間** |
+
+Part 1 の環境構築 4 時間と合わせて **延べ 8 時間で Hard Way 完走**。発見したハマりは G20-G23 の 4 件 (FQDN 二重解決 / SSH host key / apiserver 無言失敗 / RBAC 漏れ) で、すべて **lima + Apple Silicon + Hard Way 2024** 固有のものでした。
+
+学びとして大きかったのは:
+
+- **kubeadm が何を隠しているか** を素手で確認できたこと: PKI 8 cert / kubeconfig 5 種 / encryption / RBAC bootstrap / control plane 起動順 / Pod routing。それぞれが kubeadm では裏で自動化されている工程
+- systemd unit のエラー切り分けは **flag dump を `grep` で剥がす** のが基本動作
+- `kube-apiserver-to-kubelet.yaml` の存在意義 (port-forward / logs / exec が動く理由)
+
+次の [Part 3](/blog/2026/kubernetes-hard-way-apple-silicon-part3-tier1-and-upstream-bug) では完走したクラスタを **学習材料として深掘り**します。Tier 1 B (etcd backup/restore で `etcdctl` から `etcdutl` への分離 G24)、Tier 1 A (CoreDNS 手動 deploy)、そして本シリーズの一番の見どころである **Hard Way 2024 公式の上流バグ G25** (cert SAN と Service CIDR 不整合) の分析を扱います。
+
+CoreDNS を deploy してみたら CoreDNS Pod が **`READY 0/1`** で停滞する、その原因が公式テンプレート 2 ファイル間の値の不整合だった、という発見の話です。
+
+それでは [Part 3](/blog/2026/kubernetes-hard-way-apple-silicon-part3-tier1-and-upstream-bug) でまたお会いしましょう。
+
+---
+
+## シリーズ記事
+
+- [Part 1: 環境構築編](/blog/2026/kubernetes-hard-way-apple-silicon-part1-environment)
+- Part 2（本記事）: PKI から Smoke Test まで完走編
+- [Part 3: Tier 1 深堀り編 + 公式の隠れたバグ G25](/blog/2026/kubernetes-hard-way-apple-silicon-part3-tier1-and-upstream-bug)
+
+## 関連リンク
+
+- [Kubernetes The Hard Way (公式リポジトリ)](https://github.com/kelseyhightower/kubernetes-the-hard-way)
+  - [Chapter 04: Provisioning a CA and Generating TLS Certificates](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/04-certificate-authority.md)
+  - [Chapter 05: Generating Kubernetes Configuration Files for Authentication](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/05-kubernetes-configuration-files.md)
+  - [Chapter 06: Generating the Data Encryption Config and Key](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/06-data-encryption-keys.md)
+  - [Chapter 07: Bootstrapping the etcd Cluster](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/07-bootstrapping-etcd.md)
+  - [Chapter 08: Bootstrapping the Kubernetes Control Plane](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/08-bootstrapping-kubernetes-controllers.md)
+  - [Chapter 09: Bootstrapping the Kubernetes Worker Nodes](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/09-bootstrapping-kubernetes-workers.md)
+  - [Chapter 10: Configuring kubectl for Remote Access](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/10-configuring-kubectl.md)
+  - [Chapter 11: Provisioning Pod Network Routes](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/11-pod-network-routes.md)
+  - [Chapter 12: Smoke Test](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/12-smoke-test.md)

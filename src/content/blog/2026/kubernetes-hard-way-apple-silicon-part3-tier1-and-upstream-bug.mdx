@@ -1,0 +1,326 @@
+---
+title: 'Apple Silicon Mac で Kubernetes The Hard Way 2026年版 - Tier 1 深堀り編 + 公式の隠れたバグ G25'
+description: 'シリーズ Part 3。完走したクラスタで etcd backup/restore (Tier 1 B) と CoreDNS 手動 deploy (Tier 1 A) を行う。CoreDNS が READY 0/1 で停滞した原因は Hard Way 2024 公式テンプレート 2 ファイル間の Service CIDR 不整合 (G25) という、上流バグだった。lima 関係なく踏む。'
+published: 2026-04-30
+tags:
+  - Kubernetes
+  - Kubernetes The Hard Way
+  - Apple Silicon
+  - PKI
+  - etcd
+  - CoreDNS
+  - インフラ
+isPublished: true
+category: programming
+emoji: ☸️
+---
+
+## はじめに
+
+[Part 1](/blog/2026/kubernetes-hard-way-apple-silicon-part1-environment) で環境構築、[Part 2](/blog/2026/kubernetes-hard-way-apple-silicon-part2-bootstrap) で Hard Way Chapter 1-12 完走まで来ました。Part 3 は完走後の**深堀り** です。テーマは 3 つ:
+
+- Tier 1 B: etcd backup/restore (動いてる K8s クラスタの etcd を入れ替えても state が生き残るか)
+- Tier 1 A: CoreDNS 手動 deploy (Hard Way には CoreDNS が無いので、kubeadm が裏でやっている工程を素手で経験する)
+- G25: Hard Way 2024 の **上流バグ** (cert SAN と Service CIDR の不整合)
+
+特に G25 は **lima や Apple Silicon に関係なく**、公式 Hard Way 2024 を素直になぞった全員が踏むはずのバグです。CoreDNS deploy で初めて顕在化するので、Chapter 12 完走で満足して次に進むと気付かないという、いやらしい性質を持っています。
+
+## 完走後の観察 — kubeadm が隠しているもの
+
+Tier 1 に入る前に少しだけクラスタを観察します。CKA の Troubleshooting 視点で「**普段 kubeadm が裏でやっていることが、Hard Way だとどう見えるか**」を確認するパートです。
+
+最初に `default/kubernetes` Service の正体:
+
+```bash
+kubectl describe svc kubernetes
+# Selector:                 <none>
+# Endpoints:                192.168.105.3:6443
+```
+
+普通の Service は label selector で Pod を見つけますが、`default/kubernetes` だけは **selector を持たない特殊 Service** で、apiserver 自身が自分の IP:port を Endpoints に**手動書き込み**します。endpoints-controller が触らないので apiserver が独占管理する設計です (これが後で G25 の伏線になります)。
+
+次に CoreDNS 不在の operational signature:
+
+```bash
+kubectl get events --sort-by='.lastTimestamp' -A | tail -5
+# Warning  MissingClusterDNS  pod/nginx-...  kubelet does not have ClusterDNS IP configured
+#                                            and cannot create Pod using "ClusterFirst" policy.
+#                                            Falling back to "Default" policy.
+```
+
+kubelet が `clusterDNS` 未設定なので、Pod 作成時に毎回 warning を出して `Default` policy にフォールバック → Pod の `resolv.conf` は host (lima) の DNS を継承するという動作になっています。これを Tier 1 A で潰す予定。
+
+最後に RBAC の確認:
+
+```bash
+kubectl auth can-i create pods --as=system:node:node-0
+# no
+```
+
+kubelet (`system:node:<name>`) は **任意の Pod 作成権限を持たない**。これが「kubelet が compromise されても他ノードに横展開できない」セキュリティモデルで、`Node Authorizer + NodeRestriction` admission plugin の効果です。
+
+こうした「クラスタが動いた後に何が見えるか」を素手で観察するだけで、CKA の Troubleshooting で問われるレイヤがどこにあるか分かるようになります。
+
+## Tier 1 B: etcd backup / restore で G24 を踏む
+
+CKA の Troubleshooting 30% に直結する重要訓練。**動いてる K8s クラスタの etcd を入れ替えて state が生き残るか確認する**シナリオです。
+
+### Step 1: snapshot save
+
+```bash
+ssh root@server etcdctl snapshot save /tmp/etcd-backup.db
+# 881 kB, took 20.3ms
+```
+
+snapshot は **20ms で 881KB**。動いている nginx Deployment + Secret + Node 状態がぜんぶこの 1 ファイルに入っています。
+
+### Step 2: G24 — `etcdctl snapshot restore` が消えていた
+
+```bash
+ssh root@server etcdctl snapshot restore /tmp/etcd-backup.db --data-dir=/var/lib/etcd-restored
+# Error: unknown flag: --data-dir
+```
+
+公式手順そのまま打ってるはずなのに `unknown flag`。調べると **etcd 3.6 で `snapshot restore` が `etcdctl` から `etcdutl` に分離**されていました (Hard Way 2024 では etcd 3.6.0-rc.3 が指定される)。
+
+設計判断としては「restore は **offline 操作 (etcd プロセス停止前提)** なので、稼働中の cluster client `etcdctl` とは責務が違う」という分離。理屈は分かるけど初見では刺さります。
+
+### Step 3: etcdutl 入手 + restore
+
+```bash
+cd /tmp
+ETCD_VERSION=v3.6.0-rc.3
+curl -LO https://github.com/etcd-io/etcd/releases/download/${ETCD_VERSION}/etcd-${ETCD_VERSION}-linux-arm64.tar.gz
+tar -xzf etcd-${ETCD_VERSION}-linux-arm64.tar.gz
+cp etcd-${ETCD_VERSION}-linux-arm64/etcdutl /usr/local/bin/
+
+etcdutl snapshot restore /tmp/etcd-backup.db --data-dir=/var/lib/etcd-restored
+```
+
+ログを読むと面白い:
+
+```text
+"cluster-id": "cdf818194e3a8c32"      ← 元の cluster identity 保持
+"local-member-id": "0"                  ← 新メンバーは ID 0 (フレッシュ)
+"added-peer-id": "8e9e05c52164694d"     ← snapshot から再構成された旧 member
+```
+
+cluster ID は保持しつつ、member ID は新規発行される設計。この挙動は Part 2 で Chapter 7 完了直後の `etcdctl member list` の出力と見比べるとよく分かります。
+
+### Step 4: etcd 入れ替え (本番想定の手順)
+
+```bash
+systemctl stop etcd                                  # 1. etcd 停止 (apiserver は connection refused を出すが死なない)
+mv /var/lib/etcd /var/lib/etcd.broken                # 2. 旧 data-dir 退避 (失敗時の安全網)
+mv /var/lib/etcd-restored /var/lib/etcd              # 3. restored を本番位置に
+chmod 700 /var/lib/etcd
+systemctl start etcd                                 # 4. etcd 起動
+```
+
+Step 2 の「**旧 data-dir を消さずに退避する**」のが本番の鉄則。restore に失敗したら戻せるようにするためです。
+
+### Step 5: K8s state 検証 (jumpbox から)
+
+```bash
+kubectl get pods
+# nginx-54c98b4f84-p42pl   1/1   Running   0   33m   ← AGE 完全保持
+
+kubectl get nodes
+# node-0   Ready   <none>   47m   v1.32.3
+# node-1   Ready   <none>   47m   v1.32.3
+```
+
+etcd を入れ替えたのに **AGE が連続している** のがポイント。`creationTimestamp` が etcd に永続化されているので、snapshot から復元すれば **元の状態にそのまま戻る**。
+
+得た学びは大きく 3 つ:
+
+- **decoupled architecture**。control plane と workload plane が分離されているので、**etcd 停止 ≈ apiserver 機能停止**だが**Pod は走り続ける**。kubelet と containerd は etcd を直接触らない
+- **K8s state = etcd の中身**。動いている Pod は etcd の中身ではないので、kubelet が container 状態を再 watch するだけで再構成される
+- **CKA 試験対策**として、「snapshot save → 故障シミュレーション → restore で復旧」を 5 分以内で実行できる練習は試験本番で効く (出題頻度高)
+
+## Tier 1 A: CoreDNS を手動 deploy する
+
+「Hard Way には CoreDNS が無い」を埋めて完成形にする作業。kubeadm が裏でやっている DNS deploy 工程を素手で経験できます。
+
+### Step 0: 現状確認
+
+```bash
+ssh root@server grep service-cluster-ip-range /etc/systemd/system/kube-apiserver.service
+# (空) → flag 未指定 → apiserver default の 10.0.0.0/24
+
+kubectl get svc -A
+# default/kubernetes 10.0.0.1, default/nginx 10.0.0.224  → Service CIDR 10.0.0.0/24 確定
+```
+
+apiserver の `--service-cluster-ip-range` は **未指定** で default の `10.0.0.0/24` が採用されています。これが後で G25 を踏み抜く決定打になるので、頭の片隅に置いておいてください。
+
+### Step 1-2: CoreDNS manifest 取得 + apply
+
+CoreDNS 公式 deploy.sh で manifest 生成:
+
+```bash
+mkdir -p ~/coredns && cd ~/coredns
+curl -LO https://raw.githubusercontent.com/coredns/deployment/master/kubernetes/coredns.yaml.sed
+curl -LO https://raw.githubusercontent.com/coredns/deployment/master/kubernetes/deploy.sh
+chmod +x deploy.sh
+apt-get install -y jq
+./deploy.sh -i 10.0.0.10 -d cluster.local > coredns.yaml
+kubectl apply -f coredns.yaml
+```
+
+Service IP は 10.0.0.10 (Service CIDR 10.0.0.0/24 内の慣例値)、Cluster Domain は `cluster.local`。apply は成功します。
+
+### Step 3: G25 発覚 — CoreDNS が READY 0/1 で停滞
+
+ところが Pod が `Running` には行くものの、**`READY 0/1`** で固まる。logs を見ると:
+
+```text
+[WARNING] plugin/kubernetes: Kubernetes API connection failure:
+  Get "https://10.0.0.1:443/version":
+  x509: certificate is valid for 127.0.0.1, 10.32.0.1, not 10.0.0.1
+[INFO] plugin/ready: Still waiting on: "kubernetes"
+```
+
+CoreDNS は in-cluster Pod として動いているので、apiserver には **`default/kubernetes` Service IP `10.0.0.1`** 経由で繋ぎにいきます。ところが apiserver の TLS 証明書は **`10.32.0.1`** が SAN に入っていて、**`10.0.0.1` は入っていない**。だから x509 検証で蹴られる。
+
+これが本シリーズの一番の見どころ、**Hard Way 2024 の上流バグ G25** です。
+
+## G25 の正体: テンプレート 2 ファイル間の値の不整合
+
+原因を辿ると、Hard Way 2024 のテンプレート 2 ファイルで **Service CIDR の前提値が食い違っている**:
+
+| ファイル                                   | 値                                            | 出所                                                   |
+| ------------------------------------------ | --------------------------------------------- | ------------------------------------------------------ |
+| `ca.conf` の `[kube-api-server_alt_names]` | `IP.1 = 10.32.0.1`                            | 旧 Hard Way の Service CIDR `10.32.0.0/24` の最初の IP |
+| `units/kube-apiserver.service`             | `--service-cluster-ip-range` フラグ**未指定** | apiserver default の `10.0.0.0/24` を採用              |
+
+結果として:
+
+- apiserver は `10.0.0.0/24` を Service CIDR として運用する
+- `default/kubernetes` Service の ClusterIP は **`10.0.0.1`** (apiserver が起動時に Service CIDR の最初の IP を自動取得)
+- `kube-api-server.crt` の SAN は **`10.32.0.1`** だけで、`10.0.0.1` を含まない
+- in-cluster Pod が Service IP `10.0.0.1` 経由で apiserver に TLS 接続 → cert 検証失敗
+
+なぜ Chapter 12 完走まで顕在化しなかったのか、というと、**Pod から apiserver に話しかけたクライアントがいなかった**からです。これまでの接続クライアントは:
+
+- DNS 名 `server.kubernetes.local` (cert SAN にあり OK)
+- `127.0.0.1` (admin kubeconfig、cert SAN にあり OK)
+- lima IP `192.168.105.3` (実は cert に無いが誰も使ってないので問題化せず)
+
+の 3 系統で、どれも cert に含まれる名前 / IP でしか apiserver に到達していなかった。**初の被害者が in-cluster Pod (CoreDNS) になった**わけです。
+
+### 解決: cert を再発行 (key 維持、SAN に 10.0.0.1 追加)
+
+3 つの選択肢を比較した結果、cert 再発行を採用しました:
+
+| 案                                                    | 概要                                             | 評価                                                                                        |
+| ----------------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| **A. cert 再発行 (採用)**                             | SAN に `10.0.0.1` を追加して再発行               | 10 分で完了。本番でもよくやる正攻法                                                         |
+| B. apiserver の Service CIDR を `10.32.0.0/24` に変更 | `--service-cluster-ip-range=10.32.0.0/24` を追加 | 既存 Service (10.0.0.x) と etcd 内の `default/kubernetes` Service IP が衝突。リカバリ作業大 |
+| C. CoreDNS が insecure TLS で apiserver に繋ぐ        | `--insecureSkipTLSVerify` 系の hack              | セキュリティホール、本番運用不可                                                            |
+
+案 A の手順:
+
+```bash
+# 1. ca.conf に IP.2 = 10.0.0.1 を追加
+sed -i '/^IP\.1[[:space:]]*=[[:space:]]*10\.32\.0\.1/a IP.2  = 10.0.0.1' ca.conf
+
+# 2. CSR + cert 再発行 (key は維持)
+openssl req -new -key kube-api-server.key -sha256 \
+  -config ca.conf -section kube-api-server -out kube-api-server.csr
+openssl x509 -req -days 3653 -in kube-api-server.csr \
+  -copy_extensions copyall -sha256 \
+  -CA ca.crt -CAkey ca.key -CAcreateserial \
+  -out kube-api-server.crt
+
+# 3. SAN 検証
+openssl x509 -in kube-api-server.crt -text -noout | grep -E "IP Address:"
+# IP Address:127.0.0.1, IP Address:10.32.0.1, IP Address:10.0.0.1, ...
+
+# 4. 配布 + 反映
+scp kube-api-server.crt root@server:/var/lib/kubernetes/
+ssh root@server systemctl restart kube-apiserver
+kubectl rollout restart deployment coredns -n kube-system
+```
+
+ポイントは **key を維持して cert だけ再発行する** こと。これは本番でもよくやる「**証明書の SAN を後から拡張する**」操作で、同じ手順で certificate expiration の延長もできます。`openssl req -new -key <既存の key>` の組み合わせを覚えておくと PKI rotation 全般で効きます。
+
+cert 再発行後、CoreDNS は **`1/1 Running`** に到達し、DNS 解決テスト 4 種すべて成功:
+
+```bash
+kubectl exec -it $POD -- getent hosts nginx
+# 10.0.0.224  nginx.default.svc.cluster.local        (短名→FQDN補完)
+
+kubectl exec -it $POD -- getent hosts kubernetes
+# 10.0.0.1    kubernetes.default.svc.cluster.local   (apiserver の Service)
+
+kubectl exec -it $POD -- getent hosts kube-dns.kube-system.svc.cluster.local
+# 10.0.0.10   kube-dns.kube-system.svc.cluster.local (cross-namespace)
+
+kubectl exec -it $POD -- getent hosts google.com
+# 2404:6800:400b:c005::71  google.com               (外部 forward)
+```
+
+### G25 から得た学び
+
+- **CKA Troubleshooting (30%)** に直結: ログで `x509: certificate is valid for X, Y, not Z` を見たら **「server cert の SAN を確認」** が定石
+- **K8s の `default/kubernetes` Service IP は apiserver が Service CIDR の最初の IP を自動取得** する: `10.0.0.0/24` なら `10.0.0.1`、`10.32.0.0/24` なら `10.32.0.1`
+- 本来 Hard Way の `ca.conf` と `units/kube-apiserver.service` は **同期して書かれるべき** だが、2024 年版は不整合のまま push されている (公式に PR を投げる候補)
+- このバグは **lima 固有ではない**。Apple Silicon でも GCP でも、Hard Way 2024 を素直になぞった全員が踏むはず
+
+## CIDR の階層を整理する
+
+Tier 1 A までやると、Hard Way で出てくる CIDR が 6 つあると気付きます。整理すると:
+
+| CIDR               | 用途                                       | 観察値                                                    |
+| ------------------ | ------------------------------------------ | --------------------------------------------------------- |
+| `192.168.105.0/24` | lima shared network (物理層)               | server 192.168.105.3, node-X 192.168.105.4-5              |
+| `192.168.5.0/24`   | lima usernet (Mac ホスト経由)              | host.lima.internal 192.168.5.2                            |
+| `10.0.0.0/24`      | K8s **Service CIDR** (apiserver default)   | kubernetes 10.0.0.1, kube-dns 10.0.0.10, nginx 10.0.0.224 |
+| `10.200.0.0/24`    | node-0 の **Pod CIDR**                     | nginx Pod 10.200.0.2                                      |
+| `10.200.1.0/24`    | node-1 の **Pod CIDR**                     | (動作中の Pod なし)                                       |
+| `10.200.0.0/16`    | Pod CIDR の親 (各 node /24 を切り出す範囲) | -                                                         |
+
+K8s が「Service IP は仮想 (kube-proxy が DNAT)、Pod IP は実体 (CNI/route で疎通)、物理 IP は別レイヤ」という 3 層構造で動いていることが、自分の手で構築すると体に染み込みます。Service CIDR と Pod CIDR を混同していると CKA / 実務でハマるので、ここで一度整理しておくのが効きます。
+
+## まとめ
+
+Part 3 で扱った内容と所要時間:
+
+| Tier 1 タスク                                           | 時間         |
+| ------------------------------------------------------- | ------------ |
+| 完走後の観察 (apiserver Service / RBAC / etcd raw dump) | 約 20 分     |
+| Tier 1 B: etcd backup/restore (G24 込み)                | 約 25 分     |
+| Tier 1 A: CoreDNS deploy (G25 検出・修正込み)           | 約 45 分     |
+| **合計**                                                | **約 90 分** |
+
+Part 1 の環境構築 4 時間 + Part 2 の Hard Way 完走 4 時間 + Part 3 の Tier 1 1.5 時間で、**延べ約 9.5 時間** で「環境構築 → 完走 → 内部理解」までを 1 周。
+
+新規に発見したハマりポイントは通算 6 件 (G20-G25)、うち G25 だけは公式 Hard Way 2024 の上流バグで、**lima 関係なく全員が踏む**性質を持っています。
+
+学びの圧縮:
+
+- **PKI rotation は実務スキル**。「key を維持して cert だけ再発行 (SAN 拡張 / 期限延長)」は Hard Way の文脈を超えて使える
+- **etcd backup/restore は CKA の核**。動いてる K8s の etcd を入れ替えても **AGE が連続する** こと自体が、K8s の decoupled architecture の証明になる
+- **CoreDNS deploy が Hard Way の隠れた最終 boss**。kubeadm が裏でやっていた DNS のデプロイ工程を素手で経験できる
+- **公式テンプレートでも疑う**。`ca.conf` と `units/*.service` は同期しているはず、という前提が崩れる例が現実に存在する
+
+これで Apple Silicon Mac × Hard Way × 2024 版のシリーズは完結です。読みながら同じ場所で詰まっていた誰かの **9.5 時間** を返せたら何より。
+
+次は **TCP/IP マスタリング 入門編** を読みつつ、`ip netns` + `iptables` で同じレイヤを 1 VM 内で再現する実験編に進む予定 (これは別シリーズで)。
+
+---
+
+## シリーズ記事
+
+- [Part 1: 環境構築編](/blog/2026/kubernetes-hard-way-apple-silicon-part1-environment)
+- [Part 2: PKI から Smoke Test まで完走編](/blog/2026/kubernetes-hard-way-apple-silicon-part2-bootstrap)
+- Part 3（本記事）: Tier 1 深堀り編 + 公式の隠れたバグ G25
+
+## 関連リンク
+
+- [Kubernetes The Hard Way (公式リポジトリ)](https://github.com/kelseyhightower/kubernetes-the-hard-way)
+  - [Chapter 12: Smoke Test](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/12-smoke-test.md)
+  - [Chapter 13: Cleaning Up](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/13-cleanup.md)
+- [CoreDNS Manifests for Kubernetes](https://github.com/coredns/deployment/tree/master/kubernetes)
+- [etcd v3 — Disaster recovery](https://etcd.io/docs/v3.5/op-guide/recovery/) — `etcdctl` / `etcdutl` の snapshot / restore 手順
