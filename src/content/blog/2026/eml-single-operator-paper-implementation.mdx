@@ -84,9 +84,9 @@ EML演算子はその**連続数学版**です。`eml(x, y) = exp(x) − ln(y)` 
 
 仕様書（論文URL、成果物のゴール、技術スタック、配置規約）をまとめてClaude Codeに渡したら、以下の順で進んでいきました。
 
-- **Phase 1**: `Complex` 型・`EMLTree` 型・`eml(x,y)` 評価器・RPN変換をTDDで実装
-- **Phase 1.5**: 著者の参照実装から compiler primitive を移植して12関数を再現
-- **Phase 2**: Astro + React islands でブラウザデモを実装
+- Phase 1 では `Complex` 型・`EMLTree` 型・`eml(x,y)` 評価器・RPN変換をTDDで実装
+- Phase 1.5 で著者の参照実装から compiler primitive を移植し12関数を再現
+- Phase 2 では Astro + React islands でブラウザデモを実装
 
 全体の実装時間は**1時間強**。僕の作業は仕様書を書くのと、途中で何度か判断を求められたときに返事するのが主で、手でコードを書いた時間はほぼゼロです。
 
@@ -153,12 +153,12 @@ if (z.im === 0) return { re: Math.exp(z.re), im: 0 };
 
 ## 技術スタック
 
-- **言語**: TypeScript (strictest)
-- **フレームワーク**: Astro 6 + React 19（既存のfunailogに相乗り）
-- **テスト**: vitest
-- **スタイリング**: Tailwind v4
-- **ツリーレイアウト**: d3-hierarchy（Reingold–Tilford）
-- **アニメーション**: framer-motion
+- 言語は TypeScript (strictest)
+- フレームワークは Astro 6 + React 19（既存のfunailogに相乗り）
+- テストは vitest
+- スタイリングは Tailwind v4
+- ツリーレイアウトは d3-hierarchy（Reingold–Tilford）
+- アニメーションは framer-motion
 
 コードは `src/lib/eml/` に600行程度、`src/components/eml/` に400行程度でした。
 
