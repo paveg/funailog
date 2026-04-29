@@ -46,10 +46,10 @@ sequenceDiagram
 
 ## TL;DR
 
-- **楽観的更新の4パターン**: 配列追加・配列要素更新・配列要素削除・オブジェクトプロパティ更新のonMutate実装例
-- **Context型安全性**: ロールバック用スナップショット管理をTypeScriptで型安全に
-- **TTLプリセット**: 数秒～無限まで、用途別のstaleTime設定テンプレート
-- **キャッシュバージョニング**: APIスキーマ変更時の古いキャッシュ自動クリーンアップ戦略
+- 楽観的更新の4パターンとして、配列追加・配列要素更新・配列要素削除・オブジェクトプロパティ更新のonMutate実装例を示す
+- Context型安全性のため、ロールバック用スナップショット管理をTypeScriptで型安全にする
+- TTLプリセットとして、数秒〜無限まで用途別のstaleTime設定テンプレートを用意する
+- キャッシュバージョニングは、APIスキーマ変更時の古いキャッシュ自動クリーンアップ戦略を担う
 
 > この設計を実装した筋トレ記録アプリ **Attain** を公開中。
 > 電波の悪いジムでも快適に使えます。
@@ -176,9 +176,9 @@ export const useAddSet = (sessionId: string) => {
 
 ### ポイント
 
-1. **一時ID**: `temp-${Date.now()}` でUI表示用のIDを発行
-2. **Exercise情報**: 既存のセットまたはsessionExercisesから取得
-3. **onSettled**: 成功・失敗に関わらず、最終的にサーバーと同期
+1. 一時IDは `temp-${Date.now()}` でUI表示用に発行する
+2. Exercise情報は既存のセットまたはsessionExercisesから取得する
+3. onSettled では成功・失敗に関わらず、最終的にサーバーと同期する
 
 ---
 
@@ -259,8 +259,8 @@ export const useUpdateSet = (sessionId: string) => {
 
 ### ポイント
 
-1. **部分更新**: `updatedSet.weightKg ?? set.weightKg` で未指定フィールドは既存値を維持
-2. **map関数**: 該当IDのみ更新、それ以外はそのまま返す
+1. 部分更新は `updatedSet.weightKg ?? set.weightKg` で未指定フィールドの既存値を維持する
+2. map関数では該当IDのみ更新し、それ以外はそのまま返す
 
 ---
 
@@ -321,8 +321,8 @@ export const useDeleteSet = (sessionId: string) => {
 
 ### ポイント
 
-1. **filter関数**: 削除対象以外を残す
-2. **引数の型**: `string`（setIdのみ）でシンプルに
+1. filter関数では削除対象以外を残す
+2. 引数の型は `string`（setIdのみ）でシンプルに保つ
 
 ---
 
@@ -393,8 +393,8 @@ export const useSetExerciseRpe = (sessionId: string) => {
 
 ### ポイント
 
-1. **Computed property**: `[data.exerciseId]: data.rpe` で動的キーを設定
-2. **スプレッド演算子**: 既存のRPE設定を保持しつつ、該当エクササイズのみ更新
+1. Computed property では `[data.exerciseId]: data.rpe` で動的キーを設定する
+2. スプレッド演算子で既存のRPE設定を保持しつつ、該当エクササイズのみ更新する
 
 ---
 
