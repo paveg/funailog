@@ -10,6 +10,7 @@ import expressiveCode from 'astro-expressive-code';
 import { h } from 'hastscript';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeMermaid from 'rehype-mermaid';
+import rehypeSlug from 'rehype-slug';
 
 import rehypeBudoux from './src/lib/rehype-budoux';
 import rehypeUnwrapSvgP from './src/lib/rehype-unwrap-svg-p';
@@ -67,10 +68,11 @@ export default defineConfig({
           strategy: 'pre-mermaid',
         },
       ],
+      rehypeSlug,
       [
         rehypeAutolinkHeadings,
         {
-          behavior: 'append',
+          behavior: 'prepend',
           properties(node: Element) {
             return {
               'aria-labelledby': node.properties.id,

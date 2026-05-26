@@ -13,25 +13,31 @@ const { posts } = Astro.props;
 
 {
   posts.length > 0 && (
-    <aside class="border-border mt-12 border-t pt-8">
-      <h2 class="font-code text-muted-foreground mb-4 text-xs">related</h2>
-      <ul class="space-y-3">
+    <aside class="mt-12 pt-8">
+      <h2 class="font-heading text-foreground mb-4 text-base font-semibold">
+        Related
+      </h2>
+      <div class="grid gap-3 sm:grid-cols-2">
         {posts.map((post) => (
-          <li>
-            <a href={`/blog/${post.id}`} class="group block">
-              <span
-                class="font-heading text-foreground group-hover:text-link text-sm transition-colors"
-                data-budoux
-              >
-                <Budoux text={post.data.title} />
+          <a
+            href={`/blog/${post.id}`}
+            class="bg-surface-elevated border-border-elevated group rounded-lg border p-4 shadow-sm transition-shadow duration-200 hover:shadow-md"
+          >
+            <span class="text-muted-foreground mb-1 block text-xs">
+              <span class="bg-muted rounded px-1.5 py-0.5 capitalize">
+                {post.data.category}
               </span>
-              <span class="font-code text-muted-foreground ml-2 text-xs">
-                {formatDateEn(post.data.published)}
-              </span>
-            </a>
-          </li>
+              <span class="ml-2">{formatDateEn(post.data.published)}</span>
+            </span>
+            <span
+              class="font-heading text-foreground group-hover:text-link line-clamp-2 text-sm leading-snug font-medium transition-colors"
+              data-budoux
+            >
+              <Budoux text={post.data.title} />
+            </span>
+          </a>
         ))}
-      </ul>
+      </div>
     </aside>
   )
 }

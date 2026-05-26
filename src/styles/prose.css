@@ -103,15 +103,15 @@ body {
       a > span.heading-link-icon {
         &:after {
           content: '#';
-          @apply text-muted-foreground ml-2 text-base transition-colors;
+          @apply text-muted-foreground mr-1.5 text-base transition-colors;
           transition-duration: var(--duration-fast);
-          opacity: 0.4;
+          opacity: 0;
         }
       }
       &:hover {
         a > span.heading-link-icon {
           &:after {
-            opacity: 1;
+            opacity: 0.6;
           }
         }
       }

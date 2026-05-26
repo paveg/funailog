@@ -121,6 +121,28 @@ const relatedPosts = getRelatedPosts(post, publishedPosts);
   <ScrollToTop />
   <script is:inline slot="page-scripts">
     (function () {
+      document
+        .querySelectorAll('article :is(h2,h3,h4,h5,h6)[id] a')
+        .forEach(function (a) {
+          a.addEventListener('click', function (e) {
+            e.preventDefault();
+            const url =
+              location.origin + location.pathname + '#' + a.closest('[id]').id;
+            history.replaceState(null, '', '#' + a.closest('[id]').id);
+            navigator.clipboard.writeText(url).then(function () {
+              const icon = a.querySelector('.heading-link-icon');
+              if (icon) {
+                icon.dataset.original = icon.style.cssText;
+                icon.style.opacity = '1';
+                setTimeout(function () {
+                  icon.style.cssText = icon.dataset.original || '';
+                }, 1500);
+              }
+            });
+          });
+        });
+    })();
+    (function () {
       const els = document.querySelectorAll('pre.mermaid');
       if (els.length === 0) return;
       const s = document.createElement('script');
