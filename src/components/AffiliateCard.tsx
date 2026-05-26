@@ -166,7 +166,6 @@ const AffiliateCard = ({
   if (variant === 'compact') {
     return (
       <div className={cn(affiliateCardVariants({ variant }), className)}>
-        {!hidePrBadge && <PrBadge />}
         <div className="flex items-center gap-3 p-3">
           {image && (
             <img
@@ -177,10 +176,15 @@ const AffiliateCard = ({
             />
           )}
           <div className="min-w-0 flex-1">
-            <span className="text-foreground line-clamp-1 text-sm font-medium">
+            <span className="text-foreground line-clamp-1 text-sm leading-snug font-medium">
               {title}
             </span>
           </div>
+          {!hidePrBadge && (
+            <Badge variant="outline" className="shrink-0">
+              PR
+            </Badge>
+          )}
           <div className="flex shrink-0 gap-1.5">
             {services.map((service) => (
               <ServiceButton key={service.label} service={service} />
@@ -194,7 +198,6 @@ const AffiliateCard = ({
   if (variant === 'inline') {
     return (
       <div className={cn(affiliateCardVariants({ variant }), className)}>
-        {!hidePrBadge && <PrBadge />}
         <div className="flex items-center gap-3 p-3 md:p-4">
           {image && (
             <img
@@ -205,11 +208,18 @@ const AffiliateCard = ({
             />
           )}
           <div className="min-w-0 flex-1">
-            <h3 className="text-foreground m-0 line-clamp-1 text-sm font-medium">
-              {title}
-            </h3>
+            <div className="flex items-start gap-2">
+              <h3 className="text-foreground m-0 line-clamp-1 flex-1 text-sm leading-snug font-medium">
+                {title}
+              </h3>
+              {!hidePrBadge && (
+                <Badge variant="outline" className="shrink-0">
+                  PR
+                </Badge>
+              )}
+            </div>
             {description && (
-              <p className="text-muted-foreground m-0 mt-0.5 line-clamp-1 text-xs">
+              <p className="text-muted-foreground m-0 mt-0.5 line-clamp-1 text-xs leading-relaxed">
                 {description}
               </p>
             )}
@@ -240,11 +250,11 @@ const AffiliateCard = ({
         )}
         <div className="flex flex-1 flex-col">
           <div className="flex flex-col space-y-1.5 p-4 pb-2 md:p-6 md:pb-2">
-            <h3 className="text-foreground m-0 line-clamp-2 text-base font-medium">
+            <h3 className="text-foreground m-0 line-clamp-2 text-base leading-snug font-medium">
               {title}
             </h3>
             {description && (
-              <p className="text-muted-foreground m-0 line-clamp-2 text-sm">
+              <p className="text-muted-foreground m-0 line-clamp-2 text-sm leading-relaxed">
                 {description}
               </p>
             )}
