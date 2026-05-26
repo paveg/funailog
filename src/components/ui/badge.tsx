@@ -26,7 +26,7 @@ const badgeVariants = cva(
         outline:
           'border-border bg-transparent text-muted-foreground hover:bg-accent hover:text-accent-foreground',
         // Tech tags - subtle primary tones matching the design system
-        tech: 'border-primary/10 bg-primary/5 text-primary/80 hover:bg-primary/10 dark:border-primary/20 dark:bg-primary/10 dark:text-primary/90',
+        tech: 'border-primary/10 bg-primary/5 text-primary hover:bg-primary/10 dark:border-primary/20 dark:bg-primary/10 dark:text-primary',
         // Project tags - slightly different tone
         project:
           'border-muted-foreground/20 dark:border-muted-foreground/25 bg-muted text-muted-foreground hover:bg-accent',
