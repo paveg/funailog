@@ -21,7 +21,7 @@ const { posts } = Astro.props;
         {posts.map((post) => (
           <a
             href={`/blog/${post.id}`}
-            class="bg-surface-elevated border-border-elevated group overflow-hidden rounded-lg border shadow-sm transition-shadow duration-200 hover:shadow-md"
+            class="bg-surface-elevated border-border-elevated group flex overflow-hidden rounded-lg border shadow-sm transition-shadow duration-200 hover:shadow-md"
           >
             <img
               src={
@@ -29,10 +29,10 @@ const { posts } = Astro.props;
                 `/api/og/article/${post.collection}/${post.id}.png`
               }
               alt=""
-              width={600}
-              height={315}
+              width={160}
+              height={84}
               loading="lazy"
-              class="bg-muted aspect-[1200/630] w-full object-cover"
+              class="bg-muted hidden h-auto w-[120px] shrink-0 object-cover sm:block"
             />
             <div class="p-3 md:p-4">
               <span class="text-muted-foreground mb-1 block text-xs">
