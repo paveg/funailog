@@ -25,14 +25,23 @@ body {
     }
 
     & ul {
-      @apply my-5 list-disc pl-6;
+      @apply my-5 list-none pl-0;
 
-      & ul {
-        @apply my-1 list-[circle] pl-5;
+      & > li {
+        @apply relative pl-4;
+
+        &::before {
+          content: '';
+          @apply bg-muted-foreground/40 absolute top-[0.7em] left-0 size-1 rounded-full;
+        }
       }
 
-      & ul ul {
-        list-style-type: '–  ';
+      & ul {
+        @apply my-1 pl-3;
+
+        & > li::before {
+          @apply bg-muted-foreground/25 size-[3px];
+        }
       }
     }
 
@@ -46,7 +55,7 @@ body {
     }
 
     & li {
-      @apply my-2 list-outside leading-relaxed;
+      @apply my-2 leading-relaxed;
       text-wrap: pretty;
 
       &::marker {
