@@ -61,7 +61,11 @@ const t = useTranslations(defaultLang);
         const li = document.createElement('li');
         const a = document.createElement('a');
         a.href = `#${id}`;
-        a.textContent = h.textContent?.replace(/#$/, '').trim() ?? '';
+        const rawText = Array.from(h.childNodes)
+          .filter((n) => n.nodeType === Node.TEXT_NODE)
+          .map((n) => n.textContent)
+          .join('');
+        a.textContent = rawText.replace(/#/g, '').trim();
         a.className =
           'toc-link block truncate py-1 pl-3 border-l-2 border-transparent text-muted-foreground transition-all duration-150 hover:text-foreground';
 
