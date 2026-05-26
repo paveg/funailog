@@ -150,7 +150,7 @@ export default config;
 import '../src/styles/tokens.css';
 import '@fontsource/line-seed-jp/400.css';
 import '@fontsource/line-seed-jp/700.css';
-import '@fontsource-variable/fira-code';
+import '@fontsource-variable/jetbrains-mono';
 
 import type { Preview } from '@storybook/react';
 

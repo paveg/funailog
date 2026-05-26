@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 @import '@fontsource/line-seed-jp/400.css';
 @import '@fontsource/line-seed-jp/700.css';
-@import '@fontsource-variable/fira-code/index.css';
+@import '@fontsource-variable/jetbrains-mono/index.css';
 @plugin '@tailwindcss/typography';
 
 /* ─── Dark mode: class strategy ────────────────────────── */
@@ -151,8 +151,8 @@
   --font-body:
     'LINE Seed JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
   --font-heading: 'LINE Seed JP', 'Hiragino Sans', sans-serif;
-  --font-code: 'Fira Code Variable', 'Fira Code', monospace;
-  --font-mono: 'Fira Code Variable', 'Fira Code', monospace;
+  --font-code: 'JetBrains Mono Variable', 'JetBrains Mono', monospace;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', monospace;
 
   /* Border radius */
   --radius-sm: var(--radius-sm);

@@ -6,7 +6,7 @@ funailog.com の再設計 Phase 1。デザイントークンの刷新、Storyboo
 
 **ターゲット読者**: ガジェット好き全般（技術背景不問）
 **デザイン方向性**: Adaptive Duo-tone（ライト/ダーク両モードで同等に美しい）
-**フォント**: LINE Seed JP（見出し）、システムフォントスタック（本文）、FiraCode（コード）
+**フォント**: LINE Seed JP（見出し）、システムフォントスタック（本文）、JetBrains Mono（コード）
 
 ## 制約
 
