@@ -25,11 +25,10 @@ body {
     }
 
     & ul {
-      @apply my-5 pl-4;
-      list-style-type: '–  ';
+      @apply my-5 list-disc pl-6;
 
       & ul {
-        @apply my-1 pl-4;
+        @apply my-1 list-[circle] pl-5;
       }
     }
 
@@ -49,6 +48,10 @@ body {
     & li {
       @apply my-2 leading-relaxed;
       text-wrap: pretty;
+
+      &::marker {
+        @apply text-muted-foreground/60;
+      }
     }
 
     /* Heading hierarchy */
