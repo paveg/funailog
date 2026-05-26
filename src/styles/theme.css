@@ -55,6 +55,11 @@
   --shadow: 0 2px 8px hsl(0 0% 0% / 0.06), 0 1px 3px hsl(0 0% 0% / 0.04);
   --shadow-md: 0 4px 16px hsl(0 0% 0% / 0.08), 0 2px 6px hsl(0 0% 0% / 0.04);
 
+  /* Surfaces */
+  --surface-elevated: hsl(0 0% 100%);
+  --surface-sunken: hsl(220 20% 97%);
+  --border-elevated: transparent;
+
   /* Code (inline only — code blocks handled by Expressive Code) */
   --code-bg: hsl(0 0% 96%);
 
@@ -103,6 +108,11 @@
   --shadow: 0 2px 8px hsl(0 0% 0% / 0.3), 0 1px 3px hsl(0 0% 0% / 0.2);
   --shadow-md: 0 4px 16px hsl(0 0% 0% / 0.35), 0 2px 6px hsl(0 0% 0% / 0.2);
 
+  /* Surfaces */
+  --surface-elevated: hsl(240 10% 10%);
+  --surface-sunken: hsl(240 10% 4%);
+  --border-elevated: hsl(0 0% 100% / 0.06);
+
   --code-bg: hsl(0 0% 10%);
 }
 
@@ -133,6 +143,9 @@
   --color-link-active: var(--link-active);
   --color-accent-line: var(--accent-line);
   --color-code-bg: var(--code-bg);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-border-elevated: var(--border-elevated);
 
   /* Typography */
   --font-body:

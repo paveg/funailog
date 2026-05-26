@@ -1,4 +1,4 @@
-@reference "./tokens.css";
+@reference "./theme.css";
 
 body {
   article {
@@ -21,6 +21,7 @@ body {
 
     & p {
       @apply my-5;
+      max-width: 38em;
       text-wrap: pretty;
     }
 
