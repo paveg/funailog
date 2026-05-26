@@ -98,7 +98,7 @@ const buildServiceLinks = (
       label: 'Yahoo!',
       href: yahoo.href || '#',
       price: yahoo.price,
-      colorClass: 'bg-[#FF0033] hover:bg-[#FF0033]/90 text-white',
+      colorClass: 'bg-[#E60033] hover:bg-[#E60033]/90 text-white',
     });
   }
 
@@ -128,9 +128,7 @@ const ServiceButton = ({ service }: { service: ServiceLink }) => (
     )}
   >
     <span>{service.label}</span>
-    {service.price && (
-      <span className="text-xs opacity-90">({service.price})</span>
-    )}
+    {service.price && <span className="text-xs">({service.price})</span>}
   </a>
 );
 
