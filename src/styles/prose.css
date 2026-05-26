@@ -208,14 +208,8 @@ body {
 
     /* YouTube embed (astro-embed lite-youtube) */
     & lite-youtube {
-      @apply my-8 block w-full max-w-none overflow-hidden rounded-lg;
+      @apply not-prose my-8 block w-full max-w-none rounded-lg;
       aspect-ratio: 16 / 9;
-      background-size: cover;
-      background-position: center;
-
-      & a {
-        @apply text-transparent no-underline;
-      }
     }
 
     & figure {
