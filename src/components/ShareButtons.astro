@@ -31,44 +31,39 @@ const platforms = [
 const hatenaHref = `https://b.hatena.ne.jp/entry/${encodeURIComponent(url)}`;
 ---
 
-<div class="border-border mt-12 border-t pt-6">
-  <p class="font-code text-muted-foreground mb-3 text-center text-xs">
-    {t('share.label')}
-  </p>
-  <div class="flex items-center justify-center gap-3">
+<div class="mt-12 pt-6">
+  <div class="flex flex-wrap items-center justify-center gap-2">
     {
       platforms.map((p) => (
         <a
           href={p.href}
           target="_blank"
           rel="noopener noreferrer"
-          class="text-muted-foreground hover:text-foreground inline-flex size-8 items-center justify-center rounded-md transition-colors"
+          class="border-border hover:bg-accent hover:text-accent-foreground text-muted-foreground inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs transition-colors"
           aria-label={p.label}
-          title={p.name}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="size-4"
+            class="size-3.5"
             viewBox="0 0 24 24"
             fill="currentColor"
           >
             <path d={p.pathD} />
           </svg>
+          {p.name}
         </a>
       ))
     }
-    {/* Hatena Bookmark */}
     <a
       href={hatenaHref}
       target="_blank"
       rel="noopener noreferrer"
-      class="text-muted-foreground hover:text-foreground inline-flex size-8 items-center justify-center rounded-md transition-colors"
+      class="border-border hover:bg-accent hover:text-accent-foreground text-muted-foreground inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs transition-colors"
       aria-label={t('share.hatena')}
-      title="Hatena"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="size-4"
+        class="size-3.5"
         viewBox="0 0 24 24"
         fill="currentColor"
       >
@@ -81,19 +76,18 @@ const hatenaHref = `https://b.hatena.ne.jp/entry/${encodeURIComponent(url)}`;
           font-family="system-ui">B!</text
         >
       </svg>
+      Hatena
     </a>
-    {/* Copy link */}
     <button
       id="copy-link-btn"
       type="button"
-      class="text-muted-foreground hover:text-foreground inline-flex size-8 items-center justify-center rounded-md transition-colors"
+      class="border-border hover:bg-accent hover:text-accent-foreground text-muted-foreground inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs transition-colors"
       aria-label={t('share.copyLink')}
-      title="Copy link"
       data-url={url}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="size-4"
+        class="size-3.5"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -106,6 +100,7 @@ const hatenaHref = `https://b.hatena.ne.jp/entry/${encodeURIComponent(url)}`;
         <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
         ></path>
       </svg>
+      <span>Copy</span>
     </button>
   </div>
 </div>
@@ -130,10 +125,16 @@ const hatenaHref = `https://b.hatena.ne.jp/entry/${encodeURIComponent(url)}`;
 
         try {
           await navigator.clipboard.writeText(url);
-          btn.classList.add('text-foreground');
-          setTimeout(() => {
-            btn.classList.remove('text-foreground');
-          }, 2000);
+          const label = btn.querySelector('span');
+          if (label) {
+            const orig = label.textContent;
+            label.textContent = 'Copied!';
+            btn.classList.add('text-foreground', 'bg-accent');
+            setTimeout(() => {
+              label.textContent = orig;
+              btn.classList.remove('text-foreground', 'bg-accent');
+            }, 2000);
+          }
         } catch {
           console.warn('Failed to copy to clipboard');
         }
