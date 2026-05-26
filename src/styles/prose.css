@@ -25,7 +25,8 @@ body {
     }
 
     & ul {
-      @apply my-5 list-none pl-4;
+      @apply my-5 pl-4;
+      list-style-type: '–  ';
 
       & ul {
         @apply my-1 pl-4;
