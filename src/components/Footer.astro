@@ -15,12 +15,10 @@ const startYear = 2023;
 ---
 
 <footer class="border-border mt-auto border-t pt-12 pb-10">
-  <div
-    class="font-code text-muted-foreground grid gap-8 text-xs sm:grid-cols-3"
-  >
+  <div class="text-muted-foreground grid gap-8 text-xs sm:grid-cols-3">
     {/* Column 1: Site identity */}
     <div class="space-y-2">
-      <p class="text-foreground font-medium">funailog.com</p>
+      <p class="font-heading text-foreground font-semibold">funailog.com</p>
       <p class="hidden leading-relaxed text-balance sm:block" data-budoux>
         <Budoux text={t('footer.description')} />
       </p>
@@ -31,7 +29,7 @@ const startYear = 2023;
 
     {/* Column 2: Navigation */}
     <div class="space-y-2">
-      <p class="text-foreground font-medium">nav</p>
+      <p class="font-heading text-foreground font-semibold">nav</p>
       <ul class="space-y-1">
         <li>
           <a href="/" class="hover:text-foreground transition-colors">Home</a>
@@ -66,7 +64,7 @@ const startYear = 2023;
 
     {/* Column 3: Links */}
     <div class="space-y-2">
-      <p class="text-foreground font-medium">elsewhere</p>
+      <p class="font-heading text-foreground font-semibold">elsewhere</p>
       <ul class="space-y-1">
         <li>
           <a
