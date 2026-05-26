@@ -1,0 +1,912 @@
+---
+import { Code } from 'astro-expressive-code/components';
+
+import { AffiliateCard } from '@/components/AffiliateCard';
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Style Guide — funailog Design System</title>
+    <style>
+      @import '../styles/theme.css';
+
+      body {
+        font-family: var(--font-body);
+        background: var(--background);
+        color: var(--foreground);
+        margin: 0;
+        padding: 0;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+
+      .styleguide {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+      }
+
+      .styleguide-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 3rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .styleguide-header h1 {
+        font-family: var(--font-heading);
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+      }
+
+      .theme-toggle {
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        background: var(--surface-elevated);
+        color: var(--foreground);
+        cursor: pointer;
+        font-family: var(--font-body);
+        font-size: 0.875rem;
+      }
+
+      section {
+        margin-bottom: 3rem;
+      }
+
+      section > h2 {
+        font-family: var(--font-heading);
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0 0 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .swatch-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1rem;
+      }
+
+      .swatch {
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        border: 1px solid var(--border);
+      }
+
+      .swatch-color {
+        height: 64px;
+      }
+
+      .swatch-label {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+        font-family: var(--font-code);
+        background: var(--surface-elevated);
+      }
+
+      .swatch-label span {
+        display: block;
+        color: var(--muted-foreground);
+        margin-top: 0.125rem;
+      }
+
+      .surface-demo {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .surface-card {
+        padding: 1.5rem;
+        border-radius: var(--radius-lg);
+      }
+
+      .surface-card h3 {
+        font-family: var(--font-heading);
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem;
+      }
+
+      .surface-card p {
+        font-size: 0.875rem;
+        color: var(--muted-foreground);
+        margin: 0;
+        line-height: 1.6;
+      }
+
+      .shadow-demo {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .shadow-card {
+        padding: 1.5rem;
+        border-radius: var(--radius-lg);
+        background: var(--surface-elevated);
+        border: 1px solid var(--border-elevated);
+        text-align: center;
+      }
+
+      .shadow-card p {
+        margin: 0;
+        font-size: 0.75rem;
+        font-family: var(--font-code);
+        color: var(--muted-foreground);
+      }
+
+      /* Typography */
+      .type-heading-scale {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+
+      .type-heading-row {
+        display: flex;
+        align-items: baseline;
+        gap: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .type-heading-row .label {
+        flex-shrink: 0;
+        width: 2.5rem;
+        font-family: var(--font-code);
+        font-size: 0.75rem;
+        color: var(--muted-foreground);
+      }
+
+      .type-body-demo {
+        max-width: 38em;
+        line-height: 1.8;
+      }
+
+      .type-body-demo p {
+        margin: 0 0 1rem;
+        text-wrap: pretty;
+      }
+
+      .type-inline-demo {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        align-items: baseline;
+        margin-top: 1rem;
+      }
+
+      .type-inline-demo a {
+        color: var(--link);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        text-decoration-color: color-mix(
+          in oklab,
+          var(--link) 40%,
+          transparent
+        );
+        transition:
+          color 150ms,
+          text-decoration-color 150ms;
+      }
+
+      .type-inline-demo a:hover {
+        color: var(--link-hover);
+        text-decoration-color: currentColor;
+      }
+
+      .type-inline-demo a:visited {
+        color: var(--link-visited);
+      }
+
+      .type-inline-demo code {
+        font-family: var(--font-code);
+        font-size: 0.875em;
+        background: var(--code-bg);
+        padding: 0.125rem 0.375rem;
+        border-radius: var(--radius-sm);
+      }
+
+      .type-inline-demo strong {
+        font-weight: 700;
+      }
+
+      .type-code-block {
+        background: var(--surface-sunken);
+        border-radius: var(--radius-md);
+        padding: 1rem 1.25rem;
+        font-family: var(--font-code);
+        font-size: 0.875rem;
+        line-height: 1.6;
+        overflow-x: auto;
+        font-feature-settings:
+          'calt' 1,
+          'liga' 1;
+      }
+
+      .type-meta {
+        font-family: var(--font-code);
+        font-size: 0.6875rem;
+        color: var(--muted-foreground);
+        margin-top: 0.5rem;
+      }
+
+      .type-contrast-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .type-contrast-card {
+        padding: 1rem;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border);
+      }
+
+      .type-contrast-card .sample {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .type-contrast-card .ratio {
+        font-family: var(--font-code);
+        font-size: 0.6875rem;
+        color: var(--muted-foreground);
+      }
+
+      .type-contrast-card .pass {
+        color: hsl(142 71% 35%);
+      }
+
+      .dark .type-contrast-card .pass {
+        color: hsl(142 71% 55%);
+      }
+
+      /* Card */
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="styleguide">
+      <header class="styleguide-header">
+        <h1>funailog Design System</h1>
+        <button class="theme-toggle" id="themeToggle">Toggle Dark Mode</button>
+      </header>
+
+      <!-- Colors -->
+      <section>
+        <h2>Colors</h2>
+        <div class="swatch-grid">
+          <div class="swatch">
+            <div class="swatch-color" style="background: var(--background);">
+            </div>
+            <div class="swatch-label">background<span>--background</span></div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-color" style="background: var(--foreground);">
+            </div>
+            <div class="swatch-label">foreground<span>--foreground</span></div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-color" style="background: var(--primary);"></div>
+            <div class="swatch-label">primary<span>--primary</span></div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-color" style="background: var(--secondary);">
+            </div>
+            <div class="swatch-label">secondary<span>--secondary</span></div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-color" style="background: var(--muted);"></div>
+            <div class="swatch-label">muted<span>--muted</span></div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-color" style="background: var(--accent);"></div>
+            <div class="swatch-label">accent<span>--accent</span></div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-color" style="background: var(--border);"></div>
+            <div class="swatch-label">border<span>--border</span></div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-color" style="background: var(--link);"></div>
+            <div class="swatch-label">link<span>--link</span></div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-color" style="background: var(--destructive);">
+            </div>
+            <div class="swatch-label">
+              destructive<span>--destructive</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Surfaces -->
+      <section>
+        <h2>Surfaces</h2>
+        <div class="surface-demo">
+          <div class="surface-card" style="background: var(--background);">
+            <h3>Background</h3>
+            <p>ページの基底面。コンテンツの背景。</p>
+          </div>
+          <div
+            class="surface-card"
+            style="background: var(--surface-elevated); box-shadow: var(--shadow-sm); border: 1px solid var(--border-elevated);"
+          >
+            <h3>Surface Elevated</h3>
+            <p>
+              カードやポップオーバー。背景から浮き上がった面。ライトモードではシャドウ、ダークモードでは微細ボーダーで表現。
+            </p>
+          </div>
+          <div class="surface-card" style="background: var(--surface-sunken);">
+            <h3>Surface Sunken</h3>
+            <p>入力欄やコード枠。背景より沈んだ面。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Shadows -->
+      <section>
+        <h2>Shadows</h2>
+        <div class="shadow-demo">
+          <div class="shadow-card" style="box-shadow: var(--shadow-xs);">
+            <p>--shadow-xs</p>
+          </div>
+          <div class="shadow-card" style="box-shadow: var(--shadow-sm);">
+            <p>--shadow-sm</p>
+          </div>
+          <div class="shadow-card" style="box-shadow: var(--shadow);">
+            <p>--shadow</p>
+          </div>
+          <div class="shadow-card" style="box-shadow: var(--shadow-md);">
+            <p>--shadow-md</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Typography: Heading Scale -->
+      <section>
+        <h2>Typography — Heading Scale</h2>
+        <p class="type-meta">
+          font-family: LINE Seed JP (--font-heading) / clamp() responsive sizing
+          / text-wrap: balance
+        </p>
+        <div class="type-heading-scale">
+          <div class="type-heading-row">
+            <span class="label">H1</span>
+            <h1
+              style="font-family: var(--font-heading); font-size: clamp(1.5rem, 4vw, 1.875rem); font-weight: 700; letter-spacing: -0.02em; text-wrap: balance; margin: 0;"
+            >
+              デザインシステムの見出し Heading 1
+            </h1>
+          </div>
+          <div class="type-heading-row">
+            <span class="label">H2</span>
+            <h2
+              style="font-family: var(--font-heading); font-size: clamp(1.25rem, 3vw, 1.5rem); font-weight: 600; letter-spacing: -0.01em; text-wrap: balance; margin: 0; padding: 0; border: none;"
+            >
+              デザインシステムの見出し Heading 2
+            </h2>
+          </div>
+          <div class="type-heading-row">
+            <span class="label">H3</span>
+            <h3
+              style="font-family: var(--font-heading); font-size: clamp(1.1rem, 2.5vw, 1.25rem); font-weight: 600; letter-spacing: -0.01em; margin: 0;"
+            >
+              デザインシステムの見出し Heading 3
+            </h3>
+          </div>
+          <div class="type-heading-row">
+            <span class="label">H4</span>
+            <h4
+              style="font-family: var(--font-heading); font-size: clamp(1rem, 2vw, 1.125rem); font-weight: 600; margin: 0;"
+            >
+              デザインシステムの見出し Heading 4
+            </h4>
+          </div>
+          <div class="type-heading-row">
+            <span class="label">H5</span>
+            <h5
+              style="font-family: var(--font-heading); font-size: clamp(0.875rem, 1.5vw, 1rem); font-weight: 500; margin: 0;"
+            >
+              デザインシステムの見出し Heading 5
+            </h5>
+          </div>
+          <div class="type-heading-row">
+            <span class="label">H6</span>
+            <h6
+              style="font-family: var(--font-heading); font-size: clamp(0.875rem, 1.5vw, 1rem); font-weight: 500; margin: 0;"
+            >
+              デザインシステムの見出し Heading 6
+            </h6>
+          </div>
+        </div>
+      </section>
+
+      <!-- Typography: Body Text -->
+      <section>
+        <h2>Typography — Body Text</h2>
+        <p class="type-meta">
+          font-family: LINE Seed JP (--font-body) / max-width: 38em /
+          line-height: 1.8 / text-wrap: pretty
+        </p>
+        <div class="type-body-demo">
+          <p>
+            日本語のブログ記事において、1行あたりの文字数は可読性に直結します。jp-ui-contracts
+            の提唱する 38em の最大幅は、日本語の場合およそ 35〜40
+            文字に相当し、視線の往復距離を適切に保ちます。
+          </p>
+          <p>
+            LINE Seed JP は LINE
+            が開発したユニバーサルデザインフォントです。ゴシック体をベースにしながら、文字の隙間を広くとることで視認性を高めています。ガジェットレビューや技術記事の本文にも違和感なく馴染みます。
+          </p>
+          <p>
+            This paragraph demonstrates mixed Japanese-English text rendering.
+            Astro のビルド時に静的 HTML を生成し、Islands Architecture
+            で必要な箇所だけ React を hydrate します。text-autospace: normal
+            によって、和欧間のスペーシングが自動調整されます。
+          </p>
+        </div>
+      </section>
+
+      <!-- Typography: Inline Elements -->
+      <section>
+        <h2>Typography — Inline Elements</h2>
+        <div class="type-inline-demo">
+          <a href="#link-demo">リンクテキスト</a>
+          <a href="#link-demo">Link text (English)</a>
+          <code>inline code</code>
+          <code>const x: string = "hello"</code>
+          <strong>太字テキスト Bold</strong>
+          <em>斜体テキスト Italic</em>
+        </div>
+      </section>
+
+      <!-- Typography: Code Block -->
+      <section>
+        <h2>Typography — Code Block</h2>
+        <p class="type-meta">
+          Expressive Code / ファイル名表示 / シンタックスハイライト /
+          コピーボタン
+        </p>
+
+        <Code
+          code={`interface DesignToken {
+  name: string;
+  value: string | number;
+  description?: string;
+}
+
+const getToken = (name: string): DesignToken | undefined => {
+  return tokens.find(t => t.name === name);
+};`}
+          lang="ts"
+          title="src/lib/design-tokens.ts"
+        />
+
+        <div style="margin-top: 1.5rem;">
+          <Code
+            code={`const config = defineConfig({
+  integrations: [react(), mdx()],
+  build: { format: 'directory' },
+});
+
+export default config;`}
+            lang="ts"
+            title="astro.config.ts"
+          />
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <Code
+            code={`.card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}`}
+            lang="css"
+            title="card.css"
+          />
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <Code
+            code={`pnpm build && pnpm preview
+# or
+pnpm dev`}
+            lang="bash"
+            title="Terminal"
+          />
+        </div>
+      </section>
+
+      <!-- Typography: WCAG Contrast -->
+      <section>
+        <h2>Typography — WCAG Contrast</h2>
+        <p class="type-meta">
+          AA 基準: 通常テキスト 4.5:1 / 大きなテキスト (18pt+ / 14pt bold+) 3:1
+        </p>
+        <div class="type-contrast-grid">
+          <div class="type-contrast-card">
+            <p class="sample" style="color: var(--foreground);">
+              前景色 (--foreground)
+            </p>
+            <p class="ratio">
+              <span class="pass">AA PASS</span> — Light: 18.4:1 / Dark: 13.8:1
+            </p>
+          </div>
+          <div class="type-contrast-card">
+            <p class="sample" style="color: var(--muted-foreground);">
+              ミュート色 (--muted-foreground)
+            </p>
+            <p class="ratio">
+              <span class="pass">AA PASS</span> — Light: 4.87:1 / Dark: 4.5:1
+            </p>
+          </div>
+          <div class="type-contrast-card">
+            <p class="sample">
+              <a
+                href="#contrast-demo"
+                style="color: var(--link); text-decoration: underline;"
+                >リンク色 (--link)</a
+              >
+            </p>
+            <p class="ratio">
+              <span class="pass">AA PASS</span> — Light: 5.3:1 / Dark: 5.8:1
+            </p>
+          </div>
+          <div class="type-contrast-card">
+            <p class="sample" style="color: var(--primary);">
+              プライマリ色 (--primary)
+            </p>
+            <p class="ratio">
+              <span class="pass">AA PASS</span> — Light: 5.9:1 / Dark: 6.2:1
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Card -->
+      <section>
+        <h2>Card</h2>
+        <p class="type-meta">
+          bg-surface-elevated / border-border-elevated / shadow-sm →
+          hover:shadow-md / Adaptive Duo-tone: ライトは影、ダークは微細ボーダー
+        </p>
+        <div class="card-grid">
+          <div
+            class="bg-surface-elevated text-card-foreground border-border-elevated rounded-lg border shadow-sm transition-shadow duration-200 hover:shadow-md"
+          >
+            <div class="flex flex-col space-y-1.5 p-4 md:p-6">
+              <h3 class="font-heading text-base leading-snug font-medium">
+                デフォルト Card
+              </h3>
+              <p class="text-muted-foreground text-sm">
+                記事一覧やリンクカードで使う標準カード。ホバーで影が深くなる。
+              </p>
+            </div>
+            <div class="p-4 pt-0 md:p-6 md:pt-0">
+              <p class="text-sm">
+                CardHeader + CardTitle + CardDescription + CardContent
+                の構成。各サブコンポーネントはスロットとして自由に組み合わせ可能。
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="bg-surface-elevated text-card-foreground border-border-elevated rounded-lg border shadow-sm transition-shadow duration-200 hover:shadow-md"
+          >
+            <div class="flex flex-col space-y-1.5 p-4 md:p-6">
+              <h3 class="font-heading text-base leading-snug font-medium">
+                Card with Footer
+              </h3>
+              <p class="text-muted-foreground text-sm">
+                フッター付きカード。アクションボタンやメタ情報を配置する。
+              </p>
+            </div>
+            <div class="p-4 pt-0 md:p-6 md:pt-0">
+              <p class="text-sm">コンテンツ領域。画像やテキストが入る。</p>
+            </div>
+            <div
+              class="border-border-elevated flex items-center justify-between border-t p-4 pt-3 md:p-6 md:pt-4"
+            >
+              <span class="text-muted-foreground text-xs">2026-05-27</span>
+              <span
+                class="bg-primary text-primary-foreground rounded-full px-2.5 py-0.5 text-xs font-medium"
+                >programming</span
+              >
+            </div>
+          </div>
+
+          <div
+            class="bg-surface-elevated text-card-foreground border-border-elevated rounded-lg border shadow-sm transition-shadow duration-200 hover:shadow-md"
+          >
+            <div
+              class="bg-muted flex h-40 items-center justify-center rounded-t-lg"
+            >
+              <span class="text-muted-foreground text-sm"
+                >画像プレースホルダ</span
+              >
+            </div>
+            <div class="flex flex-col space-y-1.5 p-4 md:p-6">
+              <h3 class="font-heading text-base leading-snug font-medium">
+                Card with Image
+              </h3>
+              <p class="text-muted-foreground text-sm">
+                ガジェットレビューのサムネイル付きカード。上部に画像、下部にテキスト。
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Badge -->
+      <section>
+        <h2>Badge</h2>
+        <p class="type-meta">
+          class-variance-authority / 5 variants: default, secondary, outline,
+          tech, project
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <div
+            class="border-primary/15 bg-primary/8 text-primary inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium"
+          >
+            default
+          </div>
+          <div
+            class="border-border bg-secondary text-secondary-foreground inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium"
+          >
+            secondary
+          </div>
+          <div
+            class="border-border text-muted-foreground inline-flex items-center gap-1 rounded-md border bg-transparent px-2.5 py-1 text-xs font-medium"
+          >
+            outline
+          </div>
+          <div
+            class="border-primary/10 bg-primary/5 text-primary/80 inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium"
+          >
+            tech
+          </div>
+          <div
+            class="border-muted-foreground/20 bg-muted text-muted-foreground inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium"
+          >
+            project
+          </div>
+        </div>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <div
+            class="border-primary/10 bg-primary/5 text-primary/80 inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium"
+          >
+            React
+          </div>
+          <div
+            class="border-primary/10 bg-primary/5 text-primary/80 inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium"
+          >
+            TypeScript
+          </div>
+          <div
+            class="border-primary/10 bg-primary/5 text-primary/80 inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium"
+          >
+            Astro
+          </div>
+          <div
+            class="border-muted-foreground/20 bg-muted text-muted-foreground inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium"
+          >
+            funailog
+          </div>
+        </div>
+      </section>
+
+      <!-- Button -->
+      <section>
+        <h2>Button</h2>
+        <p class="type-meta">
+          6 variants × 4 sizes / Radix Slot 対応 / focus-visible ring
+        </p>
+        <div class="flex flex-wrap items-center gap-3">
+          <button
+            class="bg-primary text-primary-foreground inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-normal transition-colors"
+          >
+            Default
+          </button>
+          <button
+            class="bg-secondary text-secondary-foreground inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-normal transition-colors"
+          >
+            Secondary
+          </button>
+          <button
+            class="border-border bg-background inline-flex h-9 items-center justify-center rounded-md border px-4 py-2 text-sm font-normal transition-colors"
+          >
+            Outline
+          </button>
+          <button
+            class="bg-destructive text-destructive-foreground inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-normal transition-colors"
+          >
+            Destructive
+          </button>
+          <button
+            class="hover:bg-accent inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-normal transition-colors"
+          >
+            Ghost
+          </button>
+          <a
+            href="#button-demo"
+            class="text-link inline-flex items-center text-sm underline-offset-3 hover:underline"
+          >
+            Link
+          </a>
+        </div>
+        <div class="mt-4 flex flex-wrap items-center gap-3">
+          <button
+            class="bg-primary text-primary-foreground inline-flex h-8 items-center justify-center rounded-md px-3 text-xs font-normal transition-colors"
+          >
+            Small
+          </button>
+          <button
+            class="bg-primary text-primary-foreground inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-normal transition-colors"
+          >
+            Default
+          </button>
+          <button
+            class="bg-primary text-primary-foreground inline-flex h-10 items-center justify-center rounded-md px-6 text-sm font-normal transition-colors"
+          >
+            Large
+          </button>
+          <button
+            class="bg-primary text-primary-foreground inline-flex size-9 items-center justify-center rounded-md text-sm font-normal transition-colors"
+          >
+            ★
+          </button>
+        </div>
+      </section>
+
+      <!-- Separator -->
+      <section>
+        <h2>Separator</h2>
+        <p class="type-meta">Radix UI Separator / horizontal + vertical</p>
+        <div class="space-y-4">
+          <div>
+            <p class="mb-2 text-sm">Horizontal</p>
+            <div class="bg-border h-[1px] w-full"></div>
+          </div>
+          <div class="flex items-center gap-4">
+            <p class="text-sm">Vertical</p>
+            <div class="bg-border h-8 w-[1px]"></div>
+            <p class="text-sm">Between elements</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- AffiliateCard -->
+      <section>
+        <h2>AffiliateCard</h2>
+        <p class="type-meta">
+          3 variants: default / inline / compact / PR バッジ常時表示（法的要件）
+        </p>
+        <div class="space-y-6">
+          <div>
+            <p class="text-muted-foreground mb-2 text-xs">variant: default</p>
+            <AffiliateCard
+              client:load
+              title="Dell U4025QW 39.7インチ 曲面モニター"
+              description="5K2K 解像度、Thunderbolt 4 対応、KVM 内蔵の究極のウルトラワイドモニター"
+              image="https://placehold.co/180x140/f5f5f5/666?text=U4025QW"
+              amazon={{ asin: 'B0DK1VQ1YZ', price: '¥199,800' }}
+              rakuten={{ href: '#rakuten', price: '¥198,000' }}
+              amazonAssociateId="funailog-22"
+            />
+          </div>
+          <div>
+            <p class="text-muted-foreground mb-2 text-xs">variant: inline</p>
+            <AffiliateCard
+              client:load
+              variant="inline"
+              title="Dell U4025QW 39.7インチ 曲面モニター"
+              description="5K2K ウルトラワイド"
+              image="https://placehold.co/64x64/f5f5f5/666?text=Dell"
+              amazon={{ asin: 'B0DK1VQ1YZ', price: '¥199,800' }}
+              amazonAssociateId="funailog-22"
+            />
+          </div>
+          <div>
+            <p class="text-muted-foreground mb-2 text-xs">variant: compact</p>
+            <AffiliateCard
+              client:load
+              variant="compact"
+              title="Dell U4025QW"
+              image="https://placehold.co/48x48/f5f5f5/666?text=D"
+              amazon={{ asin: 'B0DK1VQ1YZ', price: '¥199,800' }}
+              amazonAssociateId="funailog-22"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- LinkCard (HTML preview) -->
+      <section>
+        <h2>LinkCard</h2>
+        <p class="type-meta">
+          Astro コンポーネント / ビルド時 fetch → JSON キャッシュ / OGP
+          メタデータ表示
+        </p>
+        <div class="space-y-4">
+          <a
+            href="#linkcard-demo"
+            class="bg-surface-elevated border-border-elevated not-prose flex rounded-lg border no-underline shadow-sm transition-shadow duration-200 hover:shadow-md"
+          >
+            <div
+              class="bg-muted flex h-[100px] w-[120px] shrink-0 items-center justify-center rounded-l-lg object-cover md:h-[120px] md:w-[200px]"
+            >
+              <span class="text-muted-foreground text-xs">OG Image</span>
+            </div>
+            <div class="flex min-w-0 flex-col justify-center p-4 md:p-5">
+              <span
+                class="text-foreground line-clamp-2 text-sm leading-snug font-medium"
+                >Zod から Valibot への移行ガイド — バンドルサイズ 92% 削減の実践</span
+              >
+              <span
+                class="text-muted-foreground mt-1 line-clamp-1 text-xs leading-relaxed"
+                >funailog.com</span
+              >
+            </div>
+          </a>
+          <a
+            href="#linkcard-demo-2"
+            class="bg-surface-elevated border-border-elevated not-prose flex rounded-lg border no-underline shadow-sm transition-shadow duration-200 hover:shadow-md"
+          >
+            <div
+              class="bg-muted flex h-[100px] w-[120px] shrink-0 items-center justify-center rounded-l-lg object-cover md:h-[120px] md:w-[200px]"
+            >
+              <span class="text-muted-foreground text-xs">OG Image</span>
+            </div>
+            <div class="flex min-w-0 flex-col justify-center p-4 md:p-5">
+              <span
+                class="text-foreground line-clamp-2 text-sm leading-snug font-medium"
+                >Modern Edge Tech Stack — Astro + Cloudflare Pages で作るブログ</span
+              >
+              <span
+                class="text-muted-foreground mt-1 line-clamp-1 text-xs leading-relaxed"
+                >funailog.com</span
+              >
+            </div>
+          </a>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const toggle = document.getElementById('themeToggle');
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark') document.documentElement.classList.add('dark');
+
+      toggle?.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+        const isDark = document.documentElement.classList.contains('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        toggle.textContent = isDark ? 'Toggle Light Mode' : 'Toggle Dark Mode';
+      });
+
+      if (document.documentElement.classList.contains('dark') && toggle) {
+        toggle.textContent = 'Toggle Light Mode';
+      }
+    </script>
+  </body>
+</html>

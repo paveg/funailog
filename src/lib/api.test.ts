@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+vi.mock('./link-card-cache', () => ({
+  getCached: vi.fn(() => undefined),
+  setCached: vi.fn(),
+}));
+
 // Hoisted mock: returned payload simulates an attacker-controlled public
 // domain whose HTML declared <meta property="og:image" content="http://127.0.0.1/..."> —
 // the classic second-stage SSRF via og:image. The first-stage guard would

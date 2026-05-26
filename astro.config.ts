@@ -33,20 +33,7 @@ export default defineConfig({
         LinkPreview: false,
       },
     }),
-    expressiveCode({
-      themes: ['github-light', 'github-dark'],
-      themeCssSelector: (theme) => {
-        if (theme.type === 'dark') return '.dark';
-        return ':root:not(.dark)';
-      },
-      // Inline styles to avoid Tailwind v4 Vite plugin parsing EC's generated CSS
-      emitExternalStylesheet: false,
-      styleOverrides: {
-        codeFontFamily: "var(--font-code, 'Fira Code Variable', monospace)",
-        codeFontSize: '0.875rem',
-        borderRadius: '0.5rem',
-      },
-    }),
+    expressiveCode(),
     mdx(),
     sitemap(),
     inline(),

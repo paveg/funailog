@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro check && astro build",
+    "build": "astro check && astro build && rm -rf dist/styleguide",
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
@@ -26,7 +26,10 @@
     "prebuild": "pnpx tsx ./src/utils/clean.ts",
     "prepare": "husky",
     "cv": "tsx scripts/generate-cv.ts",
-    "cv:en": "tsx scripts/generate-cv.ts --en"
+    "cv:en": "tsx scripts/generate-cv.ts --en",
+    "link-cards:warm": "tsx scripts/link-cards.ts warm",
+    "link-cards:prune": "tsx scripts/link-cards.ts prune",
+    "link-cards:list": "tsx scripts/link-cards.ts list"
   },
   "lint-staged": {
     "*.{ts,tsx,astro,js,mjs}": [
@@ -48,7 +51,7 @@
     "@astrojs/react": "^5.0.3",
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.2",
-    "@fontsource-variable/fira-code": "5.2.7",
+    "@fontsource-variable/jetbrains-mono": "5.2.8",
     "@fontsource/line-seed-jp": "5.2.1",
     "@radix-ui/react-icons": "^1.3.2",
     "@radix-ui/react-separator": "^1.1.8",
