@@ -25,15 +25,33 @@ body {
     }
 
     & ul {
-      @apply list-disc pl-5;
+      @apply my-5 list-disc pl-6;
+
+      & ul {
+        @apply my-1 list-[circle] pl-5;
+      }
+
+      & ul ul {
+        list-style-type: '–  ';
+      }
     }
+
     & ol {
-      @apply list-decimal pl-5;
+      @apply my-5 list-decimal pl-6;
+
+      & ol {
+        @apply my-1 pl-5;
+        list-style-type: lower-alpha;
+      }
     }
+
     & li {
-      @apply list-outside;
-      @apply my-1.5;
+      @apply my-2 list-outside leading-relaxed;
       text-wrap: pretty;
+
+      &::marker {
+        @apply text-muted-foreground;
+      }
     }
 
     /* Heading hierarchy */

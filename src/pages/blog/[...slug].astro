@@ -98,19 +98,16 @@ const relatedPosts = getRelatedPosts(post, publishedPosts);
         <Budoux text={post.data.title} />
       </h1>
       <ArticleHeader post={post} minRead={remarkPluginFrontmatter.minRead} />
-      {
-        post.data.heroImage && (
-          <Image
-            class="mt-4 rounded-lg"
-            src={post.data.heroImage}
-            alt={`${post.data.title} のヒーロー画像`}
-            width={1200}
-            height={630}
-            loading="eager"
-            fetchpriority="high"
-          />
-        )
-      }
+      <Image
+        class="mt-4 rounded-lg"
+        src={post.data.heroImage ??
+          `/api/og/article/${post.collection}/${post.id}.png`}
+        alt={`${post.data.title} のアイキャッチ`}
+        width={1200}
+        height={630}
+        loading="eager"
+        fetchpriority="high"
+      />
     </header>
 
     <ArticleTOC mode="mobile" />
