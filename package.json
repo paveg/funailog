@@ -27,6 +27,7 @@
     "prepare": "husky",
     "cv": "tsx scripts/generate-cv.ts",
     "cv:en": "tsx scripts/generate-cv.ts --en",
+    "a11y": "playwright test",
     "link-cards:warm": "tsx scripts/link-cards.ts warm",
     "link-cards:prune": "tsx scripts/link-cards.ts prune",
     "link-cards:list": "tsx scripts/link-cards.ts list"
@@ -99,9 +100,11 @@
     }
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.11.3",
     "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.39.2",
     "@playform/inline": "0.1.2",
+    "@playwright/test": "1.60.0",
     "@tailwindcss/typography": "^0.5.19",
     "@textlint-ja/textlint-rule-preset-ai-writing": "^1.6.3",
     "@types/d3-hierarchy": "3.1.7",

@@ -52,7 +52,7 @@ const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
               {hasDistinctUpdate && post.lastUpdated && (
                 <time
                   datetime={post.lastUpdated.toISOString()}
-                  class="text-muted-foreground/60"
+                  class="text-muted-foreground"
                 >
                   updated {formatDateEn(post.lastUpdated)}
                 </time>
@@ -91,7 +91,7 @@ const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
               {hasDistinctUpdate && post.lastUpdated && (
                 <time
                   datetime={post.lastUpdated.toISOString()}
-                  class="text-muted-foreground/60"
+                  class="text-muted-foreground"
                 >
                   updated {formatDateEn(post.lastUpdated)}
                 </time>

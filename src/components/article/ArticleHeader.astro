@@ -34,14 +34,14 @@ const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
     {
       hasDistinctUpdate && lastUpdated && (
         <span class="flex items-center gap-1">
-          <span class="text-muted-foreground/60">updated</span>
+          <span class="text-muted-foreground">updated</span>
           <time datetime={lastUpdated.toISOString()}>
             {formatDateEn(lastUpdated)}
           </time>
         </span>
       )
     }
-    <span class="text-muted-foreground/60">{minRead}</span>
+    <span class="text-muted-foreground">{minRead}</span>
   </div>
 
   {/* Tags */}
