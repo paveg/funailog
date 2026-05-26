@@ -27,7 +27,7 @@
     "prepare": "husky",
     "cv": "tsx scripts/generate-cv.ts",
     "cv:en": "tsx scripts/generate-cv.ts --en",
-    "a11y": "pa11y-ci --config .pa11yci",
+    "a11y": "axe http://localhost:4321/ http://localhost:4321/about --exit",
     "link-cards:warm": "tsx scripts/link-cards.ts warm",
     "link-cards:prune": "tsx scripts/link-cards.ts prune",
     "link-cards:list": "tsx scripts/link-cards.ts list"
@@ -101,6 +101,7 @@
     }
   },
   "devDependencies": {
+    "@axe-core/cli": "4.11.3",
     "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.39.2",
     "@playform/inline": "0.1.2",
@@ -134,7 +135,6 @@
     "markdownlint-cli2": "^0.20.0",
     "mdast-util-to-hast": "^13.2.1",
     "mdast-util-to-string": "^4.0.0",
-    "pa11y-ci": "4.1.1",
     "prettier": "^3.7.4",
     "prettier-plugin-astro": "^0.13.0",
     "prettier-plugin-tailwindcss": "^0.7.2",

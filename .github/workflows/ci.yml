@@ -64,11 +64,17 @@ jobs:
       - name: Build
         run: pnpm run build
 
-      - name: a11y check (axe-core via pa11y-ci)
+      - name: a11y check (axe-core)
         run: |
           pnpm preview --host 127.0.0.1 &
           sleep 3
-          pnpm exec pa11y-ci --config .pa11yci
+          pnpm exec axe \
+            http://localhost:4321/ \
+            http://localhost:4321/blog/2025/zod-to-valibot-migration \
+            http://localhost:4321/blog/2025/modern-edge-tech-stack \
+            http://localhost:4321/blog/2024/review-monitors-u4025qw-dell \
+            http://localhost:4321/about \
+            --exit
           kill %1 || true
 
       - name: Upload build artifact
