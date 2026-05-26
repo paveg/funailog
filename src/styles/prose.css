@@ -208,8 +208,13 @@ body {
 
     /* YouTube embed (astro-embed lite-youtube) */
     & lite-youtube {
-      @apply not-prose my-8 block w-full max-w-none rounded-lg;
+      @apply my-8 block w-full max-w-none rounded-lg;
       aspect-ratio: 16 / 9;
+
+      & a {
+        color: inherit;
+        text-decoration: none;
+      }
     }
 
     & figure {
