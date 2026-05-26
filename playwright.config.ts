@@ -6,8 +6,9 @@ export default defineConfig({
     baseURL: 'http://localhost:4321',
   },
   webServer: {
-    command: 'pnpm preview --host 127.0.0.1',
+    command: 'pnpm dev --host 127.0.0.1',
     port: 4321,
     reuseExistingServer: !process.env.CI,
+    timeout: 30000,
   },
 });

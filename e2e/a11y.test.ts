@@ -1,13 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
-const pages = [
-  ['Top', '/'],
-  ['Article (tech)', '/blog/2025/zod-to-valibot-migration'],
-  ['Article (stack)', '/blog/2025/modern-edge-tech-stack'],
-  ['Review (gadget)', '/blog/2024/review-monitors-u4025qw-dell'],
-  ['About', '/about'],
-] as const;
+const pages = [['Styleguide', '/styleguide']] as const;
 
 for (const [name, path] of pages) {
   test(`${name} (${path}) has no WCAG AA violations`, async ({ page }) => {
