@@ -54,8 +54,6 @@ const site = Astro.site ?? '';
 const path = `${post.collection}/${post.id}`;
 const fullUrl = new URL(path, site).toString();
 const t = useTranslations(defaultLang);
-const defaultImagePath = `/api/og/article/${post.collection}/${post.id}.png`;
-
 const relatedPosts = getRelatedPosts(post, publishedPosts);
 ---
 
@@ -92,34 +90,38 @@ const relatedPosts = getRelatedPosts(post, publishedPosts);
 >
   <ReadingProgress />
   <div>
-    {/* Header section: full-width, centered */}
-    <header class="mb-6">
-      <h1 class="font-heading text-center [text-wrap:wrap]" data-budoux>
+    <header class="mb-8">
+      <h1
+        class="font-heading text-foreground text-2xl leading-snug font-bold md:text-3xl"
+        data-budoux
+      >
         <Budoux text={post.data.title} />
       </h1>
       <ArticleHeader post={post} minRead={remarkPluginFrontmatter.minRead} />
-      <Image
-        class="my-3 rounded-md"
-        src={post.data.heroImage ?? defaultImagePath}
-        alt={`${post.data.title} のヒーロー画像`}
-        width={1200}
-        height={630}
-        loading="eager"
-        fetchpriority="high"
-      />
+      {
+        post.data.heroImage && (
+          <Image
+            class="mt-4 rounded-lg"
+            src={post.data.heroImage}
+            alt={`${post.data.title} のヒーロー画像`}
+            width={1200}
+            height={630}
+            loading="eager"
+            fetchpriority="high"
+          />
+        )
+      }
     </header>
 
-    {/* Mobile TOC */}
     <ArticleTOC mode="mobile" />
 
-    {/* Content + sidebar TOC */}
-    <div class="lg:grid lg:grid-cols-[1fr_200px] lg:gap-8">
+    <div class="xl:grid xl:grid-cols-[1fr_180px] xl:gap-8">
       <article>
         <Content components={components} />
         <ShareButtons url={fullUrl} title={post.data.title} />
         <RelatedArticles posts={relatedPosts} />
       </article>
-      <aside class="hidden lg:block">
+      <aside class="hidden xl:block">
         <div class="sticky top-20">
           <ArticleTOC mode="desktop" />
         </div>
