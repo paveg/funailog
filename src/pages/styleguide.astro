@@ -1,4 +1,6 @@
 ---
+import { Code } from 'astro-expressive-code/components';
+
 import { AffiliateCard } from '@/components/AffiliateCard';
 ---
 
@@ -480,20 +482,59 @@ import { AffiliateCard } from '@/components/AffiliateCard';
       <section>
         <h2>Typography — Code Block</h2>
         <p class="type-meta">
-          font-family: JetBrains Mono Variable (--font-code) / ligatures enabled
-          / font-size: 0.875rem
+          Expressive Code / ファイル名表示 / シンタックスハイライト /
+          コピーボタン
         </p>
-        <pre
-          class="type-code-block"><code set:html={`// JetBrains Mono ligatures: =&gt; !== === &gt;= &lt;=
-interface DesignToken {
+
+        <Code
+          code={`interface DesignToken {
   name: string;
   value: string | number;
   description?: string;
 }
 
-const getToken = (name: string): DesignToken | undefined =&gt; {
-  return tokens.find(t =&gt; t.name === name);
-};`} /></pre>
+const getToken = (name: string): DesignToken | undefined => {
+  return tokens.find(t => t.name === name);
+};`}
+          lang="ts"
+          title="src/lib/design-tokens.ts"
+        />
+
+        <div style="margin-top: 1.5rem;">
+          <Code
+            code={`const config = defineConfig({
+  integrations: [react(), mdx()],
+  build: { format: 'directory' },
+});
+
+export default config;`}
+            lang="ts"
+            title="astro.config.ts"
+          />
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <Code
+            code={`.card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-elevated);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}`}
+            lang="css"
+            title="card.css"
+          />
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <Code
+            code={`pnpm build && pnpm preview
+# or
+pnpm dev`}
+            lang="bash"
+            title="Terminal"
+          />
+        </div>
       </section>
 
       <!-- Typography: WCAG Contrast -->
