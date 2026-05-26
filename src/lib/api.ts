@@ -5,6 +5,7 @@ import path from 'path';
 import fetchSiteMetadata from 'fetch-site-metadata';
 import sharp from 'sharp';
 
+import { getCached, setCached } from './link-card-cache';
 import { assertPublicUrl } from './ssrf-guard';
 
 import type { Metadata } from 'fetch-site-metadata';
@@ -181,15 +182,24 @@ const fetchSiteImage = async (src: string): Promise<string | undefined> => {
 };
 
 export const fetchLinkCard = async (href: string) => {
+  const cached = getCached(href);
+  if (cached) {
+    return cached;
+  }
+
   const { description, image, title } = await siteMetadata(href);
 
   const ogImage = image?.src ? await fetchSiteImage(image.src) : undefined;
 
-  return {
+  const result = {
     description,
     image: {
       src: ogImage,
     },
     title,
   };
+
+  setCached(href, result);
+
+  return result;
 };
