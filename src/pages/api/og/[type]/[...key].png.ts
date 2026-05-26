@@ -27,6 +27,7 @@ export const GET: APIRoute = async ({ params }) => {
           ? (article.data.lastUpdated ?? article.data.published)
           : undefined,
         article.data.emoji ?? undefined,
+        isPost ? article.data.category : undefined,
       );
       res = new Response(image as unknown as BodyInit);
     }
