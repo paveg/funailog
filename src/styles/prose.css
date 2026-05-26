@@ -21,20 +21,37 @@ body {
 
     & p {
       @apply my-5;
-      max-width: 38em;
       text-wrap: pretty;
     }
 
     & ul {
-      @apply list-disc pl-5;
+      @apply my-5 list-disc pl-6;
+
+      & ul {
+        @apply my-1 list-[circle] pl-5;
+      }
+
+      & ul ul {
+        list-style-type: '–  ';
+      }
     }
+
     & ol {
-      @apply list-decimal pl-5;
+      @apply my-5 list-decimal pl-6;
+
+      & ol {
+        @apply my-1 pl-5;
+        list-style-type: lower-alpha;
+      }
     }
+
     & li {
-      @apply list-outside;
-      @apply my-1.5;
+      @apply my-2 list-outside leading-relaxed;
       text-wrap: pretty;
+
+      &::marker {
+        @apply text-muted-foreground;
+      }
     }
 
     /* Heading hierarchy */
@@ -126,24 +143,62 @@ body {
       @apply my-5 overflow-x-auto rounded-md text-xs md:text-sm;
     }
     & blockquote {
-      @apply border-border bg-muted text-muted-foreground my-5 rounded-r-md border-l-2 py-3 pr-3 pl-4 not-italic;
+      @apply border-accent-line bg-surface-sunken my-5 rounded-r-md border-l-2 py-3 pr-4 pl-4 not-italic;
+      @apply text-foreground text-sm md:text-base;
+
+      & p {
+        @apply my-2;
+      }
+
+      & p:first-child {
+        @apply mt-0;
+      }
+
+      & p:last-child {
+        @apply mb-0;
+      }
     }
+
     & .footnotes {
-      @apply border-border text-muted-foreground mt-8 border-t pt-5 text-xs md:text-sm;
+      @apply border-border text-muted-foreground mt-10 border-t pt-5 text-xs md:text-sm;
+
+      & ol {
+        @apply pl-4;
+      }
+
+      & li {
+        @apply my-2;
+      }
+
       & .data-footnote-backref {
-        text-decoration: none;
+        @apply text-link no-underline;
       }
     }
 
     /* Tables */
+    & .table-wrapper {
+      @apply my-5 overflow-x-auto;
+    }
+
     & table {
       @apply my-5 w-full text-xs md:text-sm;
     }
+
     & th {
       @apply bg-muted px-2 py-2 text-left font-medium md:px-3;
+      white-space: nowrap;
     }
+
     & td {
       @apply border-border border-t px-2 py-2 md:px-3;
+    }
+
+    & tr {
+      @apply transition-colors;
+
+      &:hover {
+        @apply bg-muted/50;
+      }
     }
 
     /* Images and figures */
@@ -153,16 +208,19 @@ body {
 
     /* YouTube embed (astro-embed lite-youtube) */
     & lite-youtube {
-      @apply my-8 w-full max-w-none rounded-md;
+      @apply my-8 w-full max-w-none rounded-lg;
       aspect-ratio: 16 / 9;
     }
+
     & figure {
-      @apply my-5;
+      @apply my-6;
+
       & img {
         @apply my-0;
       }
+
       & figcaption {
-        @apply text-muted-foreground mt-2 text-center text-xs;
+        @apply text-muted-foreground mt-3 text-center text-xs leading-relaxed;
       }
     }
   }
