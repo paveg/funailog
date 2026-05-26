@@ -1,5 +1,7 @@
 ---
-
+if (import.meta.env.PROD) {
+  return Astro.redirect('/404');
+}
 ---
 
 <html lang="ja">
@@ -612,6 +614,144 @@ const getToken = (name: string): DesignToken | undefined =&gt; {
                 ガジェットレビューのサムネイル付きカード。上部に画像、下部にテキスト。
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Badge -->
+      <section>
+        <h2>Badge</h2>
+        <p class="type-meta">
+          class-variance-authority / 5 variants: default, secondary, outline,
+          tech, project
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <div
+            class="border-primary/15 bg-primary/8 text-primary inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium"
+          >
+            default
+          </div>
+          <div
+            class="border-border bg-secondary text-secondary-foreground inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium"
+          >
+            secondary
+          </div>
+          <div
+            class="border-border text-muted-foreground inline-flex items-center gap-1 rounded-md border bg-transparent px-2.5 py-1 text-xs font-medium"
+          >
+            outline
+          </div>
+          <div
+            class="border-primary/10 bg-primary/5 text-primary/80 inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium"
+          >
+            tech
+          </div>
+          <div
+            class="border-muted-foreground/20 bg-muted text-muted-foreground inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium"
+          >
+            project
+          </div>
+        </div>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <div
+            class="border-primary/10 bg-primary/5 text-primary/80 inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium"
+          >
+            React
+          </div>
+          <div
+            class="border-primary/10 bg-primary/5 text-primary/80 inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium"
+          >
+            TypeScript
+          </div>
+          <div
+            class="border-primary/10 bg-primary/5 text-primary/80 inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium"
+          >
+            Astro
+          </div>
+          <div
+            class="border-muted-foreground/20 bg-muted text-muted-foreground inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium"
+          >
+            funailog
+          </div>
+        </div>
+      </section>
+
+      <!-- Button -->
+      <section>
+        <h2>Button</h2>
+        <p class="type-meta">
+          6 variants × 4 sizes / Radix Slot 対応 / focus-visible ring
+        </p>
+        <div class="flex flex-wrap items-center gap-3">
+          <button
+            class="bg-primary text-primary-foreground inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-normal transition-colors"
+          >
+            Default
+          </button>
+          <button
+            class="bg-secondary text-secondary-foreground inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-normal transition-colors"
+          >
+            Secondary
+          </button>
+          <button
+            class="border-border bg-background inline-flex h-9 items-center justify-center rounded-md border px-4 py-2 text-sm font-normal transition-colors"
+          >
+            Outline
+          </button>
+          <button
+            class="bg-destructive text-destructive-foreground inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-normal transition-colors"
+          >
+            Destructive
+          </button>
+          <button
+            class="hover:bg-accent inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-normal transition-colors"
+          >
+            Ghost
+          </button>
+          <a
+            href="#button-demo"
+            class="text-link inline-flex items-center text-sm underline-offset-3 hover:underline"
+          >
+            Link
+          </a>
+        </div>
+        <div class="mt-4 flex flex-wrap items-center gap-3">
+          <button
+            class="bg-primary text-primary-foreground inline-flex h-8 items-center justify-center rounded-md px-3 text-xs font-normal transition-colors"
+          >
+            Small
+          </button>
+          <button
+            class="bg-primary text-primary-foreground inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-normal transition-colors"
+          >
+            Default
+          </button>
+          <button
+            class="bg-primary text-primary-foreground inline-flex h-10 items-center justify-center rounded-md px-6 text-sm font-normal transition-colors"
+          >
+            Large
+          </button>
+          <button
+            class="bg-primary text-primary-foreground inline-flex size-9 items-center justify-center rounded-md text-sm font-normal transition-colors"
+          >
+            ★
+          </button>
+        </div>
+      </section>
+
+      <!-- Separator -->
+      <section>
+        <h2>Separator</h2>
+        <p class="type-meta">Radix UI Separator / horizontal + vertical</p>
+        <div class="space-y-4">
+          <div>
+            <p class="mb-2 text-sm">Horizontal</p>
+            <div class="bg-border h-[1px] w-full"></div>
+          </div>
+          <div class="flex items-center gap-4">
+            <p class="text-sm">Vertical</p>
+            <div class="bg-border h-8 w-[1px]"></div>
+            <p class="text-sm">Between elements</p>
           </div>
         </div>
       </section>
