@@ -16,11 +16,11 @@ const t = useTranslations(defaultLang);
 
 {
   mode === 'mobile' ? (
-    <details class="toc-root border-border mb-6 rounded-md border">
-      <summary class="font-code text-muted-foreground cursor-pointer px-4 py-2.5 text-xs select-none">
+    <details class="toc-root bg-surface-sunken mb-8 rounded-lg" open>
+      <summary class="font-heading text-foreground cursor-pointer px-4 py-3 text-sm font-semibold select-none">
         {t('toc.title')}
       </summary>
-      <ul class="toc-list text-muted-foreground space-y-0.5 px-4 pb-3 text-xs" />
+      <ul class="toc-list text-muted-foreground space-y-1 px-4 pb-4 text-xs" />
     </details>
   ) : (
     <nav class="toc-root" aria-label={t('toc.ariaLabel')}>
