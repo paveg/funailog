@@ -13,20 +13,31 @@ const { posts } = Astro.props;
 
 {
   posts.length > 0 && (
-    <aside class="border-border mt-12 border-t pt-8">
-      <h2 class="font-code text-muted-foreground mb-4 text-xs">related</h2>
+    <aside class="mt-12 pt-8">
+      <h2 class="font-heading text-foreground mb-4 text-base font-semibold">
+        Related
+      </h2>
       <ul class="space-y-3">
         {posts.map((post) => (
           <li>
-            <a href={`/blog/${post.id}`} class="group block">
+            <a
+              href={`/blog/${post.id}`}
+              class="border-border group hover:border-accent-line hover:bg-surface-sunken block rounded-lg border-l-2 py-2 pr-3 pl-4 transition-all duration-200"
+            >
+              <span class="text-muted-foreground flex items-center gap-2 text-xs">
+                <span class="bg-muted rounded px-1.5 py-0.5 capitalize">
+                  {post.data.category}
+                </span>
+                {formatDateEn(post.data.published)}
+              </span>
               <span
-                class="font-heading text-foreground group-hover:text-link text-sm transition-colors"
+                class="font-heading text-foreground group-hover:text-link mt-1 block text-sm leading-snug font-medium transition-colors"
                 data-budoux
               >
                 <Budoux text={post.data.title} />
               </span>
-              <span class="font-code text-muted-foreground ml-2 text-xs">
-                {formatDateEn(post.data.published)}
+              <span class="text-muted-foreground mt-0.5 line-clamp-1 block text-xs leading-relaxed">
+                {post.data.description}
               </span>
             </a>
           </li>
