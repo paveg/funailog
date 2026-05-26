@@ -112,18 +112,11 @@ const relatedPosts = getRelatedPosts(post, publishedPosts);
 
     <ArticleTOC mode="mobile" />
 
-    <div class="xl:grid xl:grid-cols-[1fr_180px] xl:gap-8">
-      <article>
-        <Content components={components} />
-        <ShareButtons url={fullUrl} title={post.data.title} />
-        <RelatedArticles posts={relatedPosts} />
-      </article>
-      <aside class="hidden xl:block">
-        <div class="sticky top-20">
-          <ArticleTOC mode="desktop" />
-        </div>
-      </aside>
-    </div>
+    <article>
+      <Content components={components} />
+      <ShareButtons url={fullUrl} title={post.data.title} />
+      <RelatedArticles posts={relatedPosts} />
+    </article>
   </div>
   <ScrollToTop />
   <script is:inline slot="page-scripts">
