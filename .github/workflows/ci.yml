@@ -64,18 +64,11 @@ jobs:
       - name: Build
         run: pnpm run build
 
-      - name: a11y check (axe-core)
-        run: |
-          pnpm preview --host 127.0.0.1 &
-          sleep 3
-          pnpm exec axe \
-            http://localhost:4321/ \
-            http://localhost:4321/blog/2025/zod-to-valibot-migration \
-            http://localhost:4321/blog/2025/modern-edge-tech-stack \
-            http://localhost:4321/blog/2024/review-monitors-u4025qw-dell \
-            http://localhost:4321/about \
-            --exit
-          kill %1 || true
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install chromium --with-deps
+
+      - name: a11y check (axe-core via Playwright)
+        run: pnpm exec playwright test
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
