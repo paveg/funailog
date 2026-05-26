@@ -1,5 +1,5 @@
 ---
-
+import { AffiliateCard } from '@/components/AffiliateCard';
 ---
 
 <html lang="ja">
@@ -751,6 +751,102 @@ const getToken = (name: string): DesignToken | undefined =&gt; {
             <div class="bg-border h-8 w-[1px]"></div>
             <p class="text-sm">Between elements</p>
           </div>
+        </div>
+      </section>
+
+      <!-- AffiliateCard -->
+      <section>
+        <h2>AffiliateCard</h2>
+        <p class="type-meta">
+          3 variants: default / inline / compact / PR バッジ常時表示（法的要件）
+        </p>
+        <div class="space-y-6">
+          <div>
+            <p class="text-muted-foreground mb-2 text-xs">variant: default</p>
+            <AffiliateCard
+              client:load
+              title="Dell U4025QW 39.7インチ 曲面モニター"
+              description="5K2K 解像度、Thunderbolt 4 対応、KVM 内蔵の究極のウルトラワイドモニター"
+              image="https://placehold.co/180x140/f5f5f5/666?text=U4025QW"
+              amazon={{ asin: 'B0DK1VQ1YZ', price: '¥199,800' }}
+              rakuten={{ href: '#rakuten', price: '¥198,000' }}
+              amazonAssociateId="funailog-22"
+            />
+          </div>
+          <div>
+            <p class="text-muted-foreground mb-2 text-xs">variant: inline</p>
+            <AffiliateCard
+              client:load
+              variant="inline"
+              title="Dell U4025QW 39.7インチ 曲面モニター"
+              description="5K2K ウルトラワイド"
+              image="https://placehold.co/64x64/f5f5f5/666?text=Dell"
+              amazon={{ asin: 'B0DK1VQ1YZ', price: '¥199,800' }}
+              amazonAssociateId="funailog-22"
+            />
+          </div>
+          <div>
+            <p class="text-muted-foreground mb-2 text-xs">variant: compact</p>
+            <AffiliateCard
+              client:load
+              variant="compact"
+              title="Dell U4025QW"
+              image="https://placehold.co/48x48/f5f5f5/666?text=D"
+              amazon={{ asin: 'B0DK1VQ1YZ', price: '¥199,800' }}
+              amazonAssociateId="funailog-22"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- LinkCard (HTML preview) -->
+      <section>
+        <h2>LinkCard</h2>
+        <p class="type-meta">
+          Astro コンポーネント / ビルド時 fetch → JSON キャッシュ / OGP
+          メタデータ表示
+        </p>
+        <div class="space-y-4">
+          <a
+            href="#linkcard-demo"
+            class="bg-surface-elevated border-border-elevated not-prose flex rounded-lg border no-underline shadow-sm transition-shadow duration-200 hover:shadow-md"
+          >
+            <div
+              class="bg-muted flex h-[120px] w-[200px] shrink-0 items-center justify-center rounded-l-lg"
+            >
+              <span class="text-muted-foreground text-xs">OG Image</span>
+            </div>
+            <div class="flex min-w-0 flex-col justify-center p-4 md:p-5">
+              <span
+                class="text-foreground line-clamp-2 text-sm leading-snug font-medium"
+                >Zod から Valibot への移行ガイド — バンドルサイズ 92% 削減の実践</span
+              >
+              <span
+                class="text-muted-foreground mt-1 line-clamp-1 text-xs leading-relaxed"
+                >funailog.com</span
+              >
+            </div>
+          </a>
+          <a
+            href="#linkcard-demo-2"
+            class="bg-surface-elevated border-border-elevated not-prose flex rounded-lg border no-underline shadow-sm transition-shadow duration-200 hover:shadow-md"
+          >
+            <div
+              class="bg-muted flex h-[120px] w-[200px] shrink-0 items-center justify-center rounded-l-lg"
+            >
+              <span class="text-muted-foreground text-xs">OG Image</span>
+            </div>
+            <div class="flex min-w-0 flex-col justify-center p-4 md:p-5">
+              <span
+                class="text-foreground line-clamp-2 text-sm leading-snug font-medium"
+                >Modern Edge Tech Stack — Astro + Cloudflare Pages で作るブログ</span
+              >
+              <span
+                class="text-muted-foreground mt-1 line-clamp-1 text-xs leading-relaxed"
+                >funailog.com</span
+              >
+            </div>
+          </a>
         </div>
       </section>
     </div>
