@@ -100,7 +100,7 @@ const hatenaHref = `https://b.hatena.ne.jp/entry/${encodeURIComponent(url)}`;
         <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
         ></path>
       </svg>
-      Copy
+      <span>Copy</span>
     </button>
   </div>
 </div>
@@ -125,10 +125,16 @@ const hatenaHref = `https://b.hatena.ne.jp/entry/${encodeURIComponent(url)}`;
 
         try {
           await navigator.clipboard.writeText(url);
-          btn.classList.add('text-foreground');
-          setTimeout(() => {
-            btn.classList.remove('text-foreground');
-          }, 2000);
+          const label = btn.querySelector('span');
+          if (label) {
+            const orig = label.textContent;
+            label.textContent = 'Copied!';
+            btn.classList.add('text-foreground', 'bg-accent');
+            setTimeout(() => {
+              label.textContent = orig;
+              btn.classList.remove('text-foreground', 'bg-accent');
+            }, 2000);
+          }
         } catch {
           console.warn('Failed to copy to clipboard');
         }
