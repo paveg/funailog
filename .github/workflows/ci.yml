@@ -64,6 +64,13 @@ jobs:
       - name: Build
         run: pnpm run build
 
+      - name: a11y check (axe-core via pa11y-ci)
+        run: |
+          pnpm preview --host 127.0.0.1 &
+          sleep 3
+          pnpm exec pa11y-ci --config .pa11yci
+          kill %1 || true
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:

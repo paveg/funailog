@@ -1,0 +1,533 @@
+{
+  "http://kamifurano-hokkaido.com/": {
+    "description": "北海道上富良野で素敵な思い出を作るなら",
+    "image": {},
+    "title": "白銀荘 / 日の出公園オートキャンプ場|公式サイト　北海道上富良野町で人気の吹上温泉、ラベンダー畑隣接のキャンプ場"
+  },
+  "https://arxiv.org/abs/2603.21852": {
+    "description": "A single two-input gate suffices for all of Boolean logic in digital hardware. No comparable primitive has been known for continuous mathematics: computing elementary functions such as sin, cos, sqrt, and log has always required multiple distinct operations. Here I show that a single binary operator, eml(x,y)=exp(x)-ln(y), together with the constant 1, generates the standard repertoire of a scientific calculator. This includes constants such as e, pi, and i; arithmetic operations including addition, subtraction, multiplication, division, and exponentiation as well as the usual transcendental and algebraic functions. For example, exp(x)=eml(x,1), ln(x)=eml(1,eml(eml(1,x),1)), and likewise for all other operations. That such an operator exists was not anticipated; I found it by systematic exhaustive search and established constructively that it suffices for the concrete scientific-calculator basis. In EML (Exp-Minus-Log) form, every such expression becomes a binary tree of identical nodes, yielding a grammar as simple as S -> 1 | eml(S,S). This uniform structure also enables gradient-based symbolic regression: using EML trees as trainable circuits with standard optimizers (Adam), I demonstrate the feasibility of exact recovery of closed-form elementary functions from numerical data at shallow tree depths up to 4. The same architecture can fit arbitrary data, but when the generating law is elementary, it may recover the exact formula.",
+    "image": {
+      "src": "/.cache/embed/12d01bd52f6047c46a48a9cb19515953561dfb5cad335183622d0867a19d3f45.avif"
+    },
+    "title": "All elementary functions from a single binary operator"
+  },
+  "https://carview.yahoo.co.jp/article/detail/da3ffd48fa62c7734588a729526912f3645e2136/": {
+    "description": "発表前夜のランクル70。その現状を調査した2014年以来の再々販が決定しているトヨタ「ランドクルーザー70」。その発売が目前に迫っています。ランドクルーザー70は、乗用車としての性格も強い「ランドクルーザー300」や「ランドクルーザー...",
+    "image": {
+      "src": "/.cache/embed/fc8c72f4f3b26b639595ace469352c39b9894682bf0b120a261a986c948491bd.avif"
+    },
+    "title": "【発表前夜】ランクル70販売店の現状を調査！ 普通に買えるのはいつ？ 中古が高騰しないワケとは（carview!） | 自動車情報サイト【新車・中古車】 - carview!"
+  },
+  "https://daily-dose.pavegy.workers.dev/": {
+    "description": "サプリメントの摂取管理を効率化。バーコードスキャン、AIタイミング提案、リマインダー機能搭載。",
+    "image": {
+      "src": "/.cache/embed/63efb9e3e023b482c222df7c1668760dbf5646bf46d57130e2021524ae33a640.avif"
+    },
+    "title": "DailyDose - サプリメント管理アプリ"
+  },
+  "https://developers.google.com/analytics/devguides/reporting/data/v1?hl=ja": {
+    "description": "Google アナリティクスのレポートとデータをプログラマティックに管理する。",
+    "image": {
+      "src": "/.cache/embed/aec2ff8f55599e9dc34d7caae99ddda17e44bcd96e38684bedb72bc0453ae893.avif"
+    },
+    "title": "Google Analytics Data API の概要  |  Google for Developers"
+  },
+  "https://flexispot.jp/e7-set.html": {
+    "description": "FlexiSpot電動昇降デスクE7を使えば、立ち姿勢に合う高さまで調節可能。天板サイズ、色をお部屋の雰囲気やデザインに合わせチョイス。",
+    "image": {
+      "src": "/.cache/embed/e013772d43618a5cd01d86dce1fb2f116f03bd4bd6cc51ba46ec7822766304ad.avif"
+    },
+    "title": "電動昇降式デスク・E7 | FlexiSpot 公式ストア"
+  },
+  "https://funailog.com/blog/2026/tuck-read-it-later-indie-dev": {
+    "description": "Pocketの終了をきっかけに、5日間でAI搭載のRead-it-laterアプリ「Tuck」を開発。Cloudflare Workers + Hono + React 19の技術スタックと、個人開発の裏側を公開。",
+    "image": {
+      "src": "/.cache/embed/20fb9578e5e3403a5f2c45221e9e9cc45a0604cab82ecafbc43fcbc3bb6b809d.avif"
+    },
+    "title": "自分用に作ったRead-it-laterアプリをProduct Huntに出してみた【Tuck開発記】 | フナイログ"
+  },
+  "https://gettuck.app": {
+    "description": "AI-powered read-it-later app that summarizes articles and supports your reading habits.",
+    "image": {
+      "src": "/.cache/embed/631817c5ba4dbd8cfe0ee6dfdaf02acf4dbcc62d9081cf8e4bf28e169a5400fe.avif"
+    },
+    "title": "Tuck - Curate. Focus. Remember."
+  },
+  "https://ghostty.org/": {
+    "description": "Ghostty is a fast, feature-rich, and cross-platform terminal emulator that uses platform-native UI and GPU acceleration.",
+    "image": {
+      "src": "/.cache/embed/8c0ee1b3fc342170319f443dca3e0cd1ee3f4156bb42af869f1db83425febda2.avif"
+    },
+    "title": "Ghostty"
+  },
+  "https://github.com/codiume/orbit/tree/main/packages/astro-seo-schema": {
+    "description": "Collection of useful integrations & components for the Astro ecosystem. ⭐️ Star to support our work! - codiume/orbit",
+    "image": {
+      "src": "/.cache/embed/08ac5d7a59486725f57a0833769056dda0b1ac08702103e81e1108b84cf75254.avif"
+    },
+    "title": "orbit/packages/astro-seo-schema at main · codiume/orbit"
+  },
+  "https://github.com/gitleaks/gitleaks": {
+    "description": "Find secrets with Gitleaks 🔑. Contribute to gitleaks/gitleaks development by creating an account on GitHub.",
+    "image": {
+      "src": "/.cache/embed/990ed90b6453da303a16efb0d1ed8dd85c82cce6ce8ccee15c68bb63a18c986b.avif"
+    },
+    "title": "GitHub - gitleaks/gitleaks: Find secrets with Gitleaks 🔑"
+  },
+  "https://github.com/haxibami/haxibami.net": {
+    "description": "haxibami's website. Contribute to haxibami/h6i.org development by creating an account on GitHub.",
+    "image": {
+      "src": "/.cache/embed/a37adfa64927859fac2eada51054678c65ea8b314f08828695a24ef9019cff82.avif"
+    },
+    "title": "GitHub - haxibami/h6i.org: haxibami's website."
+  },
+  "https://github.com/paveg/blog/blob/main/src/lib/ga.ts#L1-L53": {
+    "description": "Contribute to paveg/blog development by creating an account on GitHub.",
+    "image": {
+      "src": "/.cache/embed/a567241bc8d174d93bb91088caa96ca83e2f51416c5f07b3131483c9f0a1e23d.avif"
+    },
+    "title": "blog/src/lib/ga.ts at main · paveg/blog"
+  },
+  "https://github.com/paveg/blog/blob/main/src/pages/popular.tsx#L21-L28": {
+    "description": "Contribute to paveg/blog development by creating an account on GitHub.",
+    "image": {
+      "src": "/.cache/embed/a567241bc8d174d93bb91088caa96ca83e2f51416c5f07b3131483c9f0a1e23d.avif"
+    },
+    "title": "blog/src/pages/popular.tsx at main · paveg/blog"
+  },
+  "https://github.com/paveg/dots": {
+    "description": "Contribute to paveg/dots development by creating an account on GitHub.",
+    "image": {
+      "src": "/.cache/embed/3b362e39dfc89200f1963e4945b7a4f4abb1505b3762859ac029c21b7f24bc54.avif"
+    },
+    "title": "GitHub - paveg/dots"
+  },
+  "https://github.com/paveg/funailog/blob/main/src/lib/rich-results.ts": {
+    "description": "Contribute to paveg/funailog development by creating an account on GitHub.",
+    "image": {
+      "src": "/.cache/embed/a47e58d9bd133fdba832dba7fb00026e807afbf41164b372fd11ace7b6a1f8a3.avif"
+    },
+    "title": "funailog/src/lib/rich-results.ts at main · paveg/funailog"
+  },
+  "https://github.com/paveg/hono-idempotency": {
+    "description": "Stripe-style Idempotency-Key middleware for Hono with KV/D1/Memory stores - paveg/hono-idempotency",
+    "image": {
+      "src": "/.cache/embed/432c3991344316fde3b73c10823d2dcc13459c6e56154186cfcdff38fd1703d0.avif"
+    },
+    "title": "GitHub - paveg/hono-idempotency: Stripe-style Idempotency-Key middleware for Hono with KV/D1/Memory stores"
+  },
+  "https://github.com/paveg/hono-problem-details": {
+    "description": "RFC 9457 Problem Details middleware for Hono. Contribute to paveg/hono-problem-details development by creating an account on GitHub.",
+    "image": {
+      "src": "/.cache/embed/aa5d996c89db85e8968ac42a7527836e67f674ca87431323bb4b4d2c3bfbb113.avif"
+    },
+    "title": "GitHub - paveg/hono-problem-details: RFC 9457 Problem Details middleware for Hono"
+  },
+  "https://github.com/paveg/tuck/pull/215": {
+    "image": {}
+  },
+  "https://github.com/VA00/SymbolicRegressionPackage": {
+    "description": "Basic building blocks for brute-force and random symbolic regression methods in Mathematica - VA00/SymbolicRegressionPackage",
+    "image": {
+      "src": "/.cache/embed/6f4e91bd7a73a32d328b52c9cf6520bff2bf549d64844aec1ab6acb4de78b085.avif"
+    },
+    "title": "GitHub - VA00/SymbolicRegressionPackage: Basic building blocks for brute-force and random symbolic regression methods in Mathematica"
+  },
+  "https://github.com/vercel-labs/agent-skills/tree/main/skills/react-best-practices": {
+    "description": "Vercel's official collection of agent skills. Contribute to vercel-labs/agent-skills development by creating an account on GitHub.",
+    "image": {
+      "src": "/.cache/embed/1d0ff95b98e6a80710113e0ceb7b3d66045a51773f036892160cd6cfbb6cfd5f.avif"
+    },
+    "title": "agent-skills/skills/react-best-practices at main · vercel-labs/agent-skills"
+  },
+  "https://github.com/x-motemen/ghq": {
+    "description": "Remote repository management made easy. Contribute to x-motemen/ghq development by creating an account on GitHub.",
+    "image": {
+      "src": "/.cache/embed/13d517a6ef520e347b13747abc7c60ea46afd0fe9531528a486b4b2b813b34df.avif"
+    },
+    "title": "GitHub - x-motemen/ghq: Remote repository management made easy"
+  },
+  "https://googleapis.dev/nodejs/analytics-data/latest/index.html": {
+    "image": {},
+    "title": "\n      Home - Documentation\n  "
+  },
+  "https://id-information.co.jp/kuruma/landcruiser_hanbaidaisu/": {
+    "image": {
+      "src": "/.cache/embed/7a497082ffa1770d28188eb7276c1bd39d6177cda8fd4e9f97899185ee29ec47.avif"
+    },
+    "title": "トヨタ ランドクルーザー300　新車販売台数の推移/売れ行き(生産台数)と生産状況は？工場とラインの稼働状況も - 株式会社アイディーインフォメーション"
+  },
+  "https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%A9%E3%83%83%E3%82%AF%E3%83%9C%E3%83%BC%E3%83%AB": {
+    "image": {
+      "src": "/.cache/embed/ce51233affe983a253dff4016a935d83046b453222fa830a4e3188102e4e1635.avif"
+    },
+    "title": "トラックボール - Wikipedia"
+  },
+  "https://ja.wikipedia.org/wiki/%E5%B9%B8%E7%A6%8F%E9%A7%85": {
+    "image": {
+      "src": "/.cache/embed/48ca4eb0b56772abacaccd0e70405b5e08d295b4db50089808e6409f06a564bb.avif"
+    },
+    "title": "幸福駅 - Wikipedia"
+  },
+  "https://jaga-farm.com/flexispot-e7/": {
+    "description": "FlexiSpotのスタンディングデスクE7をレビュー。純正竹天板を鬼目ナット化してみた。天板への穴あけから取り付けまで詳細に解説。",
+    "image": {
+      "src": "/.cache/embed/11f6d5824966fcf61e6e2bb77d3d29b77244a2d62e022d89af9276623f86fd50.avif"
+    },
+    "title": "【DIY】FlexiSpot E7 レビュー | 純正竹天板を鬼目ナット化してみた | じゃが畑"
+  },
+  "https://jp.candyhouse.co/": {
+    "description": "家を出る時に何を持つ?鍵、財布、スマホ...?「SESAME(セサミ)」は魔法で家の鍵を開閉出来るAI時代のスマートロックです。取付も簡単で鍵も簡単にシェア。顔認証、手のひら静脈、モバイルSuica、スマホ、Google Home、Alexa、Siri対応で可能性は無限大！暮らしの革命を。By キャンディハウス",
+    "image": {
+      "src": "/.cache/embed/1397ed5330b81686566fbad40891d0206e31f53eac7969e3381b599a83094059.avif"
+    },
+    "title": "セサミ スマートロック | CANDY HOUSE 公式"
+  },
+  "https://jp.ext.hp.com/gaming/personal/hp_x27i_display/": {
+    "description": "IPSパネルを採用し、QHD（2560×1440）の解像度 の大型の27.0インチHP X27i QHDゲーミングディスプレイをご紹介します。",
+    "image": {},
+    "title": "HP X27i QHDゲーミングディスプレイ - 製品詳細 - ゲーミングモニター | 日本HP"
+  },
+  "https://json-ld.org/": {
+    "image": {},
+    "title": "JSON-LD - JSON for Linked Data"
+  },
+  "https://kanademono.design/": {
+    "description": "あなただけの明日を奏でる触媒としてのインテリア。 KANADEMONOでは、パーソナライズ家具ブランドとして、「完璧さ」よりも「ちょうど良さ」を大切にしています。 多様な価値観が認められる今の時代、一人ひとりの個性や好みにマッチする家具をリーズナブルな価格で、しかも短納期で提供します。 私たちは、あなたの日常をもっと創造的に、自由にするためのパートナー。人生を自分らしくデザインする力を、私たちのプロダクトを通じて手に入れてみてください。",
+    "image": {},
+    "title": "KANADEMONO"
+  },
+  "https://kanademono.design/collections/table-desk/products/tbl-k11-bk": {
+    "description": "落ち着きのあるブラウンのラバーウッドの天板と、マットブラックの鉄脚を組み合わせた、シンプルモダンなデザインのテーブルです。 ダイニングテーブルにもワークスペース用のデスクにもぴったりのこちらのテーブルは「幅：1000 〜 1800 mm」「奥行：650 〜 800 mm」の範囲で、サイズオーダーが無料。空間にフィットするサイズの天板と、お好みのアイアン脚を組み合わせて、オリジナルのテーブルをオーダーしてみませんか。",
+    "image": {
+      "src": "/.cache/embed/190d8797b47e23be3cb1f348ed758a68c38387c6393d390b4964e691f4e33946.avif"
+    },
+    "title": "THE TABLE / ラバーウッド ブラウン × Black Steel"
+  },
+  "https://kanademono.design/pages/about": {
+    "description": "All the furniture is tailored to you. あなただけの明日を奏でる触媒としてのインテリア",
+    "image": {},
+    "title": "KANADEMONO について"
+  },
+  "https://nature.global/": {
+    "description": "Nature株式会社のオフィシャルサイトです。スマートリモコン「Nature Remo（ネイチャーリモ）」や、次世代型HEMS「Nature Remo E（ネイチャーリモイー）」などの各種商品情報、企業情報などをご紹介しています",
+    "image": {
+      "src": "/.cache/embed/1a79a29f5457508fe06b5be5309717457738df4072ba15f332288ba86e02aa25.avif"
+    },
+    "title": "Nature - Nature"
+  },
+  "https://note.com/fine_stilt865/n/n4f7f1c09098c": {
+    "description": "マンション管理が専門の癖についつい車の事を書いてしまう。これは自身のキャリアの前半が車業界で、途中から今にかけてはマンション管理業界で食べているので、やむを得ないともいえる。好きなのは車でマンション管理はあくまで食っていくために選んだ業界だし。地味だけどマンション管理業界は《食いっぱぐれ》が無い。これはかつての就職氷河期においても当てはまり、ありがたい特性だ。  と、のっけから脱線したがタイトルにあるランクル300。2年半前の2021年8月に国内で発売開始され、いきなり３万台程の受注が入ったため全部捌くのに数年かかる見通しになりトヨタ自動車が慌てて受注停止したある意味伝説の車と言えよう",
+    "image": {
+      "src": "/.cache/embed/57d627834aeb964103f9540a470c2da6b01223af8b9dacde7ec99fa57d57e56b.avif"
+    },
+    "title": "ランクル300累計登録台数と受注残の謎｜マンションeコネクト"
+  },
+  "https://note.com/goando/m/me3ed2026f6ac": {
+    "description": "なるべくデスクをすっきりさせて心穏やかに仕事をするためのマガジンです。",
+    "image": {
+      "src": "/.cache/embed/d95615f7aa2fbe3a1bfbcfa9d87a641fadf8396e1b13341c9f068df59f2f55f9.avif"
+    },
+    "title": "デスクをすっきりさせるマガジン｜Go Ando / PREDUCTS / THE GUILD｜note"
+  },
+  "https://onsen.nifty.com/onsen-matome/220519036396/": {
+    "description": "本記事では、サウナであまみが出る原因や、注意が必要な「血管炎」との見分け方について分かりやすく解説します。さらに、あまみが出やすくなるサウナの入り方や、おすすめのサウナ施設も紹介するので、ぜひ最後までお読みいただければ幸いです。",
+    "image": {
+      "src": "/.cache/embed/32d976a28a281f2a5e0b3fadaf09e7e2dc1c177b846a8db4dda07a1dfa7efa4a.avif"
+    },
+    "title": "サウナの「あまみ」とは？消えない時の対処法や危険なサイン（血管炎）との見分け方を徹底解説｜ニフティ温泉"
+  },
+  "https://ouraring.com/": {
+    "description": "Enhance your health journey with Oura. The Oura Ring provides round-the-clock insights into sleep, fitness, and stress for wellness. Now HSA/FSA eligible.",
+    "image": {
+      "src": "/.cache/embed/83e109fc2a8681d15619c9c263046408ed338907af470247e04286b15a29fdf0.avif"
+    },
+    "title": "Oura Ring. Smart Ring for Fitness, Stress, Sleep & Health."
+  },
+  "https://preducts.jp/": {
+    "description": "わたしたちは「いい仕事」を生み出す道具のメーカーです。",
+    "image": {
+      "src": "/.cache/embed/09801d31abb3bab07c3dee7e1e11d144ab537d84e4dd4e43a2c6d961cb05a209.avif"
+    },
+    "title": "PREDUCTS - Desk for Good Work"
+  },
+  "https://preducts.jp/blogs/journal/featured-desk-controller": {
+    "description": "PREDUCTS DESKの電動昇降コントローラが新しくなります。これまでFlexiSpot E7/E8に標準で付属するコントローラを使用していましたが、今週の発送分より順次、オリジナルの「Desk Controller」へアップデートしました。本記事ではオリジナル版のデザインと採用背景をご紹介します。",
+    "image": {
+      "src": "/.cache/embed/e41231992676ef5e7b26aa2aff2920514093705b792249176126b863ee3509c4.avif"
+    },
+    "title": "Desk Controller：PREDUCTSらしさを纏う、新しいデスクのインターフェイス | PREDUCTS"
+  },
+  "https://preducts.jp/products/board-forest-flexispot": {
+    "description": "わたしたちは「いい仕事」を生み出す道具のメーカーです。",
+    "image": {
+      "src": "/.cache/embed/09801d31abb3bab07c3dee7e1e11d144ab537d84e4dd4e43a2c6d961cb05a209.avif"
+    },
+    "title": "404 Not Found | PREDUCTS"
+  },
+  "https://preducts.jp/products/desk-controller": {
+    "description": "PREDUCTS DESKおよびBOARDに標準で付属するマットブラック筐体のオリジナルコントローラー。FlexiSpot E7/E8/E7 Pro/E7Hなどの昇降脚フレームに対応します。※PREDUCTS DESKに取り付けるためのMount for Desk Controllerは付属しません。",
+    "image": {
+      "src": "/.cache/embed/55eabad757e1d207189967cd148b5fa9e581272ee2ca64a49937ef6aa3398fa2.avif"
+    },
+    "title": "Desk Controller | PREDUCTS"
+  },
+  "https://preducts.jp/products/desk-forest-wide": {
+    "description": "わたしたちは「いい仕事」を生み出す道具のメーカーです。",
+    "image": {
+      "src": "/.cache/embed/09801d31abb3bab07c3dee7e1e11d144ab537d84e4dd4e43a2c6d961cb05a209.avif"
+    },
+    "title": "404 Not Found | PREDUCTS"
+  },
+  "https://preducts.jp/products/mount-flexispot-controller": {
+    "description": "PREDUCTS Desk ControllerやFlexiSpot昇降脚に付属するコントローラーをPREDUCTS DESKにマウントするためのアルミ製モジュール。※昇降デスクモデル及び天板に標準で付属します。",
+    "image": {
+      "src": "/.cache/embed/c65ff8267c00dafaafb6f0ad99a4235ae5d38ac87f27427a2cf04e9f580caf7a.avif"
+    },
+    "title": "Mount for Desk Controller | PREDUCTS"
+  },
+  "https://rehype-pretty-code.netlify.app/": {
+    "description": "Beautiful code blocks for Markdown or MDX powered by the Shiki syntax highlighter.",
+    "image": {},
+    "title": "Rehype Pretty Code"
+  },
+  "https://ritalog0317.com/flexispot-diy-ritalog/": {
+    "description": "この度はじめてのDIYをすることになったリタ(@ritalog940317)です。 今回はタイトルにもあるよう",
+    "image": {
+      "src": "/.cache/embed/5d58ad39dca5cb77d978fd991268a69dba8ea8cfca1dfa98a07b470485c533fe.avif"
+    },
+    "title": "DIY初心者がFlexiSpot E8とかなでもの天板を鬼目ナットを使ってDIYした記録 | リタログ"
+  },
+  "https://sa-nitawaki.medium.com/%E3%83%87%E3%83%95%E3%82%A9%E3%83%AB%E3%83%88%E3%82%B7%E3%82%A7%E3%83%AB%E3%82%92fish%E3%81%AB%E5%A4%89%E3%81%88%E3%82%8B%E3%81%AA-d9233b39335e": {
+    "image": {},
+    "title": "Just a moment..."
+  },
+  "https://sauna-ikitai.com/saunners/2430/posts/3223965": {
+    "description": "森のスパリゾート 北海道ホテル（帯広市）へのFunaiさんのサ活です[1回目]",
+    "image": {
+      "src": "/.cache/embed/fabbd492c2d83575f62805e373a1d628cf29f84781ae1e54dc0f732bd5d0f94d.avif"
+    },
+    "title": "Funaiさんのサ活（森のスパリゾート 北海道ホテル, 帯広市）1回目"
+  },
+  "https://tailf.pavegy.workers.dev": {
+    "description": "日本の技術ブログを、もっと見つけやすく",
+    "image": {
+      "src": "/.cache/embed/b3da44367a92e704769d257a9d21915cb34458153fb8ac8f690aba0419c0df2c.avif"
+    },
+    "title": "ホーム | tail -f"
+  },
+  "https://toyota.jp/landcruiser250/": {
+    "description": "トヨタ ランドクルーザー“250” の公式サイト。機能・性能などの紹介をはじめ、ご購入を検討されている方への情報をご案内します。",
+    "image": {},
+    "title": "トヨタ ランドクルーザー“250” | トヨタ自動車WEBサイト"
+  },
+  "https://twitter.com/acsaaan": {
+    "image": {}
+  },
+  "https://twitter.com/hg11mbps": {
+    "image": {}
+  },
+  "https://vercel.com/blog/introducing-react-best-practices": {
+    "description": "We've encapsulated 10+ years of React and Next.js optimization knowledge into react-best-practices, a structured repository optimized for AI agents and LLMs. ",
+    "image": {
+      "src": "/.cache/embed/b70bb95d19ba73ed78df5897c0c7c2e9ff51b1a1172d47e9a1abe0707fcc279b.avif"
+    },
+    "title": "Introducing: React Best Practices"
+  },
+  "https://wiki.archlinux.jp/index.php/XDG_Base_Directory": {
+    "image": {},
+    "title": "XDG Base Directory - ArchWiki"
+  },
+  "https://www.amazon.co.jp/dp/B09R4GW3V6": {
+    "image": {},
+    "title": "Amazon.co.jp"
+  },
+  "https://www.amazon.co.jp/dp/B09V7BFQV4": {
+    "image": {},
+    "title": "Amazon.co.jp"
+  },
+  "https://www.amazon.co.jp/gp/product/B07SYPF134": {
+    "image": {},
+    "title": "Amazon.co.jp"
+  },
+  "https://www.amazon.com/dp/B0C14XCTCP?psc=1&ref=ppx_yo2ov_dt_b_product_details": {
+    "image": {},
+    "title": "Amazon.com"
+  },
+  "https://www.carsized.com/en/cars/compare/toyota-land-cruiser-prado-2018-suv-vs-toyota-land-cruiser-2021-suv/": {
+    "image": {},
+    "title": "Attention Required! | Cloudflare"
+  },
+  "https://www.dell.com/ja-jp/blog/monitor-u4025qw/": {
+    "description": "※当資料は、2024年1月4日に米国にて発表したブログ「Meet the New Five-Star Certified Monitors for Eye",
+    "image": {
+      "src": "/.cache/embed/fde60b8a61847f4cf9096a639a3c249734b15665d652f9b1ff8f42fd419f5611.avif"
+    },
+    "title": "デル・テクノロジーズ、目に優しい製品として5つ星に認定されたモニター「U4025QW」を発表 | Dell Technologies"
+  },
+  "https://www.fiio.jp/products/btr5/": {
+    "description": "FIIO Electronicsとは. FIIO Electronicsは2007年に中国で設立された音響機器の企画製造および販売を行うオーディオブランドです。",
+    "image": {
+      "src": "/.cache/embed/840d1f77adac3c9180d5b1c2fe10bb9101658891b944adf58ade6ff507f0944e.avif"
+    },
+    "title": "FIIO Japan"
+  },
+  "https://www.flypeach.com/lm/ai/airports/baggage/carry_on_bag": {
+    "description": "Peachの機内に持ち込むことが可能な手荷物のルールを記載しています。搭乗の前にご確認ください。",
+    "image": {
+      "src": "/.cache/embed/8e1d052889162a5dfcf01da482ab28b9956f6028933f29628f8daf53554ecdeb.avif"
+    },
+    "title": "機内持ち込み手荷物について | Peach Aviation"
+  },
+  "https://www.funailog.com/blog/2023/mx-ergo-review": {
+    "description": "LogicoolのフラッグシップトラックボールMX Ergoの詳細レビュー。Logicool Flowの活用法、VSCode設定、G703hとの比較を解説します。",
+    "image": {
+      "src": "/.cache/embed/b95a9445c5298e65a6fe229e53ef196f72246e6ed04c46ad63e58f4d6c73f874.avif"
+    },
+    "title": "Logicool MX Ergoレビュー｜トラックボール初心者が使って分かったメリットと設定方法 | フナイログ"
+  },
+  "https://www.funailog.com/blog/2023/preducts-first-impression": {
+    "description": "PREDUCTSのFOREST天板（180cm×75cm）とFlexiSpot E7を組み合わせた昇降デスクのDIY記録。鬼目ナット埋め込み手順とデバイス配置を詳しく紹介します。",
+    "image": {
+      "src": "/.cache/embed/45d9d6d87a231130e63d408c8e7c58974229cb16bdb43c80ffedb9db00c2231b.avif"
+    },
+    "title": "PREDUCTSデスク導入レビュー｜FlexiSpot E7と鬼目ナットでDIY昇降デスク【デスクツアー2023】 | フナイログ"
+  },
+  "https://www.funailog.com/blog/2023/travel-hokkaido-1": {
+    "description": "2022年末から2023年始にかけての北海道旅行記前編。宗谷岬、稚内、富良野を巡った4泊5日の詳細ルート、宿泊先、グルメ情報をまとめました。",
+    "image": {
+      "src": "/.cache/embed/40b02995924b02cb071c9be79ef9f8a098011449d993111b753ae552c0911d67.avif"
+    },
+    "title": "北海道旅行記2022-2023年末年始｜宗谷岬・稚内・富良野を巡る4泊5日【前編】 | フナイログ"
+  },
+  "https://www.funailog.com/blog/2023/travel-hokkaido-2": {
+    "description": "北海道旅行記後編。白銀荘の絶景サウナ、北海道ホテルの朝ウナ、帯広豚丼、小樽海鮮丼など4日目・5日目の全行程と費用を詳しく紹介します。",
+    "image": {
+      "src": "/.cache/embed/40b02995924b02cb071c9be79ef9f8a098011449d993111b753ae552c0911d67.avif"
+    },
+    "title": "北海道旅行記2022-2023年末年始｜白銀荘サウナ・北海道ホテル・小樽グルメ【後編】 | フナイログ"
+  },
+  "https://www.funailog.com/blog/2024/blog-replacement": {
+    "description": "Next.jsからAstro+Cloudflare Pagesにブログを移行した理由と実装記録。技術スタック、パフォーマンス改善、実装機能を詳しく解説します。",
+    "image": {
+      "src": "/.cache/embed/1d388d6b62424cff231732248f657b6a18fe50c45a424ec1ab831c0243dc92a3.avif"
+    },
+    "title": "Next.jsからAstroへブログ移行｜LightHouseフルスコア達成までの技術選定と実装 | フナイログ"
+  },
+  "https://www.funailog.com/blog/2024/handle-jsonld-on-astro": {
+    "description": "AstroブログにJSON-LDを実装してSEOを改善する方法を解説。Schema.orgの基礎から実装手順、リッチリザルトテストまで初心者向けに詳しく説明します。",
+    "image": {
+      "src": "/.cache/embed/13e0bcd9b0d6b30abc1acd2eab7196e5e3646fdff45822b24f9b620978af0935.avif"
+    },
+    "title": "AstroブログにJSON-LDを実装してSEO強化する方法 | フナイログ"
+  },
+  "https://www.funailog.com/blog/2024/preducts-desk-controller": {
+    "description": "PREDUCTSオリジナルのデスクコントローラーをレビュー。FlexiSpot純正との違い、取り付け手順、使用感を詳しく解説します。",
+    "image": {
+      "src": "/.cache/embed/9ed3cd9f565827e10bfbb5066e126d90b44a24f2c14996c3823a11ddc7f87242.avif"
+    },
+    "title": "PREDUCTS Desk Controllerレビュー｜FlexiSpot純正との違いと取り付け方法 | フナイログ"
+  },
+  "https://www.funailog.com/blog/2024/review-monitors-u4025qw-dell": {
+    "description": "5K2K ウルトラワイドモニター DELL U4025QW を 2 年以上使った実機レビュー。デュアルモニターからの移行、PBP/PIP、Dell Display Manager と不具合対応を率直に解説。",
+    "image": {
+      "src": "/.cache/embed/600564b0c2fbf83d47aa3a558fb9ef14d544247034171cfbedeb06f17a0a714d.avif"
+    },
+    "title": "DELL U4025QW を 2 年使ったレビュー｜5K2K 40 インチウルトラワイドの実用性 | フナイログ"
+  },
+  "https://www.funailog.com/blog/en/2023/rebuild-wsl2-with-alacritty": {
+    "description": "お探しのページは見つかりませんでした。",
+    "image": {},
+    "title": "404 ページが見つかりません | フナイログ"
+  },
+  "https://www.hokkaidohotel.co.jp/": {
+    "description": "＜公式サイト宿泊予約特典あり＞十勝・帯広中心部にありながら、100年の森に抱かれた自然豊かな環境で、寛ぎのひとときを過ごせるアーバンリゾートホテル。森に囲まれた自然と、十勝の美味しいお食事やモール温泉をゆっくりお楽しみください。全１１７室の客室とモール温泉露天風呂、アロマテラピー、十勝の豊かな食材を愉しめる５つのレストラン、ウェディングやご宴会・会議・展示会に最適な５つの宴会場など充実の設備とサービスでお客様をお迎えします。",
+    "image": {},
+    "title": "【公式】森のスパリゾート 北海道ホテル｜十勝・帯広市のフルサービスホテル"
+  },
+  "https://www.hokkaidohotel.co.jp/concept/": {
+    "description": "物語の始まりは明治32年。これからも北海道の十勝で、ここにしかないホテルの過ごし方を提案し続けていきます。これまでの100年を受け継ぎ、これからの100年も「記憶に残るホテル」を目指して。",
+    "image": {},
+    "title": "北海道ホテルのコンセプト｜【公式】森のスパリゾート 北海道ホテル"
+  },
+  "https://www.imgix.com/": {
+    "description": "Redefine how you optimize, edit, and deliver your visual media with tools built for speed, performance, and AI transformation.",
+    "image": {
+      "src": "/.cache/embed/1fd9f9cca855ae85a59fb4b67ca625f5e4363153e33346ea56eb0315580bf36a.avif"
+    },
+    "title": "Combining Images, Data and Intelligence to Transform Your Business"
+  },
+  "https://www.impactm.co.jp/blog/do-i-really-need-a-blog/": {
+    "image": {},
+    "title": "ブログって本当に必要？ – マーケティングのプロフェッショナル集団 – インパクトM"
+  },
+  "https://www.insta360.com/jp/product/insta360-flow": {
+    "image": {},
+    "title": "Just a moment..."
+  },
+  "https://www.insta360.com/jp/product/insta360-flow?_gl=1*c6mz6a*_up*MQ..&gclid=Cj0KCQjwn7mwBhCiARIsAGoxjaIhBJAWY687YK6XXIcnY4jckZg5rOQEZkSLUKG0eRlFUo2rcsZv6BsaAtgqEALw_wcB": {
+    "image": {},
+    "title": "Just a moment..."
+  },
+  "https://www.jada.or.jp/pages/340/": {
+    "description": "（一社）日本自動車販売協会連合会のブランド通称名別ランキングです",
+    "image": {
+      "src": "/.cache/embed/974f614556277e83fedb2d4a176cd00c1746f13e81956204c346b2da6ddddb5f.avif"
+    },
+    "title": "ブランド通称名別ランキング｜一般社団法人日本自動車販売協会連合会（公式ホームページ）"
+  },
+  "https://www.jetify.com/devbox": {
+    "description": "Devbox creates isolated, reproducible development environments that can run anywhere without Docker or virtual machines. ",
+    "image": {},
+    "title": "Devbox: Portable, Isolated Dev Environments"
+  },
+  "https://www.kamifurano.jp/archives/facility_item/465/": {
+    "description": "北海道上富良野町の観光情報を発信する「かみふらの十勝岳観光協会公式サイト」。アクセス、マップ、おすすめ観光コース、ラベンダー開花情報、十勝岳のご案内。ホテル、ペンション、温泉などの宿泊施設や飲食店の情報提供。サッポロビールの原料「ホップ」・「ビール大麦」、アウトドア体験、イベント情報も満載。「ぶたさがり」発祥の地、上富良野の最新情報「上富良野Navi」",
+    "image": {
+      "src": "/.cache/embed/4aaa63669d0aa54fdce9158f3b60cc0d9bddf245a837cca56058f1949bf79dcc.avif"
+    },
+    "title": "吹上温泉保養センター　白銀荘"
+  },
+  "https://www.logicool.co.jp/ja-jp/products/mice/mx-ergo-wireless-trackball-mouse.910-005183.html": {
+    "image": {
+      "src": "/.cache/embed/020a96f8b51ae3aa545a4ba768b85270a6c44aca121b5faf9c63f7201569c822.avif"
+    },
+    "title": "Error: 404"
+  },
+  "https://www.oculus.com/quest/": {
+    "description": "現実を超えてゆけ、Meta Questで。MetaのVRヘッドセットは、デジタルゲームとエンターテイメントを一新します。Quest 3Sの詳細を確認し、すべてのヘッドセットをご覧ください。",
+    "image": {
+      "src": "/.cache/embed/1a0aba3a1bbd6616ccdedb34c90e8ca1b65e71abfec68dae404010573c988cbe.avif"
+    },
+    "title": "Meta Quest VRヘッドセットとアクセサリー"
+  },
+  "https://www.producthunt.com/products/tuck": {
+    "image": {},
+    "title": "Just a moment..."
+  },
+  "https://www.shure.com/ja-JP/products/accessories/rmce-bt2": {
+    "description": "Bluetooth® 5.0高解像度オーディオ プレミアムワイヤレスイヤホンケーブル",
+    "image": {
+      "src": "/.cache/embed/14945b2da94327b747bdd1e4fdc6522f0955dcfa45062b0308041a1cd42b114b.avif"
+    },
+    "title": "RMCE-BT2 - RMCE-BT2 Bluetooth® 5.0 高解像度 オーディオ プレミアムワイヤレス イヤホンケーブル - Shure 日本"
+  },
+  "https://www.vill.otoineppu.hokkaido.jp/about/ichi_kisyou.html": {
+    "description": "ようこそ北海道で一番小さな村、音威子府村の公式ホームページへ。観光情報、村政情報、産業情報等を掲載しています。",
+    "image": {},
+    "title": "位置、気象｜音威子府村について｜音威子府村"
+  },
+  "https://yamakame.com/%E6%9C%80%E8%BF%91%E3%81%AEiphone%E3%82%84%E9%AB%98%E6%80%A7%E8%83%BDandroid%E3%81%AB%E3%82%B8%E3%83%B3%E3%83%90%E3%83%AB%E4%B8%8D%E8%A6%81%E3%81%AA%E3%81%AE%E3%81%8B%EF%BC%9F/#index_id3": {
+    "description": "iPhoneも15まで進化して、内蔵手振れ補正も強化され続けました。 ゆえに「iPhoneにはジンバル不要なんじゃね？」っていう声もちらほら聞かれるようになってきたようですので、それについてちょっとした検討会ですね！ 結論としては、スマホジ",
+    "image": {
+      "src": "/.cache/embed/c15c8971136c062c64cc025fbdfd10b55e5ed6ef13cc3aab34c8c5d6da3b8a03.avif"
+    },
+    "title": "最近のiphoneや高性能androidにジンバル不要なのか？ | アバウトドア"
+  },
+  "https://zenn.dev/pav/articles/3d9c92395ee44c": {
+    "image": {
+      "src": "/.cache/embed/36409721ee882ff10a56108d6eac541e16b98d663b077d84462c65f251d6d4a2.avif"
+    },
+    "title": "AI要約サービスで robots.txt を尊重する実装パターン"
+  }
+}
