@@ -72,7 +72,7 @@ export default defineConfig({
       [
         rehypeAutolinkHeadings,
         {
-          behavior: 'append',
+          behavior: 'prepend',
           properties(node: Element) {
             return {
               'aria-labelledby': node.properties.id,
