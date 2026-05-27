@@ -177,11 +177,11 @@ body {
 
     /* Tables */
     & .table-wrapper {
-      @apply my-5 overflow-x-auto;
+      @apply -mx-4 my-5 overflow-x-auto px-4 md:mx-0 md:px-0;
     }
 
     & table {
-      @apply my-5 w-full text-xs md:text-sm;
+      @apply w-full min-w-[500px] text-xs md:min-w-0 md:text-sm;
     }
 
     & th {
