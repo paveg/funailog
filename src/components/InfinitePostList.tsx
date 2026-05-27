@@ -73,9 +73,7 @@ function PostCardItem({ post }: { post: SerializedPost }) {
           </div>
           <div className="p-4">
             <div className="font-code text-muted-foreground mb-2 flex items-center gap-2 text-xs">
-              <span className="bg-muted rounded px-1.5 py-0.5 capitalize">
-                {post.category}
-              </span>
+              <span className="category-badge">{post.category}</span>
               <time dateTime={post.date}>{formatDate(post.date)}</time>
             </div>
             <h3
@@ -111,7 +109,7 @@ function PostItem({ post }: { post: SerializedPost }) {
       <div className="text-muted-foreground flex items-center gap-2 text-xs">
         <a
           href={`/blog/categories/${post.category}`}
-          className="bg-muted hover:bg-accent hover:text-foreground rounded px-1.5 py-0.5 capitalize transition-colors"
+          className="category-badge"
         >
           {post.category}
         </a>
@@ -144,11 +142,7 @@ function PostItem({ post }: { post: SerializedPost }) {
       {tags.length > 0 && (
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 pt-1.5">
           {tags.slice(0, 5).map((tag) => (
-            <a
-              key={tag}
-              href={`/blog/tags/${tag}`}
-              className="text-muted-foreground hover:text-foreground text-xs transition-colors duration-150"
-            >
+            <a key={tag} href={`/blog/tags/${tag}`} className="tag-link">
               #{tag}
             </a>
           ))}

@@ -1,0 +1,20 @@
+@reference "./theme.css";
+
+/* ─── Category badge ──────────────────────────────────── */
+.category-badge {
+  @apply bg-muted hover:bg-accent hover:text-foreground rounded px-1.5 py-0.5 text-xs capitalize transition-colors;
+}
+
+/* ─── Tag link ────────────────────────────────────────── */
+.tag-link {
+  @apply text-muted-foreground hover:text-foreground text-xs transition-colors;
+}
+
+/* ─── Post title (in lists/cards) ─────────────────────── */
+.post-title {
+  @apply font-heading text-foreground line-clamp-2 transition-colors duration-150;
+}
+
+.post-title-hover {
+  @apply group-hover:text-link;
+}

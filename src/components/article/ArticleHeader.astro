@@ -30,10 +30,7 @@ const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
 <div class="font-code text-muted-foreground my-4 space-y-3 text-xs">
   {/* Date + Category + Reading time */}
   <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-    <a
-      href={`/${collection}/categories/${category}`}
-      class="bg-muted hover:bg-accent hover:text-foreground rounded px-1.5 py-0.5 capitalize transition-colors"
-    >
+    <a href={`/${collection}/categories/${category}`} class="category-badge">
       {category}
     </a>
     <span class="flex items-center gap-1">
@@ -135,10 +132,7 @@ const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
     tags.length > 0 && (
       <div class="flex flex-wrap gap-1.5">
         {tags.map((tag) => (
-          <a
-            href={`/${collection}/tags/${tag}`}
-            class="text-muted-foreground hover:text-foreground text-xs transition-colors"
-          >
+          <a href={`/${collection}/tags/${tag}`} class="tag-link">
             #{tag}
           </a>
         ))}
