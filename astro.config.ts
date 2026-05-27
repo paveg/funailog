@@ -10,6 +10,7 @@ import expressiveCode from 'astro-expressive-code';
 import { h } from 'hastscript';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeMermaid from 'rehype-mermaid';
+import rehypeSlug from 'rehype-slug';
 
 import rehypeTableWrapper from './src/lib/rehype-table-wrapper';
 import rehypeUnwrapSvgP from './src/lib/rehype-unwrap-svg-p';
@@ -67,6 +68,7 @@ export default defineConfig({
           strategy: 'pre-mermaid',
         },
       ],
+      rehypeSlug,
       [
         rehypeAutolinkHeadings,
         {
