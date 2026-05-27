@@ -2,6 +2,8 @@
 import type { CollectionEntry } from 'astro:content';
 
 import Budoux from '@/components/Budoux.astro';
+import { defaultLang } from '@/i18n/ui';
+import { useTranslations } from '@/i18n/utils';
 
 export type Props = {
   currentPost: CollectionEntry<'blog'>;
@@ -9,6 +11,7 @@ export type Props = {
 };
 
 const { currentPost, seriesPosts } = Astro.props;
+const t = useTranslations(defaultLang);
 const currentOrder = currentPost.data.seriesOrder ?? 0;
 const total = seriesPosts.length;
 const prevPost = seriesPosts.find(
@@ -17,16 +20,19 @@ const prevPost = seriesPosts.find(
 const nextPost = seriesPosts.find(
   (p) => p.data.seriesOrder === currentOrder + 1,
 );
+const partLabel = t('series.partOf')
+  .replace('{current}', String(currentOrder))
+  .replace('{total}', String(total));
 ---
 
 {
   seriesPosts.length > 1 && (
     <nav
-      aria-label="シリーズナビゲーション"
+      aria-label={t('series.ariaLabel')}
       class="border-border bg-surface-sunken my-6 rounded-lg border p-4"
     >
-      <p class="text-muted-foreground mb-3 text-xs font-medium tracking-wide uppercase">
-        Series — Part {currentOrder} of {total}
+      <p class="text-muted-foreground mb-3 text-xs font-medium tracking-wide">
+        {t('series.label')} — {partLabel}
       </p>
 
       <ol class="space-y-1.5">
@@ -70,9 +76,15 @@ const nextPost = seriesPosts.find(
           {prevPost ? (
             <a
               href={`/blog/${prevPost.id}`}
-              class="text-muted-foreground hover:text-link text-sm transition-colors duration-150"
+              class="text-muted-foreground hover:text-link inline-flex items-center gap-1 text-sm transition-colors duration-150"
             >
-              &larr; Prev
+              <svg class="size-3.5" viewBox="0 0 15 15" fill="none">
+                <path
+                  d="M8.842 3.135a.5.5 0 0 1 .023.707L5.435 7.5l3.43 3.658a.5.5 0 0 1-.73.684l-3.75-4a.5.5 0 0 1 0-.684l3.75-4a.5.5 0 0 1 .707-.023Z"
+                  fill="currentColor"
+                />
+              </svg>
+              <span class="hidden sm:inline">Prev</span>
             </a>
           ) : (
             <span />
@@ -80,9 +92,15 @@ const nextPost = seriesPosts.find(
           {nextPost && (
             <a
               href={`/blog/${nextPost.id}`}
-              class="text-muted-foreground hover:text-link text-sm transition-colors duration-150"
+              class="text-muted-foreground hover:text-link inline-flex items-center gap-1 text-sm transition-colors duration-150"
             >
-              Next &rarr;
+              <span class="hidden sm:inline">Next</span>
+              <svg class="size-3.5" viewBox="0 0 15 15" fill="none">
+                <path
+                  d="M6.158 3.135a.5.5 0 0 0-.023.707L9.565 7.5l-3.43 3.658a.5.5 0 0 0 .73.684l3.75-4a.5.5 0 0 0 0-.684l-3.75-4a.5.5 0 0 0-.707-.023Z"
+                  fill="currentColor"
+                />
+              </svg>
             </a>
           )}
         </div>
