@@ -1,0 +1,92 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+import Budoux from '@/components/Budoux.astro';
+
+export type Props = {
+  currentPost: CollectionEntry<'blog'>;
+  seriesPosts: CollectionEntry<'blog'>[];
+};
+
+const { currentPost, seriesPosts } = Astro.props;
+const currentOrder = currentPost.data.seriesOrder ?? 0;
+const total = seriesPosts.length;
+const prevPost = seriesPosts.find(
+  (p) => p.data.seriesOrder === currentOrder - 1,
+);
+const nextPost = seriesPosts.find(
+  (p) => p.data.seriesOrder === currentOrder + 1,
+);
+---
+
+{
+  seriesPosts.length > 1 && (
+    <nav
+      aria-label="シリーズナビゲーション"
+      class="border-border bg-surface-sunken my-6 rounded-lg border p-4"
+    >
+      <p class="text-muted-foreground mb-3 text-xs font-medium tracking-wide uppercase">
+        Series — Part {currentOrder} of {total}
+      </p>
+
+      <ol class="space-y-1.5">
+        {seriesPosts.map((post) => {
+          const isCurrent = post.id === currentPost.id;
+          return (
+            <li class="flex items-baseline gap-2 text-sm">
+              <span
+                class:list={[
+                  'font-code shrink-0 text-xs',
+                  isCurrent
+                    ? 'text-link font-semibold'
+                    : 'text-muted-foreground',
+                ]}
+              >
+                {post.data.seriesOrder}.
+              </span>
+              {isCurrent ? (
+                <span
+                  class="text-foreground font-heading leading-snug font-semibold"
+                  data-budoux
+                >
+                  <Budoux text={post.data.title} />
+                </span>
+              ) : (
+                <a
+                  href={`/blog/${post.id}`}
+                  class="text-muted-foreground hover:text-link font-heading leading-snug transition-colors duration-150"
+                  data-budoux
+                >
+                  <Budoux text={post.data.title} />
+                </a>
+              )}
+            </li>
+          );
+        })}
+      </ol>
+
+      {(prevPost || nextPost) && (
+        <div class="border-border mt-3 flex items-center justify-between gap-4 border-t pt-3">
+          {prevPost ? (
+            <a
+              href={`/blog/${prevPost.id}`}
+              class="text-muted-foreground hover:text-link text-sm transition-colors duration-150"
+            >
+              &larr; Prev
+            </a>
+          ) : (
+            <span />
+          )}
+          {nextPost && (
+            <a
+              href={`/blog/${nextPost.id}`}
+              class="text-muted-foreground hover:text-link text-sm transition-colors duration-150"
+            >
+              Next &rarr;
+            </a>
+          )}
+        </div>
+      )}
+    </nav>
+  )
+}
