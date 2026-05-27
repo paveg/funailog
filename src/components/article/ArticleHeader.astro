@@ -7,9 +7,16 @@ import { formatDateEn } from '@/lib/utils';
 export type Props = {
   post: CollectionEntry<'blog'>;
   minRead: string;
+  seriesInfo?:
+    | {
+        current: number;
+        total: number;
+        posts: CollectionEntry<'blog'>[];
+      }
+    | undefined;
 };
 
-const { post, minRead } = Astro.props;
+const { post, minRead, seriesInfo } = Astro.props;
 const { published, lastUpdated, category, tags: rawTags } = post.data;
 const tags = filterTags(rawTags ?? []);
 const { collection } = post;
@@ -82,6 +89,42 @@ const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
       >
       {minRead}
     </span>
+    {
+      seriesInfo && (
+        <span class="flex items-center gap-1">
+          <svg
+            class="text-muted-foreground size-3.5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20" />
+          </svg>
+          {seriesInfo.posts.map((p, i) => {
+            const order = p.data.seriesOrder ?? i + 1;
+            const isCurrent = order === seriesInfo.current;
+            return (
+              <>
+                {i > 0 && <span class="text-border">·</span>}
+                {isCurrent ? (
+                  <span class="text-foreground font-semibold">{order}</span>
+                ) : (
+                  <a
+                    href={`/blog/${p.id}`}
+                    class="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {order}
+                  </a>
+                )}
+              </>
+            );
+          })}
+        </span>
+      )
+    }
   </div>
 
   {/* Tags */}

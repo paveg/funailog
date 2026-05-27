@@ -47,10 +47,6 @@ export const ui = {
     'share.hatena': 'はてなブックマークに追加',
     'share.copyLink': 'リンクをコピー',
     'share.copied': 'コピーしました',
-    // Series
-    'series.label': 'Series',
-    'series.partOf': 'Part {current} of {total}',
-    'series.ariaLabel': 'シリーズナビゲーション',
     // Related
     'related.title': 'Related',
     // Article
@@ -125,10 +121,6 @@ export const ui = {
     'share.hatena': 'Save to Hatena Bookmark',
     'share.copyLink': 'Copy link',
     'share.copied': 'Copied',
-    // Series
-    'series.label': 'Series',
-    'series.partOf': 'Part {current} of {total}',
-    'series.ariaLabel': 'Series navigation',
     // Related
     'related.title': 'Related',
     // Article

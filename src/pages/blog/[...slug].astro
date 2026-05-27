@@ -12,7 +12,6 @@ import ArticleHeader from '@/components/article/ArticleHeader.astro';
 import ArticleTOC from '@/components/article/ArticleTOC.astro';
 import ReadingProgress from '@/components/article/ReadingProgress.astro';
 import RelatedArticles from '@/components/article/RelatedArticles.astro';
-import SeriesNavigation from '@/components/article/SeriesNavigation.astro';
 import Budoux from '@/components/Budoux.astro';
 import Figure from '@/components/Figure.astro';
 import Link from '@/components/Link.astro';
@@ -61,6 +60,14 @@ const seriesPosts = post.data.series
       .filter((p) => p.data.series === post.data.series)
       .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0))
   : [];
+const currentOrder = post.data.seriesOrder ?? 0;
+const seriesInfo =
+  seriesPosts.length > 1
+    ? { current: currentOrder, total: seriesPosts.length, posts: seriesPosts }
+    : undefined;
+const nextInSeries = seriesPosts.find(
+  (p) => (p.data.seriesOrder ?? 0) === currentOrder + 1,
+);
 ---
 
 <Layout
@@ -103,7 +110,11 @@ const seriesPosts = post.data.series
       >
         <Budoux text={post.data.title} />
       </h1>
-      <ArticleHeader post={post} minRead={remarkPluginFrontmatter.minRead} />
+      <ArticleHeader
+        post={post}
+        minRead={remarkPluginFrontmatter.minRead}
+        seriesInfo={seriesInfo}
+      />
       <Image
         class="mt-4 rounded-lg"
         src={post.data.heroImage ??
@@ -117,10 +128,25 @@ const seriesPosts = post.data.series
     </header>
 
     <ArticleTOC mode="mobile" />
-    <SeriesNavigation currentPost={post} seriesPosts={seriesPosts} />
 
     <article>
       <Content components={components} />
+      {
+        nextInSeries && (
+          <div class="border-border mt-10 border-t pt-6">
+            <a
+              href={`/blog/${nextInSeries.id}`}
+              class="text-muted-foreground hover:text-link group inline-flex items-center gap-1.5 text-sm transition-colors"
+            >
+              <span>Next:</span>
+              <span class="text-foreground group-hover:text-link font-heading font-medium transition-colors">
+                {nextInSeries.data.title}
+              </span>
+              <span>&rarr;</span>
+            </a>
+          </div>
+        )
+      }
       <ShareButtons url={fullUrl} title={post.data.title} />
       <RelatedArticles posts={relatedPosts} />
     </article>
