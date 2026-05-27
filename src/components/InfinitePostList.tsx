@@ -147,7 +147,7 @@ function PostItem({ post }: { post: SerializedPost }) {
             </a>
           ))}
           {tags.length > 5 && (
-            <span className="text-muted-foreground/70 text-xs">
+            <span className="text-muted-foreground text-xs">
               +{tags.length - 5}
             </span>
           )}

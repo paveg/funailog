@@ -25,6 +25,7 @@ pnpm-debug.log*
 .firecrawl/
 
 .playwright-mcp
+test-results/
 CV_*
 
 # draft posts (not ready for public)

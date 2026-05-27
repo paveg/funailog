@@ -195,7 +195,7 @@ export function CollapsibleRoles({
                     </Badge>
                   ))}
                   {role.technologies.length > 5 && (
-                    <span className="text-muted-foreground/70 text-2xs inline-flex items-center px-1.5 py-0.5">
+                    <span className="text-muted-foreground text-2xs inline-flex items-center px-1.5 py-0.5">
                       +{role.technologies.length - 5}
                     </span>
                   )}
