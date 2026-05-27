@@ -1,14 +1,10 @@
 ---
 import { getEntry } from 'astro:content';
 
-import { defaultLang } from '@/i18n/ui';
-import { useTranslations } from '@/i18n/utils';
-
 const meta = await getEntry('site', 'meta');
 if (!meta) {
   throw new Error('Site meta configuration not found');
 }
-const t = useTranslations(defaultLang);
 const currentYear = new Date().getFullYear();
 const startYear = 2023;
 ---
