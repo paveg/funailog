@@ -33,12 +33,68 @@ export type SerializedPost = {
   category?: string | undefined;
   tags?: string[] | undefined;
   url: string;
+  heroImage?: string | undefined;
 };
 
 const POSTS_PER_PAGE = 10;
 
 function formatDate(dateString: string): string {
   return formatDateEn(new Date(dateString));
+}
+
+function BudouxTitle({ title }: { title: string }) {
+  return (
+    <>
+      {budouxParser
+        .parse(title)
+        .flatMap((segment, i) => [
+          ...(i > 0 ? [<wbr key={`wbr-${i}`} />] : []),
+          <Fragment key={`seg-${i}`}>{segment}</Fragment>,
+        ])}
+    </>
+  );
+}
+
+function PostCardItem({ post }: { post: SerializedPost }) {
+  const heroImage = post.heroImage ?? `/api/og/article/blog/${post.slug}.png`;
+
+  return (
+    <article className="group">
+      <a href={post.url} className="block">
+        <div className="border-border bg-card overflow-hidden rounded-lg border transition-shadow duration-200 hover:shadow-md">
+          <div className="bg-muted aspect-[16/9] overflow-hidden">
+            <img
+              src={heroImage}
+              alt={post.title}
+              width={1200}
+              height={630}
+              className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+              loading="lazy"
+            />
+          </div>
+          <div className="p-4">
+            <div className="font-code text-muted-foreground mb-2 flex items-center gap-2 text-xs">
+              <span className="bg-muted rounded px-1.5 py-0.5 capitalize">
+                {post.category}
+              </span>
+              <time dateTime={post.date}>{formatDate(post.date)}</time>
+            </div>
+            <h3
+              className="font-heading text-foreground group-hover:text-link line-clamp-2 text-lg transition-colors duration-150"
+              data-budoux
+            >
+              <BudouxTitle title={post.title} />
+            </h3>
+            {post.description && (
+              <p className="text-muted-foreground mt-2 line-clamp-2 text-sm">
+                {post.description}
+              </p>
+            )}
+          </div>
+        </div>
+      </a>
+    </article>
+  );
 }
 
 function PostItem({ post }: { post: SerializedPost }) {
@@ -77,14 +133,14 @@ function PostItem({ post }: { post: SerializedPost }) {
           className="font-heading text-foreground group-hover:text-link line-clamp-2 text-base transition-colors duration-200 md:text-lg"
           data-budoux
         >
-          {budouxParser
-            .parse(post.title)
-            .flatMap((segment, i) => [
-              ...(i > 0 ? [<wbr key={`wbr-${i}`} />] : []),
-              <Fragment key={`seg-${i}`}>{segment}</Fragment>,
-            ])}
+          <BudouxTitle title={post.title} />
         </h2>
       </a>
+      {post.description && (
+        <p className="text-muted-foreground mt-1 line-clamp-1 text-sm">
+          {post.description}
+        </p>
+      )}
       {tags.length > 0 && (
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 pt-1.5">
           {tags.slice(0, 5).map((tag) => (
@@ -111,12 +167,14 @@ export type InfinitePostListProps = {
   initialPosts: SerializedPost[];
   showSearch?: boolean;
   title?: string;
+  featuredCount?: number;
 };
 
 export function InfinitePostList({
   initialPosts,
   showSearch = false,
   title,
+  featuredCount = 0,
 }: InfinitePostListProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -242,20 +300,37 @@ export function InfinitePostList({
         </p>
       )}
 
-      {/* Post list */}
-      <ul className="space-y-8 pl-3">
-        {displayedPosts.length === 0 ? (
-          <li className="text-muted-foreground py-8 text-center">
-            {debouncedQuery ? t('postList.noResults') : t('postList.noPosts')}
-          </li>
-        ) : (
-          displayedPosts.map((post) => (
-            <li key={`${post.type}-${post.slug}`}>
-              <PostItem post={post} />
-            </li>
-          ))
-        )}
-      </ul>
+      {displayedPosts.length === 0 ? (
+        <p className="text-muted-foreground py-8 text-center">
+          {debouncedQuery ? t('postList.noResults') : t('postList.noPosts')}
+        </p>
+      ) : (
+        <>
+          {/* Featured cards (hidden during search) */}
+          {featuredCount > 0 && !debouncedQuery && (
+            <div className="mb-8 grid gap-4 sm:grid-cols-2">
+              {displayedPosts.slice(0, featuredCount).map((post) => (
+                <PostCardItem
+                  key={`card-${post.type}-${post.slug}`}
+                  post={post}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Text list (older posts, or all posts during search) */}
+          <ul className="space-y-8 pl-3">
+            {(debouncedQuery
+              ? displayedPosts
+              : displayedPosts.slice(featuredCount)
+            ).map((post) => (
+              <li key={`${post.type}-${post.slug}`}>
+                <PostItem post={post} />
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
 
       {/* Load more indicator */}
       <div ref={loadMoreRef} className="flex justify-center py-8">
