@@ -2,7 +2,11 @@
 import type { UnifiedPost } from '@/types/unified-post';
 
 import Budoux from '@/components/Budoux.astro';
+import { defaultLang } from '@/i18n/ui';
+import { useTranslations } from '@/i18n/utils';
 import { formatDateEn } from '@/lib/utils';
+
+const t = useTranslations(defaultLang);
 
 export type Props = {
   post: UnifiedPost;
@@ -54,7 +58,7 @@ const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
                   datetime={post.lastUpdated.toISOString()}
                   class="text-muted-foreground"
                 >
-                  updated {formatDateEn(post.lastUpdated)}
+                  {t('article.updated')} {formatDateEn(post.lastUpdated)}
                 </time>
               )}
             </div>
@@ -93,7 +97,7 @@ const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
                   datetime={post.lastUpdated.toISOString()}
                   class="text-muted-foreground"
                 >
-                  updated {formatDateEn(post.lastUpdated)}
+                  {t('article.updated')} {formatDateEn(post.lastUpdated)}
                 </time>
               )}
             </div>

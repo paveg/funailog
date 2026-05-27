@@ -14,7 +14,6 @@ import {
   useState,
 } from 'react';
 
-import { Badge } from '@/components/ui/badge';
 import { defaultLang } from '@/i18n/ui';
 import { useTranslations } from '@/i18n/utils';
 import { filterTags } from '@/lib/tags';
@@ -61,7 +60,7 @@ function PostCardItem({ post }: { post: SerializedPost }) {
   return (
     <article className="group">
       <a href={post.url} className="block">
-        <div className="border-border bg-card overflow-hidden rounded-lg border transition-shadow duration-200 hover:shadow-md">
+        <div className="border-border bg-card overflow-hidden rounded-lg border transition-shadow duration-150 hover:shadow-md">
           <div className="bg-muted aspect-[16/9] overflow-hidden">
             <img
               src={heroImage}
@@ -107,13 +106,14 @@ function PostItem({ post }: { post: SerializedPost }) {
   return (
     <article className="group relative">
       {/* Accent line on hover */}
-      <div className="bg-accent-line absolute top-0 -left-3 h-full w-0.5 origin-top scale-y-0 transition-transform duration-200 group-hover:scale-y-100" />
+      <div className="bg-accent-line absolute top-0 -left-3 h-full w-0.5 origin-top scale-y-0 transition-transform duration-150 group-hover:scale-y-100" />
 
       <div className="text-muted-foreground flex items-center gap-2 text-xs">
-        <a href={`/blog/categories/${post.category}`}>
-          <Badge className="capitalize" variant="secondary">
-            {post.category}
-          </Badge>
+        <a
+          href={`/blog/categories/${post.category}`}
+          className="bg-muted hover:bg-accent hover:text-foreground rounded px-1.5 py-0.5 capitalize transition-colors"
+        >
+          {post.category}
         </a>
         <span className="flex items-center gap-1">
           <CalendarIcon className="size-3" />
@@ -130,7 +130,7 @@ function PostItem({ post }: { post: SerializedPost }) {
       </div>
       <a href={post.url} className="block pt-1">
         <h2
-          className="font-heading text-foreground group-hover:text-link line-clamp-2 text-base transition-colors duration-200 md:text-lg"
+          className="font-heading text-foreground group-hover:text-link line-clamp-2 text-base transition-colors duration-150 md:text-lg"
           data-budoux
         >
           <BudouxTitle title={post.title} />
