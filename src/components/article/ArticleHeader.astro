@@ -9,6 +9,7 @@ export type Props = {
   minRead: string;
   seriesInfo?:
     | {
+        title: string;
         current: number;
         total: number;
         posts: CollectionEntry<'blog'>[];
@@ -91,7 +92,8 @@ const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
     </span>
     {
       seriesInfo && (
-        <span class="flex items-center gap-0.5">
+        <span class="flex items-center gap-1">
+          <span class="text-muted-foreground">{seriesInfo.title}</span>
           {seriesInfo.posts.map((p, i) => {
             const order = p.data.seriesOrder ?? i + 1;
             const isCurrent = order === seriesInfo.current;

@@ -25,6 +25,7 @@ export const blogCollection = defineCollection({
     tags: z.array(z.string()).optional(),
     related: z.array(z.string()).optional(),
     series: z.string().optional(),
+    seriesTitle: z.string().optional(),
     seriesOrder: z.number().int().positive().optional(),
     emoji: z.string().optional().default('📝'),
   }),

@@ -63,7 +63,12 @@ const seriesPosts = post.data.series
 const currentOrder = post.data.seriesOrder ?? 0;
 const seriesInfo =
   seriesPosts.length > 1
-    ? { current: currentOrder, total: seriesPosts.length, posts: seriesPosts }
+    ? {
+        title: post.data.seriesTitle ?? post.data.series ?? '',
+        current: currentOrder,
+        total: seriesPosts.length,
+        posts: seriesPosts,
+      }
     : undefined;
 const nextInSeries = seriesPosts.find(
   (p) => (p.data.seriesOrder ?? 0) === currentOrder + 1,
