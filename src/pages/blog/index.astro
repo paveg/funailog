@@ -37,6 +37,7 @@ const serializedPosts = allPosts.map((post) => ({
   category: post.category,
   tags: post.tags,
   url: post.url,
+  heroImage: post.originalPost?.data.heroImage as string | undefined,
 }));
 ---
 
@@ -69,6 +70,7 @@ const serializedPosts = allPosts.map((post) => ({
       initialPosts={serializedPosts}
       title={t('blog.index')}
       showSearch={true}
+      featuredCount={4}
     />
   </div>
 </Layout>

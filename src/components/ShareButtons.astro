@@ -100,7 +100,10 @@ const hatenaHref = `https://b.hatena.ne.jp/entry/${encodeURIComponent(url)}`;
         <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
         ></path>
       </svg>
-      <span>Copy</span>
+      <span
+        data-copy-label={t('share.copyLink')}
+        data-copied-label={t('share.copied')}>{t('share.copyLink')}</span
+      >
     </button>
   </div>
 </div>
@@ -127,8 +130,8 @@ const hatenaHref = `https://b.hatena.ne.jp/entry/${encodeURIComponent(url)}`;
           await navigator.clipboard.writeText(url);
           const label = btn.querySelector('span');
           if (label) {
-            const orig = label.textContent;
-            label.textContent = 'Copied!';
+            const orig = label.dataset.copyLabel ?? label.textContent;
+            label.textContent = label.dataset.copiedLabel ?? 'Copied!';
             btn.classList.add('text-foreground', 'bg-accent');
             setTimeout(() => {
               label.textContent = orig;

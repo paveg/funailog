@@ -38,14 +38,20 @@ export const ui = {
     'a11y.readingProgress': '読了率',
     'a11y.externalLink': '外部リンク',
     // TOC
-    'toc.title': 'contents',
+    'toc.title': 'Contents',
     'toc.ariaLabel': '目次',
     // Share
-    'share.label': 'share',
+    'share.label': 'Share',
     'share.x': 'Xでシェア',
     'share.facebook': 'Facebookでシェア',
     'share.hatena': 'はてなブックマークに追加',
     'share.copyLink': 'リンクをコピー',
+    'share.copied': 'コピーしました',
+    // Related
+    'related.title': 'Related',
+    // Article
+    'article.updated': 'updated',
+    'article.minRead': '{min} min read',
     // Footer
     'footer.description':
       'ガジェット・仕事道具・乗り物、そして技術について綴る個人メディア。',
@@ -106,14 +112,20 @@ export const ui = {
     'a11y.readingProgress': 'Reading progress',
     'a11y.externalLink': 'external link',
     // TOC
-    'toc.title': 'contents',
+    'toc.title': 'Contents',
     'toc.ariaLabel': 'Table of contents',
     // Share
-    'share.label': 'share',
+    'share.label': 'Share',
     'share.x': 'Share on X',
     'share.facebook': 'Share on Facebook',
     'share.hatena': 'Save to Hatena Bookmark',
     'share.copyLink': 'Copy link',
+    'share.copied': 'Copied',
+    // Related
+    'related.title': 'Related',
+    // Article
+    'article.updated': 'updated',
+    'article.minRead': '{min} min read',
     // Footer
     'footer.description':
       'A personal media about gadgets, work tools, vehicles, and technology.',

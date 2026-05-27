@@ -2,6 +2,8 @@
 import type { CollectionEntry } from 'astro:content';
 
 import Budoux from '@/components/Budoux.astro';
+import { defaultLang } from '@/i18n/ui';
+import { useTranslations } from '@/i18n/utils';
 import { formatDateEn } from '@/lib/utils';
 
 export type Props = {
@@ -9,13 +11,14 @@ export type Props = {
 };
 
 const { posts } = Astro.props;
+const t = useTranslations(defaultLang);
 ---
 
 {
   posts.length > 0 && (
     <aside class="mt-12 pt-8">
       <h2 class="font-heading text-foreground mb-4 text-base font-semibold">
-        Related
+        {t('related.title')}
       </h2>
       <ul class="space-y-3">
         {posts.map((post) => (
@@ -25,9 +28,7 @@ const { posts } = Astro.props;
               class="border-border group hover:border-accent-line hover:bg-surface-sunken block rounded-lg border-l-2 py-2 pr-3 pl-4 transition-all duration-200"
             >
               <span class="text-muted-foreground flex items-center gap-2 text-xs">
-                <span class="bg-muted rounded px-1.5 py-0.5 capitalize">
-                  {post.data.category}
-                </span>
+                <span class="category-badge">{post.data.category}</span>
                 {formatDateEn(post.data.published)}
               </span>
               <span
