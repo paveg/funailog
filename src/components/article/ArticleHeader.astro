@@ -98,13 +98,13 @@ const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
             return (
               <>
                 {isCurrent ? (
-                  <span class="bg-foreground text-background inline-flex size-5 items-center justify-center rounded-full text-[10px] font-bold">
+                  <span class="bg-foreground text-background inline-flex size-6 items-center justify-center rounded-full text-[11px] font-bold">
                     {order}
                   </span>
                 ) : (
                   <a
                     href={`/blog/${p.id}`}
-                    class="border-border hover:bg-muted inline-flex size-5 items-center justify-center rounded-full border text-[10px] transition-colors"
+                    class="border-border hover:bg-muted hover:border-muted-foreground inline-flex size-6 items-center justify-center rounded-full border text-[11px] transition-colors"
                   >
                     {order}
                   </a>
@@ -124,9 +124,9 @@ const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
         {tags.map((tag) => (
           <a
             href={`/${collection}/tags/${tag}`}
-            class="border-border hover:bg-accent hover:text-accent-foreground rounded-md border px-2 py-0.5 text-xs transition-colors"
+            class="text-muted-foreground hover:text-foreground text-xs transition-colors"
           >
-            {tag}
+            #{tag}
           </a>
         ))}
       </div>
