@@ -248,7 +248,7 @@ export function InfinitePostList({
   };
 
   return (
-    <div className="py-4">
+    <div className="py-8">
       {/* Header with optional title and search */}
       {(title || showSearch) && (
         <div className="flex flex-col gap-4 pb-6 sm:flex-row sm:items-center sm:justify-between">
