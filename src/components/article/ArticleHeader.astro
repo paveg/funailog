@@ -91,30 +91,20 @@ const hasDistinctUpdate = !!lastUpdatedOnly && lastUpdatedOnly !== dateOnly;
     </span>
     {
       seriesInfo && (
-        <span class="flex items-center gap-1">
-          <svg
-            class="text-muted-foreground size-3.5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20" />
-          </svg>
+        <span class="flex items-center gap-0.5">
           {seriesInfo.posts.map((p, i) => {
             const order = p.data.seriesOrder ?? i + 1;
             const isCurrent = order === seriesInfo.current;
             return (
               <>
-                {i > 0 && <span class="text-border">·</span>}
                 {isCurrent ? (
-                  <span class="text-foreground font-semibold">{order}</span>
+                  <span class="bg-foreground text-background inline-flex size-5 items-center justify-center rounded-full text-[10px] font-bold">
+                    {order}
+                  </span>
                 ) : (
                   <a
                     href={`/blog/${p.id}`}
-                    class="text-muted-foreground hover:text-foreground transition-colors"
+                    class="border-border hover:bg-muted inline-flex size-5 items-center justify-center rounded-full border text-[10px] transition-colors"
                   >
                     {order}
                   </a>
