@@ -1,29 +1,22 @@
 ---
 import { getEntry } from 'astro:content';
 
-import Budoux from '@/components/Budoux.astro';
-import { defaultLang } from '@/i18n/ui';
-import { useTranslations } from '@/i18n/utils';
-
 const meta = await getEntry('site', 'meta');
 if (!meta) {
   throw new Error('Site meta configuration not found');
 }
-const t = useTranslations(defaultLang);
 const currentYear = new Date().getFullYear();
 const startYear = 2023;
 ---
 
-<footer class="border-border mt-auto border-t pt-8 pb-6 md:pt-12 md:pb-10">
+<footer class="border-border mt-auto border-t py-8 md:py-12">
   <div class="text-muted-foreground grid gap-8 text-xs sm:grid-cols-3">
     {/* Column 1: Site identity */}
     <div class="space-y-2">
       <p class="font-heading text-foreground font-semibold">funailog.com</p>
-      <p class="hidden leading-relaxed text-balance sm:block" data-budoux>
-        <Budoux text={t('footer.description')} />
-      </p>
-      <p class="leading-relaxed text-balance sm:hidden" data-budoux>
-        <Budoux text={t('footer.descriptionShort')} />
+      <p class="leading-relaxed">
+        ガジェット・仕事道具・乗り物、<br />
+        そして技術について綴る個人メディア。
       </p>
     </div>
 
