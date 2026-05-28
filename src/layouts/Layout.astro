@@ -8,6 +8,7 @@ import { getEntry } from 'astro:content';
 import type { JsonLdSchema } from '@/lib/rich-results';
 
 import CloudflareAnalytics from '@/components/analytics/CloudflareAnalytics.astro';
+import GoogleAnalytics from '@/components/analytics/GoogleAnalytics.astro';
 import Footer from '@/components/Footer.astro';
 import Header from '@/components/Header.astro';
 import { TailwindIndicator } from '@/components/tailwind-indicator';
@@ -131,6 +132,7 @@ if (!meta) {
       )
     }
     {isProd && <CloudflareAnalytics />}
+    {isProd && <GoogleAnalytics />}
     {
       schemas.map((schema) => (
         <script
