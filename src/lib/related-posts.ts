@@ -1,5 +1,7 @@
 import type { CollectionEntry } from 'astro:content';
 
+import { isVisible } from '@/lib/posts';
+
 /**
  * Find related posts by matching category and tags.
  * Scoring: same category = 2pts, each shared tag = 1pt.
@@ -12,7 +14,7 @@ export function getRelatedPosts(
   const currentTags = new Set(current.data.tags ?? []);
 
   return allPosts
-    .filter((p) => p.id !== current.id && p.data.isPublished)
+    .filter((p) => p.id !== current.id && isVisible(p))
     .map((post) => {
       let score = 0;
       if (post.data.category === current.data.category) score += 2;
