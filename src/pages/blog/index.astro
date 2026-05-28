@@ -5,6 +5,7 @@ import { InfinitePostList } from '@/components/InfinitePostList';
 import { defaultLang } from '@/i18n/ui';
 import { useTranslations, generateHreflangs } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
+import { isVisible } from '@/lib/posts';
 import { BreadcrumbLd, CollectionPageLd } from '@/lib/rich-results';
 import { blogToUnified, sortUnifiedPosts } from '@/types/unified-post';
 
@@ -20,7 +21,7 @@ const homeUrl = new URL('/', site).toString();
 
 // Fetch blog posts
 const blogPosts = (await getCollection('blog'))
-  .filter((post) => post.data.isPublished)
+  .filter(isVisible)
   .map(blogToUnified);
 
 // Sort all posts

@@ -2,11 +2,10 @@ import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 
 import ogImage from '@/components/ogImage';
+import { isVisible } from '@/lib/posts';
 
 const docs = await getCollection('page');
-const posts = (await getCollection('blog')).filter(
-  (post) => post.data.isPublished,
-);
+const posts = (await getCollection('blog')).filter(isVisible);
 
 const articles = [...docs, ...posts];
 

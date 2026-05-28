@@ -1,12 +1,13 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 
+import { isVisible } from '@/lib/posts';
 import { blogToUnified, sortUnifiedPosts } from '@/types/unified-post';
 
 export const GET: APIRoute = async () => {
   // Fetch blog posts
   const blogPosts = (await getCollection('blog'))
-    .filter((post) => post.data.isPublished)
+    .filter(isVisible)
     .map(blogToUnified);
 
   // Sort all posts

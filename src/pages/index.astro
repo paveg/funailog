@@ -6,6 +6,7 @@ import PostCard from '@/components/PostCard.astro';
 import { defaultLang } from '@/i18n/ui';
 import { useTranslations, generateHreflangs } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
+import { isVisible } from '@/lib/posts';
 import { WebsiteLd } from '@/lib/rich-results';
 import { blogToUnified, sortUnifiedPosts } from '@/types/unified-post';
 
@@ -18,7 +19,7 @@ if (!meta) {
 
 // 最新記事5件を取得
 const blogPosts = (await getCollection('blog'))
-  .filter((post) => post.data.isPublished)
+  .filter(isVisible)
   .map(blogToUnified);
 
 const recentPosts = sortUnifiedPosts(blogPosts).slice(0, 5);
