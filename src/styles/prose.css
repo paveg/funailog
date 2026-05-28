@@ -21,7 +21,12 @@ body {
 
     & p {
       @apply my-5;
-      text-wrap: pretty;
+
+      /* `text-wrap: pretty` は孤児行を避けるため手前の行を早めに改行する。
+         モバイルの狭幅では右側の余白が目立つので、デスクトップ幅でのみ有効化。 */
+      @media (min-width: 48rem) {
+        text-wrap: pretty;
+      }
     }
 
     & ul {
@@ -47,7 +52,10 @@ body {
 
     & li {
       @apply my-2 leading-relaxed;
-      text-wrap: pretty;
+
+      @media (min-width: 48rem) {
+        text-wrap: pretty;
+      }
 
       &::marker {
         @apply text-muted-foreground/60;
