@@ -45,17 +45,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Lint系を並列実行
-      - name: Lint (parallel)
-        run: |
-          pnpm run format:check &
-          pnpm exec eslint --cache . &
-          pnpm run lint:md &
-          pnpm run validate:content &
-          wait
+      - name: Lint
+        run: pnpm lint
 
-      - name: Type check
-        run: pnpm run check && pnpm exec tsc --noEmit
+      - name: Unit tests
+        run: pnpm test
 
       - name: Build
         run: pnpm run build
@@ -80,7 +74,7 @@ jobs:
         run: pnpm exec playwright install-deps chromium
 
       - name: a11y check (axe-core via Playwright)
-        run: pnpm exec playwright test
+        run: pnpm test:a11y
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
