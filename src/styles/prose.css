@@ -61,8 +61,13 @@ body {
     & h4,
     & h5,
     & h6 {
-      text-wrap: balance;
       word-break: normal;
+
+      /* `text-wrap: balance` は左右の行長を揃えるため、モバイルでは
+         1 行目の右に必ず隙間ができて読みにくい。デスクトップ幅でのみ有効化。 */
+      @media (min-width: 48rem) {
+        text-wrap: balance;
+      }
     }
     & h1 {
       @apply font-heading text-foreground mt-10 mb-5;
