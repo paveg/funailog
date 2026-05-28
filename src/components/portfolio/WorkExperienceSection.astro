@@ -128,14 +128,14 @@ const COLLAPSIBLE_THRESHOLD = 3;
                 work.roles.length > 0 &&
                 (work.roles.length >= COLLAPSIBLE_THRESHOLD ? (
                   <CollapsibleRoles
-                    client:load
+                    client:idle
                     roles={work.roles}
                     initialVisibleCount={2}
                     lang={lang}
                   />
                 ) : (
                   <CollapsibleRoles
-                    client:load
+                    client:idle
                     roles={work.roles}
                     initialVisibleCount={work.roles.length}
                     lang={lang}
