@@ -1,7 +1,7 @@
 ---
 import { Code } from 'astro-expressive-code/components';
 
-import { AffiliateCard } from '@/components/AffiliateCard';
+import AffiliateCard from '@/components/AffiliateCard.astro';
 ---
 
 <html lang="ja">
@@ -799,45 +799,16 @@ pnpm dev`}
       <section>
         <h2>AffiliateCard</h2>
         <p class="type-meta">
-          3 variants: default / inline / compact / PR バッジ常時表示（法的要件）
+          Astro コンポーネント / Amazon ASIN 自動アフィリエイト URL 生成 / PR
+          バッジ常時表示（法的要件）
         </p>
-        <div class="space-y-6">
-          <div>
-            <p class="text-muted-foreground mb-2 text-xs">variant: default</p>
-            <AffiliateCard
-              client:load
-              title="Dell U4025QW 39.7インチ 曲面モニター"
-              description="5K2K 解像度、Thunderbolt 4 対応、KVM 内蔵の究極のウルトラワイドモニター"
-              image="https://placehold.co/180x140/f5f5f5/666?text=U4025QW"
-              amazon={{ asin: 'B0DK1VQ1YZ', price: '¥199,800' }}
-              rakuten={{ href: '#rakuten', price: '¥198,000' }}
-              amazonAssociateId="funailog-22"
-            />
-          </div>
-          <div>
-            <p class="text-muted-foreground mb-2 text-xs">variant: inline</p>
-            <AffiliateCard
-              client:load
-              variant="inline"
-              title="Dell U4025QW 39.7インチ 曲面モニター"
-              description="5K2K ウルトラワイド"
-              image="https://placehold.co/64x64/f5f5f5/666?text=Dell"
-              amazon={{ asin: 'B0DK1VQ1YZ', price: '¥199,800' }}
-              amazonAssociateId="funailog-22"
-            />
-          </div>
-          <div>
-            <p class="text-muted-foreground mb-2 text-xs">variant: compact</p>
-            <AffiliateCard
-              client:load
-              variant="compact"
-              title="Dell U4025QW"
-              image="https://placehold.co/48x48/f5f5f5/666?text=D"
-              amazon={{ asin: 'B0DK1VQ1YZ', price: '¥199,800' }}
-              amazonAssociateId="funailog-22"
-            />
-          </div>
-        </div>
+        <AffiliateCard
+          title="Dell U4025QW 39.7インチ 曲面モニター"
+          description="5K2K 解像度、Thunderbolt 4 対応、KVM 内蔵の究極のウルトラワイドモニター"
+          image="https://placehold.co/180x140/f5f5f5/666?text=U4025QW"
+          amazon={{ asin: 'B0DK1VQ1YZ', price: '¥199,800' }}
+          rakuten={{ href: '#rakuten', price: '¥198,000' }}
+        />
       </section>
 
       <!-- LinkCard (HTML preview) -->
