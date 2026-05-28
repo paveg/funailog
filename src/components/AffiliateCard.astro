@@ -173,9 +173,10 @@ if (other) {
                   ]}
                 >
                   <span>{service.label}</span>
-                  {service.price && (
-                    <span class="text-xs opacity-90">({service.price})</span>
-                  )}
+                  {/* 価格表示は PA-API 連携まで一時的に非表示
+                     （ハードコードした値が古くなり景表法上もリスクがあるため）。
+                     props.price 自体は受け取り続けるので、API 連携時に
+                     この {} を外せば復帰できる。 */}
                 </a>
               ))
             }
