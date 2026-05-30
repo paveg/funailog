@@ -25,7 +25,7 @@ workExperience:
       Started with data aggregation feature development, progressed through Tech Lead
       and Engineering Manager roles, currently serving as Architect.
       Continuously involved in hiring and incident response.
-      Leveraging tenure from early stage, contributed to multiple legacy system remodeling and re-architecture efforts.
+      Leveraging tenure from early stage, contributed to multiple existing-system remodeling and re-architecture efforts.
     technologies:
       - Ruby
       - Rails
@@ -43,15 +43,15 @@ workExperience:
           end: null
         project: HR/Payroll Integration Platform
         description: |
-          Main focus: gRPC API redesign and re-delineation of application responsibility boundaries. Driving master data decomposition and microservice design in a multi-product environment where data and auth are tightly coupled with a large-scale monolith.
+          Led the team as EM during the launch phase (first ~6 months), then moved to the Architect/IC track.
+          Main focus: gRPC API redesign and re-delineation of application responsibility boundaries. Drove master data decomposition and microservice design across a multi-product environment.
           Cross-team coordination with feature owners, auth platform, and QA teams.
           Also involved in ArgoCD GitOps deployment, cluster upgrade operations, and Datadog (APM / Logs / Infra) observability operations.
         star:
           - situation: |
-              In a multi-product environment, customers had to go through unrelated product registration flows.
-              Tight coupling of master data and authorization management caused performance issues and
-              reduced development productivity. Information to be extracted was tightly coupled with
-              the HR product (a large-scale monolith), requiring coordination with feature owner teams.
+              In a multi-product environment, master data and authorization management needed to be
+              extracted into a foundation usable across products. The information spanned multiple
+              features, requiring coordination with feature owner teams.
             task: |
               As Architect, led domain boundary definition, technical strategy and roadmap planning.
               Drove consensus building across auth platform team, feature owner teams, QA team, and business stakeholders.
@@ -66,7 +66,7 @@ workExperience:
               and ongoing observability operations with Datadog (APM / Logs / Infra).
             result: |
               Established collaboration framework with feature owner teams, improving new feature development productivity.
-              Defined technical strategy for incremental decomposition of the large-scale monolith.
+              Defined technical strategy for incremental service decomposition.
         technologies:
           - Go
           - Ruby
@@ -88,6 +88,10 @@ workExperience:
         description: |
           Built a Japan/Philippines hybrid team (4 engineers + 2 QA) from scratch as a playing manager, writing 40-50% of the code to deliver release in 6 months alongside planning. Later managed onboarding of mobile app team (2) and contract developers (4).
           Drove Schema-driven development using OpenAPI Generator, Orval, and TanStack Query.
+          Owned the mobile app release preparation, then handed off to a successor upon team transfer (subsequently involved in a support capacity).
+        links:
+          - url: https://corp.freee.co.jp/news/0107freee_product.html
+            label: Employee Portal App Launch
         technologies:
           - Go
           - Ruby
@@ -119,12 +123,13 @@ workExperience:
 
       - role: Engineering Manager / Tech Lead
         period:
-          start: '2024-01'
+          start: '2023-04'
           end: '2024-06'
         project: freee Advisor Client Management
         description: |
           Client management service for tax accountants, a key customer segment.
-          The legacy contract management model had structural issues, requiring data model remodeling.
+          The work centered on remodeling the contract management data model.
+          Before building the new service, started with remodeling, adjusting, and closing down the legacy advisor service.
           Led through beta release as a playing manager in the global team.
         links:
           - url: https://corp.freee.co.jp/news/20231108freee_advisor.html
@@ -141,14 +146,14 @@ workExperience:
           - Vite
         star:
           - situation: |
-              The existing freee Accounting system managed contract relationships between business offices
-              and tax accountant firms via user status, causing contract traceability issues when accountants
-              had multiple affiliations or contracts. A previously envisioned re-architecture model remained
-              half-implemented, and the existing multi-tenant platform needed a cross-tenant mechanism.
+              freee Accounting managed contract relationships between business offices and tax accountant
+              firms via user status; a model that could correctly represent accountants with multiple
+              affiliations or contracts was needed. Building on a previously envisioned model, a cross-tenant
+              mechanism had to be introduced on the existing multi-tenant platform.
             task: |
               Designed a new data model placing a "contract" entity between business offices and accountant firms.
               Ensured safe data migration in an environment where migration failure would directly lead to
-              a security incident. In a dual-lead team, responsible for technical design, project management,
+              serious impact. In a dual-lead team, responsible for technical design, project management,
               and stakeholder coordination.
             action: |
               Assessed existing data and defined migration strategy, executing zero-downtime migration.
@@ -156,13 +161,13 @@ workExperience:
               Drove Schema-driven frontend development using OpenAPI Generator, Orval, and TanStack Query.
             result: |
               Replaced the legacy advisor service, scaling to 1,000 tax accountants.
-              Successfully completed 0→1 product launch.
+              Completed a full rebuild (re-architecture) of the legacy service.
               Deprecated legacy system and achieved team member growth.
 
       - role: Senior Software Engineer / Tech Lead
         period:
-          start: '2022-07'
-          end: '2023-12'
+          start: '2022-09'
+          end: '2023-03'
         project: freee Data Entry Service
         description: |
           Tech Lead for freee Data Entry Service (paper receipt → journal entry data) in the global team. Focused on domain design for Japan-specific tax processing, contributing to the official release in February 2023.
@@ -200,14 +205,14 @@ workExperience:
         period:
           start: '2019-07'
           end: '2022-06'
-        project: Online Lending Platform
+        project: freee Financing / Offer-type Loan
         description: |
-          Participated in development of the online lending platform at the financial subsidiary (freee Finance Lab Inc.).
-          Navigated specification misalignments with external financial institutions during integration.
+          Led the launch of freee Financing, an online financing platform, at the financial subsidiary (freee Finance Lab Inc.).
+          Also participated in development of the Offer-type Loan product, navigating specification misalignments with external financial institutions during integration.
           A parallel effort was prototyping and GTM validation of new lending products.
         star:
           - situation: |
-              Participated in the online lending platform development at the financial subsidiary.
+              Participated in the Offer-type Loan product development at the financial subsidiary.
               External financial institution integrations required compliance with institution-specific specifications,
               while new products were in prototype and GTM validation phase.
             task: |
@@ -225,6 +230,8 @@ workExperience:
             label: freee Financing
           - url: https://www.freee.co.jp/financing/cash-flow/
             label: Cash Flow Management Navi
+          - url: https://corp.freee.co.jp/news/business-loan-end.html
+            label: Offer-type Loan End / Integration into freee Financing
         technologies:
           - Ruby
           - Rails
@@ -243,7 +250,7 @@ workExperience:
         project: Data Aggregation Feature
         description: |
           Developed and operated transaction retrieval features via API integration with financial institutions.
-          Participated in multiple major bank integration projects as PjM and player, and joined the scraping engine re-architecture project driving transition to a multi-layered architecture.
+          Participated in multiple major bank integration projects as PjM and player, and joined the aggregation engine re-architecture project driving transition to a multi-layered architecture.
         links:
           - url: https://corp.freee.co.jp/news/freee-amex-api-8458.html
             label: American Express API Integration
@@ -265,20 +272,20 @@ workExperience:
         star:
           - situation: |
               The data aggregation feature retrieved transactions from banks and credit card companies
-              via scraping and API integration. Multiple API integration projects with major financial
-              institutions were running in parallel. The existing scraping engine required architectural
-              overhaul to handle growing scale.
+              via API integration and aggregation. Multiple API integration projects with major financial
+              institutions were running in parallel, and the aggregation engine was re-architected
+              to handle growing scale.
             task: |
               Participated as PjM and player in API integration projects (American Express, MUFG Bank,
               Shinkin Banks, GMO Aozora Net Bank, JCB, etc.). Led domain abstraction for credit card
               transactions and implemented key layers of the multi-layered architecture.
             action: |
               Managed projects while driving specification alignment and implementation with major financial institutions.
-              Designed and implemented scraping and data persistence layers within the multi-layered architecture
+              Designed and implemented data retrieval and persistence layers within the multi-layered architecture
               (task kick → data retrieval → backup → retry → parsing → persistence).
             result: |
               Delivered API integrations with multiple major financial institutions, expanding service coverage.
-              Improved maintainability and extensibility of the scraping engine through multi-layered architecture migration.
+              Improved maintainability and extensibility of the aggregation engine through multi-layered architecture migration.
 
   # === Other Experience ===
   - company: ACALL Inc.
