@@ -63,6 +63,7 @@ const currentOrder = post.data.seriesOrder ?? 0;
 const seriesInfo =
   seriesPosts.length > 1
     ? {
+        id: post.data.series ?? '',
         title: post.data.seriesTitle ?? post.data.series ?? '',
         current: currentOrder,
         total: seriesPosts.length,
