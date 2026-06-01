@@ -1,0 +1,94 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+
+import PostCard from '@/components/PostCard.astro';
+import { defaultLang } from '@/i18n/ui';
+import { useTranslations, generateHreflangs } from '@/i18n/utils';
+import Layout from '@/layouts/Layout.astro';
+import { isVisible } from '@/lib/posts';
+import { BreadcrumbLd, CollectionPageLd } from '@/lib/rich-results';
+import { blogToUnified } from '@/types/unified-post';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const publishedPosts = (await getCollection('blog')).filter(isVisible);
+
+  const seriesIds = [
+    ...new Set(
+      publishedPosts
+        .map((post) => post.data.series)
+        .filter((series): series is string => Boolean(series)),
+    ),
+  ];
+
+  return seriesIds.map((series) => {
+    const seriesPosts = publishedPosts
+      .filter((post) => post.data.series === series)
+      .sort((a, b) => (a.data.seriesOrder ?? 0) - (b.data.seriesOrder ?? 0));
+
+    return {
+      params: { series },
+      props: {
+        seriesTitle: seriesPosts[0]?.data.seriesTitle ?? series,
+        posts: seriesPosts,
+      },
+    };
+  });
+};
+
+type Props = { seriesTitle: string; posts: CollectionEntry<'blog'>[] };
+
+const { series } = Astro.params;
+if (!series || typeof series !== 'string') {
+  return Astro.redirect('/404');
+}
+const { seriesTitle, posts } = Astro.props as Props;
+const lang = defaultLang;
+const t = useTranslations(lang);
+const site = Astro.site ?? '';
+const meta = await getEntry('site', 'meta');
+if (!meta) {
+  throw new Error('Site meta configuration not found');
+}
+const basePath = `blog/series/${series}`;
+const pageUrl = new URL(`/${basePath}`, site).toString();
+const homeUrl = new URL('/', site).toString();
+const blogUrl = new URL('/blog', site).toString();
+
+const unifiedPosts = posts.map(blogToUnified);
+---
+
+<Layout
+  title={`${t('series.prefix')}${seriesTitle} | ${t('main.title')}`}
+  description={t('series.description')}
+  path={`/${basePath}`}
+  lang={lang}
+  og={{
+    enabled: true,
+  }}
+  hreflangs={generateHreflangs(basePath)}
+  jsonLdSchema={[
+    CollectionPageLd({
+      name: `${t('series.prefix')}${seriesTitle}`,
+      description: t('series.description'),
+      url: pageUrl,
+      meta,
+      site,
+    }),
+    BreadcrumbLd([
+      { name: t('main.title'), url: homeUrl },
+      { name: t('blog.index'), url: blogUrl },
+      { name: seriesTitle, url: pageUrl },
+    ]),
+  ]}
+>
+  <header class="mb-8">
+    <p class="text-muted-foreground mb-1 text-sm">{t('series.prefix')}</p>
+    <h1 class="font-heading text-foreground text-2xl font-bold md:text-3xl">
+      {seriesTitle}
+    </h1>
+  </header>
+  <div>
+    {unifiedPosts.map((post) => <PostCard post={post} variant="list" />)}
+  </div>
+</Layout>
