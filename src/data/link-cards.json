@@ -39,6 +39,13 @@
     },
     "title": "電動昇降式デスク・E7 | FlexiSpot 公式ストア"
   },
+  "https://funailog.com/blog/2026/smarthome-design-overview/": {
+    "description": "賃貸マンション2LDKへの引越を機にスマートホームを本格導入。壁内配線不可の制約下で、ネットワーク・IoT・リモートアクセスの全体像とフェーズ導入の考え方をまとめました。",
+    "image": {
+      "src": "/.cache/embed/381857778f8afedab1ce3a2f047c9963256988d65908e9aa490fee4801a5f54e.avif"
+    },
+    "title": "賃貸2LDKスマートホーム設計——引越前に決めたこと全部 | フナイログ"
+  },
   "https://funailog.com/blog/2026/tuck-read-it-later-indie-dev": {
     "description": "Pocketの終了をきっかけに、5日間でAI搭載のRead-it-laterアプリ「Tuck」を開発。Cloudflare Workers + Hono + React 19の技術スタックと、個人開発の裏側を公開。",
     "image": {
