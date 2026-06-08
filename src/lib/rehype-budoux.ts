@@ -8,6 +8,12 @@ import type { Plugin } from 'unified';
 
 interface Options {
   excludeTagNames?: string[];
+  /**
+   * When set, only segment text whose ancestor chain contains one of these
+   * tag names (e.g. ['h1','h2',...] to limit BudouX to headings). When unset,
+   * all text outside excludeTagNames is segmented.
+   */
+  includeTagNames?: string[];
 }
 
 const defaultExcludeTagNames = ['pre', 'code', 'a', 'svg'];
@@ -37,6 +43,7 @@ let parser: HTMLProcessingParser | null = null;
 
 const rehypeBudoux: Plugin<[Options?], Root> = ({
   excludeTagNames = defaultExcludeTagNames,
+  includeTagNames,
 }: Options = {}) => {
   return (tree) => {
     visitParents(tree, 'text', (node, ancestors) => {
@@ -51,6 +58,8 @@ const rehypeBudoux: Plugin<[Options?], Root> = ({
         parent.type !== 'element' ||
         matchesExcluded(parent, excludeTagNames) ||
         ancestors.some((a) => matchesExcluded(a, excludeTagNames)) ||
+        (includeTagNames !== undefined &&
+          !ancestors.some((a) => matchesExcluded(a, includeTagNames))) ||
         node.value.trim().length === 0
       ) {
         return;

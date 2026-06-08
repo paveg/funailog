@@ -121,7 +121,7 @@
         a > span.heading-link-icon {
           &:after {
             content: '#';
-            @apply text-muted-foreground mr-1.5 text-base transition-colors;
+            @apply text-muted-foreground ml-1.5 text-base transition-colors;
             transition-duration: var(--duration-fast);
             opacity: 0;
           }
