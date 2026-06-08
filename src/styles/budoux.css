@@ -17,16 +17,19 @@ html:lang(ja) {
   word-break: auto-phrase;
 }
 
-/* BudouX-segmented text: prefer browser-native phrase wrapping
-   on Chrome 119+, with <wbr> as a break hint. Falls back to
-   word-break: normal in Safari — pretty line-wrap + wbr hints
-   still produce reasonable results.
+/* BudouX-segmented text (article titles, card titles): the <wbr> hints
+   from BudouX mark phrase boundaries. Pair them with word-break: keep-all
+   so EVERY browser breaks only at those boundaries. word-break: auto-phrase
+   is Chrome-only; Safari/iOS falls back to normal and breaks mid-phrase,
+   which made long headings wrap raggedly on mobile. keep-all + <wbr> gives
+   the same phrase wrapping everywhere. overflow-wrap: anywhere is the safety
+   valve for tokens with no break point; text-wrap: pretty trims orphans.
 
-   text-wrap: pretty reduces orphans and short last lines. Heading-
-   level balance lives in prose.css (article scope) and per-element
-   text-balance utilities (hero tagline, footer descriptions). */
-[data-budoux] {
-  word-break: auto-phrase;
+   The :lang(ja) [data-budoux] selector (specificity 0,2,0) intentionally
+   overrides the :lang(ja) h1–h4 rule above (0,1,1) for the article title. */
+[data-budoux],
+:lang(ja) [data-budoux] {
+  word-break: keep-all;
   overflow-wrap: anywhere;
   text-wrap: pretty;
 }

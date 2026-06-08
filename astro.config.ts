@@ -12,6 +12,7 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeMermaid from 'rehype-mermaid';
 import rehypeSlug from 'rehype-slug';
 
+import rehypeBudoux from './src/lib/rehype-budoux';
 import rehypeTableWrapper from './src/lib/rehype-table-wrapper';
 import rehypeUnwrapSvgP from './src/lib/rehype-unwrap-svg-p';
 import remarkLink from './src/lib/remark-link';
@@ -72,7 +73,7 @@ export default defineConfig({
       [
         rehypeAutolinkHeadings,
         {
-          behavior: 'prepend',
+          behavior: 'append',
           properties(node: Element) {
             return {
               'aria-labelledby': node.properties.id,
@@ -85,7 +86,10 @@ export default defineConfig({
       ],
       rehypeUnwrapSvgP,
       rehypeTableWrapper,
-      // rehypeBudoux,
+      // BudouX <wbr> for headings only: gives phrase-aware wrapping on all
+      // browsers (incl. iOS WebKit, where word-break: auto-phrase is ignored).
+      // Runs after autolink-headings; <a> is excluded so the # anchor stays atomic.
+      [rehypeBudoux, { includeTagNames: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] }],
     ],
   },
   site: 'https://www.funailog.com',
