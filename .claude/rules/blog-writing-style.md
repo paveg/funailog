@@ -1,3 +1,7 @@
+---
+paths: src/content/blog/**
+---
+
 # ブログ記事の文体ルール
 
 このルールはブログ記事（`src/content/blog/`配下のMDXファイル）を作成・編集する際に適用する。

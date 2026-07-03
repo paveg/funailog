@@ -52,26 +52,10 @@ digraph blog_writing {
 ## 3. 下書き
 
 frontmatter を先に確定する。
-
-```yaml
-title: 'タイトル'
-description: '120字以内の要約'
-published: 2026-XX-XX
-tags: [関連タグ] # 3-7 個、製品名/技術名/カテゴリ関連の意味あるキーワード
-isPublished: false # 下書き中は false、PR 作成のステップで true に変える
-category: gadgets # programming/design/gadgets/travel/lifestyle/vehicles/other
-emoji: 🏠 # 記事内容と意味的に対応する 1 文字（例: キーボードなら ⌨️、コンテナなら 📦）
-series: series-slug # シリーズ記事の場合
-seriesTitle: シリーズ表示名 # シリーズ記事の場合
-seriesOrder: 1 # シリーズ記事の場合
-```
-
-シリーズ記事の `series` slug は **既存の Part 記事の frontmatter を必ず確認して揃える**。
-表記揺れ（例: `kubernetes-the-hard-way-...` vs `kubernetes-hard-way-...`）があると
-シリーズリンクが切れる。
-
-programming カテゴリの記事は「想定読者」セクションを「はじめに」の直下に置く
-（アーキ図や手順の前に、誰向けかを明示する）。
+ファイル配置・frontmatter・シリーズ slug 整合・「想定読者」の位置などの規約は
+`src/content/blog/CLAUDE.md` を参照する（スキーマの原典は `src/schemas/blog-collection.ts`）。
+tags は 3-7 個、製品名/技術名/カテゴリ関連の意味あるキーワード。
+emoji は記事内容と意味的に対応する 1 文字（例: キーボードなら ⌨️、コンテナなら 📦）。
 
 本文のルール:
 
