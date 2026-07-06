@@ -341,6 +341,20 @@
   "https://twitter.com/hg11mbps": {
     "image": {}
   },
+  "https://twitter.com/paveg_/status/1610516731977666561?s=20&t=zc55OzpRiKYqBsItkxoOyg": {
+    "description": "新千歳でダガー1の着艦確認",
+    "image": {
+      "src": "/.cache/embed/2a5503513443d98b8729c47b8651a499ed0ec24d575669f6b767575f45fb5e07.avif"
+    },
+    "title": "funai (@paveg_) on X"
+  },
+  "https://twitter.com/paveg_/status/1610588023187705857?s=20&t=zc55OzpRiKYqBsItkxoOyg": {
+    "description": "小樽三角市場",
+    "image": {
+      "src": "/.cache/embed/2a5503513443d98b8729c47b8651a499ed0ec24d575669f6b767575f45fb5e07.avif"
+    },
+    "title": "funai (@paveg_) on X"
+  },
   "https://vercel.com/blog/introducing-react-best-practices": {
     "description": "We've encapsulated 10+ years of React and Next.js optimization knowledge into react-best-practices, a structured repository optimized for AI agents and LLMs. ",
     "image": {
