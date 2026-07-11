@@ -195,6 +195,13 @@
     "image": {},
     "title": "HP X27i QHDゲーミングディスプレイ - 製品詳細 - ゲーミングモニター | 日本HP"
   },
+  "https://jp.store.ui.com/jp/ja/products/ucg-fiber": {
+    "description": "Desktop 10G Cloud Gateway with integrated 4-port 2.5 GbE switch, selectable NVR storage, and full UniFi application support.",
+    "image": {
+      "src": "/.cache/embed/f1875bec607be79585f2043019d45e40a348de570280fd62b432a8388e1c9731.avif"
+    },
+    "title": "Cloud Gateway Fiber - Ubiquitiストア "
+  },
   "https://json-ld.org/": {
     "image": {},
     "title": "JSON-LD - JSON for Linked Data"
