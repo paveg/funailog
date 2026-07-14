@@ -1,0 +1,95 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+
+import { defaultLang } from '@/i18n/ui';
+import { useTranslations, generateHreflangs } from '@/i18n/utils';
+import Layout from '@/layouts/Layout.astro';
+import { isVisible } from '@/lib/posts';
+import { BreadcrumbLd, CollectionPageLd } from '@/lib/rich-results';
+import { formatDateEn } from '@/lib/utils';
+import {
+  blogToUnified,
+  sortUnifiedPosts,
+  type UnifiedPost,
+} from '@/types/unified-post';
+
+const lang = defaultLang;
+const t = useTranslations(lang);
+const site = Astro.site ?? '';
+const meta = await getEntry('site', 'meta');
+if (!meta) {
+  throw new Error('Site meta configuration not found');
+}
+const pageUrl = new URL('/blog/archive', site).toString();
+const homeUrl = new URL('/', site).toString();
+const blogUrl = new URL('/blog', site).toString();
+
+const posts = sortUnifiedPosts(
+  (await getCollection('blog')).filter(isVisible).map(blogToUnified),
+);
+
+const postsByYear = new Map<number, UnifiedPost[]>();
+for (const post of posts) {
+  const year = post.date.getFullYear();
+  const yearPosts = postsByYear.get(year) ?? [];
+  yearPosts.push(post);
+  postsByYear.set(year, yearPosts);
+}
+const years = [...postsByYear.keys()].sort((a, b) => b - a);
+---
+
+<Layout
+  title={`${t('archive.title')} | ${t('main.title')}`}
+  description={t('archive.description')}
+  path="/blog/archive"
+  lang={lang}
+  og={{
+    enabled: true,
+  }}
+  hreflangs={generateHreflangs('blog/archive')}
+  jsonLdSchema={[
+    CollectionPageLd({
+      name: t('archive.title'),
+      description: t('archive.description'),
+      url: pageUrl,
+      meta,
+      site,
+    }),
+    BreadcrumbLd([
+      { name: t('main.title'), url: homeUrl },
+      { name: t('blog.index'), url: blogUrl },
+      { name: t('archive.title'), url: pageUrl },
+    ]),
+  ]}
+>
+  <div class="py-8">
+    <h1 class="font-heading mb-8 text-lg font-semibold">
+      {t('archive.title')}
+    </h1>
+    {
+      years.map((year) => (
+        <section class="mb-8">
+          <h2 class="font-code text-muted-foreground mb-3 text-sm">{year}</h2>
+          <ul class="border-border space-y-2 border-l pl-4">
+            {postsByYear.get(year)?.map((post) => (
+              <li class="flex flex-wrap items-baseline gap-x-3">
+                <a
+                  href={post.url}
+                  class="text-foreground hover:text-link transition-colors duration-150"
+                >
+                  {post.title}
+                </a>
+                <time
+                  datetime={post.date.toISOString()}
+                  class="font-code text-muted-foreground text-xs"
+                >
+                  {formatDateEn(post.date)}
+                </time>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</Layout>
