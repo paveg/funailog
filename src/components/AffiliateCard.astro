@@ -56,6 +56,7 @@ const generateAmazonUrl = (asin: string): string => {
 
 // 各サービスのリンク情報を整形
 interface ServiceLink {
+  shop: string;
   label: string;
   href: string;
   price: string | undefined;
@@ -69,6 +70,7 @@ if (amazon) {
     ? generateAmazonUrl(amazon.asin)
     : amazon.href || '#';
   services.push({
+    shop: 'amazon',
     label: 'Amazon',
     href,
     price: amazon.price,
@@ -78,6 +80,7 @@ if (amazon) {
 
 if (rakuten) {
   services.push({
+    shop: 'rakuten',
     label: '楽天',
     href: rakuten.href || '#',
     price: rakuten.price,
@@ -87,6 +90,7 @@ if (rakuten) {
 
 if (yahoo) {
   services.push({
+    shop: 'yahoo',
     label: 'Yahoo!',
     href: yahoo.href || '#',
     price: yahoo.price,
@@ -96,6 +100,7 @@ if (yahoo) {
 
 if (other) {
   services.push({
+    shop: 'other',
     label: other.label,
     href: other.href || '#',
     price: other.price,
@@ -165,6 +170,8 @@ if (other) {
                   href={service.href}
                   target="_blank"
                   rel="noopener noreferrer sponsored"
+                  data-affiliate-shop={service.shop}
+                  data-affiliate-item={title}
                   class:list={[
                     'inline-flex items-center gap-1.5 rounded-md px-3 py-2',
                     'text-sm font-medium no-underline',
@@ -186,3 +193,22 @@ if (other) {
     </div>
   </Card>
 </div>
+
+<script>
+  document.addEventListener('click', (event) => {
+    if (typeof window.gtag !== 'function') return;
+
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const link = target.closest<HTMLAnchorElement>('a[data-affiliate-shop]');
+    if (!link) return;
+
+    window.gtag('event', 'affiliate_click', {
+      shop: link.dataset.affiliateShop,
+      item_name: link.dataset.affiliateItem,
+      link_url: link.href,
+      page_path: location.pathname,
+    });
+  });
+</script>
