@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
@@ -17,8 +19,17 @@ import rehypeTableWrapper from './src/lib/rehype-table-wrapper';
 import rehypeUnwrapSvgP from './src/lib/rehype-unwrap-svg-p';
 import remarkLink from './src/lib/remark-link';
 import { remarkReadingTime } from './src/lib/remark-reading-time';
+import { getBlogPostLastmod } from './src/lib/sitemap-lastmod';
 
 import type { Element } from 'hast';
+
+function readContent(path: string): string | undefined {
+  try {
+    return readFileSync(path, 'utf-8');
+  } catch {
+    return undefined;
+  }
+}
 
 // https://astro.build/config
 export default defineConfig({
@@ -37,7 +48,12 @@ export default defineConfig({
     }),
     expressiveCode(),
     mdx(),
-    sitemap(),
+    sitemap({
+      serialize(item) {
+        const lastmod = getBlogPostLastmod(item.url, readContent);
+        return lastmod ? { ...item, lastmod } : item;
+      },
+    }),
     inline(),
   ],
   build: {
