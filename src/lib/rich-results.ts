@@ -34,7 +34,7 @@ const publisher = (site: URL | ''): Organization => {
 
   return {
     '@type': 'Organization',
-    '@id': 'paveg/funailog',
+    '@id': `${url}#organization`,
     name: t('main.title'),
     url: url,
   };
@@ -82,6 +82,10 @@ export const ArticleLd = (
     author: [person(meta)],
     publisher: publisher(site),
     isPartOf: WebsiteLd(meta, site),
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': articleUrl,
+    },
   };
 };
 
