@@ -14,6 +14,7 @@ import Header from '@/components/Header.astro';
 import { TailwindIndicator } from '@/components/tailwind-indicator';
 import { ui, defaultLang, type SupportedLang } from '@/i18n/ui';
 import { useTranslations } from '@/i18n/utils';
+import { ensureTrailingSlash } from '@/lib/utils';
 
 export type Props = {
   title: string;
@@ -60,7 +61,10 @@ if (!meta) {
     <meta charset="utf-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="canonical" href={new URL(path, site).toString()} />
+    <link
+      rel="canonical"
+      href={new URL(ensureTrailingSlash(path), site).toString()}
+    />
     {noindex && <meta name="robots" content="noindex" />}
     <link
       rel="alternate"
@@ -72,7 +76,7 @@ if (!meta) {
         <link
           rel="alternate"
           hreflang={hl.hreflang}
-          href={new URL(hl.path, site).toString()}
+          href={new URL(ensureTrailingSlash(hl.path), site).toString()}
         />
       ))
     }
@@ -95,7 +99,10 @@ if (!meta) {
     <meta name="publisher" content="Ryota Ikezawa" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={new URL(path, site).toString()} />
+    <meta
+      property="og:url"
+      content={new URL(ensureTrailingSlash(path), site).toString()}
+    />
     <meta property="og:site_name" content={meta.data.rss.title} />
     <meta name="twitter:site" content="@paveg_" />
     <meta name="twitter:creator" content="@paveg_" />

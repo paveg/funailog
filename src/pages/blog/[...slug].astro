@@ -24,6 +24,7 @@ import Layout from '@/layouts/Layout.astro';
 import { isVisible } from '@/lib/posts';
 import { getRelatedPosts } from '@/lib/related-posts';
 import { ArticleLd, BreadcrumbLd } from '@/lib/rich-results';
+import { ensureTrailingSlash } from '@/lib/utils';
 
 const meta = await getEntry('site', 'meta');
 if (!meta) {
@@ -51,7 +52,7 @@ const components = {
 };
 const site = Astro.site ?? '';
 const path = `${post.collection}/${post.id}`;
-const fullUrl = new URL(path, site).toString();
+const fullUrl = new URL(ensureTrailingSlash(path), site).toString();
 const t = useTranslations(defaultLang);
 const relatedPosts = getRelatedPosts(post, publishedPosts);
 const seriesPosts = post.data.series
@@ -101,7 +102,7 @@ const nextInSeries = seriesPosts.find(
     ArticleLd(meta, post, site),
     BreadcrumbLd([
       { name: t('main.title'), url: new URL('/', site).toString() },
-      { name: t('blog.index'), url: new URL('/blog', site).toString() },
+      { name: t('blog.index'), url: new URL('/blog/', site).toString() },
       { name: post.data.title, url: fullUrl },
     ]),
   ]}
@@ -140,7 +141,7 @@ const nextInSeries = seriesPosts.find(
         nextInSeries && (
           <div class="mt-12">
             <a
-              href={`/blog/${nextInSeries.id}`}
+              href={`/blog/${nextInSeries.id}/`}
               class="text-muted-foreground hover:text-link group inline-flex items-center gap-1.5 text-sm transition-colors"
             >
               <span>Next:</span>

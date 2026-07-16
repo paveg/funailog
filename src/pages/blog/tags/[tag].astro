@@ -40,9 +40,9 @@ if (!meta) {
   throw new Error('Site meta configuration not found');
 }
 const basePath = `blog/tags/${tag}`;
-const pageUrl = new URL(`/${basePath}`, site).toString();
+const pageUrl = new URL(`/${basePath}/`, site).toString();
 const homeUrl = new URL('/', site).toString();
-const blogUrl = new URL('/blog', site).toString();
+const blogUrl = new URL('/blog/', site).toString();
 
 const sortedPosts = sortUnifiedPosts(posts.map(blogToUnified));
 

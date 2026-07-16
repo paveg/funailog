@@ -13,6 +13,7 @@ import type {
 } from 'schema-dts';
 
 import { useTranslations } from '@/i18n/utils';
+import { ensureTrailingSlash } from '@/lib/utils';
 
 const person = (meta: CollectionEntry<'site'>): Person => {
   return {
@@ -63,7 +64,10 @@ export const ArticleLd = (
   blog: CollectionEntry<'blog'>,
   site: URL | '',
 ): WithContext<Article> => {
-  const articleUrl = new URL(`${blog.collection}/${blog.id}`, site).toString();
+  const articleUrl = new URL(
+    ensureTrailingSlash(`${blog.collection}/${blog.id}`),
+    site,
+  ).toString();
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',

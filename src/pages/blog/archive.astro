@@ -20,9 +20,9 @@ const meta = await getEntry('site', 'meta');
 if (!meta) {
   throw new Error('Site meta configuration not found');
 }
-const pageUrl = new URL('/blog/archive', site).toString();
+const pageUrl = new URL('/blog/archive/', site).toString();
 const homeUrl = new URL('/', site).toString();
-const blogUrl = new URL('/blog', site).toString();
+const blogUrl = new URL('/blog/', site).toString();
 
 const posts = sortUnifiedPosts(
   (await getCollection('blog')).filter(isVisible).map(blogToUnified),

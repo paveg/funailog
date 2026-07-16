@@ -17,7 +17,7 @@ export async function GET(context: APIContext) {
     description: meta.data.rss.description,
     site: context.site ?? '',
     items: posts.map((post) => {
-      const url = `/${post.collection}/${post.id}`;
+      const url = `/${post.collection}/${post.id}/`;
       return {
         title: post.data.title,
         description: post.data.description,

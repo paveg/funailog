@@ -30,7 +30,7 @@ export function blogToUnified(post: CollectionEntry<'blog'>): UnifiedPost {
     lastUpdated: post.data.lastUpdated,
     category: post.data.category,
     tags: post.data.tags,
-    url: `/blog/${post.id}`,
+    url: `/blog/${post.id}/`,
     collection: post.collection,
     originalPost: post,
   };

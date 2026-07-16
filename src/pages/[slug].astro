@@ -46,7 +46,7 @@ const meta = await getEntry('site', 'meta');
 if (!meta) {
   throw new Error('Site meta configuration not found');
 }
-const pageUrl = new URL(`/${page.id}`, site).toString();
+const pageUrl = new URL(`/${page.id}/`, site).toString();
 const homeUrl = new URL('/', site).toString();
 ---
 
