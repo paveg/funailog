@@ -5,9 +5,13 @@ const url = Astro.url;
 
 const navItems = [
   { href: '/', label: 'Home', match: (p: string) => p === '/' },
-  { href: '/blog', label: 'Blog', match: (p: string) => p.includes('/blog') },
   {
-    href: '/portfolio',
+    href: '/blog/',
+    label: 'Blog',
+    match: (p: string) => p.includes('/blog'),
+  },
+  {
+    href: '/portfolio/',
     label: 'Portfolio',
     match: (p: string) => p.includes('/portfolio'),
   },

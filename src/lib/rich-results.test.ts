@@ -58,7 +58,7 @@ describe('rich-results', () => {
       const result = ArticleLd(meta, blog, site);
       expect(result.mainEntityOfPage).toEqual({
         '@type': 'WebPage',
-        '@id': 'https://www.funailog.com/blog/2026/example-post',
+        '@id': 'https://www.funailog.com/blog/2026/example-post/',
       });
     });
 

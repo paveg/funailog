@@ -23,3 +23,18 @@ export function formatDateEn(date: Date): string {
     day: 'numeric',
   }).format(date);
 }
+
+const FILE_EXTENSION_PATTERN = /\.[a-zA-Z0-9]+$/;
+
+/**
+ * Ensure an internal page path ends with a trailing slash, matching the
+ * directory-style URLs Astro emits (`build.format: 'directory'`).
+ * Paths ending in a file extension (rss.xml, og images, ...) are returned
+ * unchanged, since those are served as files, not directories.
+ */
+export function ensureTrailingSlash(path: string): string {
+  if (path.endsWith('/') || FILE_EXTENSION_PATTERN.test(path)) {
+    return path;
+  }
+  return `${path}/`;
+}

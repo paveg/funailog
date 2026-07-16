@@ -108,7 +108,7 @@ function PostItem({ post }: { post: SerializedPost }) {
 
       <div className="text-muted-foreground flex items-center gap-2 text-xs">
         <a
-          href={`/blog/categories/${post.category}`}
+          href={`/blog/categories/${post.category}/`}
           className="category-badge"
         >
           {post.category}
@@ -142,7 +142,7 @@ function PostItem({ post }: { post: SerializedPost }) {
       {tags.length > 0 && (
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 pt-1.5">
           {tags.slice(0, 5).map((tag) => (
-            <a key={tag} href={`/blog/tags/${tag}`} className="tag-link">
+            <a key={tag} href={`/blog/tags/${tag}/`} className="tag-link">
               #{tag}
             </a>
           ))}
