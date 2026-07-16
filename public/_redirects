@@ -1,0 +1,11 @@
+/about /portfolio/ 301
+/about/ /portfolio/ 301
+/en /en/portfolio/ 301
+/en/ /en/portfolio/ 301
+/articles/preducts-first-impression /blog/2023/preducts-first-impression/ 301
+/articles/preducts-first-impression/ /blog/2023/preducts-first-impression/ 301
+/articles/popular-articles-with-google-analytics-4 /blog/2023/popular-articles-with-google-analytics-4/ 301
+/articles/popular-articles-with-google-analytics-4/ /blog/2023/popular-articles-with-google-analytics-4/ 301
+/2026/harness-engineering-landscape /blog/2026/harness-engineering-landscape/ 301
+/2026/harness-engineering-landscape/ /blog/2026/harness-engineering-landscape/ 301
+/blog/en/* /blog/:splat 301
