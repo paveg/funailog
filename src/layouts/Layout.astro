@@ -15,6 +15,7 @@ import { TailwindIndicator } from '@/components/tailwind-indicator';
 import { ui, defaultLang, type SupportedLang } from '@/i18n/ui';
 import { useTranslations } from '@/i18n/utils';
 import { ensureTrailingSlash } from '@/lib/utils';
+import fontsCssUrl from '@/styles/fonts.css?url';
 
 export type Props = {
   title: string;
@@ -61,6 +62,15 @@ if (!meta) {
     <meta charset="utf-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href={fontsCssUrl}
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link rel="stylesheet" href={fontsCssUrl} />
+    </noscript>
     <link
       rel="canonical"
       href={new URL(ensureTrailingSlash(path), site).toString()}
