@@ -2,34 +2,65 @@
 /**
  * ArticleTOC — mode="mobile" renders collapsible details,
  * mode="desktop" renders sidebar nav. Scroll spy shared via class selectors.
+ *
+ * The list itself is SSR'd from `headings` (h2/h3 only) so the layout is
+ * stable on first paint; the client script only wires up scroll-spy
+ * highlighting and smooth-scroll clicks against the existing DOM.
  */
+import type { MarkdownHeading } from 'astro';
+
 import { defaultLang } from '@/i18n/ui';
 import { useTranslations } from '@/i18n/utils';
 
 export type Props = {
   mode: 'mobile' | 'desktop';
+  headings: MarkdownHeading[];
 };
 
-const { mode } = Astro.props;
+const { mode, headings } = Astro.props;
 const t = useTranslations(defaultLang);
+const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
 {
-  mode === 'mobile' ? (
-    <details class="toc-root bg-surface-sunken mb-8 rounded-lg" open>
-      <summary class="font-heading text-foreground cursor-pointer px-4 py-3 text-sm font-semibold select-none">
-        {t('toc.title')}
-      </summary>
-      <ul class="toc-list text-muted-foreground space-y-1 px-4 pb-4 text-xs" />
-    </details>
-  ) : (
-    <nav class="toc-root" aria-label={t('toc.ariaLabel')}>
-      <p class="font-code text-muted-foreground mb-3 text-xs">
-        {t('toc.title')}
-      </p>
-      <ul class="toc-list space-y-0.5 text-xs" />
-    </nav>
-  )
+  items.length >= 2 &&
+    (mode === 'mobile' ? (
+      <details class="toc-root bg-surface-sunken mb-8 rounded-lg" open>
+        <summary class="font-heading text-foreground cursor-pointer px-4 py-3 text-sm font-semibold select-none">
+          {t('toc.title')}
+        </summary>
+        <ul class="toc-list text-muted-foreground space-y-1 px-4 pb-4 text-xs">
+          {items.map((item) => (
+            <li class={item.depth === 3 ? 'pl-3' : undefined}>
+              <a
+                href={`#${item.slug}`}
+                class="toc-link text-muted-foreground hover:text-foreground block truncate border-l-2 border-transparent py-1 pl-3 transition-all duration-150"
+              >
+                {item.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
+    ) : (
+      <nav class="toc-root" aria-label={t('toc.ariaLabel')}>
+        <p class="font-code text-muted-foreground mb-3 text-xs">
+          {t('toc.title')}
+        </p>
+        <ul class="toc-list space-y-0.5 text-xs">
+          {items.map((item) => (
+            <li class={item.depth === 3 ? 'pl-3' : undefined}>
+              <a
+                href={`#${item.slug}`}
+                class="toc-link text-muted-foreground hover:text-foreground block truncate border-l-2 border-transparent py-1 pl-3 transition-all duration-150"
+              >
+                {item.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    ))
 }
 
 <script>
@@ -42,37 +73,22 @@ const t = useTranslations(defaultLang);
     if (!article) return;
 
     const headings = article.querySelectorAll('h2, h3');
-    if (headings.length < 2) {
-      document
-        .querySelectorAll('.toc-root')
-        .forEach((el) => ((el as HTMLElement).style.display = 'none'));
-      return;
-    }
+    if (headings.length === 0) return;
 
     const allLinks: { el: Element; links: HTMLAnchorElement[] }[] = [];
 
-    document.querySelectorAll('.toc-list').forEach((list) => {
-      while (list.firstChild) list.removeChild(list.firstChild);
+    headings.forEach((h) => {
+      const id = h.id;
+      if (!id) return;
 
-      headings.forEach((h) => {
-        const id = h.id;
-        if (!id) return;
+      const links = Array.from(
+        document.querySelectorAll<HTMLAnchorElement>(
+          `.toc-link[href="#${id}"]`,
+        ),
+      );
+      if (links.length === 0) return;
 
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        a.href = `#${id}`;
-        const rawText = Array.from(h.childNodes)
-          .filter((n) => n.nodeType === Node.TEXT_NODE)
-          .map((n) => n.textContent)
-          .join('');
-        a.textContent = rawText.replace(/#/g, '').trim();
-        a.className =
-          'toc-link block truncate py-1 pl-3 border-l-2 border-transparent text-muted-foreground transition-all duration-150 hover:text-foreground';
-
-        if (h.tagName === 'H3') {
-          li.className = 'pl-3';
-        }
-
+      links.forEach((a) => {
         a.addEventListener('click', (e) => {
           e.preventDefault();
           const target = document.getElementById(id);
@@ -81,17 +97,9 @@ const t = useTranslations(defaultLang);
             history.replaceState(null, '', `#${id}`);
           }
         });
-
-        li.appendChild(a);
-        list.appendChild(li);
-
-        const existing = allLinks.find((item) => item.el === h);
-        if (existing) {
-          existing.links.push(a);
-        } else {
-          allLinks.push({ el: h, links: [a] });
-        }
       });
+
+      allLinks.push({ el: h, links });
     });
 
     _tocObserver = new IntersectionObserver(

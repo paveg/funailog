@@ -44,7 +44,7 @@ export async function getStaticPaths() {
   }));
 }
 const { post, publishedPosts } = Astro.props;
-const { Content, remarkPluginFrontmatter } = await render(post);
+const { Content, headings, remarkPluginFrontmatter } = await render(post);
 const components = {
   figure: Figure,
   a: Link,
@@ -133,7 +133,7 @@ const nextInSeries = seriesPosts.find(
       />
     </header>
 
-    <ArticleTOC mode="mobile" />
+    <ArticleTOC mode="mobile" headings={headings} />
 
     <article>
       <Content components={components} />
