@@ -5,7 +5,6 @@ import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 
-import inline from '@playform/inline';
 import tailwindcss from '@tailwindcss/vite';
 import embeds from 'astro-embed/integration';
 import expressiveCode from 'astro-expressive-code';
@@ -54,14 +53,10 @@ export default defineConfig({
         return lastmod ? { ...item, lastmod } : item;
       },
     }),
-    inline({
-      // LINE Seed JP の unicode-range サブセット @font-face 群は 16 進羅列で gzip が効かず、
-      // 全ページの HTML にインライン化すると転送量が膨らむ。外部 CSS のまま配信してキャッシュを効かせる。
-      Beasties: { inlineFonts: false },
-    }),
   ],
   build: {
     format: 'directory',
+    inlineStylesheets: 'always',
   },
   image: {
     // ブログ記事で参照するリモート画像（microCMS 添付・imgix 経由の手動アップロード）を
