@@ -59,6 +59,12 @@ export default defineConfig({
   build: {
     format: 'directory',
   },
+  image: {
+    // ブログ記事で参照するリモート画像（microCMS 添付・imgix 経由の手動アップロード）を
+    // ビルド時最適化の対象にする。未登録のリモートドメインは astro:assets の <Image> で
+    // 最適化がスキップされる。
+    domains: ['images.microcms-assets.io', 'funailog.imgix.net'],
+  },
   prefetch: {
     defaultStrategy: 'hover',
     prefetchAll: true,
