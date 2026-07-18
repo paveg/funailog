@@ -54,7 +54,11 @@ export default defineConfig({
         return lastmod ? { ...item, lastmod } : item;
       },
     }),
-    inline(),
+    inline({
+      // LINE Seed JP の unicode-range サブセット @font-face 群は 16 進羅列で gzip が効かず、
+      // 全ページの HTML にインライン化すると転送量が膨らむ。外部 CSS のまま配信してキャッシュを効かせる。
+      Beasties: { inlineFonts: false },
+    }),
   ],
   build: {
     format: 'directory',
