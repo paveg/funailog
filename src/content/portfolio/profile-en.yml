@@ -45,8 +45,8 @@ workExperience:
         project: Platform Engineering
         description: |
           Tech lead on the SRE team, driving platform engineering.
-          Focused on observability and self-service-driven developer experience,
-          covering the platform broadly including the container infrastructure and networking.
+          Focused on observability and self-service-driven developer experience across the platform,
+          including the container infrastructure and networking.
         technologies:
           - Kubernetes
           - Istio
@@ -65,7 +65,6 @@ workExperience:
           Led the team as EM during the launch phase (first ~6 months), then moved to the Architect/IC track.
           Main focus: gRPC API redesign and re-delineation of application responsibility boundaries. Drove master data decomposition and microservice design across a multi-product environment.
           Cross-team coordination with feature owners, auth platform, and QA teams.
-          Also involved in ArgoCD GitOps deployment, cluster upgrade operations, and Datadog (APM / Logs / Infra) observability operations.
         star:
           - situation: |
               In a multi-product environment, master data and authorization management needed to be
