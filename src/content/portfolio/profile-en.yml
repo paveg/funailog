@@ -8,8 +8,7 @@ profile:
     Progressed through SWE roles — data aggregation development, tech lead, EM, architect — before moving to SRE.
     Led legacy system remodeling, microservice design, and multi-tenant data isolation boundary design.
     Volunteered for an EM role for about a year, then returned to the TL/IC track to take responsibility for technology rather than people.
-    After serving as architect on freee's HR/Payroll Integration Platform team, moved to SRE in June 2026,
-    working as tech lead on platform engineering — observability and self-service-driven developer experience.
+    After serving as architect on freee's HR/Payroll Integration Platform team, moved to SRE in June 2026 as tech lead on platform engineering.
     Continuous experience leading and delivering within globally distributed teams (Japan / Philippines).
     Core stack: Go, TypeScript, Ruby, Rails, React, Kubernetes, gRPC, MySQL, ArgoCD, Datadog.
   avatar: /profile.jpg
@@ -83,8 +82,7 @@ workExperience:
               Also involved in ArgoCD GitOps deployment, cluster upgrade operations,
               and ongoing observability operations with Datadog (APM / Logs / Infra).
             result: |
-              Established collaboration framework with feature owner teams, improving new feature development productivity.
-              Defined technical strategy for incremental service decomposition.
+              Established collaboration framework with feature owner teams and a technical strategy for incremental service decomposition, laying the groundwork for new feature development productivity.
         technologies:
           - Go
           - Ruby
@@ -104,9 +102,8 @@ workExperience:
           end: '2024-12'
         project: Employee Portal
         description: |
-          Built a Japan/Philippines hybrid team (4 engineers + 2 QA) from scratch as a playing manager, writing 40-50% of the code to deliver release in 6 months alongside planning. Later managed onboarding of mobile app team (2) and contract developers (4).
+          Built a Japan/Philippines hybrid team (4 engineers + 2 QA) from scratch as a playing manager, writing 40-50% of the code to deliver release in 6 months alongside planning. Later managed onboarding of mobile app team (2) and contract developers (4), then handed off to a successor upon team transfer.
           Drove Schema-driven development using OpenAPI Generator, Orval, and TanStack Query.
-          Owned the mobile app release preparation, then handed off to a successor upon team transfer (subsequently involved in a support capacity).
         links:
           - url: https://corp.freee.co.jp/news/0107freee_product.html
             label: Employee Portal App Launch
@@ -145,10 +142,8 @@ workExperience:
           end: '2024-06'
         project: freee Advisor Client Management
         description: |
-          Client management service for tax accountants, a key customer segment.
-          The work centered on remodeling the contract management data model.
-          Before building the new service, started with remodeling, adjusting, and closing down the legacy advisor service.
-          Led through beta release as a playing manager in the global team.
+          Client management service for tax accountants, a key customer segment, centered on remodeling the contract management data model.
+          Started with remodeling and closing down the legacy advisor service, then led through beta release as a playing manager in the global team.
         links:
           - url: https://corp.freee.co.jp/news/20231108freee_advisor.html
             label: freee Advisor Beta Release
@@ -179,8 +174,7 @@ workExperience:
               Drove Schema-driven frontend development using OpenAPI Generator, Orval, and TanStack Query.
             result: |
               Replaced the legacy advisor service, scaling to 1,000 tax accountants.
-              Completed a full rebuild (re-architecture) of the legacy service.
-              Deprecated legacy system and achieved team member growth.
+              Completed a full rebuild of the legacy service, deprecating the legacy system while growing team members.
 
       - role: Senior Software Engineer / Tech Lead
         period:
@@ -227,7 +221,6 @@ workExperience:
         description: |
           Led the launch of freee Financing, an online financing platform, at the financial subsidiary (freee Finance Lab Inc.).
           Also participated in development of the Offer-type Loan product, navigating specification misalignments with external financial institutions during integration.
-          A parallel effort was prototyping and GTM validation of new lending products.
         star:
           - situation: |
               Participated in the Offer-type Loan product development at the financial subsidiary.
@@ -241,8 +234,7 @@ workExperience:
               bridging misalignments with external partners through active communication.
               For new products, participated in hypothesis testing via customer (GTM) validation.
             result: |
-              Contributed to the foundational development of external financial institution integrations.
-              Some new products were eventually closed based on service status, while accumulating 0→1 hypothesis-testing and external stakeholder coordination experience.
+              Contributed to the foundational development of external financial institution integrations. Some new products were eventually closed based on service status, while accumulating 0→1 hypothesis-testing and external stakeholder coordination experience.
         links:
           - url: https://www.freee.co.jp/financing/
             label: freee Financing
@@ -302,8 +294,7 @@ workExperience:
               Designed and implemented data retrieval and persistence layers within the multi-layered architecture
               (task kick → data retrieval → backup → retry → parsing → persistence).
             result: |
-              Delivered API integrations with multiple major financial institutions, expanding service coverage.
-              Improved maintainability and extensibility of the aggregation engine through multi-layered architecture migration.
+              Delivered API integrations with multiple major financial institutions, and improved maintainability and extensibility of the aggregation engine through multi-layered architecture migration.
 
   # === Other Experience ===
   - company: ACALL Inc.
