@@ -5,10 +5,11 @@ profile:
   summary: |
     Senior software engineer and architect with 10+ years of experience.
     At freee K.K. since November 2015, experiencing the company's growth from ~100 to 2,000+ employees.
-    Progressed through data aggregation engineer, tech lead, EM, to current architect.
+    Progressed through SWE roles — data aggregation development, tech lead, EM, architect — before moving to SRE.
     Led legacy system remodeling, microservice design, and multi-tenant data isolation boundary design.
     Volunteered for an EM role for about a year, then returned to the TL/IC track to take responsibility for technology rather than people.
-    Currently serving as architect on freee's HR/Payroll Integration Platform team.
+    After serving as architect on freee's HR/Payroll Integration Platform team, moved to SRE in June 2026,
+    working as tech lead on platform engineering — observability and self-service-driven developer experience.
     Continuous experience leading and delivering within globally distributed teams (Japan / Philippines).
     Core stack: Go, TypeScript, Ruby, Rails, React, Kubernetes, gRPC, MySQL, ArgoCD, Datadog.
   avatar: /profile.jpg
@@ -22,8 +23,8 @@ workExperience:
       end: null
     description: |
       10+ years at freee K.K. since November 2015, a cloud accounting software provider (100 → 2,000+ employees).
-      Started with data aggregation feature development, progressed through Tech Lead
-      and Engineering Manager roles, currently serving as Architect.
+      Started with data aggregation feature development, progressed through Tech Lead,
+      Engineering Manager, and Architect roles, currently serving as SRE Tech Lead.
       Continuously involved in hiring and incident response.
       Leveraging tenure from early stage, contributed to multiple existing-system remodeling and re-architecture efforts.
     technologies:
@@ -37,10 +38,28 @@ workExperience:
       - Docker
       - Kubernetes
     roles:
+      - role: Site Reliability Engineer / Tech Lead
+        period:
+          start: '2026-06'
+          end: null
+        project: Platform Engineering
+        description: |
+          Tech lead on the SRE team, driving platform engineering.
+          Focused on observability and self-service-driven developer experience,
+          covering the platform broadly including the container infrastructure and networking.
+        technologies:
+          - Kubernetes
+          - Istio
+          - ArgoCD
+          - KEDA
+          - Fluentd
+          - AWS
+          - GitOps
+
       - role: Senior Software Engineer / Architect
         period:
           start: '2025-01'
-          end: null
+          end: '2026-05'
         project: HR/Payroll Integration Platform
         description: |
           Led the team as EM during the launch phase (first ~6 months), then moved to the Architect/IC track.
@@ -528,6 +547,9 @@ skills:
       - name: ArgoCD
       - name: Datadog
       - name: gRPC
+      - name: Istio
+      - name: KEDA
+      - name: Fluentd
       - name: AWS
         level: intermediate
         yearsOfExperience: 5
