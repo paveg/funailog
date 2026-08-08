@@ -11,7 +11,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "prebuild": "tsx src/utils/clean.ts",
-    "build": "astro build && rm -rf dist/styleguide",
+    "build": "astro build && rm -rf dist/styleguide dist/CLAUDE",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:a11y": "playwright test",
