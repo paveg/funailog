@@ -1,7 +1,7 @@
 ---
 title: '5社のIoT機器をHome Assistantに束ねる——IRハブ計画が崩れて「制御=Nature・センシング=Aqara」に行き着くまで'
 description: 'Nature・Aqara・SESAME・Tapo——メーカーがバラバラの IoT を Home Assistant に一本化した記録。Aqara を IR ハブにする計画が Matter ブリッジの制約で崩れ、制御は Nature、センシングは Aqara という二面分業に落ち着くまでの経緯と、各社の統合経路（Cloud API / Matter / Zigbee）を書きます。'
-published: 2026-07-23
+published: 2026-08-08
 tags:
   - Home Assistant
   - Matter
@@ -11,7 +11,7 @@ tags:
   - Zigbee
   - スマートホーム
   - 賃貸
-isPublished: false
+isPublished: true
 category: gadgets
 emoji: 🔌
 series: smarthome-rental-2ldk
@@ -90,11 +90,11 @@ M200 は得意な Zigbee のハブ番に専念し、IR という不得意分野�
 IR は壁を越えないので、エアコンのある部屋ごとに 1 台ずつ IR ブラスターを置く必要があります。
 うちは 3 部屋で 3 台です。
 
-| 機器                              | 置き場所 | HA でのエンティティ                      | 担当                                  |
-| --------------------------------- | -------- | ---------------------------------------- | ------------------------------------- |
-| Nature Remo nano                  | 書斎     | `climate.study_ac` / `light.study_light` | エアコン + 書斎照明の IR              |
-| Nature Remo nano                  | LDK      | `climate.ldk_ac`                         | エアコンの IR（popIn の点灯も）       |
-| Nature Remo mini（初代 Remo-2W1） | 寝室     | —                                        | エアコン・照明・サーキュレーターの IR |
+| 機器                              | 置き場所 | 担当                                  |
+| --------------------------------- | -------- | ------------------------------------- |
+| Nature Remo nano                  | 書斎     | エアコン + 書斎照明の IR              |
+| Nature Remo nano                  | LDK      | エアコンの IR（popIn の点灯も）       |
+| Nature Remo mini（初代 Remo-2W1） | 寝室     | エアコン・照明・サーキュレーターの IR |
 
 書斎と LDK には新しい **Nature Remo nano** を新調し、初代の **Nature Remo mini** は寝室に移設しました。
 LDK の照明はいまも popIn Aladdin 2 が現役で、その ON/OFF は nano から IR トグルで叩いています（天井のシーリング照明を IR で操作できるのは popIn の地味に便利なところです）。
