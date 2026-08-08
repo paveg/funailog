@@ -115,13 +115,7 @@ IR は一方通行なので、**HA 側はエアコンの本当の状態を知り
 <AffiliateCard
   title="Nature Remo nano（スマートリモコン）"
   description="エアコン・照明・サーキュレーターの IR を HA から制御。部屋ごとに 1 台置く前提の小型モデル"
-  amazon={{ asin: 'PLACEHOLDER_NANO' }}
-/>
-
-<AffiliateCard
-  title="アイリスオーヤマ サーキュレーター PCF-SDC15T"
-  description="IR リモコン付きなので Nature に学習させて HA から操作できる。エアコンと連動させる送風向けの定番モデル"
-  amazon={{ asin: 'PLACEHOLDER_IRIS' }}
+  amazon={{ asin: 'B0C6V1CJB7' }}
 />
 
 ## Aqara——センシングの主役
@@ -140,18 +134,21 @@ Matter ブリッジ経由なので、センサーの値は**ローカルで**HA 
 <AffiliateCard
   title="Aqara Hub M200"
   description="Zigbee コーディネーター + Thread ボーダールーター + IR + スピーカーの多機能ハブ。うちでは Zigbee のハブ番に専任させている"
-  amazon={{ asin: 'PLACEHOLDER_M200' }}
+  amazon={{ asin: 'B0FLPN7LNK' }}
 />
 
 <AffiliateCard
-  title="Aqara 温湿度計 T1"
-  description="Zigbee 接続の温湿度センサー。電池が長持ちで、置いて忘れられるのが強み"
-  amazon={{ asin: 'PLACEHOLDER_T1' }}
+  title="Aqara 温湿度計 T1（TH-S02D）"
+  description="Zigbee 接続の温湿度センサー。電池が長持ちで、置いて忘れられるのが強み。Amazon の取り扱いが無いためヨドバシのリンクを載せる"
+  other={{
+    label: 'ヨドバシ.com',
+    href: 'https://www.yodobashi.com/product-detail/100000001008817919/',
+  }}
 />
 
 ## SESAME——玄関の鍵
 
-玄関の鍵は CANDY HOUSE の **SESAME 5 Pro** です。
+玄関の鍵は CANDY HOUSE の **SESAME 5 Pro** です（この 5 Pro は現在終売で、公式の現行モデルは SESAME 6 Pro に替わっています）。
 これを HA につなぐのが **SESAME Hub 3** で、Wi-Fi ブリッジと Matter ブリッジを兼ねています。
 Hub 3 の Matter ブリッジ経由で、施錠・解錠の状態と操作が HA に上がってきます。
 
@@ -161,15 +158,15 @@ Hub 3 の Matter ブリッジ経由で、施錠・解錠の状態と操作が HA
 解錠を使ったオートメーションの中身は次回に回します。
 
 <AffiliateCard
-  title="SESAME 5 Pro（CANDY HOUSE スマートロック）"
-  description="Matter 対応のスマートロック。HA 連携には別途 SESAME Hub 3 が要る"
-  amazon={{ asin: 'PLACEHOLDER_SESAME5PRO' }}
+  title="セサミ6 Pro（CANDY HOUSE スマートロック）"
+  description="Matter 対応のスマートロック。HA 連携には別途 SESAME Hub 3 が要る。うちは前世代の 5 Pro を使っているが、そちらは終売のため現行の 6 Pro を挙げる"
+  amazon={{ asin: 'B0C7C2SPBJ' }}
 />
 
 <AffiliateCard
   title="SESAME Hub 3"
   description="SESAME を Wi-Fi と Matter で外部に橋渡しするハブ。HA 連携に必須"
-  amazon={{ asin: 'PLACEHOLDER_HUB3' }}
+  amazon={{ asin: 'B0D59WGSQB' }}
 />
 
 ## 電力の可視化
@@ -177,7 +174,7 @@ Hub 3 の Matter ブリッジ経由で、施錠・解錠の状態と操作が HA
 電力は 2 つの粒度で見ています。
 住戸全体のトレンドと、コンセント単位の系統別。
 
-住戸全体は **Nature Remo E lite** が担います。
+住戸全体は **Nature Remo E lite** が担います（こちらも終売で、現行は Nature Remo E2 lite です）。
 これは B ルート[^broute]という、電力メーターから直接データを受け取る仕組みで、家全体の消費電力をリアルタイムに取れます。
 エアコン単体の切り分けはできませんが、「いま家全体で何 W 使っているか」が分かるので、主幹が上がりすぎたときの通知に使っています。
 
@@ -187,15 +184,15 @@ Matter 対応で電力計測ができ、HA にローカルで載ります。
 エアコン本体はスマートプラグに通していません（家庭用プラグは概ね 1500W 上限で、エアコンは専用回路・専用形状になりがちで安全上不向きなためです）。
 
 <AffiliateCard
-  title="Nature Remo E lite（電力モニタ）"
-  description="B ルートで住戸全体の消費電力をリアルタイム取得。エアコン単体ではなく家全体のトレンド把握向け"
-  amazon={{ asin: 'PLACEHOLDER_ELITE' }}
+  title="Nature Remo E2 lite（電力モニタ）"
+  description="B ルートで住戸全体の消費電力をリアルタイム取得。エアコン単体ではなく家全体のトレンド把握向け。うちは前世代の E lite を使っているが、そちらは終売のため現行の E2 lite を挙げる"
+  amazon={{ asin: 'B0F1T83MB5' }}
 />
 
 <AffiliateCard
   title="TP-Link Tapo P110M（電力計測スマートプラグ）"
   description="Matter 対応・電力計測付き・HA にローカル接続。コンセント系統別の消費電力を見るのに便利（1500W まで）"
-  amazon={{ asin: 'PLACEHOLDER_P110M' }}
+  amazon={{ asin: 'B0C9PYN7RN' }}
 />
 
 ## まだ載っていない機材
