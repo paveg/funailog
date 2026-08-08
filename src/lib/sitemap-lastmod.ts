@@ -55,3 +55,32 @@ export function getBlogPostLastmod(
   if (!content) return undefined;
   return extractLastmodDate(content);
 }
+
+/**
+ * sitemap から除外する URL のパターン。
+ *
+ * - `/blog/tags/`: 記事 47 本に対してタグが 193 個あり、sitemap の 4 分の 3 を
+ *   占めていた。Google は大半のインデックスを見送るため、送り続けると
+ *   クロールが記事から逸れる。noindex は付けないので、内部リンク経由の
+ *   自然なインデックスは妨げない。
+ * - `/styleguide/`: `pnpm build` が astro build の後に dist から削除するため、
+ *   sitemap に残すと存在しない URL を送ることになる。
+ * - `/demos/`: ページ側で noindex を指定している。noindex と sitemap 送信が
+ *   両立すると Search Console がエラーとして報告する。
+ * - `/CLAUDE/`: `src/pages/CLAUDE.md` をファイルベースルーティングが拾って
+ *   生成される、リポジトリ内部向けドキュメント。
+ */
+const SITEMAP_EXCLUDED_PATH_PATTERNS = [
+  /^\/blog\/tags\//,
+  /^\/styleguide\/?$/,
+  /^\/demos\//,
+  /^\/CLAUDE\/?$/,
+];
+
+/** sitemap にその URL を載せるかどうかを判定する。 */
+export function shouldIncludeInSitemap(url: string): boolean {
+  const { pathname } = new URL(url);
+  return !SITEMAP_EXCLUDED_PATH_PATTERNS.some((pattern) =>
+    pattern.test(pathname),
+  );
+}

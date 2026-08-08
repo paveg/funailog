@@ -4,6 +4,7 @@ import {
   resolveBlogPostContentPath,
   extractLastmodDate,
   getBlogPostLastmod,
+  shouldIncludeInSitemap,
 } from './sitemap-lastmod';
 
 describe('resolveBlogPostContentPath', () => {
@@ -138,5 +139,53 @@ describe('getBlogPostLastmod', () => {
         readContent,
       ),
     ).toBeUndefined();
+  });
+});
+
+describe('shouldIncludeInSitemap', () => {
+  it('includes blog posts', () => {
+    expect(
+      shouldIncludeInSitemap(
+        'https://www.funailog.com/blog/2023/kanademono-desk-review/',
+      ),
+    ).toBe(true);
+  });
+
+  it('includes the top page, category and series pages', () => {
+    expect(shouldIncludeInSitemap('https://www.funailog.com/')).toBe(true);
+    expect(
+      shouldIncludeInSitemap(
+        'https://www.funailog.com/blog/categories/gadgets/',
+      ),
+    ).toBe(true);
+    expect(
+      shouldIncludeInSitemap(
+        'https://www.funailog.com/blog/series/smarthome-rental-2ldk/',
+      ),
+    ).toBe(true);
+  });
+
+  it('excludes tag pages', () => {
+    expect(
+      shouldIncludeInSitemap('https://www.funailog.com/blog/tags/Astro/'),
+    ).toBe(false);
+  });
+
+  it('excludes the styleguide, which the build step deletes from dist', () => {
+    expect(shouldIncludeInSitemap('https://www.funailog.com/styleguide/')).toBe(
+      false,
+    );
+  });
+
+  it('excludes noindex demo pages', () => {
+    expect(shouldIncludeInSitemap('https://www.funailog.com/demos/eml/')).toBe(
+      false,
+    );
+  });
+
+  it('excludes the CLAUDE.md page that file-based routing picks up', () => {
+    expect(shouldIncludeInSitemap('https://www.funailog.com/CLAUDE/')).toBe(
+      false,
+    );
   });
 });
