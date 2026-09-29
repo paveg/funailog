@@ -12,6 +12,10 @@ const logoBase64 = btoa(
   ),
 );
 
+// Pinned to a commit so upstream directory layout changes on a branch cannot break the build.
+const NOTO_EMOJI_SVG_BASE =
+  'https://rawcdn.githack.com/googlefonts/noto-emoji/e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e/2D/svg';
+
 const ACCENT = 'hsl(225, 30%, 42%)';
 const MUTED = 'hsl(0, 0%, 42%)';
 const BG = 'hsl(220, 20%, 97%)';
@@ -155,12 +159,14 @@ const ogImage = async (
       ],
       loadAdditionalAsset: async (languageCode, segment) => {
         if (languageCode === 'emoji') {
-          const emojiSvg = await fetch(
-            'https://rawcdn.githack.com/googlefonts/noto-emoji/main/svg/emoji_u' +
-              segment.codePointAt(0)?.toString(16) +
-              '.svg',
-            { cache: 'force-cache' },
-          ).then((res) => res.text());
+          const emojiUrl = `${NOTO_EMOJI_SVG_BASE}/emoji_u${segment.codePointAt(0)?.toString(16)}.svg`;
+          const res = await fetch(emojiUrl, { cache: 'force-cache' });
+          if (!res.ok) {
+            throw new Error(
+              `Failed to fetch emoji SVG ${emojiUrl}: HTTP ${res.status}`,
+            );
+          }
+          const emojiSvg = await res.text();
           return `data:image/png;base64,${await sharp(Buffer.from(emojiSvg), {
             density: 300,
           })
