@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 
+import { unified } from '@astrojs/markdown-remark';
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
@@ -58,6 +59,8 @@ export default defineConfig({
       },
     }),
   ],
+  // Astro 7 の既定値 'jsx' はテキストと式の間の空白を落とし、フッターなどの表示が詰まる。
+  compressHTML: true,
   build: {
     format: 'directory',
     inlineStylesheets: 'always',
@@ -80,42 +83,47 @@ export default defineConfig({
   },
   markdown: {
     syntaxHighlight: false,
-    smartypants: false,
-    remarkRehype: {
-      footnoteLabel: 'footnote',
-      footnoteBackLabel: '↩',
-    },
-    remarkPlugins: [remarkLink, remarkReadingTime],
-    rehypePlugins: [
-      [
-        rehypeMermaid,
-        {
-          // pre-mermaid: client-side rendering, no Playwright dependency
-          strategy: 'pre-mermaid',
-        },
-      ],
-      rehypeSlug,
-      [
-        rehypeAutolinkHeadings,
-        {
-          behavior: 'append',
-          properties(node: Element) {
-            return {
-              'aria-labelledby': node.properties.id,
-            };
+    processor: unified({
+      smartypants: false,
+      remarkRehype: {
+        footnoteLabel: 'footnote',
+        footnoteBackLabel: '↩',
+      },
+      remarkPlugins: [remarkLink, remarkReadingTime],
+      rehypePlugins: [
+        [
+          rehypeMermaid,
+          {
+            // pre-mermaid: client-side rendering, no Playwright dependency
+            strategy: 'pre-mermaid',
           },
-          content: h('span.heading-link-icon', {
-            title: 'link',
-          }),
-        },
+        ],
+        rehypeSlug,
+        [
+          rehypeAutolinkHeadings,
+          {
+            behavior: 'append',
+            properties(node: Element) {
+              return {
+                'aria-labelledby': node.properties.id,
+              };
+            },
+            content: h('span.heading-link-icon', {
+              title: 'link',
+            }),
+          },
+        ],
+        rehypeUnwrapSvgP,
+        rehypeTableWrapper,
+        // BudouX <wbr> for headings only: gives phrase-aware wrapping on all
+        // browsers (incl. iOS WebKit, where word-break: auto-phrase is ignored).
+        // Runs after autolink-headings; <a> is excluded so the # anchor stays atomic.
+        [
+          rehypeBudoux,
+          { includeTagNames: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] },
+        ],
       ],
-      rehypeUnwrapSvgP,
-      rehypeTableWrapper,
-      // BudouX <wbr> for headings only: gives phrase-aware wrapping on all
-      // browsers (incl. iOS WebKit, where word-break: auto-phrase is ignored).
-      // Runs after autolink-headings; <a> is excluded so the # anchor stays atomic.
-      [rehypeBudoux, { includeTagNames: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] }],
-    ],
+    }),
   },
   site: 'https://www.funailog.com',
 });

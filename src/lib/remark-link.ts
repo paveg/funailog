@@ -3,6 +3,8 @@ import { visit } from 'unist-util-visit';
 import { isParent, isBareLink } from './mdast-util-node-is';
 
 import type { Root } from 'mdast';
+// LinkData に hProperties を足す型拡張を読み込む。
+import type {} from 'mdast-util-to-hast';
 import type { Plugin } from 'unified';
 import type { Parent } from 'unist';
 
