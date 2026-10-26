@@ -164,6 +164,10 @@
       & pre {
         @apply my-5 overflow-x-auto rounded-md text-xs md:text-sm;
       }
+      /* mermaid の配色は透明背景が前提（[...slug].astro の themeVariables）なので、コードブロックの背景を外す */
+      & pre.mermaid {
+        @apply bg-transparent p-0;
+      }
       & blockquote {
         @apply border-accent-line bg-surface-sunken my-5 rounded-r-md border-l-2 py-3 pr-4 pl-4 not-italic;
         @apply text-foreground text-sm md:text-base;
