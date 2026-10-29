@@ -1,6 +1,10 @@
 import { visit } from 'unist-util-visit';
 
-import { isParent, isBareLink } from './mdast-util-node-is';
+import {
+  isParent,
+  isBareLink,
+  isFootnoteDefinition,
+} from './mdast-util-node-is';
 
 import type { Root } from 'mdast';
 // LinkData に hProperties を足す型拡張を読み込む。
@@ -15,7 +19,7 @@ const remarkLinkcard: Plugin<void[], Root> = () => {
         return;
       }
 
-      if (parent.type === 'listItem') {
+      if (parent.type === 'listItem' || isFootnoteDefinition(parent)) {
         return;
       }
 
