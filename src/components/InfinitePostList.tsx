@@ -4,28 +4,21 @@ import {
   MagnifyingGlassIcon,
   ReloadIcon,
 } from '@radix-ui/react-icons';
-import { loadDefaultJapaneseParser } from 'budoux';
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { WbrText } from '@/components/WbrText';
 import { defaultLang } from '@/i18n/ui';
 import { useTranslations } from '@/i18n/utils';
 import { filterTags } from '@/lib/tags';
 import { cn, formatDateEn } from '@/lib/utils';
 
 const t = useTranslations(defaultLang);
-const budouxParser = loadDefaultJapaneseParser();
 
 export type SerializedPost = {
   type: 'blog';
   slug: string;
   title: string;
+  titleSegments: string[];
   description?: string | undefined;
   date: string;
   lastUpdated?: string | undefined;
@@ -39,19 +32,6 @@ const POSTS_PER_PAGE = 10;
 
 function formatDate(dateString: string): string {
   return formatDateEn(new Date(dateString));
-}
-
-function BudouxTitle({ title }: { title: string }) {
-  return (
-    <>
-      {budouxParser
-        .parse(title)
-        .flatMap((segment, i) => [
-          ...(i > 0 ? [<wbr key={`wbr-${i}`} />] : []),
-          <Fragment key={`seg-${i}`}>{segment}</Fragment>,
-        ])}
-    </>
-  );
 }
 
 function PostCardItem({ post }: { post: SerializedPost }) {
@@ -80,7 +60,7 @@ function PostCardItem({ post }: { post: SerializedPost }) {
               className="font-heading text-foreground group-hover:text-link line-clamp-2 text-lg transition-colors duration-150"
               data-budoux
             >
-              <BudouxTitle title={post.title} />
+              <WbrText segments={post.titleSegments} />
             </h3>
             {post.description && (
               <p className="text-muted-foreground mt-2 line-clamp-2 text-sm">
@@ -131,7 +111,7 @@ function PostItem({ post }: { post: SerializedPost }) {
           className="font-heading text-foreground group-hover:text-link line-clamp-2 text-base transition-colors duration-150 md:text-lg"
           data-budoux
         >
-          <BudouxTitle title={post.title} />
+          <WbrText segments={post.titleSegments} />
         </h2>
       </a>
       {post.description && (

@@ -7,6 +7,7 @@ import type { WorkExperience } from '@/schemas/portfolio-collection';
 import Budoux from '@/components/Budoux.astro';
 import { Badge } from '@/components/ui/badge';
 import { useTranslations } from '@/i18n/utils';
+import { segmentJapanese } from '@/lib/budoux-segments';
 
 interface Props {
   items: WorkExperience[];
@@ -15,6 +16,13 @@ interface Props {
 
 const { items, lang = 'ja' } = Astro.props;
 const t = useTranslations(lang);
+
+function withDescriptionSegments(roles: NonNullable<WorkExperience['roles']>) {
+  return roles.map((role) => ({
+    ...role,
+    descriptionSegments: segmentJapanese(role.description),
+  }));
+}
 
 function formatPeriod(period: { start: string; end: string | null }): string {
   const start = period.start.replace('-', '/');
@@ -129,14 +137,14 @@ const COLLAPSIBLE_THRESHOLD = 3;
                 (work.roles.length >= COLLAPSIBLE_THRESHOLD ? (
                   <CollapsibleRoles
                     client:idle
-                    roles={work.roles}
+                    roles={withDescriptionSegments(work.roles)}
                     initialVisibleCount={2}
                     lang={lang}
                   />
                 ) : (
                   <CollapsibleRoles
                     client:idle
-                    roles={work.roles}
+                    roles={withDescriptionSegments(work.roles)}
                     initialVisibleCount={work.roles.length}
                     lang={lang}
                   />
