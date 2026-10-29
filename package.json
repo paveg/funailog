@@ -182,7 +182,7 @@
     "rehype-autolink-headings": "^7.1.0",
     "rehype-parse": "9.0.1",
     "rehype-stringify": "10.0.1",
-    "satori": "^0.18.3",
+    "satori": "^0.33.5",
     "sharp": "^0.35.4",
     "textlint": "^15.5.4",
     "textlint-plugin-mdx": "^1.1.0",
