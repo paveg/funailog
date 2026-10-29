@@ -5,8 +5,10 @@ const { src, alt, loading = 'lazy', fetchpriority, ...props } = Astro.props;
 const imageProps = {
   src,
   alt,
-  width: 1200,
-  height: 630,
+  // Markdown images carry no size, so remote ones are measured at build time.
+  ...(typeof src === 'string' && props.width === undefined
+    ? { inferSize: true }
+    : {}),
   widths: [576, 768, 992, 1200, 1400, 1600],
   sizes: '(min-width: 1200px) 720px, (min-width: 780px) calc(100vw - 32px)',
   ...props,
