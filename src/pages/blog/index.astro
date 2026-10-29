@@ -5,6 +5,7 @@ import { InfinitePostList } from '@/components/InfinitePostList';
 import { defaultLang } from '@/i18n/ui';
 import { useTranslations, generateHreflangs } from '@/i18n/utils';
 import Layout from '@/layouts/Layout.astro';
+import { segmentJapanese } from '@/lib/budoux-segments';
 import { isVisible } from '@/lib/posts';
 import { BreadcrumbLd, CollectionPageLd } from '@/lib/rich-results';
 import { blogToUnified, sortUnifiedPosts } from '@/types/unified-post';
@@ -32,6 +33,7 @@ const serializedPosts = allPosts.map((post) => ({
   type: post.type,
   slug: post.slug,
   title: post.title,
+  titleSegments: segmentJapanese(post.title),
   description: post.originalPost?.data.description,
   date: post.date.toISOString(),
   lastUpdated: post.lastUpdated?.toISOString(),
