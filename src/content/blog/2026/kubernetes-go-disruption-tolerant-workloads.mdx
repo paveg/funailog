@@ -51,7 +51,7 @@ Pod や Deployment の基本は説明しません。
 | 退避                 | Eviction API や kubelet による Pod の追い出し |
 | Job                  | Job リソース。仕事の単位はタスクと呼ぶ        |
 
-検証には kind v0.33.0（Kubernetes v1.37.0）、Go 1.27.3、otelcol-contrib 0.164.0 を使いました。AWS 版の Karpenter（実際の EC2 や Spot を使うもの）は kind では動かせません。そのため Karpenter の挙動は、ドキュメント（v1.15）と実装を根拠にしています。
+検証には kind v0.33.0（Kubernetes v1.37.0）、Go 1.27.3、otelcol-contrib 0.164.0 を使いました。AWS 版の Karpenter（実際の EC2 や Spot を使うもの）は kind では動かせません。そのため Karpenter の挙動は、ドキュメント（v1.15）と実装を根拠にしています。ただし、PDB・do-not-disrupt・NodePool の disruption budget が Consolidation を止めることと、`terminationGracePeriod` の上限で削除された Pod に `DisruptionTarget` が付かないことは、KWOK v0.8.0（ノードをシミュレーションして Karpenter を動かす仕組み）と Karpenter v1.15.1 で検証しました。
 
 ## Disruption はどこから来るか
 
@@ -178,7 +178,7 @@ podFailurePolicy:
 
 **`podFailurePolicy` を効かせるには、アプリが「止められたら 0 以外で終わる」責務を果たす必要があります。**
 
-ただし、`Ignore` が効くのは `DisruptionTarget` が付いた失敗だけです。`kubectl delete pod` で消した Pod には condition が付かないので、0 以外で終わると `backoffLimit` を 1 消費します。Karpenter が `terminationGracePeriod` の上限や Node Auto Repair で行う強制削除も同じです。Karpenter の実装は、通常の退避には Eviction API を使います。一方、強制削除では Pod を直接消していて、condition を付けません[^karpenter-eviction]。そのためアプリの失敗として数えられます[^k8s-141316]。Karpenter が削除の前に condition を付ける提案は、2026 年 10 月時点で未対応です[^karpenter-3218]。
+ただし、`Ignore` が効くのは `DisruptionTarget` が付いた失敗だけです。`kubectl delete pod` で消した Pod には condition が付かないので、0 以外で終わると `backoffLimit` を 1 消費します。Karpenter が `terminationGracePeriod` の上限や Node Auto Repair で行う強制削除も同じです。Karpenter の実装は、通常の退避には Eviction API を使います。一方、強制削除では Pod を直接消すので、condition は付きません[^karpenter-eviction]。そのためアプリの失敗として数えられます[^k8s-141316]。Karpenter が削除の前に condition を付ける提案は、2026 年 10 月時点で未対応です[^karpenter-3218]。
 
 逆に、ノードのメモリ不足などで kubelet に退避された Pod（reason `TerminationByKubelet`）には condition が付きます。アプリ側に原因があってもその失敗は `Ignore` され、`activeDeadlineSeconds` の期限まで作り直しが続くことがあります[^disruptions]。
 
@@ -260,7 +260,7 @@ Consolidation でバックエンドの Pod が別のノードへ移る場合も�
 | do-not-disrupt（Pod）         | Consolidation、条件付きで Drift | `"true"` は無期限、`"30m"` は期間指定                                     |
 | disruption budget（NodePool） | graceful の流量                 | 既定は `nodes: 10%`                                                       |
 
-NodePool の `terminationGracePeriod` は、ドレインが続く時間の上限です。上限に間に合うよう、PDB や do-not-disrupt の Pod も、Pod 自身の猶予期間を見込んで前もって強制的に削除されます[^karpenter-nodepool]。
+NodePool の `terminationGracePeriod` は、ドレインが続く時間の上限です。上限に間に合うよう、PDB や do-not-disrupt の Pod も、Pod 自身の猶予期間を見込んで前もって強制的に削除されます[^karpenter-nodepool]。猶予期間が上限より長い Pod は、ドレインの開始と同時に、猶予を上限までの残り時間に縮めて削除されます（KWOK では、猶予期間 300 秒の Pod が上限 30 秒のノードで 29 秒に縮められました）。
 
 なお `consolidationPolicy` は、v1 で `WhenUnderutilized` が `WhenEmptyOrUnderutilized` に改名され、v1.14 で `Balanced` が加わっています。古い記事の設定例はそのままでは使えません。
 
