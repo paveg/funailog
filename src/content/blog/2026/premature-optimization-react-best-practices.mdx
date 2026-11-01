@@ -1,6 +1,6 @@
 ---
 title: 'Premature Optimization: Vercel の React Best Practices を個人開発に適用できるか試したら逆効果だった話'
-description: Vercel がリリースした React Best Practices (Agent Skills) を個人開発アプリに適用できるか試したところ、GC 負荷が 22% 増加。計測に基づかない最適化の危険性と、大規模サービス向けガイドラインの正しい適用範囲について実体験をもとに解説します。
+description: Vercel がリリースした React Best Practices (Agent Skills) を個人開発アプリに適用できるか試したところ、GC イベントが 22% 増加。計測に基づかない最適化の危険性と、大規模サービス向けガイドラインの正しい適用範囲について実体験をもとに解説します。
 published: 2026-01-15
 tags: ['React', 'Performance', 'Vercel', '個人開発', 'TypeScript']
 heroImage: /premature-optimization-og.jpg
@@ -22,7 +22,7 @@ https://vercel.com/blog/introducing-react-best-practices
 
 「これは便利だ」と思い、個人開発アプリに適用できるか試してみました。
 
-**結果、GC 負荷が 22% 増加しました。**
+**結果、GC イベントが 22% 増加しました。**
 
 この記事では、read-it-later アプリ「[Tuck](https://gettuck.app)」での実体験をもとに、ベストプラクティスを闇雲に適用する危険性と、適用すべきプロジェクトの規模感について解説します。
 
@@ -335,7 +335,7 @@ function shallowEqual(prevProps, nextProps) {
 }
 ```
 
-### 2. GC 負荷が増加 (+22.3%)
+### 2. GC イベントが増加 (+22.3%)
 
 `memo()`, `useMemo()`, `useCallback()` は内部でオブジェクトを保持します。
 
@@ -353,11 +353,11 @@ function useMemo(factory, deps) {
 }
 ```
 
-保持したオブジェクトや deps 配列が GC の対象になり、GC イベントが増えたと考えています。
+保持したオブジェクトや deps 配列が GC の対象になり、GC イベントが増えたと考えています。GC 総時間の増加は +9.3%（482ms → 527ms）でした。
 
 ### 3. Layout 時間の改善 (-37.6%)
 
-唯一の改善点です。ただし絶対値は 15.7ms → 9.8ms で、ユーザーが体感できるレベルではありません（60fps = 16.67ms/frame）。
+いちばん大きな改善です。ただし絶対値は 15.7ms → 9.8ms で、ユーザーが体感できるレベルではありません（60fps = 16.67ms/frame）。
 
 ---
 
@@ -543,7 +543,7 @@ https://github.com/paveg/tuck/pull/215
 
 ## まとめ
 
-「最適化」を試した結果、GC 負荷が 22% 増加していました。
+「最適化」を試した結果、GC イベントが 22% 増加していました。
 
 ### チェックリスト
 
