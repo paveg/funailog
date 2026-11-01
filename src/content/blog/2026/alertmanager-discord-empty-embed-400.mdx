@@ -1,6 +1,6 @@
 ---
-title: '監視は5分で気づいたのに通知は1件も届かなかった：Alertmanager の Discord 通知が 400 で落ちていた話'
-description: 'IPv4 だけが 7.5 時間止まった障害を、監視は 5 分で検知していました。それなのに Discord には 1 件も通知が来ていませんでした。不通中に届かないのは当然でしたが、復旧後も Alertmanager の送信は 400 で失敗し続けていました。空の embed が原因です。'
+title: 'Alertmanager の Discord 通知が空の embed で 400 になっていた：監視は5分で気づいたのに1件も届かなかった話'
+description: 'Alertmanager の Discord 通知が HTTP 400 で失敗し続けていました。title と message を空にしても、中身の空の embed が送られるのが原因です。IPv4 が約 7 時間半止まった日、監視は 5 分で検知していたのに、Alertmanager の通知は 1 件も届いていませんでした。'
 published: 2026-11-01
 tags:
   - Alertmanager
@@ -8,7 +8,7 @@ tags:
   - Discord
   - 監視
   - 自宅サーバ
-isPublished: false
+isPublished: true
 category: programming
 emoji: 🔕
 ---
@@ -19,9 +19,9 @@ import embedJsonFigure from '../../../assets/blog/2026/alertmanager-discord-embe
 
 ## はじめに
 
-2026-11-01 の未明、自宅の回線で IPv4 だけが約 7.5 時間止まりました。IPv6 は生きていたので、気づいたのは朝になってからです。それも通知ではなく、「なんだか回線が死んでいる気がする」という体感でした。
+2026-11-01 の未明、自宅の回線で IPv4 だけが約 7 時間半止まりました。IPv6 は生きていたので、気づいたのは朝になってからです。それも通知ではなく、「なんだか回線が死んでいる気がする」という体感でした。
 
-あとで調べると、自宅の監視（Prometheus と Alertmanager）は障害の開始から 5 分で正しく検知していました。それなのに、Discord には 1 件も通知が届いていません。原因は 2 つ重なっていました。
+あとで調べると、自宅の監視（Prometheus と Alertmanager）は、ルールどおり障害が 5 分続いた時点で正しく検知していました。それなのに、Alertmanager からの通知は Discord に 1 件も届いていません。原因は 2 つ重なっていました。
 
 - 不通のあいだは、通知そのものがインターネット経由なので送れない
 - 復旧したあとも、Alertmanager の通知を Discord が HTTP 400 で拒否していた。こちらは障害と関係がなく、3 か月前に入れた設定の誤りがずっと潜んでいた
@@ -43,7 +43,7 @@ Prometheus のルールの書き方や、Alertmanager の基本は説明しま�
 自宅の Proxmox 上に監視用の LXC を 1 台置き、Prometheus、blackbox_exporter、Alertmanager を動かしています。回線の死活は、blackbox_exporter の 2 種類のプローブで見ています。
 
 - ICMP: `1.1.1.1` と `8.8.8.8`、それにゲートウェイ（192.168.10.1）への ping
-- HTTPS: 外部の公開サイトへのリクエスト
+- HTTPS: `1.1.1.1` と `dns.google` へのリクエスト
 
 回線が死んだと判断するアラート `WanDown` は、この 2 種類を組み合わせています。
 
@@ -62,28 +62,28 @@ Prometheus のルールの書き方や、Alertmanager の基本は説明しま�
 
 外への ICMP も HTTPS も全滅していて、ゲートウェイだけは応答する。この状態が 5 分続いたら発火します。ゲートウェイまで応答しないなら、それは回線ではなく家の中の問題なので、別のアラートに任せています。
 
-ICMP と HTTPS の 2 本立てにしたのは、2026-08-01 に ICMP のプローバーだけが壊れ、このアラートが 13 時間誤報し続けたからです。1 種類のプローブだけでは、「回線が死んだ」のか「測る側が死んだ」のかを区別できません。
+ICMP と HTTPS の 2 本立てにしたのは、以前 ICMP のプローバーだけが壊れ、このアラートが半日ほど誤報し続けたからです。1 種類のプローブだけでは、「回線が死んだ」のか「測る側が死んだ」のかを区別できません。
 
-プローブは、すべて IPv4 に固定しています（`preferred_ip_protocol: ip4`）。HTTPS の宛先は `https://1.1.1.1/cdn-cgi/trace` と `https://dns.google/resolve?name=example.com` の 2 つで、後者は IPv6 でも引けるホスト名です。今回の障害は IPv6 が生きていて IPv4 だけが止まる形だったので、固定していなければ `dns.google` へのプローブが IPv6 で成功し、`WanDown` の条件が崩れていた可能性があります（監視用の LXC から IPv6 で外に出られたかは確かめていません）。回線は v6 プラス（MAP-E）で、IPv4 は IPv6 のトンネルの上を通っています。その構成は [ISP を乗り換えた記事](/blog/2026/isp-migration-nuro-to-enhikari) に書きました。
+プローブは、すべて IPv4 に固定しています（`preferred_ip_protocol: ip4`）。HTTPS の宛先のうち `dns.google` はホスト名なので、IPv6 でも引けます。今回の障害は IPv6 が生きていて IPv4 だけが止まる形だったので、固定していなければ `dns.google` へのプローブが IPv6 で成功し、`WanDown` の条件が崩れていた可能性があります（監視用の LXC から IPv6 で外に出られたかは確かめていません）。回線は v6 プラス（MAP-E）で、IPv4 は IPv6 のトンネルの上を通っています。その構成は [ISP を乗り換えた記事](/blog/2026/isp-migration-nuro-to-enhikari) に書きました。
 
 ## 検知は正しかった
 
-Prometheus の `ALERTS` を見ると、`WanDown` は 04:29 に発火し、11:54 に解消していました。ゲートウェイの自動更新が 04:24〜04:29 に走り、11:53 に僕が手で直すまで、という障害の区間とほぼ一致します。
+Prometheus の `ALERTS` を見ると、`WanDown` は 4 時半ごろに発火し、正午の少し前に解消していました。ゲートウェイの自動更新が走ってから、僕が手で直すまで、という障害の区間とほぼ一致します。
 
-06:00 時点の 3 つの条件の値は、外への ICMP が `0`、HTTPS が `0`、ゲートウェイへの ICMP が `1` です。ルールが想定していたとおりの形でした。
+障害中は、外への ICMP と HTTPS が全滅し、ゲートウェイだけが応答していました。ルールが想定していたとおりの形です。
 
 <Image
   src={timelineFigure}
   alt="2026-11-01 の検知と通知のタイムライン。IPv4 の不通と WanDown の発火はどちらも 04 時台から 11 時台まで続き、そのあいだ Discord への送信は 5 分おきにタイムアウトしていた。11:53 ごろの復旧後は 400 で拒否され、届いたのは別経路の Home Assistant からの Recovered だけだった"
   width={1200}
-  height={407}
+  height={387}
 />
 
 監視は、正しい時刻に、正しい理由で鳴っていました。問題はその先にあります。
 
 ## 不通のあいだに届かないのは当然
 
-Alertmanager のログには、04:34 から 5 分おきに次の行が並んでいました。
+Alertmanager のログには、発火の 5 分後から、5 分おきに次の行が並んでいました。
 
 ```text
 Notify for alerts failed ... WanDown ... context deadline exceeded
@@ -102,9 +102,9 @@ $ dig +short discord.com A
 
 Discord には IPv4 でしか届かないので、IPv4 が止まった時点で通知の経路は切れていました。
 
-## 復旧したあとも届かない
+## 復旧したあとも Discord が 400 で拒否した
 
-おかしいのは、11:53 に IPv4 が戻ったあとです。復旧すれば、溜まっていた通知や解消の通知が届くはずでした。ところが、ログにはタイムアウトの代わりに別のエラーが出ていました。
+おかしいのは、正午の少し前に IPv4 が戻ったあとです。復旧すれば、溜まっていた通知や解消の通知が届くはずでした。ところが、ログにはタイムアウトの代わりに別のエラーが出ていました。
 
 ```text
 unexpected status code 400: {"embeds": ["0"]}
@@ -119,25 +119,23 @@ Alertmanager の送信カウンターを見ると、状況はもっと悪いこ�
 | `alertmanager_notifications_total`        | 117 |
 | `alertmanager_notifications_failed_total` | 117 |
 | うち `reason="contextDeadlineExceeded"`   | 108 |
-| うち `reason="other"`（400）              |   9 |
+| うち `reason="other"`（400）[^reason]     |   9 |
 
-**117 回送って、117 回とも失敗していました。成功は 0 回です。** 最初の 400 は 11:54 なので、それより前の失敗はすべてタイムアウトで、108 回はどれも障害中のものです。5 分おきの `WanDown` だけなら 90 回ほどなので、障害中に送ろうとしたほかのアラートの分も含まれていると考えられます（内訳は確かめていません）。一方、400 の 9 回はどれも復旧後のもので、回線と関係がありません。回線が正常でも、Discord への通知は届かない状態だったことになります。
+**117 回送って、117 回とも失敗していました。成功は 0 回です。** 400 が出始めたのは復旧の直後なので、それより前の 108 回はすべて障害中のタイムアウトです。一方、400 の 9 回はどれも復旧後のもので、回線と関係がありません。回線が正常でも、Discord への通知は届かない状態だったことになります。
 
-この間、Discord に届いたのは、Home Assistant の ping の監視が Alertmanager とは別の経路で送っている通知だけでした。11:56 に「Recovered: WAN (1.1.1.1)」が 1 件届いています。障害が始まったことを知らせる通知は、どの経路からも届いていません。
+この間、Discord に届いたのは、Home Assistant の ping の監視が Alertmanager とは別の経路で送っている通知だけでした。復旧の 2 分後に、回線が戻ったことを知らせる「Recovered」が 1 件届いています。障害が始まったことを知らせる通知は、どの経路からも届いていません。
 
-いつから届かなかったのかは分かりません。設定を変えたのは 2026-08-02 なので、そこからずっと届いていなかった可能性があります。ただ、それ以前のカウンターはコンテナの再起動で消えていて、確かめられませんでした。
+いつから届かなかったのかは分かりません。設定を変えたのは 8 月なので、そこからずっと届いていなかった可能性があります。ただ、それ以前のカウンターはコンテナの再起動で消えていて、確かめられませんでした。
 
 ## 原因は Alertmanager が必ず embed を送ること
 
-2026-08-02 の変更では、Discord の通知を embed を使わずに本文（`content`）だけで送ろうとしていました。Discord のスマホアプリでは embed の中の文字を選択できず、アラートの内容をコピーできないからです。
+8 月の変更では、Discord の通知を embed を使わずに本文（`content`）だけで送ろうとしていました。Discord のスマホアプリで、embed の中の文字を選択できず、アラートの内容をコピーできなかったからです。
 
 そのときの設定は次のとおりです。
 
 ```yaml
 discord_configs:
-  - webhook_url_file: /run/secrets/discord_webhook
-    send_resolved: true
-    title: ''
+  - title: ''
     message: ''
     content: |-
       {{ if eq .Status "firing" }}🔴 FIRING{{ else }}✅ RESOLVED{{ end }} · {{ .CommonLabels.alertname }}{{ with .CommonLabels.severity }} · {{ . }}{{ end }}
@@ -156,7 +154,7 @@ type webhookEmbed struct {
 }
 ```
 
-`title` と `description` の JSON タグに `omitempty` がありません。そして送信のたびに、embed を 1 つ、条件なしに組み立てています。
+`title` と `description` の JSON タグに `omitempty` がありません。そして送信のたびに、embed を 1 つ、条件なしに組み立てています。この部分は、執筆時点の最新版の v0.34.2 でも変わっていません。
 
 ```go
 w := webhook{
@@ -170,7 +168,7 @@ w := webhook{
 }
 ```
 
-`color` は、発火中なら赤、解消なら緑、それ以外なら灰色が必ず入ります。つまり title と message を空にしても embed は消えず、**色だけが入った中身の空の embed が送られます。** Discord はこれを 400 `{"embeds": ["0"]}` で拒否していました。
+`color` は、発火中なら赤、解消なら緑、それ以外なら灰色が必ず入ります。つまり title と message を空にしても embed は消えず、**title と description が空文字の embed が送られます。** Discord はこれを 400 `{"embeds": ["0"]}` で拒否していました。Discord のドキュメントには、空の embed を拒否するとは書かれていません。ただ、後で書くとおり title だけを変えたら受理されたので、中身が空なことが拒否の理由だと考えています。
 
 <Image
   src={embedJsonFigure}
@@ -190,13 +188,7 @@ title: '{{ if eq .Status "firing" }}🔴{{ else }}✅{{ end }} {{ .CommonLabels.
 message: ''
 ```
 
-失敗の合計は、カウンターを見たあとにもう 1 回増え、修正の直前で 118 回になっていました。`amtool check-config` で設定の文法を確かめ、Alertmanager に設定を読み直させました。そのあと、送信の成功回数（`notifications_total` から `failed_total` を引いた値）は次のように増えています。
-
-| 時点                                                         | 成功 | 失敗（合計） |
-| :----------------------------------------------------------- | ---: | -----------: |
-| 修正の直前                                                   |    0 |          118 |
-| 設定の読み直し後（その時点で発火中だった別のアラートを再送） |    1 |          118 |
-| テストのアラートを投入した後                                 |    2 |          118 |
+`amtool check-config` で設定の文法を確かめ、Alertmanager に設定を読み直させました。すると、その時点で発火中だった別のアラートが再送され、送信の成功回数（`notifications_total` から `failed_total` を引いた値）が 0 から 1 に増えました。続けてテストのアラートを入れると 2 になり、失敗は増えていません。
 
 テストのアラートは、`DiscordDeliveryTest` という名前で Alertmanager の API に直接入れました。Discord には `🔴 FIRING · DiscordDeliveryTest · info` が、embed のタイトル付きで届いています。
 
@@ -206,11 +198,11 @@ message: ''
 
 400 は直りました。ただ、今回の障害そのものを通知で知る手段は、まだありません。
 
-回線が止まると、家の中から Discord に知らせる仕組みは、どう作っても動きません。今回の 108 回のタイムアウトがそれです。家の中の監視が正しく鳴っても、その声が外に出ていけません。
+回線が 1 本しかない今の構成では、その回線が止まると、回線越しに知らせる仕組みは動きません。今回の 108 回のタイムアウトがそれです。家の中の監視が正しく鳴っても、その声が外に出ていけません。今回は IPv6 が生きていたので、IPv6 で届く中継を挟めば届いた可能性はあります。ただ、回線が丸ごと止まれば同じことです。
 
-定石は、外部のハートビートです。healthchecks.io のようなサービスに、監視用の LXC から定期的に生存報告を送り、報告が途絶えたら外部側がメールやプッシュで知らせます。報告が「届かなくなった」ことに外側が気づく仕組みなので、回線が死んでも機能します。これはまだ手を付けていません。
+定石は、外部のハートビートです。healthchecks.io のようなサービスに、監視用の LXC から定期的に生存報告を送り、報告が途絶えたら外部側がメールなどで知らせます。報告が「届かなくなった」ことに外側が気づく仕組みなので、回線が死んでも機能します。これはまだ手を付けていません。
 
-`alertmanager_notifications_failed_total` が増えたら鳴るアラートを足す案も考えました。ただ、そのアラートの通知も同じ Discord の経路を通ります。経路が壊れていれば、壊れたことを知らせる通知も届きません。今回の 400 も、そのアラートの通知が同じ空の embed で拒否されるので、気づく手段にはなりません。回線断にも 400 にも効かないので、外部ハートビートの代わりにはなりません。
+`alertmanager_notifications_failed_total` が増えたら鳴るアラートを足す案も考えました。ただ、今の設定は通知先が Discord の 1 つだけなので、そのアラートの通知も同じ経路を通り、今回の 400 では同じ空の embed で拒否されます。メールなど別の通知先に分ければ、こうした設定の誤りには効きます。それでも回線が止まれば、家から出る通知はどれも届かないので、外部ハートビートの代わりにはなりません。
 
 なお、Proxmox のバックアップの通知は、毎週の成功通知そのものをハートビートとして扱っています（[Home Assistant を Proxmox に入れた記事](/blog/2026/home-assistant-m920q-proxmox)）。こちらは「来ないこと」に人が気づく前提で、自動で知らせてはくれません。
 
@@ -218,11 +210,13 @@ message: ''
 
 - 監視は 5 分で正しく検知していた。届かなかったのは通知の経路のほう
 - 不通のあいだは、`discord.com` に AAAA レコードが無いため、IPv6 が生きていても届かない
-- Alertmanager v0.33.1 の Discord 通知は、title と message を空にしても embed を必ず 1 つ送る。中身の空の embed を Discord は 400 で拒否する
+- Alertmanager の Discord 通知は、title と message を空にしても embed を必ず 1 つ送る（v0.33.1 と v0.34.2 で確認）。中身の空の embed は、Discord に 400 で拒否された
 - title を 1 行入れれば、message は空のままでも受理される
 
-いちばんの教訓は、受け取る側が静かでも、送る側が正常とは限らないことです。届いたかどうかは、送った側のカウンター（`alertmanager_notifications_failed_total`）にしか出ていませんでした。通知の設定を変えたら、テストのアラートを 1 本流し、届くところまで見る。次は外部ハートビートを入れて、回線が死んだときにも気づけるようにします。
+いちばんの教訓は、受け取る側が静かでも、送る側が正常とは限らないことです。届いたかどうかは、送った側（Alertmanager のログと `alertmanager_notifications_failed_total`）にしか出ていませんでした。通知の設定を変えたら、テストのアラートを 1 本流し、届くところまで見る。次は外部ハートビートを入れて、回線が死んだときにも気づけるようにします。
 
 それでは、またね。
+
+[^reason]: v0.33.1 の値です。v0.34.0 からは、Discord の 400 は `reason="clientError"` として数えられます（[CHANGELOG](https://github.com/prometheus/alertmanager/blob/main/CHANGELOG.md) の #5332）。
 
 [^am-discord]: [prometheus/alertmanager notify/discord/discord.go（v0.33.1）](https://github.com/prometheus/alertmanager/blob/v0.33.1/notify/discord/discord.go)
