@@ -95,7 +95,7 @@ const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
 
 ### 4. RFC 9457 Problem Details
 
-エラーレスポンスは[RFC 9457](https://www.rfc-editor.org/rfc/rfc9457)に準拠した`application/problem+json`形式です。`code`フィールドでプログラムからエラーを識別しやすい形式になっています。
+エラーレスポンスは[RFC 9457](https://www.rfc-editor.org/rfc/rfc9457)に準拠した`application/problem+json`形式です。`code`フィールドでプログラムからエラーを識別しやすい形式になっています。RFC 9457 の形式そのものは、[hono-problem-details の記事](/blog/2026/hono-problem-details-rfc9457/)で解説しています。
 
 ```json
 {
