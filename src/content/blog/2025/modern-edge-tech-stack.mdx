@@ -17,7 +17,7 @@ category: programming
 
 ## TL;DR
 
-- Edge First の方針として、Cloudflare Workers + D1 で「物理的な距離」を最小化
+- Edge First の方針として、Cloudflare Workers で API をユーザーの近くで動かす
 - Optimistic UI を TanStack Query で実装し、「通信待ち時間」を体感ゼロにした
 - Offline Ready により、電波の悪いジムでもキャッシュ済みのデータで使い続けられる
 - DX 面では Hono + Expo を採用し、個人開発でも「爆速」で機能提供できる
@@ -39,7 +39,7 @@ category: programming
 | **State/Data**   | TanStack Query      | 楽観的更新 & オフライン対応               |
 | **Backend**      | Cloudflare Workers  | Edge実行による低レイテンシ                |
 | **Framework**    | Hono                | 超軽量 & Web標準準拠                      |
-| **Database**     | Cloudflare D1       | Edgeで動くSQLite                          |
+| **Database**     | Cloudflare D1       | Workersから使えるSQLite                   |
 
 ```mermaid
 flowchart LR
@@ -49,7 +49,7 @@ flowchart LR
         E --> TQ
     end
 
-    subgraph Edge["⚡ Cloudflare Edge"]
+    subgraph Edge["⚡ Cloudflare"]
         W[Workers]
         H[Hono]
         D1[(D1 SQLite)]
@@ -71,12 +71,12 @@ flowchart LR
 
 この課題に対して、3つのレイヤーで解決策を講じました。
 
-### 1. 物理的な距離をゼロに (Edge + D1)
+### 1. API をユーザーの近くで動かす (Workers + D1)
 
 従来の構成（東京リージョンのコンテナなど）ではなく、ユーザーの最も近くでコードが動く **Cloudflare Workers** を採用しました。
-データベースには **Cloudflare D1** (SQLite) を採用しています。D1 のデータベース本体は 1 か所に置かれるので、クエリまでエッジで完結するわけではありませんが、Workers と同じ Cloudflare のネットワークの中で往復が済みます。
-
 Workers はコールドスタートの影響もほとんど受けません。
+
+データベースには **Cloudflare D1** (SQLite) を採用しています。ただし D1 のデータベース本体は 1 か所に置かれるので、DB へのクエリはその場所まで往復します。エッジで速くなるのは API の処理そのもので、DB アクセスまでユーザーの近くで完結するわけではありません。
 
 ### 2. 通信待ち時間をゼロに (Optimistic Updates)
 
@@ -99,7 +99,7 @@ UI は API の応答を待たずに切り替わります。
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      gcTime: 1000 * 60 * 60 * 24 * 7, // 7日間キャッシュを保持
+      gcTime: 1000 * 60 * 60 * 24 * 7, // 使われないキャッシュを7日間保持
       networkMode: 'offlineFirst', // オフラインでもキャッシュがあれば表示
     },
   },
