@@ -65,7 +65,7 @@ Google Cloud Platformのページからサービスアカウントを作成し�
 ![サービスアカウントのリストを開きます](https://images.microcms-assets.io/assets/3ab7834809eb4654a5239e79fba895de/667a731fceea4f1b9aa1478134ce8fae/service-account-step1.jpg?auto=format)
 _サービスアカウントのリストを開きます_
 
-![サービスアカウントに作成するアカウントの詳細を入れる](https://images.microcms-assets.io/assets/3ab7834809eb4654a5239e79fba895de/80f279fe22404053a6592dfe0511309b/service-account-step2.jpg?auto=format)
+![サービスアカウントに作成するアカウントの詳細を入れる](../../../assets/blog/2023/ga-service-account-step2.jpg)
 _サービスアカウントに作成するアカウントの詳細を入れます_
 
 ![念のため閲覧者のみのロールを割り当ててアカウントの作成を完了します](https://images.microcms-assets.io/assets/3ab7834809eb4654a5239e79fba895de/05599a41e3a844a38e98d5cf448d7034/service-account-step3.jpg?auto=format)
@@ -94,12 +94,12 @@ _新しい鍵を作成ボタンを押下後、キーのタイプが選択でき�
   "project_id": "aaa",
   "private_key_id": "bbb",
   "private_key": "-----BEGIN PRIVATE KEY-----\nccc\n-----END PRIVATE KEY-----\n",
-  "client_email": "test-service-account@silver-adapter-374912.iam.gserviceaccount.com",
+  "client_email": "test-service-account@your-project-id.iam.gserviceaccount.com",
   "client_id": "ddd",
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
   "token_uri": "https://oauth2.googleapis.com/token",
   "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/test-service-account%40silver-adapter-374912.iam.gserviceaccount.com"
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/test-service-account%40your-project-id.iam.gserviceaccount.com"
 }
 ```
 
@@ -111,7 +111,7 @@ JSONファイルがダウンロードされるので、以下の2つをメモっ
 環境変数では以下として利用します。
 
 ```bash
-GA_CLIENT_EMAIL=test-service-account@silver-adapter-374912.iam.gserviceaccount.com
+GA_CLIENT_EMAIL=test-service-account@your-project-id.iam.gserviceaccount.com
 GA_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----
 ccc
 -----END PRIVATE KEY-----"
@@ -141,7 +141,7 @@ _役割とデータ制限の追加でアドレスを指定し、追加する_
 このページでは以下の順に実行します。
 
 1. サービスアカウントのメールアドレスを入力する
-   - 先の `test-service-account@silver-adapter-374912.iam.gserviceaccount.com`
+   - 先の `test-service-account@your-project-id.iam.gserviceaccount.com`
 2. 「新規ユーザーにメールで通知する」のチェックボックスを外す
 3. 「追加」ボタンを押下する
 
