@@ -144,7 +144,7 @@ function sanitizeExtensions(extensions) {
 
 危険なキーがなければオブジェクトのコピーは発生しません。通常パスのコストはゼロです。
 
-**安全なJSON.stringify**: 循環参照やBigIntで`JSON.stringify`が飛んでも、500のフォールバックレスポンスを返します。
+**安全なJSON.stringify**: 循環参照やBigIntで`JSON.stringify`が例外を投げても、500のフォールバックレスポンスを返します。
 
 ```ts
 const FALLBACK_BODY = JSON.stringify({
