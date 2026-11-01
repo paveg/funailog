@@ -16,6 +16,8 @@ seriesOrder: 3
 ---
 
 import AffiliateCard from '@/components/AffiliateCard.astro';
+import Image from '@/components/markdown/Image.astro';
+import networkTopologyFigure from '../../../assets/blog/2026/unifi-network-topology.png';
 
 ※ 本記事にはアフィリエイトリンク（広告）を含みます。
 
@@ -77,25 +79,12 @@ AP 側に電源が要らないので、設置場所の自由度が高い。
 
 論理構成はこうなっています。
 
-```mermaid
-graph TD
-  ONU["10G-EPON ONU（NTT 提供）"]
-  UCG["UCG Fiber（LDK）"]
-  AP["U7 Pro（GW 直上）"]
-  PVE["Proxmox / Home Assistant（有線）"]
-  Desk["デスクの Mac（書斎・有線 / VLAN 1）"]
-  Human["家族の端末 5台"]
-  IoT["IoT 機器 14台"]
-  Guest["来客端末"]
-
-  ONU -->|10GBASE-T| UCG
-  UCG -->|2.5GbE + PoE| AP
-  UCG -->|1GbE| PVE
-  UCG -->|2.5GbE / Cat6A 20m| Desk
-  AP -. "home（VLAN 1）" .-> Human
-  AP -. "home-iot（VLAN 20）" .-> IoT
-  AP -. "home-guest（VLAN 30）" .-> Guest
-```
+<Image
+  src={networkTopologyFigure}
+  alt="回線から端末までの構成図。10G-EPON の ONU から 10GBASE-T で UCG Fiber につなぎ、有線で U7 Pro（2.5GbE と PoE+）、Proxmox と Home Assistant（HA が VLAN 1 と 20 に足を持つ）、書斎のデスクの Mac（2.5GbE、Cat6A 20m、VLAN 1）に配る。U7 Pro からは SSID ごとに、家族の端末 5 台を VLAN 1、IoT 機器 14 台を VLAN 20、来客端末を VLAN 30 に分ける"
+  width={1200}
+  height={596}
+/>
 
 ## VLAN 設計：家庭は3つで足りる
 
