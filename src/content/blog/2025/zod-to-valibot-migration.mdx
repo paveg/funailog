@@ -1,6 +1,6 @@
 ---
-title: Cloudflare Workers × Hono プロジェクトで Zod から Valibot に移行してバンドルサイズを89%削減した話
-description: PWA開発において重要なバンドルサイズ最適化のため、スキーマバリデーションライブラリをZodからValibotに移行。約89%のサイズ削減を実現した具体的な変換パターンと移行手順を解説します。
+title: Cloudflare Workers × Hono プロジェクトで Zod から Valibot に移行してバリデーションのサイズを89%削減した話
+description: Cloudflare Workers のバンドルを小さくするため、スキーマバリデーションライブラリをZodからValibotに移行。ライブラリ分のサイズを約89%削った具体的な変換パターンと移行手順を解説します。
 published: 2025-12-06
 tags: ['Valibot', 'Cloudflare', 'Hono', 'PWA', 'Performance', 'TypeScript']
 isPublished: true
@@ -9,9 +9,9 @@ category: programming
 
 ## はじめに
 
-PWA（Progressive Web App）の開発において、バンドルサイズはユーザー体験に直結する重要な指標です。特にモバイルユーザーや低速回線環境では、数十KBの差がアプリの初回表示時間に大きく影響します。
+バンドルサイズは、ブラウザに配るフロントエンドだけでなく、Cloudflare Workers のようなエッジで動くバックエンドでも気にしておきたい指標です。Workers ではバンドルが大きいほど起動に時間がかかります。
 
-今回、サプリメント摂取管理アプリ「DailyDose」のAPIバックエンド（Cloudflare Workers + Hono）で使用していたスキーマバリデーションライブラリを Zod から Valibot に移行し、バンドルサイズを約89%削減することに成功しました。
+今回、サプリメント摂取管理アプリ「DailyDose」のAPIバックエンド（Cloudflare Workers + Hono）で使用していたスキーマバリデーションライブラリを Zod から Valibot に移行し、ライブラリ分のサイズを約89%削りました。
 
 この記事では、移行の動機、具体的な変換パターン、そして移行時の注意点を解説します。
 
@@ -22,18 +22,18 @@ PWA（Progressive Web App）の開発において、バンドルサイズはユ�
 | Zod        | ~59KB    | ~14KB   |
 | Valibot    | ~6KB     | ~2KB    |
 
-**約89%のサイズ削減**を実現できます。
+ライブラリ単体のサイズ（Minified）で比べると、**約89%の削減**になります。
 
-この差が生まれる理由は、両ライブラリの設計思想の違いにあります：
+この差が生まれる理由は、両ライブラリの設計思想の違いにあります。
 
 - Zod はメソッドチェーンによる直感的なAPIで、全機能がバンドルされる
 - Valibot は関数合成ベースのモジュラー設計で、使用する機能のみがtree-shakingで抽出される
 
-Cloudflare Workersには1MBのサイズ制限があるため、この差は特に重要です。
+執筆時点の Cloudflare Workers には圧縮後のサイズ上限（無料プランで 3MB）がありました。上限は 2026 年 9 月になくなり、いまは非圧縮で 64MiB まで載せられますが、バンドルが大きいほど起動が遅くなる点は変わりません。
 
 ## 技術スタック
 
-移行対象のプロジェクト構成：
+移行したプロジェクトの構成は次のとおりです。
 
 - ランタイムは Cloudflare Workers
 - フレームワークは Hono
@@ -353,7 +353,7 @@ import { vValidator } from '@hono/valibot-validator';
 
 - 移行ファイル数は11ファイル
 - テストは171件すべてパス
-- バンドルサイズ削減は約53KB（89%削減）
+- バリデーションライブラリ分のサイズ削減は約53KB（Minified、89%削減）
 - API互換性は完全維持
 
 ---
