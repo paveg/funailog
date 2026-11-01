@@ -31,6 +31,7 @@ Cloudflare Pages ではなく、SSR でもない。
 ブログ記事は `src/content/blog/{year}/*.mdx` に年ディレクトリのみで配置する。
 日本語のみで、英語コンテンツツリーは存在しない（英語は `src/pages/en/portfolio.astro` の 1 ページだけ）。
 固定ページは `src/content/page/*.mdx`（about, privacy）、サイトメタデータは `src/content/site/meta.yml`。
+新しい記事は `writing-funailog-articles` スキル（`.claude/skills/`）の工程で書く。
 
 ディレクトリ別の規約は各階層の CLAUDE.md にある:
 `src/content/blog/`, `src/lib/`, `src/pages/`, `src/styles/`。
