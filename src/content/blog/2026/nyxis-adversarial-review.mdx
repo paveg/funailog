@@ -12,6 +12,9 @@ tags:
 emoji: 🔍
 ---
 
+import Image from '@/components/markdown/Image.astro';
+import trustBoundaryFigure from '../../../assets/blog/2026/nyxis-trust-boundary.png';
+
 ## はじめに
 
 Lean[^lean] 製のバックエンドフレームワーク Nyxis が公開されました。X での公開時のポストは、次の一文で始まります。
@@ -55,25 +58,12 @@ IO も DB 接続も書けないので、型の上では、ハンドラは認可�
 
 ただし、保証の強さは部品によって違います。証明の手前と後ろに、信頼するしかない部分が残ります。
 
-```mermaid
-flowchart TB
-  subgraph before["信頼の前提：証明の手前"]
-    spec["Cedar スキーマ・ポリシー<br/>人間が承認したか"]
-    jwt["JWT の検証<br/>主体を決める"]
-    main["Main.lean・lakefile<br/>監査の対象外"]
-  end
-  check["ビルド時の監査 nyxis_check_app<br/>禁止リスト。証明ではない"]
-  subgraph proof["Lean の定理で証明済み"]
-    handler["任意のハンドラ<br/>pure / call だけ"] --> authz["認可層<br/>cedar-spec の isAuthorized"] --> model["モデル上の DB 操作"]
-  end
-  subgraph after["信頼の前提：証明の後ろ"]
-    native["DB 接続と SQL の実行<br/>libpq などの C ライブラリ"]
-  end
-  check -. アプリのモジュールを検査 .-> handler
-  spec -- 判定に使う --> authz
-  jwt -- 主体を渡す --> authz
-  model -. 前提つきでのみ対応 .-> native
-```
+<Image
+  src={trustBoundaryFigure}
+  alt="証明の範囲と信頼の前提の図。左の「証明の手前」に、ビルド時の監査 nyxis_check_app（禁止リストで、証明ではない）、Cedar のスキーマとポリシー、JWT の検証、監査の対象外の Main.lean と lakefile。中央の「定理が覆う範囲」では、任意のハンドラ（pure と call しか書けない）が認可層（cedar-spec の isAuthorized）を通ってモデル上の DB 操作に至る。右の「証明の後ろ」に DB 接続と SQL の実行（libpq などの C ライブラリ）があり、モデル上の DB 操作とは前提つきでのみ対応する。言語の実行環境と前段のプロキシも証明の外にあり、経路全体を支えている"
+  width={1200}
+  height={572}
+/>
 
 型の外の抜け道（実装の差し替えなど）は、`nyxis_check_app` が `unsafe` や `@[extern]` を禁止リストで拒否して塞ぎます。これは監査で、証明ではありません。
 
