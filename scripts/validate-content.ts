@@ -6,6 +6,8 @@
  * 1. Frontmatter schema (required fields, valid category enum, date format)
  * 2. MDX parse errors (syntax issues caught before build)
  * 3. Broken emphasis (** rendered as literal text instead of bold)
+ * 4. Internal links (broken paths, missing posts, links from published posts to drafts)
+ * 5. Disclosure (real name, MAC address, global IPv6 address, email address)
  *
  * Usage:
  *   pnpm validate:content                    # All blog MDX files
@@ -17,6 +19,12 @@ import { globSync } from 'node:fs';
 import { resolve, relative } from 'node:path';
 
 import { parse as parseYAML } from 'yaml';
+
+import {
+  checkInternalLink,
+  findDisclosures,
+  type DisclosureLabel,
+} from '../src/lib/content-checks';
 
 // ── Frontmatter schema ──────────────────────────────────────────────
 
@@ -175,6 +183,108 @@ async function checkMdxParse(mdxBody: string): Promise<string | null> {
   }
 }
 
+// ── Internal links ──────────────────────────────────────────────────
+
+const KNOWN_ROUTES = new Set([
+  '/',
+  '/blog',
+  '/blog/archive',
+  '/blog/tags',
+  '/blog/categories',
+  '/blog/series',
+  '/portfolio',
+  '/en/portfolio',
+  '/rss.xml',
+  '/llms.txt',
+]);
+const KNOWN_ROUTE_PREFIXES = [
+  '/blog/tags/',
+  '/blog/categories/',
+  '/blog/series/',
+  '/demos/',
+  '/api/',
+];
+
+function isKnownRoute(path: string): boolean {
+  return (
+    KNOWN_ROUTES.has(path) ||
+    KNOWN_ROUTE_PREFIXES.some((prefix) => path.startsWith(prefix)) ||
+    existsSync(`src/content/page${path}.mdx`) ||
+    existsSync(`public${path}`)
+  );
+}
+
+function loadPostIds() {
+  const publishedPosts = new Set<string>();
+  const draftPosts = new Set<string>();
+  for (const file of globSync('src/content/blog/*/*.mdx')) {
+    const postId = file
+      .replace(/^src\/content\/blog\//, '')
+      .replace(/\.mdx$/, '');
+    const { data } = extractFrontmatter(readFileSync(file, 'utf-8'));
+    (data?.isPublished === true ? publishedPosts : draftPosts).add(postId);
+  }
+  return { publishedPosts, draftPosts };
+}
+
+const postIds = loadPostIds();
+
+async function findLinkUrls(mdxBody: string): Promise<string[]> {
+  const { unified } = await import('unified');
+  const remarkParse = (await import('remark-parse')).default;
+  const remarkMdx = (await import('remark-mdx')).default;
+  const remarkGfm = (await import('remark-gfm')).default;
+
+  let tree;
+  try {
+    tree = unified()
+      .use(remarkParse)
+      .use(remarkGfm)
+      .use(remarkMdx)
+      .parse(mdxBody);
+  } catch {
+    // MDX parse errors are reported separately
+    return [];
+  }
+
+  const urls: string[] = [];
+
+  function walk(node: {
+    type: string;
+    url?: string;
+    name?: string;
+    attributes?: { name?: string; value?: unknown }[];
+    children?: unknown[];
+  }) {
+    if ((node.type === 'link' || node.type === 'definition') && node.url) {
+      urls.push(node.url);
+    }
+    if (node.name === 'a') {
+      const href = node.attributes?.find(
+        (attribute) => attribute.name === 'href',
+      )?.value;
+      if (typeof href === 'string') {
+        urls.push(href);
+      }
+    }
+    for (const child of node.children ?? []) {
+      walk(child as typeof node);
+    }
+  }
+
+  walk(tree as unknown as Parameters<typeof walk>[0]);
+  return urls;
+}
+
+// ── Disclosure ──────────────────────────────────────────────────────
+
+// この検査より前からある記述。本人が確認して残すと決めたものだけを足す。
+const DISCLOSURE_ALLOWED: Record<string, DisclosureLabel[]> = {
+  'src/content/blog/2023/popular-articles-with-google-analytics-4.mdx': [
+    'メールアドレス',
+  ],
+};
+
 // ── Main ────────────────────────────────────────────────────────────
 
 type FileResult = {
@@ -218,6 +328,25 @@ async function validateFile(filePath: string): Promise<FileResult> {
     result.errors.push(
       `broken emphasis at line ~${issue.line}: literal "**" found in text → "${issue.excerpt}"`,
     );
+  }
+
+  // 4. Internal links
+  for (const url of await findLinkUrls(body)) {
+    const linkError = checkInternalLink(url, {
+      ...postIds,
+      isSourcePublished: data?.isPublished === true,
+      isKnownRoute,
+    });
+    if (linkError) {
+      result.errors.push(`internal link: ${linkError}`);
+    }
+  }
+
+  // 5. Disclosure
+  for (const { label, line, match } of findDisclosures(content)) {
+    if (!DISCLOSURE_ALLOWED[rel]?.includes(label)) {
+      result.errors.push(`disclosure at line ${line}: ${label} → "${match}"`);
+    }
   }
 
   return result;
