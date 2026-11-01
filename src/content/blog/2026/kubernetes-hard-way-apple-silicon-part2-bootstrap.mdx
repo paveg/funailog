@@ -27,7 +27,7 @@ seriesOrder: 2
 - Chapter 9-11: Worker bootstrap + Pod ネットワーク (static route)
 - Chapter 12: Smoke Test 6 種
 
-Chapter 4-6 は公式手順がきれいに書かれていて躓きほぼ無し。一方 Chapter 7-12 は大物で、ここから本格的に詰まり始めます (4 個のハマりを発見)。
+Chapter 4-6 は公式手順がきれいに書かれていて躓きほぼ無し。一方 Chapter 7-12 は大物で、ここから本格的に詰まり始めます (4 個のハマりを踏みました)。
 
 完走までの所要時間は Chapter 4-6 で 1.5 時間、Chapter 7-12 で 2.5 時間、合計 4 時間。Part 1 の環境構築 4 時間と合わせて、Hard Way 全体で延べ 8 時間という計算でした。
 
@@ -204,7 +204,7 @@ ssh root@server etcdctl member list
 
 ## Chapter 8: kube-apiserver が無言で死ぬ (G22)
 
-Chapter 8 は control plane の 3 コンポーネント (apiserver / scheduler / controller-manager) を server 上で起動させる章。素直に systemd を叩いたんですが、`kube-apiserver` だけが `activating (auto-restart)` ループに入って起動しません (無言で)。
+Chapter 8 は control plane の 3 コンポーネント (apiserver / scheduler / controller-manager) を server 上で起動させる章。素直に systemd を叩いたんですが、`kube-apiserver` だけが `activating (auto-restart)` を繰り返して起動しません (無言で)。
 
 `journalctl -u kube-apiserver -f` を見ると、起動時の flag dump (200 行超) で画面が埋まり、本当のエラーが流れていく:
 
@@ -234,9 +234,9 @@ ssh root@server mv ca.crt ca.key \
 ssh root@server systemctl restart kube-apiserver
 ```
 
-肝心のエラーが 200 行の flag dump に埋もれて見えなくなる、というのは K8s の systemd ベースのコンポーネントで普遍的に起きる罠で、**`grep -iE "error|failed|cannot|no such"` を癖にする** だけで突破速度が一気に上がります。CKA の Troubleshooting (配点 30%) でも同じパターンが頻出します。
+肝心のエラーが 200 行の flag dump に埋もれて見えなくなる、というのは K8s の systemd ベースのコンポーネントで普遍的に起きる罠で、**`grep -iE "error|failed|cannot|no such"` を癖にする** だけで原因にたどり着くまでが一気に早くなります。CKA の Troubleshooting (配点 30%) でも同じパターンが頻出します。
 
-apiserver が立ち上がった瞬間のログには、Kubernetes の core を支える小さな魔法が見えます:
+apiserver が立ち上がった瞬間のログには、apiserver が `default/kubernetes` Service を自動生成した跡が見えます:
 
 ```text
 allocated clusterIPs service="default/kubernetes" clusterIPs={"IPv4":"10.0.0.1"}
@@ -320,7 +320,7 @@ curl -I http://${NODE_NAME}:${NODE_PORT}
 # HTTP/1.1 200 OK
 ```
 
-Chapter 9 で仕込んだ `br_netfilter` + `bridge-nf-call-iptables=1` がここで初めて目に見える形で結実します (kube-proxy の iptables ルールが NodePort を Pod IP に DNAT する経路で必須)。
+Chapter 9 で仕込んだ `br_netfilter` + `bridge-nf-call-iptables=1` がここで初めて効いてきます (kube-proxy の iptables ルールが NodePort を Pod IP に DNAT する経路で必須)。
 
 これで Smoke Test 6 種すべてパスし、Hard Way Chapter 1-12 完走です。
 
