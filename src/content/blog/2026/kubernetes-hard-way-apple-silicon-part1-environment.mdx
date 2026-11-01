@@ -25,11 +25,11 @@ import vmLayoutFigure from '../../../assets/blog/2026/k8s-hard-way-part1-vms.png
 
 ところが Hard Way の現行版 (2024 版) は **Debian 12 + ARM64/AMD64 両対応** にリニューアルされたとはいえ、VM の用意は読者任せで、公式手順は実質的に GCP / AMD64 を前提として書かれている部分が多いです。そのため Apple Silicon Mac で完結させたい人は、**Hard Way 本編に入る前の環境構築**でまず壁にぶつかります（僕も例外なくぶつかりました）。
 
-このシリーズはその壁の超え方の記録です。Part 1 では `lima + socket_vmnet` で 4 VM を立てて [Chapter 1-3](https://github.com/kelseyhightower/kubernetes-the-hard-way/tree/master/docs) を消化するまでをカバーします。
+このシリーズはその壁の越え方の記録です。Part 1 では `lima + socket_vmnet` で 4 VM を立てて [Chapter 1-3](https://github.com/kelseyhightower/kubernetes-the-hard-way/tree/master/docs) を消化するまでをカバーします。
 
 ### 想定読者
 
-Apple Silicon Mac で Hard Way を完走したい人、`lima` を普段使いしていて Hard Way 用にネットワークまで踏み込みたい人、あるいは `kubeadm` のブラックボックスを剥がして Kubernetes 内部を覗きたい人を念頭に書いています。
+Apple Silicon Mac で Hard Way を完走したい人、`lima` を普段使いしていて Hard Way 用にネットワークまで踏み込みたい人、あるいは `kubeadm` のブラックボックスの中にある Kubernetes 内部を覗きたい人を念頭に書いています。
 
 逆に「とりあえず動くクラスタが欲しいだけ」なら `kind` や `minikube` の方が早いです。本シリーズは公式手順をなぞる過程で詰まる箇所だけに絞って書くので、Hard Way 自体の意義や CKA / CKS との関係は別の記事でまとめる予定です。
 
@@ -74,7 +74,7 @@ Hard Way には VM プロバイダの指定がないので、まず何で VM を
 
 合計 4 CPU / 7GB RAM / ディスク 31GB（宣言値）。Apple Silicon Mac M3 24GB RAM の半分以下のリソースで収まります。
 
-ディスクは `qcow2` の sparse なので宣言値より実使用が支配的で、4 VM 全起動後でも合計 **約 12GB** しか食いません。公式 20GB は余裕を持たせた値で、10GB でも Hard Way 全体を進めて余ります。
+ディスクは `qcow2` の sparse なので実際の使用量は宣言値よりずっと小さく、4 VM 全起動後でも合計 **約 12GB** しか食いません。公式 20GB は余裕を持たせた値で、10GB でも Hard Way 全体を進めて余ります。
 
 なお、`lima` のメモリ指定は GB 整数なので、公式の jumpbox 推奨 512MB は表現できません。最小 1GB に丸めています。Mac 側の空きは **30GB** ほど確保しておくと安心です (3GB/VM × 4 台 + Hard Way 進行中の証明書・バイナリ・etcd データで実測 14-15GB を使います)。
 
@@ -122,7 +122,7 @@ node-1: 192.168.5.15
 
 これは [lima のデフォルトネットワーク](https://lima-vm.io/docs/config/network/) (`user-v2` / usernet) の仕様で、各 VM が独立した NAT ゲートウェイを持ち、その NAT gateway IP (192.168.5.15) を「自分の IP」と認識しています。**VM 間の直接通信はこのネットワークではできません**。Hard Way の etcd クラスタや、apiserver と kubelet の間の通信が全滅します。
 
-解決策は [`socket_vmnet`](https://github.com/lima-vm/socket_vmnet) で shared network に切り替えることです。ただ、その切り替え自体がもう数段のハマりポイントを連れてきます。
+解決策は [`socket_vmnet`](https://github.com/lima-vm/socket_vmnet) で shared network に切り替えることです。ただ、その切り替えでさらに数段階つまずきます。
 
 ### Step 1: socket_vmnet をインストール
 
@@ -184,7 +184,7 @@ sudo chmod -R go-w /opt/socket_vmnet
 limactl sudoers | sudo tee /private/etc/sudoers.d/lima
 ```
 
-なぜこの設計かというと、`socket_vmnet` を sudo NOPASSWD で起動できるようにするためには、**実行ファイル自身とそこに至るパス全体が root 所有 + 他ユーザー書込不可**でなければならないからです。さもないと「悪意あるバイナリに差し替えて sudo 経由で root 昇格」が成立してしまいます。Homebrew の Cellar 構造はユーザー所有前提なので、これと相性が悪い、という構図です。
+なぜこの設計かというと、`socket_vmnet` を sudo NOPASSWD で起動できるようにするためには、**実行ファイル自身とそこに至るパス全体が root 所有 + 他ユーザー書込不可**でなければならないからです。さもないと「悪意あるバイナリに差し替えて sudo 経由で root 昇格」が成立してしまいます。Homebrew の Cellar 構造はユーザー所有前提なので、これと相性が悪いです。
 
 副作用として、`brew upgrade socket_vmnet` を打っても `/opt/socket_vmnet/` 側は更新されません。アップグレードのたびに上記の `cp` を手で打ち直すしかなく、これが地味に忘れがちです。
 
@@ -213,7 +213,7 @@ done
 
 期待出力は **各 VM で異なる `192.168.105.x` の IP** です。ここまで来てやっと VM 間で `ping` が通る状態になります。
 
-公式 Hard Way は「各 VM に独立 IP がある」前提で書かれており、この `socket_vmnet` セットアップを省略すると [Chapter 7 (etcd)](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/07-bootstrapping-etcd.md) で破綻します。Apple Silicon × Hard Way が世間でつまずく代表ポイントです。
+公式 Hard Way は「各 VM に独立 IP がある」前提で書かれており、この `socket_vmnet` セットアップを省略すると [Chapter 7 (etcd)](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/07-bootstrapping-etcd.md) で破綻します。Apple Silicon で Hard Way を進めるときにつまずく代表的な箇所です。
 
 ## SSH 鍵配布と root ログイン
 
