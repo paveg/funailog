@@ -280,7 +280,6 @@ async function findLinkUrls(mdxBody: string): Promise<string[]> {
 
 // この検査より前からある記述。本人が確認して残すと決めたものだけを足す。
 const DISCLOSURE_ALLOWED: Record<string, DisclosureLabel[]> = {
-  'src/content/blog/2024/handle-jsonld-on-astro.mdx': ['本名'],
   'src/content/blog/2023/popular-articles-with-google-analytics-4.mdx': [
     'メールアドレス',
   ],
