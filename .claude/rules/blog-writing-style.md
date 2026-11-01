@@ -19,20 +19,9 @@ paths: src/content/blog/**
 
 **重要**: ルールを暗記するより、実際の記事を読んで文体を吸収すること。
 
-## コンテンツマーケティングスキルの活用
+## SEO の監査
 
-ブログ記事を作成・編集する際は、`content-marketing:content-marketer` スキルを活用すること。このスキルは以下の点で記事の品質向上に役立つ：
-
-- SEO最適化されたタイトル・見出し構成
-- 読者のエンゲージメントを高める構成
-- 適切なキーワード配置
-- コンバージョンを意識した記事設計
-
-スキルの呼び出し方法：
-
-```text
-Skill: content-marketing:content-marketer
-```
+記事の title・description・見出しを決めるときは、`seo-auditor` agent（`.claude/agents/seo-auditor.md`）に記事のパスと GSC の CSV を渡して監査させる。agent は根拠付きの指摘だけを返すので、修正はメインのセッションが行う。
 
 ## 基本トーン
 
