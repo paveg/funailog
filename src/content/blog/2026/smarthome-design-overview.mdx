@@ -17,6 +17,9 @@ seriesTitle: 賃貸スマートホーム
 seriesOrder: 1
 ---
 
+import Image from '@/components/markdown/Image.astro';
+import designLayersFigure from '../../../assets/blog/2026/smarthome-design-layers.png';
+
 引越をきっかけに、自宅のスマートホーム化を本格的にやることにしました。
 
 現状でも SESAME のスマートロックや Nature Remo で赤外線家電を操作するところまでは導入していますが、各デバイスがバラバラに動いているだけで「スマートホーム」と呼べるほどの統合はできていません。新居への引越は設計をゼロからやり直すにはちょうどいいタイミングです。
@@ -41,38 +44,12 @@ seriesOrder: 1
 
 設計は5つの層に分かれます。
 
-```mermaid
-graph TD
-  subgraph 回線層
-    ISP["en ひかりクロス 10G<br/>v6プラス（MAP-E）"]
-  end
-
-  subgraph ネットワーク層
-    GW["UCG Fiber<br/>ゲートウェイ + VLAN"]
-    AP["Wi-Fi AP<br/>（当面は Aterm 流用）"]
-  end
-
-  subgraph IoT層
-    HA["Home Assistant<br/>中央制御"]
-    AqaraHub["Aqara Hub M200<br/>Zigbee / Matter / Thread / IR"]
-    Sensors["センサー群<br/>温湿度・人感・開閉"]
-    Lock["SESAME 5<br/>スマートロック"]
-  end
-
-  subgraph 操作層
-    iPhone["iPhone<br/>Apple Home"]
-    Android["Android<br/>Google Home"]
-  end
-
-  ISP --> GW
-  GW --> AP
-  GW --> HA
-  HA --> AqaraHub
-  AqaraHub --> Sensors
-  HA --> Lock
-  iPhone --> HA
-  Android --> HA
-```
+<Image
+  src={designLayersFigure}
+  alt="設計の 5 つの層。回線層は en ひかりクロス 10G と v6 プラス、ネットワーク層は UCG Fiber と当面流用する Aterm の Wi-Fi AP、IoT 層は Home Assistant を中心に Aqara Hub M200 とセンサー群、SESAME 5。操作層の iPhone（Apple Home）と Android（Google Home）、リモートアクセス層の Tailscale は、どれも Home Assistant につながる"
+  width={1200}
+  height={714}
+/>
 
 この構成を一度に揃えるのではなく、4つのフェーズに分けて導入します。
 
