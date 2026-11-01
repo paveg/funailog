@@ -1,6 +1,6 @@
 ---
-title: APIエラーを構造化するRFC 9457ミドルウェアをHono向けに作った
-description: RFC 9457 Problem Detailsに準拠したHonoミドルウェア「hono-problem-details」の設計と実装を解説。app.onError一行でapplication/problem+json形式のエラーレスポンスを返し、Zod・Valibot・OpenAPIとの統合、型安全なエラーレジストリ、ローカライズまでをカバー。
+title: HonoでRFC 9457（Problem Details）のエラーレスポンスを返すミドルウェアを作った
+description: Honoのapp.onErrorに一行足すと、HTTPExceptionを含む全エラーがRFC 9457のapplication/problem+json形式になるミドルウェア「hono-problem-details」を作りました。Zod・Valibot・OpenAPIとの統合、型安全なエラーレジストリ、ローカライズまで設計と実装を解説します。
 published: 2026-02-26
 tags:
   ['Hono', 'RFC 9457', 'API設計', 'TypeScript', 'エラーハンドリング', 'OpenAPI']
@@ -61,7 +61,7 @@ RFC 9457（旧RFC 7807）は、HTTPエラーレスポンスの標準フォーマ
 
 標準フィールドは5つ。
 
-| フィールド | 意味                  | 必須                         |
+| フィールド | 意味                  | このミドルウェアでは常に出力 |
 | ---------- | --------------------- | ---------------------------- |
 | `type`     | 問題の種類を示すURI   | ✓（デフォルト`about:blank`） |
 | `status`   | HTTPステータスコード  | ✓                            |
@@ -71,11 +71,11 @@ RFC 9457（旧RFC 7807）は、HTTPエラーレスポンスの標準フォーマ
 
 さらに**拡張メンバー**（Extension Members）を自由に追加できます。バリデーションエラーの詳細配列、リトライまでの秒数など、アプリ固有の情報を載せる場所です。
 
-仕様上のポイントとして、**拡張メンバーは標準フィールドを上書きできません**（Section 3.1）。`extensions`に`status`を入れても、標準フィールドが常に勝ちます。
+仕様では、どのメンバーも必須ではありません（Section 3.1 は「can have the following members」と書くだけで、`type`が無いときは`about:blank`とみなします）。拡張メンバー（Section 3.2）と標準フィールドの名前がぶつかったときの扱いも、仕様には書かれていません。このミドルウェアでは`type`・`status`・`title`を常に出力し、名前がぶつかったら標準フィールドを優先します。`extensions`に`status`を入れても、標準フィールドが常に勝ちます。
 
 ---
 
-## なぜ作ったのか
+## なぜ作ったのか：HTTPException はプレーンテキストを返す
 
 Honoの`HTTPException`は手軽ですが、`throw new HTTPException(404)`するとプレーンテキストの`"Not Found"`が返ります。JSON APIなのにContent-Typeが`text/plain`では、クライアント側でパースの分岐が必要になります。
 
@@ -93,7 +93,7 @@ hono-problem-detailsは **`app.onError`に渡すだけで、全エラーが構�
 
 ## 設計思想
 
-### 1. app.onError一行で導入できる
+### app.onError に渡すだけで導入できる
 
 既存コードを一切変更せずに導入できることを重視しました。
 
@@ -103,24 +103,24 @@ app.onError(problemDetailsHandler());
 
 これだけで、`HTTPException`も通常の`Error`も、すべて`application/problem+json`形式になります。既存の`throw new HTTPException(404)`はそのまま動きます。
 
-ハンドラー内部の処理順序:
+ハンドラー内部では、次の順にエラーを処理します。
 
 1. `ProblemDetailsError` → そのまま変換
 2. `mapError`が設定されていれば → カスタムマッピング
 3. `HTTPException` → ステータスコードとメッセージから変換
 4. その他の`Error` → 500 Internal Server Error
 
-### 2. 拡張メンバーのspread順序
+### 拡張メンバーのspread順序
 
-RFC 9457 Section 3.1に従って、拡張メンバーを先にspreadし、標準フィールドで上書きしています。
+標準フィールドを優先するために、拡張メンバーを先にspreadし、標準フィールドで上書きしています。
 
 ```ts
 const body = { ...sanitizeExtensions(extensions), ...standard };
 ```
 
-`extensions: { status: "custom" }`を渡しても、レスポンスの`status`は常にHTTPステータスコードです。この順序は仕様準拠のために意図的にこうしています。
+`extensions: { status: "custom" }`を渡しても、レスポンスの`status`は常にHTTPステータスコードです。この順序は意図的なものです。
 
-### 3. セキュリティ
+### セキュリティ
 
 エラーレスポンスは外部に公開されるので、防御的に作っています。
 
@@ -177,7 +177,8 @@ function safeStringify(body) {
 ```ts
 import { problemDetails } from 'hono-problem-details';
 
-app.post('/orders', (c) => {
+app.post('/orders/:id', async (c) => {
+  const id = c.req.param('id');
   const existing = await findOrder(id);
   if (existing) {
     throw problemDetails({
@@ -258,7 +259,7 @@ app.post('/users', zValidator('json', schema, zodProblemHook()), (c) => {
 });
 ```
 
-バリデーション失敗時のレスポンス:
+バリデーションに失敗すると、次のレスポンスが返ります。
 
 ```json
 {
@@ -281,7 +282,7 @@ app.post('/users', zValidator('json', schema, zodProblemHook()), (c) => {
 
 ### Valibot
 
-使い勝手はZodと同じです。バンドルサイズを気にするなら、Valibotとの組み合わせが有効です。
+使い勝手はZodと同じです。バンドルサイズを気にするなら、Valibotとの組み合わせが有効です（Zod から Valibot への移行は[別の記事](/blog/2025/zod-to-valibot-migration/)に書きました）。
 
 ```ts
 import { vValidator } from '@hono/valibot-validator';
@@ -432,7 +433,7 @@ problemDetailsHandler({
 
 hono-problem-detailsは、以下のHonoミドルウェアでoptional peer dependencyとして使われています。
 
-- [hono-idempotency](https://github.com/paveg/hono-idempotency) — 冪等性キーミドルウェア。エラーをProblem Details形式で返す
+- [hono-idempotency](https://github.com/paveg/hono-idempotency) — 冪等性キーミドルウェア。エラーをProblem Details形式で返す（[解説記事](/blog/2026/hono-idempotency-middleware/)）
 - [hono-webhook-verify](https://github.com/paveg/hono-webhook-verify) — Webhook署名検証ミドルウェア。署名エラーをProblem Details形式で返す
 
 どちらもhono-problem-detailsなしで動作します。インストールされていれば自動的にProblem Details形式に切り替わる仕組みです。
@@ -445,7 +446,7 @@ hono-problem-detailsは、以下のHonoミドルウェアでoptional peer depend
 pnpm add hono-problem-details
 ```
 
-最小構成:
+最小構成は次のとおりです。
 
 ```ts
 import { Hono } from 'hono';
@@ -464,7 +465,7 @@ app.get('/users/:id', (c) => {
 });
 ```
 
-Zodバリデーション付き:
+Zodのバリデーションを付ける場合は、次のようにします。
 
 ```bash
 pnpm add hono-problem-details @hono/zod-validator zod
