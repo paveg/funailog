@@ -7,6 +7,9 @@ isPublished: true
 category: programming
 ---
 
+import Image from '@/components/markdown/Image.astro';
+import architectureFigure from '../../../assets/blog/2025/modern-edge-architecture.png';
+
 先日、[「筋トレアプリのUX設計 - 操作を半分に減らしたZero Friction手法」](/blog/2025/zero-friction-workout-app-ux)という記事を書きました。
 
 前回の記事では「いかにユーザーの操作を減らすか（Zero Friction）」という**UX/設計思想**にフォーカスしました。
@@ -41,23 +44,12 @@ category: programming
 | **Framework**    | Hono                | 超軽量 & Web標準準拠                      |
 | **Database**     | Cloudflare D1       | Workersから使えるSQLite                   |
 
-```mermaid
-flowchart LR
-    subgraph Client["📱 Client"]
-        E[Expo App]
-        TQ[TanStack Query]
-        E --> TQ
-    end
-
-    subgraph Edge["⚡ Cloudflare"]
-        W[Workers]
-        H[Hono]
-        D1[(D1 SQLite)]
-        W --> H --> D1
-    end
-
-    TQ <-->|"低レイテンシ"| W
-```
+<Image
+  src={architectureFigure}
+  alt="全体の構成図。端末の Expo のアプリは TanStack Query で状態を端末に保存する。API は Cloudflare のユーザーに近いデータセンターの Workers と Hono で動き、近くで応答する。D1 の本体は 1 か所にあり、DB へのクエリはそこまで往復する"
+  width={1200}
+  height={436}
+/>
 
 いわゆる **"The Edge Stack"** とも呼べる構成です。
 なぜこの構成なのか？ その哲学を3つのポイントで紹介します。

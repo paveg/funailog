@@ -16,6 +16,9 @@ seriesTitle: K8s Hard Way on Apple Silicon
 seriesOrder: 1
 ---
 
+import Image from '@/components/markdown/Image.astro';
+import vmLayoutFigure from '../../../assets/blog/2026/k8s-hard-way-part1-vms.png';
+
 ## はじめに
 
 [Kubernetes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way) は、Kelsey Hightower 氏による Kubernetes の手動構築チュートリアルで、コンポーネント (etcd / kube-apiserver / kubelet / etc.) を 1 つずつ自分の手で設定していきます。完成したクラスタを 5 分で用意する `kubeadm` とは正反対のアプローチで、`Pod が起動するまでに何が動いているか` を理解するための定番教材です。
@@ -34,27 +37,12 @@ Apple Silicon Mac で Hard Way を完走したい人、`lima` を普段使いし
 
 最終的に立てる VM 構成はこのとおりです:
 
-```mermaid
-graph TB
-    subgraph mac["Mac (Apple Silicon)"]
-        subgraph lima["lima VMs (Debian 12 arm64)"]
-            J["jumpbox<br/>管理用踏み台<br/>1CPU / 1GB / 5GB"]
-            subgraph cp["Control Plane"]
-                S["server<br/>etcd + kube-apiserver<br/>scheduler<br/>controller-manager<br/>1CPU / 2GB / 10GB"]
-            end
-            subgraph workers["Workers"]
-                N0["node-0<br/>kubelet + kube-proxy<br/>+ containerd<br/>1CPU / 2GB / 8GB"]
-                N1["node-1<br/>kubelet + kube-proxy<br/>+ containerd<br/>1CPU / 2GB / 8GB"]
-            end
-        end
-    end
-
-    J -->|kubectl / SSH| S
-    J -.->|SSH| N0
-    J -.->|SSH| N1
-    S -->|TLS| N0
-    S -->|TLS| N1
-```
+<Image
+  src={vmLayoutFigure}
+  alt="完成形の構成図。Mac の中の lima で、Debian 12 arm64 の VM を 4 台動かし、socket_vmnet の shared network でつなぐ。jumpbox（1 CPU、1GB、5GB）から server へ kubectl と SSH、node-0 と node-1 へ SSH。server（etcd、kube-apiserver、scheduler、controller-manager。1 CPU、2GB、10GB）と各 node（kubelet、kube-proxy、containerd。1 CPU、2GB、8GB）は、kubelet と kube-proxy から kube-apiserver へ、kube-apiserver から kubelet へと双方向に通信する"
+  width={1200}
+  height={652}
+/>
 
 ## VM プロバイダ選定
 
@@ -79,7 +67,7 @@ Hard Way には VM プロバイダの指定がないので、まず何で VM を
 
 | VM      | CPU | Memory | Disk (宣言) | 役割                                                              |
 | ------- | --- | ------ | ----------- | ----------------------------------------------------------------- |
-| jumpbox | 1   | 1GB    | 5GB         | 管理用踏み台 (kubectl, etcdctl を叩く)                            |
+| jumpbox | 1   | 1GB    | 5GB         | 管理用踏み台 (kubectl を叩く)                                     |
 | server  | 1   | 2GB    | 10GB        | control plane (etcd / apiserver / scheduler / controller-manager) |
 | node-0  | 1   | 2GB    | 8GB         | worker (kubelet / kube-proxy / containerd)                        |
 | node-1  | 1   | 2GB    | 8GB         | worker                                                            |
@@ -132,7 +120,7 @@ node-0: 192.168.5.15
 node-1: 192.168.5.15
 ```
 
-これは [lima のデフォルトネットワーク](https://lima-vm.io/docs/config/network/) (`user-v2` / usernet) の仕様で、各 VM が独立した NAT ゲートウェイを持ち、その NAT gateway IP (192.168.5.15) を「自分の IP」と認識しています。**VM 間の直接通信はこのネットワークではできません**。Hard Way の etcd クラスタや apiserver → kubelet 通信が全滅します。
+これは [lima のデフォルトネットワーク](https://lima-vm.io/docs/config/network/) (`user-v2` / usernet) の仕様で、各 VM が独立した NAT ゲートウェイを持ち、その NAT gateway IP (192.168.5.15) を「自分の IP」と認識しています。**VM 間の直接通信はこのネットワークではできません**。Hard Way の etcd クラスタや、apiserver と kubelet の間の通信が全滅します。
 
 解決策は [`socket_vmnet`](https://github.com/lima-vm/socket_vmnet) で shared network に切り替えることです。ただ、その切り替え自体がもう数段のハマりポイントを連れてきます。
 

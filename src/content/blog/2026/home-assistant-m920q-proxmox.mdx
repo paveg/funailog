@@ -17,6 +17,9 @@ seriesTitle: 賃貸スマートホーム
 seriesOrder: 4
 ---
 
+import Image from '@/components/markdown/Image.astro';
+import dualVlanFigure from '../../../assets/blog/2026/ha-m920q-dual-vlan.png';
+
 [前回](/blog/2026/unifi-network-vlan-wifi7/)はネットワーク編でした。
 今回は予告どおり Home Assistant 編です。
 スマートホームの頭脳になる Home Assistant（以下 HA）を、どのハードに載せて、ネットワークのどこに住まわせるか。
@@ -137,16 +140,12 @@ B 案は「発見できるのにつながらない」という、原因の切り
 Proxmox のブリッジを VLAN aware にして、HAOS の VM に VLAN 20 タグ付きの仮想 NIC をもう 1 枚挿すだけ。
 作業時間は 15 分ほどでした。
 
-```mermaid
-graph LR
-  subgraph M920q["M920q（Proxmox VE）"]
-    HA["HAOS VM"]
-    HA ---|"vNIC 1"| V1["VLAN 1 側の足<br/>192.168.1.6<br/>管理画面・既定GW"]
-    HA ---|"vNIC 2（VLAN 20 タグ）"| V20["VLAN 20 側の足<br/>192.168.20.62<br/>IoT と同一L2"]
-  end
-  V1 --- Human["人間の端末（Trusted）"]
-  V20 --- IoT["IoT 機器・Matter ブリッジ"]
-```
+<Image
+  src={dualVlanFigure}
+  alt="HA が VLAN 1 と VLAN 20 の両方に足を持つ構成。M920q の物理 NIC 1 枚の上に VLAN aware のブリッジ vmbr0 があり、HAOS の VM はvNIC 1（VLAN 1、192.168.1.6、管理画面と既定 GW）と VLAN 20 タグ付きの vNIC 2（192.168.20.62、IoT と同じ L2）を持つ。vNIC 1 は人間の端末と、vNIC 2 は IoT 機器や Matter ブリッジとつながる。IoT から Trusted への通信は遮断していて、例外は HA だけ"
+  width={1200}
+  height={635}
+/>
 
 管理画面へのアクセスと外向き通信は VLAN 1 側、IoT 機器との会話は VLAN 20 側。
 デフォルトゲートウェイを VLAN 1 側だけに置くのが構成の要で、これを両方に置くと経路が不定になります。
