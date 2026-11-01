@@ -37,7 +37,7 @@ category: programming
 | **Valibot** | ~1.5 KB  | Tree-shakable、モジュラー設計 |
 
 Valibotは使った機能だけがバンドルに含まれます。
-Web 版や PWA では、この差がそのまま初回の転送量に出ます（React Native のアプリは JS を端末に同梱するので、影響はそれより小さくなります）。
+React Native のアプリでも JS のバンドルは起動時に読み込まれるので、小さいに越したことはありません。Web 版や PWA では、この差がそのまま初回の転送量にも出ます。
 
 ### API設計の工夫 - パイプ構文がTree-shakingを実現
 
