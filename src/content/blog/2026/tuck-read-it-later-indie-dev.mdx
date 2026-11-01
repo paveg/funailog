@@ -18,6 +18,9 @@ isPublished: true
 category: programming
 ---
 
+import Image from '@/components/markdown/Image.astro';
+import architectureFigure from '../../../assets/blog/2026/tuck-architecture.png';
+
 ## はじめに
 
 「あとで読む」に保存した記事、読んでますか？
@@ -100,25 +103,14 @@ Pocket、Raindrop、Instapaper...どれも英語圏向け。日本語の記事�
 | i18n      | Lingui（日英対応）          |
 | AI        | OpenAI API (gpt-4o-mini)    |
 
-```mermaid
-flowchart LR
-    subgraph Client["📱 Client"]
-        R[React 19]
-        TQ[TanStack Query]
-        R --> TQ
-    end
+<Image
+  src={architectureFigure}
+  alt="全体の構成図。ブラウザの React 19 と TanStack Router、TanStack Query から、Cloudflare のユーザーに近いデータセンターで動く Workers と Hono（API）に問い合わせる。API は、D1（本体は 1 か所にある）と Vectorize、それに Cloudflare の外の OpenAI API（要約と埋め込みの生成）に問い合わせる"
+  width={1200}
+  height={494}
+/>
 
-    subgraph Edge["⚡ Cloudflare Edge"]
-        W[Workers]
-        H[Hono]
-        D1[(D1 SQLite)]
-        V[(Vectorize)]
-        W --> H --> D1
-        H --> V
-    end
-
-    TQ <-->|"低レイテンシ"| W
-```
+「エッジで動く」のは API の処理です。D1 のデータベース本体は 1 か所に置かれるので、DB へのクエリはその場所まで往復します（[Cloudflare D1 のドキュメント](https://developers.cloudflare.com/d1/best-practices/read-replication/)）。
 
 ### なぜCloudflare？
 
