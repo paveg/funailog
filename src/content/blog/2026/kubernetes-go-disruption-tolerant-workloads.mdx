@@ -67,7 +67,7 @@ Pod を止める要因を、PDB と do-not-disrupt で防げるかどうかで�
 | Spot の回収            | forceful | 始まりは防げない | 始まりは防げない |
 | ハードウェア障害       | 非自発的 | 防げない         | 防げない         |
 
-Consolidation から Spot の回収までの 4 行は、Karpenter が起こす、または扱う Disruption です。「種類」の列は Karpenter 自身の分類です。Spot の回収そのものは EC2 が起こします。Karpenter は、Interruption の処理（`--interruption-queue`）を有効にしている場合に、通知を受けて先回りでドレインします。Karpenter は自動で起こす Disruption を graceful と forceful に分けます（手動のノード削除は別扱い）。graceful は NodePool の disruption budget で流量を制限できます。forceful は、期限切れ（Expiration）や Spot の回収通知（Interruption）をきっかけにすぐドレインを始めます。こちらには budget も効きません[^karpenter-disruption]。
+Consolidation から Spot の回収までの 4 行は、Karpenter が起こす、または扱う Disruption です。「種類」の列は Karpenter 自身の分類です。Spot の回収そのものは EC2 が起こします。Karpenter は、Interruption の処理（`--interruption-queue`）を有効にしている場合に、通知を受けて先回りでドレインします。Karpenter は自動で起こす Disruption を graceful と forceful に分けます（手動のノード削除は別扱い）。graceful は NodePool の disruption budget で流量を制限できます。forceful は、期限切れ（Expiration）や Spot の回収通知（Interruption）をきっかけにすぐドレインを始めます。forceful には budget も効きません[^karpenter-disruption]。
 
 表の「始まりは防げない」は、PDB も do-not-disrupt も forceful の開始は止めないという意味です。始まったドレインは、PDB や do-not-disrupt の Pod があれば、その退避を待ちます（NodePool に `terminationGracePeriod` があれば、その上限まで）。ただし Spot は 2 分前の通知（best effort）のあと回収されるので、ドレインが終わっていなくてもインスタンスは止まります[^spot-notice]。Drift の「条件付き」は、NodePool に `terminationGracePeriod` を設定していると、PDB や do-not-disrupt の Pod があっても Drift で止められるという意味です。
 
@@ -114,7 +114,7 @@ HTTP サーバーでは `http.Server.Shutdown` を使います。ただし `Shut
 
 ### Job の終了コードは「仕事が終わったか」を表す
 
-ワーカーは無限ループなので、`SIGTERM` で抜けて終了コード 0（成功）を返すのが自然です。退避された Pod は Deployment が終了コードを見ずに作り直すので、ワーカーはそれで構いません。ただ、同じ終わり方を Job に使うと問題が起きます（後の「Job：止められたら 0 以外で終わる」で実測します）。**Job では、仕事を終えずに止まるときに終了コードを 0 以外（失敗）にする**のが、アプリ側の責務です。
+ワーカーは無限ループなので、`SIGTERM` で抜けて終了コード 0（成功）を返すのが自然です。退避された Pod は Deployment が終了コードを見ずに作り直すので、ワーカーは終了コード 0 のままで構いません。ただ、同じ終わり方を Job に使うと問題が起きます（後の「Job：止められたら 0 以外で終わる」で実測します）。**Job では、仕事を終えずに止まるときに終了コードを 0 以外（失敗）にする**のが、アプリ側の責務です。
 
 ```go title="main.go（Job 向けの版、抜粋）"
 case <-ctx.Done():
@@ -145,7 +145,7 @@ case <-ctx.Done():
 - CronJob は同じ時刻に Job を 2 つ作ることがあり、ドキュメントは Job を冪等にすべきとしている[^cronjob]
 - Job は `parallelism`・`completions` を 1 にしても、同じプログラムが 2 回起動されることがある[^job]
 
-だから二重実行は起きる前提で、冪等性で受け止めます（冪等性キーの考え方は [Hono の冪等性ミドルウェアの記事](/blog/2026/hono-idempotency-middleware) と同じです）。ロックを使うのは、冪等にできない副作用に限るのがよいと思います。
+だから二重実行は起きる前提で、冪等にして吸収します（冪等性キーの考え方は [Hono の冪等性ミドルウェアの記事](/blog/2026/hono-idempotency-middleware) と同じです）。ロックを使うのは、冪等にできない副作用に限るのがよいと思います。
 
 ロックの代表例は leader election です。ただ、client-go のドキュメントは、リーダーが同時に 1 つだけであることは保証しないと明記しています[^leaderelection]。そこで使うのが fencing token です。ロックを取るたびに増える番号を書き込みに添え、書き込み先はそれより古い番号の書き込みを拒否します[^fencing]。
 
@@ -244,7 +244,7 @@ Collector は 2 段の構成にしました。前段のフロントが 1 台（l
   height={655}
 />
 
-1 本の trace が 2 つのバックエンドでどちらも不完全なまま判定されています。途中の span が欠落したのは、削除の直後もフロントが削除済みの IP へ送り続け、送れずに破棄したためです。削除されたバックエンドの終了処理は 3〜4 ミリ秒で終わっていたので、猶予期間を延ばしても結果は変わらないはずです（延ばした場合は試していません）。分断はそれだけでは済みませんでした。代替のバックエンドが加わったことで、生き残ったバックエンドに届いていた trace も、各回 5 本ずつ送り先が変わって分断されています（こちらは span の欠落なし）。
+1 本の trace が 2 つのバックエンドでどちらも不完全なまま判定されています。途中の span が欠落したのは、削除の直後もフロントが削除済みの IP へ送り続け、送れずに破棄したためです。削除されたバックエンドの終了処理は 3〜4 ミリ秒で終わっていたので、猶予期間を延ばしても結果は変わらないはずです（延ばした場合は試していません）。欠落とは別に、分断も起きていました。代替のバックエンドが加わったことで、生き残ったバックエンドに届いていた trace も、各回 5 本ずつ送り先が変わって分断されています（こちらは span の欠落なし）。
 
 loadbalancing exporter の README によると、送り先の一覧が変わると、およそ R/N の経路が別の送り先に移ります[^loadbalancing]。R は経路の総数、N は送り先の数です。
 
