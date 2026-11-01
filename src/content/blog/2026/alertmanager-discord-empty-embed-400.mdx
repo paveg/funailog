@@ -15,6 +15,7 @@ emoji: 🔕
 
 import Image from '@/components/markdown/Image.astro';
 import timelineFigure from '../../../assets/blog/2026/alertmanager-discord-timeline.png';
+import monitoringFigure from '../../../assets/blog/2026/alertmanager-discord-monitoring.png';
 import embedJsonFigure from '../../../assets/blog/2026/alertmanager-discord-embed-json.png';
 
 ## はじめに
@@ -65,6 +66,15 @@ Prometheus のルールの書き方や、Alertmanager の基本は説明しま�
 ICMP と HTTPS の 2 本立てにしたのは、以前 ICMP の疎通確認の仕組みだけが壊れ、このアラートが半日ほど誤報し続けたからです。1 種類の疎通確認だけでは、「回線が死んだ」のか「測る側が死んだ」のかを区別できません。
 
 疎通確認は、すべて IPv4 に固定しています（`preferred_ip_protocol: ip4`）。HTTPS の宛先のうち `dns.google` はホスト名なので、IPv6 でも引けます。今回の障害は IPv6 が生きていて IPv4 だけが止まる形だったので、固定していなければ `dns.google` への疎通確認が IPv6 で成功し、`WanDown` の条件が崩れていた可能性があります（監視用の LXC から IPv6 で外に出られたかは確かめていません）。回線は v6 プラス（MAP-E）で、IPv4 は IPv6 のトンネルの上を通っています。その構成は [ISP を乗り換えた記事](/blog/2026/isp-migration-nuro-to-enhikari) に書きました。
+
+<Image
+  src={monitoringFigure}
+  alt="監視の構成図。監視用の LXC の中で、Prometheus が blackbox_exporter に疎通確認を依頼し、WanDown を Alertmanager に渡す。疎通確認（ICMP と HTTPS、IPv4 固定）も Discord への通知も、ゲートウェイから同じ 1 本の回線を通って外に出る。Discord には AAAA レコードが無く、IPv4 でしか届かない"
+  width={1200}
+  height={496}
+/>
+
+図のとおり、外への疎通確認も Discord への通知も、同じ 1 本の回線を通ります。この構成が、後で書く「通知が外に出ていけない」問題につながります。
 
 ## 検知は正しかった
 
