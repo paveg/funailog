@@ -12,6 +12,7 @@
     "src/content/blog/2026/review-benq-screenbar-halo.mdx",
     "docs/superpowers/**",
     "**/CHANGELOG.md",
+    ".ai/**",
   ],
   "customRules": [],
   "markdownItPlugins": [],
