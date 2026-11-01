@@ -32,6 +32,10 @@ import AffiliateCard from '@/components/AffiliateCard.astro';
 太字マーカー `**` が本文にそのまま残る崩れは pre-commit の `scripts/validate-content.ts` が検出する。
 textlint（AI 文体検出）も MDX に対して走る。
 
+## 執筆の手順
+
+新しい記事は `writing-funailog-articles` スキル（`.claude/skills/`）の工程で書く。
+
 ## 文体
 
 執筆時は `.claude/rules/blog-writing-style.md` に従う
