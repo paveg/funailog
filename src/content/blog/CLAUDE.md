@@ -26,7 +26,7 @@ import AffiliateCard from '@/components/AffiliateCard.astro';
 裸 URL を単独行に置くとビルド時にリンクカードへ変換される（リスト内は対象外）。
 未公開のシリーズ続編へは単独行 URL を貼らない。存在しないページを fetch してリンクカードが壊れるため、公開前の続編にはテキストで触れる。
 新しい外部 URL を含む記事を書いたら `pnpm link-cards:warm` を手動で実行し、
-`src/data/link-cards.json` と `public/.cache/embed/*.avif` の更新をコミットに含める。
+`src/data/link-cards.json` の更新をコミットに含める（`public/.cache/embed/*.avif` は git の管理外で、ビルド時に生成される）。
 実行しなくてもビルドは通る（ビルド時にライブ fetch する）が、キャッシュを温めた方が再現性が高い。
 
 太字マーカー `**` が本文にそのまま残る崩れは pre-commit の `scripts/validate-content.ts` が検出する。
