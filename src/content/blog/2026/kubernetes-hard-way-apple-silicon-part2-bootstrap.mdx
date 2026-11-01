@@ -27,9 +27,9 @@ seriesOrder: 2
 - Chapter 9-11: Worker bootstrap + Pod ネットワーク (static route)
 - Chapter 12: Smoke Test 6 種
 
-Chapter 4-6 は公式手順がきれいに書かれていて躓きほぼ無し。一方 Chapter 7-12 は 大物 で、ここから本格的に詰まり始めます (4 個のハマりを発見)。
+Chapter 4-6 は公式手順がきれいに書かれていて躓きほぼ無し。一方 Chapter 7-12 は大物で、ここから本格的に詰まり始めます (4 個のハマりを発見)。
 
-完走までの所要時間は Chapter 4-6 で 1.5 時間、Chapter 7-12 で 2.5 時間、合計 4 時間。Part 1 の環境構築 4 時間と合わせて、Hard Way 全体で延べ 8 時間 という計算でした。
+完走までの所要時間は Chapter 4-6 で 1.5 時間、Chapter 7-12 で 2.5 時間、合計 4 時間。Part 1 の環境構築 4 時間と合わせて、Hard Way 全体で延べ 8 時間という計算でした。
 
 ## Chapter 4: PKI で CA と 8 証明書を発行
 
@@ -146,7 +146,7 @@ resources:
 192.168.105.3 server.kubernetes.local server  ← Hard Way hosts ファイルが append
 ```
 
-`server.kubernetes.local` が 2 つの IP に紐付いている 状態。`getent hosts` は 127.0.1.1 を先に返すので、server 上で `server.kubernetes.local` を引くと 127.0.1.1 が返ってきてしまいます (これを G20 と命名)。
+`server.kubernetes.local` が 2 つの IP に紐付いている状態。`getent hosts` は 127.0.1.1 を先に返すので、server 上で `server.kubernetes.local` を引くと 127.0.1.1 が返ってきてしまいます (これを G20 と命名)。
 
 TLS 検証は名前ベースなので動いてはいるんですが、server 上の `kube-controller-manager` が `127.0.1.1` 経由で apiserver に繋ぐ、という隠れ負債が残ります。
 
@@ -200,7 +200,7 @@ ssh root@server etcdctl member list
 # 6702b0a34e2cfd39, started, controller, http://127.0.0.1:2380, http://127.0.0.1:2379, false
 ```
 
-これで K8s の最下層 = 状態の永続化レイヤ が動き始めました。
+これで K8s の最下層 = 状態の永続化レイヤが動き始めました。
 
 ## Chapter 8: kube-apiserver が無言で死ぬ (G22)
 
@@ -243,7 +243,7 @@ allocated clusterIPs service="default/kubernetes" clusterIPs={"IPv4":"10.0.0.1"}
 Resetting endpoints for master service "kubernetes" to [192.168.105.3]
 ```
 
-これは「`default/kubernetes` という Service を apiserver 自身が自動生成」している瞬間です。Pod から `kubernetes.default.svc.cluster.local` で apiserver に繋ぐあの仕組みが、ここで初めて記録されています。なお Service IP `10.0.0.1` は、あとで Part 3 で 上流バグ G25 を踏み抜くトリガーになります。
+これは「`default/kubernetes` という Service を apiserver 自身が自動生成」している瞬間です。Pod から `kubernetes.default.svc.cluster.local` で apiserver に繋ぐあの仕組みが、ここで初めて記録されています。なお Service IP `10.0.0.1` は、あとで Part 3 で上流バグ G25 を踏み抜くトリガーになります。
 
 ## Chapter 9-11: Worker は tmux sync で並列、Pod ネットワークは static route
 
@@ -277,7 +277,7 @@ ssh root@node-0 ip route add ${NODE_1_SUBNET} via ${NODE_1_IP}
 ssh root@node-1 ip route add ${NODE_0_SUBNET} via ${NODE_0_IP}
 ```
 
-Hard Way は CNI plugin (Cilium / Flannel / Calico) を入れない代わりに 手動で route を書く設計です。再起動で消えるので本番なら systemd-networkd で永続化が必要ですが、学習用にはこの方が「Pod 間通信の正体は ip route」と素直に見えて分かりやすい。Part 3 で `tcpdump` で実際にパケットを追いかける予定です。
+Hard Way は CNI plugin (Cilium / Flannel / Calico) を入れない代わりに手動で route を書く設計です。再起動で消えるので本番なら systemd-networkd で永続化が必要ですが、学習用にはこの方が「Pod 間通信の正体は ip route」と素直に見えて分かりやすい。Part 3 で `tcpdump` で実際にパケットを追いかける予定です。
 
 ## Chapter 12: Smoke Test と port-forward Forbidden 事件 (G23)
 
@@ -341,7 +341,7 @@ Chapter 4-12 の所要時間:
 | Chapter 12 | Smoke Test + G23 修正          | 約 30 分      |
 | **合計**   |                                | **約 4 時間** |
 
-Part 1 の環境構築 4 時間と合わせて 延べ 8 時間で Hard Way 完走。発見したハマりは G20-G23 の 4 件 (FQDN 二重解決 / SSH host key / apiserver 無言失敗 / RBAC 漏れ) で、すべて lima + Apple Silicon + Hard Way 2024 固有のものでした。
+Part 1 の環境構築 4 時間と合わせて延べ 8 時間で Hard Way 完走。発見したハマりは G20-G23 の 4 件 (FQDN 二重解決 / SSH host key / apiserver 無言失敗 / RBAC 漏れ) で、すべて lima + Apple Silicon + Hard Way 2024 固有のものでした。
 
 学びとして大きかったのは:
 
@@ -349,7 +349,7 @@ Part 1 の環境構築 4 時間と合わせて 延べ 8 時間で Hard Way 完�
 - systemd unit のエラー切り分けは **flag dump を `grep` で剥がす** のが基本動作
 - `kube-apiserver-to-kubelet.yaml` の存在意義 (port-forward / logs / exec が動く理由)
 
-次の [Part 3](/blog/2026/kubernetes-hard-way-apple-silicon-part3-tier1-and-upstream-bug) では完走したクラスタを 学習材料として深掘りします。Tier 1 B (etcd backup/restore で `etcdctl` から `etcdutl` への分離 G24)、Tier 1 A (CoreDNS 手動 deploy)、そして本シリーズの一番の見どころである Hard Way 2024 公式の上流バグ G25 (cert SAN と Service CIDR 不整合) の分析を扱います。
+次の [Part 3](/blog/2026/kubernetes-hard-way-apple-silicon-part3-tier1-and-upstream-bug) では完走したクラスタを学習材料として深掘りします。Tier 1 B (etcd backup/restore で `etcdctl` から `etcdutl` への分離 G24)、Tier 1 A (CoreDNS 手動 deploy)、そして本シリーズの一番の見どころである Hard Way 2024 公式の上流バグ G25 (cert SAN と Service CIDR 不整合) の分析を扱います。
 
 CoreDNS を deploy してみたら CoreDNS Pod が `READY 0/1` で停滞する、その原因が公式テンプレート 2 ファイル間の値の不整合だった、という発見の話です。
 

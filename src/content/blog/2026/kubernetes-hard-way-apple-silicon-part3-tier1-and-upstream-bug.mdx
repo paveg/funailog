@@ -55,7 +55,7 @@ kubectl auth can-i create pods --as=system:node:node-0
 # no
 ```
 
-kubelet (`system:node:<name>`) は 任意の Pod 作成権限を持たない。これが「kubelet が compromise されても他ノードに横展開できない」セキュリティモデルで、`Node Authorizer + NodeRestriction` admission plugin の効果です。
+kubelet (`system:node:<name>`) は任意の Pod 作成権限を持たない。これが「kubelet が compromise されても他ノードに横展開できない」セキュリティモデルで、`Node Authorizer + NodeRestriction` admission plugin の効果です。
 
 こうした「クラスタが動いた後に何が見えるか」を素手で観察するだけで、CKA の Troubleshooting で問われるレイヤがどこにあるか分かるようになります。
 
@@ -128,7 +128,7 @@ kubectl get nodes
 # node-1   Ready   <none>   47m   v1.32.3
 ```
 
-etcd を入れ替えたのに AGE が連続している のがポイント。`creationTimestamp` が etcd に永続化されているので、snapshot から復元すれば 元の状態にそのまま戻る。
+etcd を入れ替えたのに AGE が連続しているのがポイント。`creationTimestamp` が etcd に永続化されているので、snapshot から復元すれば元の状態にそのまま戻る。
 
 得た学びは大きく 3 つ:
 
@@ -150,7 +150,7 @@ kubectl get svc -A
 # default/kubernetes 10.0.0.1, default/nginx 10.0.0.224  → Service CIDR 10.0.0.0/24 確定
 ```
 
-apiserver の `--service-cluster-ip-range` は 未指定 で default の `10.0.0.0/24` が採用されています。これが後で G25 を踏み抜く決定打になるので、頭の片隅に置いておいてください。
+apiserver の `--service-cluster-ip-range` は未指定で default の `10.0.0.0/24` が採用されています。これが後で G25 を踏み抜く決定打になるので、頭の片隅に置いておいてください。
 
 ### Step 1-2: CoreDNS manifest 取得 + apply
 
@@ -292,7 +292,7 @@ Part 3 で扱った内容と所要時間:
 | Tier 1 A: CoreDNS deploy (G25 検出・修正込み)           | 約 45 分     |
 | **合計**                                                | **約 90 分** |
 
-Part 1 の環境構築 4 時間 + Part 2 の Hard Way 完走 4 時間 + Part 3 の Tier 1 1.5 時間で、延べ約 9.5 時間 で「環境構築 → 完走 → 内部理解」までを 1 周。
+Part 1 の環境構築 4 時間 + Part 2 の Hard Way 完走 4 時間 + Part 3 の Tier 1 1.5 時間で、延べ約 9.5 時間で「環境構築 → 完走 → 内部理解」までを 1 周。
 
 新規に発見したハマりポイントは通算 6 件 (G20-G25)、うち G25 だけは公式 Hard Way 2024 の上流バグで、lima 関係なく全員が踏む性質を持っています。
 
@@ -303,9 +303,9 @@ Part 1 の環境構築 4 時間 + Part 2 の Hard Way 完走 4 時間 + Part 3 �
 - **CoreDNS deploy が Hard Way の隠れた最終 boss**。kubeadm が裏でやっていた DNS のデプロイ工程を素手で経験できる
 - **公式テンプレートでも疑う**。`ca.conf` と `units/*.service` は同期しているはず、という前提が成り立たない例が現実に存在する
 
-これで Apple Silicon Mac × Hard Way × 2024 版のシリーズは完結です。読みながら同じ場所で詰まっていた誰かの 9.5 時間 を返せたら何より。
+これで Apple Silicon Mac × Hard Way × 2024 版のシリーズは完結です。読みながら同じ場所で詰まっていた誰かの 9.5 時間を返せたら何より。
 
-次は TCP/IP マスタリング 入門編 を読みつつ、`ip netns` + `iptables` で同じレイヤを 1 VM 内で再現する実験編に進む予定 (これは別シリーズで)。
+次は TCP/IP マスタリング 入門編を読みつつ、`ip netns` + `iptables` で同じレイヤを 1 VM 内で再現する実験編に進む予定 (これは別シリーズで)。
 
 ---
 
