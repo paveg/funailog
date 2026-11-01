@@ -37,7 +37,7 @@ kubectl describe svc kubernetes
 
 普通の Service は label selector で Pod を見つけますが、`default/kubernetes` だけは selector を持たない特殊 Service で、apiserver 自身が自分の IP:port を Endpoints に手動書き込みします。endpoints-controller が触らないので apiserver が独占管理する設計です (これが後で G25 の伏線になります)。
 
-次に CoreDNS 不在の operational signature:
+次に CoreDNS が無いときの症状:
 
 ```bash
 kubectl get events --sort-by='.lastTimestamp' -A | tail -5
@@ -46,7 +46,7 @@ kubectl get events --sort-by='.lastTimestamp' -A | tail -5
 #                                            Falling back to "Default" policy.
 ```
 
-kubelet が `clusterDNS` 未設定なので、Pod 作成時に毎回 warning を出して `Default` policy にフォールバック → Pod の `resolv.conf` は host (lima) の DNS を継承するという動作になっています。これを Tier 1 A で潰す予定。
+kubelet が `clusterDNS` 未設定なので、Pod 作成時に毎回 warning を出して `Default` policy にフォールバック → Pod の `resolv.conf` は host (lima) の DNS を継承します。これを Tier 1 A で潰す予定。
 
 最後に RBAC の確認:
 
@@ -81,7 +81,7 @@ ssh root@server etcdctl snapshot restore /tmp/etcd-backup.db --data-dir=/var/lib
 
 公式手順そのまま打ってるはずなのに `unknown flag`。調べると **etcd 3.6 で `snapshot restore` が `etcdctl` から `etcdutl` に分離**されていました (Hard Way 2024 では etcd 3.6.0-rc.3 が指定される)。
 
-設計判断としては「restore は offline 操作 (etcd プロセス停止前提) なので、稼働中の cluster client `etcdctl` とは責務が違う」という分離。理屈は分かるけど初見では刺さります。
+設計判断としては「restore は offline 操作 (etcd プロセス停止前提) なので、稼働中の cluster client `etcdctl` とは責務が違う」という分離。理屈は分かるけど初見ではハマります。
 
 ### Step 3: etcdutl 入手 + restore
 
@@ -115,7 +115,7 @@ chmod 700 /var/lib/etcd
 systemctl start etcd                                 # 4. etcd 起動
 ```
 
-Step 2 の「旧 data-dir を消さずに退避する」のが本番の鉄則。restore に失敗したら戻せるようにするためです。
+上の手順 2 の「旧 data-dir を消さずに退避する」のが本番の鉄則。restore に失敗したら戻せるようにするためです。
 
 ### Step 5: K8s state 検証 (jumpbox から)
 
@@ -241,7 +241,7 @@ ssh root@server systemctl restart kube-apiserver
 kubectl rollout restart deployment coredns -n kube-system
 ```
 
-ポイントは **key を維持して cert だけ再発行する** こと。これは本番でもよくやる「**証明書の SAN を後から拡張する**」操作で、同じ手順で certificate expiration の延長もできます。`openssl req -new -key <既存の key>` の組み合わせを覚えておくと PKI rotation 全般で効きます。
+ポイントは **key を維持して cert だけ再発行する** こと。これは本番でもよくやる「**証明書の SAN を後から拡張する**」操作で、同じ手順で証明書の期限の延長もできます。`openssl req -new -key <既存の key>` の組み合わせを覚えておくと PKI rotation 全般で効きます。
 
 cert 再発行後、CoreDNS は `1/1 Running` に到達し、DNS 解決テスト 4 種すべて成功:
 
@@ -279,7 +279,7 @@ Tier 1 A までやると、Hard Way で出てくる CIDR が 6 つあると気�
 | `10.200.1.0/24`    | node-1 の **Pod CIDR**                     | (動作中の Pod なし)                                       |
 | `10.200.0.0/16`    | Pod CIDR の親 (各 node /24 を切り出す範囲) | -                                                         |
 
-K8s が「Service IP は仮想 (kube-proxy が DNAT)、Pod IP は実体 (CNI/route で疎通)、物理 IP は別レイヤ」という 3 層構造で動いていることが、自分の手で構築すると体に染み込みます。Service CIDR と Pod CIDR を混同していると CKA / 実務でハマるので、ここで一度整理しておくのが効きます。
+K8s が「Service IP は仮想 (kube-proxy が DNAT)、Pod IP は実体 (CNI/route で疎通)、物理 IP は別レイヤ」という 3 層構造で動いていることが、自分の手で構築すると体に染み込みます。Service CIDR と Pod CIDR を混同していると CKA / 実務でハマるので、ここで一度整理しておくと役に立ちます。
 
 ## まとめ
 

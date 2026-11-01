@@ -39,7 +39,7 @@ category: programming
 Valibotは使った機能だけがバンドルに含まれます。
 React Native のアプリでも JS のバンドルは起動時に読み込まれるので、小さいに越したことはありません。Web 版や PWA では、この差がそのまま初回の転送量にも出ます。
 
-### API設計の工夫 - パイプ構文がTree-shakingを実現
+### API設計の工夫 - パイプ構文でTree-shakingを効かせやすくする
 
 ```typescript
 import * as v from 'valibot';
@@ -128,7 +128,7 @@ export type User = v.InferOutput<typeof UserSchema>;
 
 ### Create/Updateスキーマの分離
 
-API設計のベストプラクティスとして、**Create/Update用のスキーマを分離**します。
+API設計では、**Create/Update用のスキーマを分離**します。
 
 ```typescript
 // Create: 必須フィールドとデフォルト値
@@ -300,7 +300,7 @@ export const useUpdateUser = () => {
 };
 ```
 
-この形にしておくと、次の変更をビルド時に検出できます。
+この形にしておくと、次の変更を型チェックがビルド時に検出します。
 
 - `UpdateUser`型の変更が、フロントエンドで型エラーとしてすぐに出る
 - APIレスポンスの構造変更も同様に検出可能
@@ -341,7 +341,7 @@ const handleSubmit = (formData: unknown) => {
 
 ### JOINした結果の型
 
-SQLのJOIN結果は、基本スキーマに追加フィールドが含まれます。
+SQLのJOIN結果には、基本スキーマにないフィールドが加わります。
 
 ```typescript
 // 基本型
@@ -408,16 +408,16 @@ const schema = v.pipe(v.string(), v.email(), v.maxLength(255));
 
 ---
 
-## まとめ: 「型で守る」開発体験
+## まとめ: 「型で守る」開発
 
 Valibotでフルスタックの型を共有すると、開発は次のように変わります。
 
-| Before                | After                     |
-| --------------------- | ------------------------- |
-| API仕様書を手動で同期 | スキーマが唯一の真実の源  |
-| 型定義を二重管理      | `v.InferOutput`で自動生成 |
-| 本番でクラッシュ発見  | ビルド時に型エラーで検出  |
-| 巨大なバンドル        | Tree-shakingで最小化      |
+| Before                     | After                     |
+| -------------------------- | ------------------------- |
+| API仕様書を手動で同期      | スキーマが唯一の情報源    |
+| 型定義を二重管理           | `v.InferOutput`で自動生成 |
+| 本番でクラッシュして気づく | ビルド時に型エラーで検出  |
+| 巨大なバンドル             | Tree-shakingで最小化      |
 
 スキーマを 1 か所にまとめておくだけで、型のずれは本番ではなくビルドの時点で見つかるようになります。
 

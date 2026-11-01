@@ -12,11 +12,11 @@ import architectureFigure from '../../../assets/blog/2025/modern-edge-architectu
 
 先日、[「筋トレアプリのUX設計 - 操作を半分に減らしたZero Friction手法」](/blog/2025/zero-friction-workout-app-ux)という記事を書きました。
 
-前回の記事では「いかにユーザーの操作を減らすか（Zero Friction）」という**UX/設計思想**にフォーカスしました。
+前回の記事では「いかにユーザーの操作を減らすか（Zero Friction）」というUX/設計思想にフォーカスしました。
 今回は、そのUXを支える<strong>技術的な裏側（Tech Stack）</strong>の考え方を解説します。
 
-妥協のないUXを実現するために、技術選定においても「Zero Friction」を徹底しました。
-キーワードは **"Speed is a Feature"**（速度は機能である）です。
+UXのために、技術選定でも「Zero Friction」を徹底しました。
+キーワードは "Speed is a Feature"（速度は機能である）です。
 
 ## TL;DR
 
@@ -35,14 +35,14 @@ import architectureFigure from '../../../assets/blog/2025/modern-edge-architectu
 
 個人開発において「開発体験（DX）」と「ユーザー体験（UX）」、そして「コスト効率」を最大化するために選んだスタックがこちらです。
 
-| Layer            | Technology          | Why?                                      |
-| ---------------- | ------------------- | ----------------------------------------- |
-| **Frontend**     | Expo (React Native) | PWAとして最速リリース & Native化への布石  |
-| **UI Framework** | Tamagui             | 高パフォーマンス & クロスプラットフォーム |
-| **State/Data**   | TanStack Query      | 楽観的更新 & オフライン対応               |
-| **Backend**      | Cloudflare Workers  | Edge実行による低レイテンシ                |
-| **Framework**    | Hono                | 超軽量 & Web標準準拠                      |
-| **Database**     | Cloudflare D1       | Workersから使えるSQLite                   |
+| Layer        | Technology          | Why?                                      |
+| ------------ | ------------------- | ----------------------------------------- |
+| Frontend     | Expo (React Native) | PWAとして最速リリース & Native化への布石  |
+| UI Framework | Tamagui             | 高パフォーマンス & クロスプラットフォーム |
+| State/Data   | TanStack Query      | 楽観的更新 & オフライン対応               |
+| Backend      | Cloudflare Workers  | Edge実行による低レイテンシ                |
+| Framework    | Hono                | 超軽量 & Web標準準拠                      |
+| Database     | Cloudflare D1       | Workersから使えるSQLite                   |
 
 <Image
   src={architectureFigure}
@@ -51,32 +51,32 @@ import architectureFigure from '../../../assets/blog/2025/modern-edge-architectu
   height={436}
 />
 
-いわゆる **"The Edge Stack"** とも呼べる構成です。
-なぜこの構成なのか？ その哲学を3つのポイントで紹介します。
+いわゆる "The Edge Stack" とも呼べる構成です。
+なぜこの構成なのか？ 理由は3つあります。
 
 ---
 
 ## 哲学1: Speed is a Feature（速度は機能である）
 
-ジムという環境は過酷です。地下で電波が悪かったり、インターバル中の限られた時間で操作することになります。
+ジムという環境は過酷です。地下で電波が悪いことがあり、インターバル中の限られた時間で操作することになります。
 ユーザーには「ロード中」のスピナーを見ている暇などありません。
 
 この課題に対して、3つのレイヤーで解決策を講じました。
 
 ### 1. API をユーザーの近くで動かす (Workers)
 
-従来の構成（東京リージョンのコンテナなど）ではなく、ユーザーの最も近くでコードが動く **Cloudflare Workers** を採用しました。
+従来の構成（東京リージョンのコンテナなど）ではなく、ユーザーの最も近くでコードが動く Cloudflare Workers を採用しました。
 Workers はコールドスタートの影響もほとんど受けません。
 
-データベースには **Cloudflare D1** (SQLite) を採用しています。ただし D1 のデータベース本体は 1 か所に置かれるので、DB へのクエリはその場所まで往復します。エッジで速くなるのは API の処理そのもので、DB アクセスまでユーザーの近くで完結するわけではありません。
+データベースには Cloudflare D1 (SQLite) を採用しています。ただし D1 のデータベース本体は 1 か所に置かれるので、DB へのクエリはその場所まで往復します。エッジで速くなるのは API の処理そのもので、DB アクセスまでユーザーの近くで完結するわけではありません。
 
 ### 2. 通信待ち時間をゼロに (Optimistic Updates)
 
 どんなに高速なAPIでも、通信環境が悪ければ意味がありません。
-そこで **TanStack Query** を活用し、徹底的な **Optimistic Updates（楽観的更新）** を実装しています。
+そこで **TanStack Query** を活用し、**Optimistic Updates（楽観的更新）** を実装しています。
 
 1. ユーザーが「完了」ボタンを押す
-2. **APIリクエストを待たずに**、即座にUIを「完了状態」に書き換え
+2. APIリクエストを待たずに、即座にUIを「完了状態」に書き換え
 3. 裏側でAPIリクエストを送信
 4. 成功したらそのまま、失敗したらロールバック
 
@@ -85,7 +85,7 @@ UI は API の応答を待たずに切り替わります。
 
 ### 3. インターネットさえも不要に (Offline Persistence)
 
-さらに、**TanStack Query Persist Client** と **AsyncStorage** を組み合わせることで、アプリケーションの状態を丸ごとデバイス内に永続化しています。
+さらに、TanStack Query Persist Client と AsyncStorage を組み合わせることで、アプリケーションの状態を丸ごとデバイス内に永続化しています。
 
 ```typescript
 export const queryClient = new QueryClient({
@@ -105,8 +105,8 @@ export const asyncStoragePersister = createAsyncStoragePersister({
 
 これにより、以下の体験を実現しました。
 
-1. **アプリ起動と同時にデータが表示**（スプラッシュ画面すらほぼ見えない）
-2. **オフライン**でも、キャッシュ済みのデータを見ながらトレーニング可能（使われないキャッシュは7日で破棄）
+1. アプリ起動と同時にデータが表示される（スプラッシュ画面すらほぼ見えない）
+2. オフラインでも、キャッシュ済みのデータを見ながらトレーニング可能（使われないキャッシュは7日で破棄）
 3. オンラインに戻った瞬間に同期
 
 「電波がないから使えない」という言い訳を、技術の力でなくしました。
@@ -132,13 +132,13 @@ APIのレスポンス型をフロントエンドが直接インポートして�
 ### PWA First, Native Ready
 
 「アプリストアの審査待ち」も開発スピードを落とす要因です。
-**Expo (React Native)** を採用しつつ、まずは **PWA (Progressive Web App)** としてWebでリリースしました。
+Expo (React Native) を採用しつつ、まずは PWA (Progressive Web App) としてWebでリリースしました。
 
 - Webのスピード感として、`git push` で即デプロイ、即ユーザーの手元へ反映できる
 - Native の品質も担保される。React Native で書いているため、いつでもiOS/Androidアプリとしてビルドできる
 
 Tamaguiを採用したことで、WebとNativeでスタイルのほとんどを共有できています。
-「Webで検証し、完成度が高まったらStoreへ」という、個人開発に向いたロードマップを歩めています。
+「Webで検証し、完成度が高まったらStoreへ」という、個人開発に向いた進め方を取れています。
 
 > **本音: PWAの限界とNativeへの渇望**
 > 正直なところ、iOSにおけるPWA動作には多くの制約があり、「早くネイティブアプリとして出したい」というのが本音です。
@@ -161,7 +161,7 @@ Apple Developer Programへの登録料（$99/年）は避けて通れません�
 
 ## Deep Dive: Hono + D1
 
-実際のバックエンドコードは驚くほどシンプルです。Honoなら、ExpressやNestJSより少ない記述で済みます。
+実際のバックエンドコードはシンプルです。Honoなら、ExpressやNestJSより少ない記述で済みます。
 
 ```typescript
 import { Hono } from 'hono';
@@ -182,7 +182,7 @@ export default app;
 ```
 
 複雑なORMを使わずとも、SQLのシンプルさとD1のパフォーマンスで十分に戦えます。
-デプロイは **Cloudflare Workers Builds** を利用しており、`main` ブランチにプッシュするだけで、ビルド・DBマイグレーション・全世界への展開が自動で完了します。
+デプロイは Cloudflare Workers Builds を利用しており、`main` ブランチにプッシュするだけで、ビルド・DBマイグレーション・全世界への展開が自動で完了します。
 
 ---
 

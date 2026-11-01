@@ -11,7 +11,7 @@ category: programming
 
 決済APIでPOSTリクエストが二重に飛んだら、請求が二重に発生します。ネットワークが不安定なモバイル環境では、クライアントがタイムアウトでリトライするのは日常茶飯事です。
 
-この問題を解決するのが**冪等性キー（Idempotency-Key）パターン**です。同じキーのリクエストは何度送っても結果が1回分になります。Stripeが広く知られる実装を持ち、現在IETFで[draft-ietf-httpapi-idempotency-key-header](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/)として標準化が進んでいます。
+この問題を解決するのが**冪等性キー（Idempotency-Key）パターン**です。同じキーのリクエストは何度送っても結果が1回分になります。Stripeの実装が広く知られており、現在IETFで[draft-ietf-httpapi-idempotency-key-header](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/)として標準化が進んでいます。
 
 Honoのエコシステムにはこのミドルウェアが存在しなかったので、**hono-idempotency**として作りました。
 
@@ -95,7 +95,7 @@ const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
 
 ### 4. RFC 9457 Problem Details
 
-エラーレスポンスは[RFC 9457](https://www.rfc-editor.org/rfc/rfc9457)に準拠した`application/problem+json`形式です。`code`フィールドでプログラムからエラーを識別しやすい形式になっています。RFC 9457 の形式そのものは、[hono-problem-details の記事](/blog/2026/hono-problem-details-rfc9457/)で解説しています。
+エラーレスポンスは[RFC 9457](https://www.rfc-editor.org/rfc/rfc9457)に準拠した`application/problem+json`形式です。`code`フィールドでクライアントのコードがエラーを識別できます。RFC 9457 の形式そのものは、[hono-problem-details の記事](/blog/2026/hono-problem-details-rfc9457/)で解説しています。
 
 ```json
 {
@@ -127,7 +127,7 @@ interface IdempotencyStore {
 
 ### 開発: Memory Store
 
-プロセス内`Map`を使用します。セットアップ不要で開発時に便利です。`maxSize`を設定すれば、上限を超えたときに古い順から自動削除されます。
+プロセス内`Map`を使用します。セットアップ不要で開発時に便利です。`maxSize`を設定すれば、上限を超えたときに古い順に自動削除されます。
 
 ```ts
 import { memoryStore } from 'hono-idempotency/stores/memory';
@@ -183,9 +183,9 @@ Hono + 冪等性の実装例として[hono-idempotent-api](https://github.com/Ki
 
 大きな設計上の分岐は**キーの生成主体**です。
 
-hono-idempotent-apiはサーバーがボディからキーを導出します。クライアントの実装負担がゼロで、仕組みとしてシンプルです。操作がボディで一意に決定されるAPI（例えばリソースの属性上書き）では、このアプローチは合理的に機能します。
+hono-idempotent-apiはサーバーがボディからキーを導出します。クライアントの実装負担がゼロで、仕組みとしてシンプルです。ボディだけで操作が決まるAPI（例えばリソースの属性上書き）では、このアプローチは合理的に機能します。
 
-一方、「同じボディだが別の意図」があるケースでは問題が起きます。典型的なのが決済で、同じカード・同じ金額で2回支払いたい場合、`{card: "4242", amount: 1000}` のハッシュは常に同じになるので、2回目が重複として捨てられてしまうのが問題です。クライアントが別のキーを振れば、それぞれ独立した決済として処理できます。
+一方、「同じボディだが別の意図」があるケースでは問題が起きます。典型的なのが決済で、同じカード・同じ金額で2回支払いたい場合、`{card: "4242", amount: 1000}` のハッシュは常に同じになるので、サーバーは2回目を重複とみなして捨ててしまいます。クライアントが別のキーを振れば、それぞれ独立した決済として処理できます。
 
 IETF draftがクライアント指定を採用しているのは、汎用仕様としてボディ=操作の前提を置けないからだと考えています。hono-idempotencyもこれに従っています。
 
