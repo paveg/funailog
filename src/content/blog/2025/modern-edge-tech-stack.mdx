@@ -10,7 +10,7 @@ category: programming
 先日、[「筋トレアプリのUX設計 - 操作を半分に減らしたZero Friction手法」](/blog/2025/zero-friction-workout-app-ux)という記事を書きました。
 
 前回の記事では「いかにユーザーの操作を減らすか（Zero Friction）」という**UX/設計思想**にフォーカスしました。
-今回は、そのUXを支える<strong>技術的な裏側（Tech Stack）</strong>の美学について解説します。
+今回は、そのUXを支える<strong>技術的な裏側（Tech Stack）</strong>の考え方を解説します。
 
 妥協のないUXを実現するために、技術選定においても「Zero Friction」を徹底しました。
 キーワードは **"Speed is a Feature"**（速度は機能である）です。
@@ -19,12 +19,12 @@ category: programming
 
 - Edge First の方針として、Cloudflare Workers + D1 で「物理的な距離」を最小化
 - Optimistic UI を TanStack Query で実装し、「通信待ち時間」を体感ゼロにした
-- Offline Ready により、電波の悪いジムでも使える「完全オフライン対応」を実現
+- Offline Ready により、電波の悪いジムでもキャッシュ済みのデータで使い続けられる
 - DX 面では Hono + Expo を採用し、個人開発でも「爆速」で機能提供できる
 
 > この技術スタックで作られた筋トレ記録アプリ **Attain** を公開中。
 > PWA対応なので、ブラウザからインストール不要で試せます。
-> 👉 [アプリを見る](https://attain-app.com/lp)
+> [アプリを見る](https://attain-app.com/lp)
 
 ---
 
@@ -74,9 +74,9 @@ flowchart LR
 ### 1. 物理的な距離をゼロに (Edge + D1)
 
 従来の構成（東京リージョンのコンテナなど）ではなく、ユーザーの最も近くでコードが動く **Cloudflare Workers** を採用しました。
-データベースも **Cloudflare D1** (SQLite on Edge) を採用することで、データアクセスも含めてEdgeで完結します。
+データベースには **Cloudflare D1** (SQLite) を採用しています。D1 のデータベース本体は 1 か所に置かれるので、クエリまでエッジで完結するわけではありませんが、Workers と同じ Cloudflare のネットワークの中で往復が済みます。
 
-これにより、コールドスタートの影響をほぼ受けず、世界中どこからでも爆速なレスポンスを実現しています。
+Workers はコールドスタートの影響もほとんど受けません。
 
 ### 2. 通信待ち時間をゼロに (Optimistic Updates)
 
@@ -88,7 +88,7 @@ flowchart LR
 3. 裏側でAPIリクエストを送信
 4. 成功したらそのまま、失敗したらロールバック
 
-UI上の「待ち時間」は文字通り **0ミリ秒** です。
+UI は API の応答を待たずに切り替わります。
 「通信中...」というストレスを、UXからまるごと排除しました。
 
 ### 3. インターネットさえも不要に (Offline Persistence)
@@ -114,7 +114,7 @@ export const asyncStoragePersister = createAsyncStoragePersister({
 これにより、以下の体験を実現しました。
 
 1. **アプリ起動と同時にデータが表示**（スプラッシュ画面すらほぼ見えない）
-2. **完全オフライン**でも、過去7日間のデータを見ながらトレーニング可能
+2. **オフライン**でも、キャッシュ済みのデータを見ながらトレーニング可能（使われないキャッシュは7日で破棄）
 3. オンラインに戻った瞬間に同期
 
 「電波がないから使えない」という言い訳を、技術の力でなくしました。
@@ -145,7 +145,7 @@ APIのレスポンス型をフロントエンドが直接インポートして�
 - Webのスピード感として、`git push` で即デプロイ、即ユーザーの手元へ反映できる
 - Native の品質も担保される。React Native で書いているため、いつでもiOS/Androidアプリとしてビルドできる
 
-Tamaguiを採用したことで、WebとNativeでスタイルを99%共有できています。
+Tamaguiを採用したことで、WebとNativeでスタイルのほとんどを共有できています。
 「Webで検証し、完成度が高まったらStoreへ」という、個人開発に向いたロードマップを歩めています。
 
 > **本音: PWAの限界とNativeへの渇望**
@@ -169,11 +169,10 @@ Apple Developer Programへの登録料（$99/年）は避けて通れません�
 
 ## Deep Dive: Hono + D1
 
-実際のバックエンドコードは驚くほどシンプルです。Honoの記述量は、ExpressやNestJSに比べて圧倒的に少ないです。
+実際のバックエンドコードは驚くほどシンプルです。Honoなら、ExpressやNestJSより少ない記述で済みます。
 
 ```typescript
 import { Hono } from 'hono';
-import { d1 } from 'd1-driver'; // イメージ
 
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -205,7 +204,7 @@ Attainは、単なる筋トレアプリではなく、こうした現代の「Ed
 
 もしあなたがエンジニアで、「待たされないアプリ」「サクサク動く気持ちよさ」を体感してみたいなら、ぜひAttainを触ってみてください。Google認証で一瞬で始められます。
 
-👉 **[Attainを試す](https://attain-app.com/lp)**
+**[Attainを試す](https://attain-app.com/lp)**
 
 ---
 
