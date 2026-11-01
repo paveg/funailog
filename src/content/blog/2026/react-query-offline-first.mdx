@@ -40,12 +40,12 @@ sequenceDiagram
 
 - 楽観的更新の4パターンとして、配列追加・配列要素更新・配列要素削除・オブジェクトプロパティ更新のonMutate実装例を示す
 - Context型安全性のため、ロールバック用スナップショット管理をTypeScriptで型安全にする
-- TTLプリセットとして、数秒〜無限まで用途別のstaleTime設定テンプレートを用意する
+- TTLプリセットとして、30秒〜無限まで用途別のstaleTime設定テンプレートを用意する
 - キャッシュバージョニングは、APIスキーマ変更時の古いキャッシュ自動クリーンアップ戦略を担う
 
 > この設計を実装した筋トレ記録アプリ **Attain** を公開中。
 > 電波の悪いジムでも快適に使えます。
-> 👉 [アプリを見る](https://attain-app.com/lp)
+> [アプリを見る](https://attain-app.com/lp)
 
 ---
 
@@ -55,6 +55,9 @@ sequenceDiagram
 
 ```typescript
 // apps/mobile/src/lib/query-client.ts
+const ONE_MINUTE = 60 * 1000;
+const ONE_HOUR = 60 * ONE_MINUTE;
+
 export const TTL = {
   /** 30秒 - リアルタイムデータ（進行中のワークアウト） */
   REALTIME: 30 * 1000,
@@ -69,7 +72,7 @@ export const TTL = {
 } as const;
 ```
 
-使用例：
+使い方は次のとおりです。
 
 ```typescript
 // エクササイズ一覧（不変データ）
@@ -121,6 +124,10 @@ export const useAddSet = (sessionId: string) => {
 
       // キャッシュを楽観的に更新
       if (previousData) {
+        // 既存データからExercise情報を取得
+        const exercise = previousData.sessionExercises.find(
+          (e) => e.exerciseId === newSet.exerciseId,
+        );
         const optimisticSet: WorkoutSetWithExercise = {
           id: `temp-${Date.now()}`, // 一時ID（後でサーバーのIDに置換）
           sessionId,
@@ -132,13 +139,9 @@ export const useAddSet = (sessionId: string) => {
           isFailed: newSet.isFailed ?? false,
           isPr: false,
           completedAt: new Date().toISOString(),
-          // 既存データからExercise情報を取得
-          exerciseNameKey:
-            previousData.sessionExercises.find(
-              (e) => e.exerciseId === newSet.exerciseId,
-            )?.exerciseNameKey ?? '',
-          exerciseEquipment: 'barbell',
-          exerciseCategory: 'chest',
+          exerciseNameKey: exercise?.exerciseNameKey ?? '',
+          exerciseEquipment: exercise?.exerciseEquipment ?? '',
+          exerciseCategory: exercise?.exerciseCategory ?? '',
         };
 
         queryClient.setQueryData<WorkoutResponse>(['workout', sessionId], {
@@ -169,7 +172,7 @@ export const useAddSet = (sessionId: string) => {
 ### ポイント
 
 1. 一時IDは `temp-${Date.now()}` でUI表示用に発行する
-2. Exercise情報は既存のセットまたはsessionExercisesから取得する
+2. Exercise情報（名前・器具・カテゴリ）はキャッシュ済みのsessionExercisesから取得する
 3. onSettled では成功・失敗に関わらず、最終的にサーバーと同期する
 
 ---
@@ -480,7 +483,7 @@ export const QueryProvider = ({ children }) => {
 | **削除**             | filterで該当要素を除外    | `.filter(item => item.id !== id)`                             |
 | **オブジェクト更新** | Computed propertyで上書き | `{ ...prev, [key]: value }`                                   |
 
-楽観的更新は、同じパターンの繰り返しです。一度理解すれば、あらゆるCRUD操作に適用できます。
+楽観的更新は、同じパターンの繰り返しです。一度理解すれば、たいていのCRUD操作に当てはめられます。
 
 ---
 
@@ -490,14 +493,14 @@ export const QueryProvider = ({ children }) => {
 
 ### なぜこの設計が必要なのか
 
-実務で遭遇する課題：
+実務でぶつかる課題と、Attainでの解決方法は次のとおりです。
 
-| 課題                     | Attainでの解決方法                            |
-| ------------------------ | --------------------------------------------- |
-| 低速ネットワーク（ジム） | 7日間のキャッシュ保持 + 楽観的更新で0msの反応 |
-| API仕様の変更            | キャッシュバージョニングで自動クリーンアップ  |
-| 数百行のコード重複       | CRUDの4パターンで全てカバー                   |
-| UIの遅延反映             | onMutateで即座にState更新                     |
+| 課題                     | Attainでの解決方法                                     |
+| ------------------------ | ------------------------------------------------------ |
+| 低速ネットワーク（ジム） | 7日間のキャッシュ保持 + 楽観的更新で通信を待たずに反映 |
+| API仕様の変更            | キャッシュバージョニングで自動クリーンアップ           |
+| 数百行のコード重複       | CRUDの4パターンで全てカバー                            |
+| UIの遅延反映             | onMutateで即座にState更新                              |
 
 ### 実際に動作するコードを確認
 
@@ -505,7 +508,7 @@ export const QueryProvider = ({ children }) => {
 - **実装パターンを実践** - 記事のコードをそのまま活用可能
 - **無料で試す** - コア機能は完全無料
 
-👉 **[Attainをブラウザで試す](https://attain-app.com/lp)**
+**[Attainをブラウザで試す](https://attain-app.com/lp)**
 
 ---
 

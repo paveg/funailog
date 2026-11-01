@@ -136,7 +136,7 @@ const store = memoryStore({ ttl: 24 * 60 * 60 * 1000, maxSize: 10000 });
 
 ### Node.js本番: Redis Store
 
-ioredis、node-redis、@upstash/redisに対応しています。`SET NX EX`による単一コマンドでのアトミックロックは、全ストア中最も強力なロック保証です。
+ioredis、node-redis、@upstash/redisに対応しています。`SET NX EX`による単一コマンドでのアトミックロックは、Node.jsで使えるストアの中では最も強いロック保証です。
 
 ```ts
 import { redisStore } from 'hono-idempotency/stores/redis';
@@ -185,7 +185,7 @@ Hono + 冪等性の実装例として[hono-idempotent-api](https://github.com/Ki
 
 hono-idempotent-apiはサーバーがボディからキーを導出します。クライアントの実装負担がゼロで、仕組みとしてシンプルです。操作がボディで一意に決定されるAPI（例えばリソースの属性上書き）では、このアプローチは合理的に機能します。
 
-一方、「同じボディだが別の意図」があるケースでは問題が起きます。典型的なのが決済で、同じカード・同じ金額で2回支払いたい場合、`{card: "4242", amount: 1000}` のハッシュは常に同じになるため、2回目が重複排除されてしまいます。クライアントが別のキーを振れば、それぞれ独立した決済として処理できます。
+一方、「同じボディだが別の意図」があるケースでは問題が起きます。典型的なのが決済で、同じカード・同じ金額で2回支払いたい場合、`{card: "4242", amount: 1000}` のハッシュは常に同じになるので、2回目が重複として捨てられてしまうのが問題です。クライアントが別のキーを振れば、それぞれ独立した決済として処理できます。
 
 IETF draftがクライアント指定を採用しているのは、汎用仕様としてボディ=操作の前提を置けないからだと考えています。hono-idempotencyもこれに従っています。
 
@@ -245,7 +245,7 @@ const app = new Hono<IdempotencyEnv>()
 pnpm add hono-idempotency
 ```
 
-最小構成:
+最小構成は次のとおりです。
 
 ```ts
 import { Hono } from 'hono';
@@ -260,7 +260,7 @@ app.post('/api/payments', (c) => {
 });
 ```
 
-本番（Redis）:
+本番でRedisを使う場合は、次のようにします。
 
 ```ts
 import { redisStore } from 'hono-idempotency/stores/redis';
@@ -276,7 +276,7 @@ app.use(
 );
 ```
 
-本番（Cloudflare D1）:
+本番でCloudflare D1を使う場合は、次のようにします。
 
 ```ts
 import { d1Store } from 'hono-idempotency/stores/cloudflare-d1';

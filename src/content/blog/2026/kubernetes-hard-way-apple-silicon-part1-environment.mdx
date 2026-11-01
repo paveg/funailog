@@ -120,7 +120,7 @@ for vm in server node-0 node-1; do limactl start $vm; done
 
 起動時に `TCP 127.0.0.1:5355 address already in use` という警告が出ますが、これは Mac の `mdnsd` が LLMNR ポートを使っているだけなので実害ありません。`PermitRootLogin` が無効など、Hard Way の SSH 周辺で詰まる箇所は次節以降に出てきます。
 
-## socket_vmnet 化 — 全 VM 同 IP 問題
+## socket_vmnet 化：全 VM 同 IP 問題
 
 ここが Apple Silicon × Hard Way で **最大のハマりポイント** です。
 
@@ -223,7 +223,7 @@ for vm in server node-0 node-1; do
 done
 ```
 
-期待出力は **各 VM で異なる `192.168.105.x` の IP** です。ここまで来てやっと VM 間で `ping` が通る土台ができます。
+期待出力は **各 VM で異なる `192.168.105.x` の IP** です。ここまで来てやっと VM 間で `ping` が通る状態になります。
 
 公式 Hard Way は「各 VM に独立 IP がある」前提で書かれており、この `socket_vmnet` セットアップを省略すると [Chapter 7 (etcd)](https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/07-bootstrapping-etcd.md) で破綻します。Apple Silicon × Hard Way が世間でつまずく代表ポイントです。
 

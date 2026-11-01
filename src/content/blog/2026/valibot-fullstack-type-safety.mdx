@@ -11,17 +11,17 @@ category: programming
 
 フルスタック開発者なら一度は経験したことがあるはずです。
 
-この記事では、**Valibot**を使ってバックエンド（Hono）とフロントエンド（React Native）間で**APIスキーマ共有による型安全性**を保証しながら、**バンドルサイズを最小化**する設計パターンを解説します。Zodの14KB程度の負荷から解放される、開発体験を実装例で紹介します。
+この記事では、Valibotを使ってバックエンド（Hono）とフロントエンド（React Native）間でAPIスキーマを共有し、型安全性を保ちながらバンドルサイズを最小化する設計パターンを解説します。Zodの約14KBを抱えずに型安全な開発をする方法を、実装例で紹介します。
 
 ## TL;DR
 
-- ValibotはZodより**90%軽量**なバリデーションライブラリ
+- ValibotはZodより約90%軽いバリデーションライブラリ
 - モノレポでの型共有として、`packages/shared`にスキーマを集約しAPI・Mobile両方で利用する
 - Honoとの統合は`@hono/valibot-validator`でリクエストバリデーションを型安全にする
 - 型の自動生成は`v.InferOutput`でスキーマから型を抽出するため、手動の型定義は不要
 
 > この設計を実装した筋トレ記録アプリ **Attain** を公開中。
-> 👉 [アプリを見る](https://attain-app.com/lp)
+> [アプリを見る](https://attain-app.com/lp)
 
 ---
 
@@ -29,15 +29,15 @@ category: programming
 
 ### バンドルサイズの決定的な差
 
-フルスタックTypeScriptの定番は**Zod**ですが、モバイルアプリでは**バンドルサイズ**が致命的です。
+フルスタックTypeScriptの定番はZodですが、モバイルアプリではバンドルサイズが無視できません。
 
 | ライブラリ  | min+gzip | 特徴                          |
 | ----------- | -------- | ----------------------------- |
 | **Zod**     | ~14.5 KB | 豊富なエコシステム            |
 | **Valibot** | ~1.5 KB  | Tree-shakable、モジュラー設計 |
 
-Valibotは**使った機能だけ**がバンドルに含まれます。
-React Nativeアプリでは、この差がユーザーの初回起動速度に直結します。
+Valibotは使った機能だけがバンドルに含まれます。
+React Native のアプリでも JS のバンドルは起動時に読み込まれるので、小さいに越したことはありません。Web 版や PWA では、この差がそのまま初回の転送量にも出ます。
 
 ### API設計の工夫 - パイプ構文がTree-shakingを実現
 
@@ -48,7 +48,7 @@ import * as v from 'valibot';
 const EmailSchema = v.pipe(v.string(), v.email(), v.maxLength(255));
 ```
 
-最初は違和感がありますが、**Tree-shaking効率**のための設計です。
+最初は違和感がありますが、Tree-shakingを効かせやすくするための設計です。
 使わないバリデーション（`v.url()`など）は、バンドルに含まれません。
 
 ---
@@ -91,7 +91,7 @@ attain/
     └── shared/       # Valibot schemas + types
 ```
 
-この構成のおかげで、スキーマを変更すれば API・Mobile の両方で**型エラーが即座に検出**されます。
+この構成のおかげで、スキーマを変更すれば API・Mobile の両方で型エラーがすぐに出ます。
 
 ---
 
@@ -150,7 +150,7 @@ export type CreateUser = v.InferOutput<typeof CreateUserSchema>;
 export type UpdateUser = v.InferOutput<typeof UpdateUserSchema>;
 ```
 
-`v.partial()`で**既存スキーマをラップ**するだけで、Update用スキーマが完成します。
+`v.partial()`で既存スキーマをラップするだけで、Update用スキーマが完成します。
 
 ### 複合型（ネストしたオブジェクト）
 
@@ -172,6 +172,8 @@ export const WorkoutSetSchema = v.object({
   isPr: v.boolean(),
   completedAt: v.string(),
 });
+
+export type WorkoutSet = v.InferOutput<typeof WorkoutSetSchema>;
 
 // JOINした結果用の拡張型
 export type WorkoutSetWithExercise = WorkoutSet & {
@@ -225,15 +227,15 @@ workouts.post(
 );
 ```
 
-`vValidator`を使うことで：
+`vValidator`を使うと、次の 3 つが手に入ります。
 
-1. リクエストボディを**自動バリデーション**
-2. バリデーション失敗時は**400エラーを自動返却**
-3. `c.req.valid("json")`で**型安全なアクセス**
+1. リクエストボディを自動でバリデーションする
+2. バリデーションに失敗したら400エラーを自動で返す
+3. `c.req.valid("json")`で型安全にアクセスできる
 
 ### エラーレスポンスのカスタマイズ
 
-デフォルトのエラーメッセージをカスタマイズしたい場合：
+デフォルトのエラーメッセージを変えたい場合は、第 3 引数にフックを渡します。
 
 ```typescript
 import { vValidator } from '@hono/valibot-validator';
@@ -298,14 +300,14 @@ export const useUpdateUser = () => {
 };
 ```
 
-**メリット**:
+この形にしておくと、次の変更をビルド時に検出できます。
 
-- `UpdateUser`型の変更が、フロントエンドで**即座に型エラー**として検出される
+- `UpdateUser`型の変更が、フロントエンドで型エラーとしてすぐに出る
 - APIレスポンスの構造変更も同様に検出可能
 
 ### フォームバリデーション
 
-フロントエンドでも同じスキーマでバリデーション可能：
+フロントエンドでも、同じスキーマでバリデーションできます。
 
 ```typescript
 import * as v from 'valibot';
@@ -331,7 +333,7 @@ const handleSubmit = (formData: unknown) => {
 
 > **この設計の実装例をすぐに確認したい方へ**: Valibotを使った実践的なフルスタック型共有は、公開中の筋トレ記録アプリ **Attain** で体験できます。
 >
-> 👉 **[Attainをブラウザで試す](https://attain-app.com/lp)**
+> **[Attainをブラウザで試す](https://attain-app.com/lp)**
 
 ---
 
@@ -356,7 +358,7 @@ export type SessionExerciseWithDetails = SessionExercise & {
 
 ### APIレスポンス型
 
-Google AIP準拠のレスポンス形式：
+レスポンスは Google AIP に準拠した形にしています。
 
 ```typescript
 // List response (AIP-132)
@@ -381,7 +383,7 @@ type WorkoutResponse = {
 
 Zodには豊富なエコシステム（zod-to-json-schema, react-hook-form連携など）がありますが、Valibotはまだ発展途上です。
 
-**対策**: 必要な機能は自前で実装するか、[valibot-json-schema](https://github.com/gcornut/valibot-to-json-schema)などの代替を使用
+**対策**: 必要な機能は自前で実装するか、[valibot-to-json-schema](https://github.com/gcornut/valibot-to-json-schema)などの代替を使用
 
 ### 2. 学習コスト
 
@@ -395,20 +397,20 @@ const schema = z.string().email().max(255);
 const schema = v.pipe(v.string(), v.email(), v.maxLength(255));
 ```
 
-ただし、**コードベースを読む分**には十分に読みやすいです。
+ただし、書かれたコードを読む分には十分に読みやすいです。
 
 ### 3. 実行時バリデーションの配置
 
 - API側では必須。外部からの入力は常にバリデーションする
 - フロントエンド側は任意。UXのためのプレバリデーションとして活用する
 
-フロントエンドでの過剰なバリデーションは、**バンドルサイズ増加**につながるため注意。
+フロントエンドでバリデーションを増やしすぎると、バンドルサイズが増えるので注意してください。
 
 ---
 
 ## まとめ: 「型で守る」開発体験
 
-Valibotを使ったフルスタック型共有は、以下のメリットをもたらします：
+Valibotでフルスタックの型を共有すると、開発は次のように変わります。
 
 | Before                | After                     |
 | --------------------- | ------------------------- |
@@ -417,7 +419,7 @@ Valibotを使ったフルスタック型共有は、以下のメリットをも�
 | 本番でクラッシュ発見  | ビルド時に型エラーで検出  |
 | 巨大なバンドル        | Tree-shakingで最小化      |
 
-「型で守られた開発体験」を、ぜひ試してみてください。
+スキーマを 1 か所にまとめておくだけで、型のずれは本番ではなくビルドの時点で見つかるようになります。
 
 ---
 
@@ -434,7 +436,7 @@ Valibotによる型安全なフルスタック開発を実践した筋トレ記�
 | オフライン対応   | ネットワーク遮断時も同じ操作感               |
 | 複数デバイス同期 | 型不整合エラーなしで自動同期                 |
 
-👉 **[Attainを試す（PWA対応）](https://attain-app.com/lp)**
+**[Attainを試す（PWA対応）](https://attain-app.com/lp)**
 
 ---
 
