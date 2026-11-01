@@ -27,13 +27,13 @@ seriesOrder: 2
 - Chapter 9-11: Worker bootstrap + Pod ネットワーク (static route)
 - Chapter 12: Smoke Test 6 種
 
-Chapter 4-6 は公式手順がきれいに書かれていて躓きほぼ無し。一方 Chapter 7-12 は **大物** で、ここから本格的に詰まり始めます (4 個のハマりを発見)。
+Chapter 4-6 は公式手順がきれいに書かれていて躓きほぼ無し。一方 Chapter 7-12 は 大物 で、ここから本格的に詰まり始めます (4 個のハマりを発見)。
 
-完走までの所要時間は Chapter 4-6 で 1.5 時間、Chapter 7-12 で 2.5 時間、合計 4 時間。Part 1 の環境構築 4 時間と合わせて、**Hard Way 全体で延べ 8 時間** という計算でした。
+完走までの所要時間は Chapter 4-6 で 1.5 時間、Chapter 7-12 で 2.5 時間、合計 4 時間。Part 1 の環境構築 4 時間と合わせて、Hard Way 全体で延べ 8 時間 という計算でした。
 
 ## Chapter 4: PKI で CA と 8 証明書を発行
 
-最初に CA を作って、その下に 8 個の証明書を発行します。Hard Way が用意する `ca.conf` には各証明書の Subject や SAN が詰まっていて、**Bash の for ループ 1 発で 8 個まとめて発行**できる設計になっているのが気持ちいいです。
+最初に CA を作って、その下に 8 個の証明書を発行します。Hard Way が用意する `ca.conf` には各証明書の Subject や SAN が詰まっていて、Bash の for ループ 1 発で 8 個まとめて発行できる設計になっているのが気持ちいいです。
 
 ```bash
 # CA 自己署名
@@ -66,7 +66,7 @@ done
 
 最後の `service-accounts` だけ役割がまったく違って、これは TLS 用ではなく ServiceAccount token (JWT) の署名用です。同じ `openssl genrsa` で作っているのに用途は別物、というのが少しトリッキーです（僕は最初混乱しました）。
 
-配布のところで一つ細かい工夫があって、`node-0.crt` を `kubelet.crt` に**リネームして配布**します:
+配布のところで一つ細かい工夫があって、`node-0.crt` を `kubelet.crt` にリネームして配布します:
 
 ```bash
 for host in node-0 node-1; do
@@ -146,7 +146,7 @@ resources:
 192.168.105.3 server.kubernetes.local server  ← Hard Way hosts ファイルが append
 ```
 
-`server.kubernetes.local` が **2 つの IP に紐付いている** 状態。`getent hosts` は 127.0.1.1 を先に返すので、server 上で `server.kubernetes.local` を引くと 127.0.1.1 が返ってきてしまいます (これを G20 と命名)。
+`server.kubernetes.local` が 2 つの IP に紐付いている 状態。`getent hosts` は 127.0.1.1 を先に返すので、server 上で `server.kubernetes.local` を引くと 127.0.1.1 が返ってきてしまいます (これを G20 と命名)。
 
 TLS 検証は名前ベースなので動いてはいるんですが、server 上の `kube-controller-manager` が `127.0.1.1` 経由で apiserver に繋ぐ、という隠れ負債が残ります。
 
@@ -156,7 +156,7 @@ TLS 検証は名前ベースなので動いてはいるんですが、server 上
 ssh root@server "sed -i 's|^127.0.1.1.*|127.0.1.1\tserver|' /etc/hosts"
 ```
 
-これで「FQDN は 192.168.105.3 だけが返す」状態になりました。動いていても**動いている理由が想定通りでない**のは気持ち悪いので、こういう違和感は早めに潰しておきたいところです。
+これで「FQDN は 192.168.105.3 だけが返す」状態になりました。動いていても動いている理由が想定通りでないのは気持ち悪いので、こういう違和感は早めに潰しておきたいところです。
 
 ## Chapter 7: etcd Bootstrap で SSH host key が変わっていた (G21)
 
@@ -200,13 +200,13 @@ ssh root@server etcdctl member list
 # 6702b0a34e2cfd39, started, controller, http://127.0.0.1:2380, http://127.0.0.1:2379, false
 ```
 
-これで K8s の最下層 = **状態の永続化レイヤ** が動き始めました。
+これで K8s の最下層 = 状態の永続化レイヤ が動き始めました。
 
 ## Chapter 8: kube-apiserver が無言で死ぬ (G22)
 
 Chapter 8 は control plane の 3 コンポーネント (apiserver / scheduler / controller-manager) を server 上で起動させる章。素直に systemd を叩いたんですが、`kube-apiserver` だけが `activating (auto-restart)` ループに入って起動しません (無言で)。
 
-`journalctl -u kube-apiserver -f` を見ると、起動時の **flag dump (200 行超)** で画面が埋まり、本当のエラーが流れていく:
+`journalctl -u kube-apiserver -f` を見ると、起動時の flag dump (200 行超) で画面が埋まり、本当のエラーが流れていく:
 
 ```text
 --advertise-address=192.168.105.3
@@ -234,7 +234,7 @@ ssh root@server mv ca.crt ca.key \
 ssh root@server systemctl restart kube-apiserver
 ```
 
-本質的なエラーが 200 行の flag dump に埋もれて見えなくなる、というのは K8s の systemd ベースのコンポーネントで普遍的に起きる罠で、**`grep -iE "error|failed|cannot|no such"` を癖にする** だけで突破速度が一気に上がります。CKA の Troubleshooting (配点 30%) でも同じパターンが頻出します。
+肝心のエラーが 200 行の flag dump に埋もれて見えなくなる、というのは K8s の systemd ベースのコンポーネントで普遍的に起きる罠で、**`grep -iE "error|failed|cannot|no such"` を癖にする** だけで突破速度が一気に上がります。CKA の Troubleshooting (配点 30%) でも同じパターンが頻出します。
 
 apiserver が立ち上がった瞬間のログには、Kubernetes の core を支える小さな魔法が見えます:
 
@@ -243,11 +243,11 @@ allocated clusterIPs service="default/kubernetes" clusterIPs={"IPv4":"10.0.0.1"}
 Resetting endpoints for master service "kubernetes" to [192.168.105.3]
 ```
 
-これは「**`default/kubernetes` という Service を apiserver 自身が自動生成**」している瞬間です。Pod から `kubernetes.default.svc.cluster.local` で apiserver に繋ぐあの仕組みが、ここで初めて記録されています。なお Service IP `10.0.0.1` は、あとで Part 3 で **上流バグ G25** を踏み抜くトリガーになります。
+これは「`default/kubernetes` という Service を apiserver 自身が自動生成」している瞬間です。Pod から `kubernetes.default.svc.cluster.local` で apiserver に繋ぐあの仕組みが、ここで初めて記録されています。なお Service IP `10.0.0.1` は、あとで Part 3 で 上流バグ G25 を踏み抜くトリガーになります。
 
 ## Chapter 9-11: Worker は tmux sync で並列、Pod ネットワークは static route
 
-worker のセットアップは node-0 と node-1 にまったく同じコマンドを打つので、**tmux の `synchronize-panes`** で並列化すると気持ちいいです:
+worker のセットアップは node-0 と node-1 にまったく同じコマンドを打つので、tmux の `synchronize-panes` で並列化すると気持ちいいです:
 
 ```bash
 tmux new-session -s hardway \; \
@@ -266,7 +266,7 @@ kubectl get nodes
 # node-1   Ready    <none>   51s   v1.32.3
 ```
 
-ここで Pod 同士が通信するための **static route** を Chapter 11 で各ノードに足します:
+ここで Pod 同士が通信するための static route を Chapter 11 で各ノードに足します:
 
 ```bash
 ssh root@server <<EOF
@@ -277,7 +277,7 @@ ssh root@node-0 ip route add ${NODE_1_SUBNET} via ${NODE_1_IP}
 ssh root@node-1 ip route add ${NODE_0_SUBNET} via ${NODE_0_IP}
 ```
 
-Hard Way は CNI plugin (Cilium / Flannel / Calico) を入れない代わりに **手動で route を書く**設計です。再起動で消えるので本番なら systemd-networkd で永続化が必要ですが、学習用にはこの方が「Pod 間通信の正体は ip route」と素直に見えて分かりやすい。Part 3 で `tcpdump` で実際にパケットを追いかける予定です。
+Hard Way は CNI plugin (Cilium / Flannel / Calico) を入れない代わりに 手動で route を書く設計です。再起動で消えるので本番なら systemd-networkd で永続化が必要ですが、学習用にはこの方が「Pod 間通信の正体は ip route」と素直に見えて分かりやすい。Part 3 で `tcpdump` で実際にパケットを追いかける予定です。
 
 ## Chapter 12: Smoke Test と port-forward Forbidden 事件 (G23)
 
@@ -308,7 +308,7 @@ kubectl exec -it $POD_NAME -- nginx -v
 # nginx version: nginx/1.29.8
 ```
 
-`kubeadm` で立てたクラスタなら自動でこの RBAC が入るので意識せずに済みますが、Hard Way は**意図的に手動 apply を要求**してきます。`kubeadm` の便利さの正体がここに隠れていることが分かる、いい題材です。
+`kubeadm` で立てたクラスタなら自動でこの RBAC が入るので意識せずに済みますが、Hard Way は意図的に手動 apply を要求してきます。`kubeadm` の便利さの正体がここに隠れていることが分かる、いい題材です。
 
 最後の Test 6 (NodePort Service) では:
 
@@ -322,7 +322,7 @@ curl -I http://${NODE_NAME}:${NODE_PORT}
 
 Chapter 9 で仕込んだ `br_netfilter` + `bridge-nf-call-iptables=1` がここで初めて目に見える形で結実します (kube-proxy の iptables ルールが NodePort を Pod IP に DNAT する経路で必須)。
 
-これで **Smoke Test 6 種すべてパス** ✅、Hard Way Chapter 1-12 完走です。
+これで Smoke Test 6 種すべてパスし、Hard Way Chapter 1-12 完走です。
 
 ## まとめと次回予告
 
@@ -341,7 +341,7 @@ Chapter 4-12 の所要時間:
 | Chapter 12 | Smoke Test + G23 修正          | 約 30 分      |
 | **合計**   |                                | **約 4 時間** |
 
-Part 1 の環境構築 4 時間と合わせて **延べ 8 時間で Hard Way 完走**。発見したハマりは G20-G23 の 4 件 (FQDN 二重解決 / SSH host key / apiserver 無言失敗 / RBAC 漏れ) で、すべて **lima + Apple Silicon + Hard Way 2024** 固有のものでした。
+Part 1 の環境構築 4 時間と合わせて 延べ 8 時間で Hard Way 完走。発見したハマりは G20-G23 の 4 件 (FQDN 二重解決 / SSH host key / apiserver 無言失敗 / RBAC 漏れ) で、すべて lima + Apple Silicon + Hard Way 2024 固有のものでした。
 
 学びとして大きかったのは:
 
@@ -349,9 +349,9 @@ Part 1 の環境構築 4 時間と合わせて **延べ 8 時間で Hard Way 完
 - systemd unit のエラー切り分けは **flag dump を `grep` で剥がす** のが基本動作
 - `kube-apiserver-to-kubelet.yaml` の存在意義 (port-forward / logs / exec が動く理由)
 
-次の [Part 3](/blog/2026/kubernetes-hard-way-apple-silicon-part3-tier1-and-upstream-bug) では完走したクラスタを **学習材料として深掘り**します。Tier 1 B (etcd backup/restore で `etcdctl` から `etcdutl` への分離 G24)、Tier 1 A (CoreDNS 手動 deploy)、そして本シリーズの一番の見どころである **Hard Way 2024 公式の上流バグ G25** (cert SAN と Service CIDR 不整合) の分析を扱います。
+次の [Part 3](/blog/2026/kubernetes-hard-way-apple-silicon-part3-tier1-and-upstream-bug) では完走したクラスタを 学習材料として深掘りします。Tier 1 B (etcd backup/restore で `etcdctl` から `etcdutl` への分離 G24)、Tier 1 A (CoreDNS 手動 deploy)、そして本シリーズの一番の見どころである Hard Way 2024 公式の上流バグ G25 (cert SAN と Service CIDR 不整合) の分析を扱います。
 
-CoreDNS を deploy してみたら CoreDNS Pod が **`READY 0/1`** で停滞する、その原因が公式テンプレート 2 ファイル間の値の不整合だった、という発見の話です。
+CoreDNS を deploy してみたら CoreDNS Pod が `READY 0/1` で停滞する、その原因が公式テンプレート 2 ファイル間の値の不整合だった、という発見の話です。
 
 それでは [Part 3](/blog/2026/kubernetes-hard-way-apple-silicon-part3-tier1-and-upstream-bug) でまたお会いしましょう。
 
