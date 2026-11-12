@@ -18,6 +18,7 @@
     "prelint": "astro sync",
     "lint": "run-p --aggregate-output --continue-on-error \"lint:*\"",
     "lint:astro": "astro check",
+    "lint:affiliate": "tsx scripts/check-affiliate-disclosure.ts",
     "lint:content": "tsx scripts/validate-content.ts",
     "lint:eslint": "eslint --cache .",
     "lint:format": "prettier --check .",
