@@ -1,27 +1,28 @@
-# Portfolio profile data (English) - Updated: 2024-12-21
+# Portfolio profile data (English) - Updated: 2026-11-17
 profile:
   name: Ryota Ikezawa
-  title: Senior Software Engineer / Architect
+  title: Site Reliability Engineer / Platform Engineer / Tech Lead
   summary: |
-    Senior software engineer and architect with 10+ years of experience.
-    At freee K.K. since November 2015, experiencing the company's growth from ~100 to 2,000+ employees.
-    Progressed through SWE roles — data aggregation development, tech lead, EM, architect — before moving to SRE.
+    SRE / Tech Lead specializing in platform engineering and developer experience.
+    Joined freee K.K. in November 2015, when the company had about 100 employees, and spent the following growth years as an engineer.
+    Started with data aggregation feature development, then expanded through SWE roles — tech lead, EM, and architect.
     Led legacy system remodeling, microservice design, and multi-tenant data isolation boundary design.
-    Volunteered for an EM role for about a year, then returned to the TL/IC track to take responsibility for technology rather than people.
-    After serving as architect on freee's HR/Payroll Integration Platform team, moved to SRE in June 2026 as tech lead on platform engineering.
+    Volunteered for an EM role for about two years in total, then returned to the TL/IC track to take responsibility for technology rather than people.
     Continuous experience leading and delivering within globally distributed teams (Japan / Philippines).
-    Core stack: Go, TypeScript, Ruby, Rails, React, Kubernetes, gRPC, MySQL, ArgoCD, Datadog.
+    After serving as architect on the HR/Payroll Integration Platform, transferred to the Orchestration team in June 2026; the team was renamed the DX Team (Developer Experience) in July 2026.
+    Currently an SRE tech lead on the DX Team, working on platform engineering.
+    Core stack: Go, TypeScript, Ruby, Rails, React, Kubernetes, Karpenter, gRPC, MySQL, ArgoCD, Datadog.
   avatar: /profile.jpg
 
 workExperience:
-  # === freee K.K. (approximately 10 years) ===
+  # === freee K.K. ===
   - company: freee K.K.
-    role: Senior Software Engineer / Architect
+    role: Site Reliability Engineer / Platform Engineer / Tech Lead
     period:
       start: '2015-11'
       end: null
     description: |
-      10+ years at freee K.K. since November 2015, a cloud accounting software provider (100 → 2,000+ employees).
+      At freee K.K., a cloud accounting software provider, since November 2015, joining when the company had about 100 employees and spending the following growth years as an engineer.
       Started with data aggregation feature development, progressed through Tech Lead,
       Engineering Manager, and Architect roles, currently serving as SRE Tech Lead.
       Continuously involved in hiring and incident response.
@@ -41,17 +42,21 @@ workExperience:
         period:
           start: '2026-06'
           end: null
-        project: Platform Engineering
+        project: DX Team (Developer Experience)
         description: |
-          Tech lead on the SRE team, driving platform engineering.
-          Focused on observability and self-service-driven developer experience across the platform,
-          including the container infrastructure and networking.
+          Transferred to the Orchestration team in June 2026; the team was renamed the DX Team (Developer Experience) in July 2026.
+          The DX Team looks after the internal platform while improving developer productivity across the company.
+          Currently serving as SRE tech lead on platform engineering, mainly responsible for Kubernetes / Istio / Karpenter / CI/CD / containers (EKS + Terraform).
+          Focused on observability and self-service-driven developer experience across the container infrastructure and networking,
+          including work that improves how development is done, such as CI/CD improvements.
         technologies:
           - Kubernetes
           - Istio
+          - Karpenter
           - ArgoCD
           - KEDA
           - Fluentd
+          - Terraform
           - AWS
           - GitOps
 
@@ -178,7 +183,7 @@ workExperience:
 
       - role: Senior Software Engineer / Tech Lead
         period:
-          start: '2022-09'
+          start: '2022-07'
           end: '2023-03'
         project: freee Data Entry Service
         description: |
@@ -540,6 +545,8 @@ skills:
       - name: Istio
       - name: KEDA
       - name: Fluentd
+      - name: Karpenter
+      - name: Terraform
       - name: AWS
         level: intermediate
         yearsOfExperience: 5
