@@ -176,7 +176,7 @@ podFailurePolicy:
 
 ポリシー有りの Job は、3 件のタスクを終える前に止められたのに Complete になりました。`podFailurePolicy` が有る Job では、コントローラーは Pod が最終状態になるまで待ち、終了コード 0 なら成功とみなすためです。ポリシー無しでは、終了中の Pod をその時点で失敗と数えます[^job]。`Ignore` のルールが評価されるのは、失敗した Pod だけです。アプリを、未完了なら終了コード 1 で終わるように直すと、Job は `backoffLimit` を消費せずに代替 Pod で続きました。
 
-**`podFailurePolicy` を効かせるには、アプリが「止められたら 0 以外で終わる」責務を果たす必要があります。**
+**`podFailurePolicy` を効かせるには、アプリ側で「止められたら 0 以外で終わる」ようにしておく必要があります。**
 
 ただし、`Ignore` が効くのは `DisruptionTarget` が付いた失敗だけです。`kubectl delete pod` で消した Pod には condition が付かないので、0 以外で終わると `backoffLimit` を 1 消費します。Karpenter が `terminationGracePeriod` の上限や Node Auto Repair で行う強制削除も同じです。Karpenter の実装は、通常の退避には Eviction API を使います。一方、強制削除では Pod を直接消すので、condition は付きません[^karpenter-eviction]。そのためアプリの失敗として数えられます[^k8s-141316]。Karpenter が削除の前に condition を付ける提案は、2026 年 10 月時点で未対応です[^karpenter-3218]。
 

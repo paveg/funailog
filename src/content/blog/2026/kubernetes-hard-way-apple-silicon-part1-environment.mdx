@@ -29,7 +29,7 @@ import vmLayoutFigure from '../../../assets/blog/2026/k8s-hard-way-part1-vms.png
 
 ### 想定読者
 
-Apple Silicon Mac で Hard Way を完走したい人、`lima` を普段使いしていて Hard Way 用にネットワークまで踏み込みたい人、あるいは `kubeadm` のブラックボックスの中にある Kubernetes 内部を覗きたい人を念頭に書いています。
+Apple Silicon Mac で Hard Way を完走したい人、`lima` を普段使いしていて Hard Way 用にネットワークまで踏み込みたい人、`kubeadm` の裏側にある Kubernetes の仕組みを覗きたい人向けです。
 
 逆に「とりあえず動くクラスタが欲しいだけ」なら `kind` や `minikube` の方が早いです。本シリーズは公式手順をなぞる過程で詰まる箇所だけに絞って書くので、Hard Way 自体の意義や CKA / CKS との関係は別の記事でまとめる予定です。
 
@@ -59,11 +59,11 @@ Hard Way には VM プロバイダの指定がないので、まず何で VM を
 
 採用は `lima` です。理由は単純で、`colima` を入れている人は既に lima バイナリも入っており、追加インストールが要りません。Apple Virtualization.framework (vz driver) を使うので Apple Silicon ネイティブで高速、料金は ¥0、オフラインで完結します。
 
-不採用にした候補のうち、Oracle Cloud Always Free は ARM A1 が太い無料枠で魅力的なのですが、本人確認のハードルや日本リージョンのキャパ不足に振り回されていると、Hard Way の開始まで辿り着けないリスクがあります。GCP は既存アカウントだと無料クレジットが付かないのが痛いところで、新規アカウントを切る手もあるものの、本筋から外れるので諦めました。
+不採用にした候補のうち、Oracle Cloud Always Free は ARM A1 の無料枠が魅力的なのですが、本人確認のハードルや日本リージョンのキャパ不足で、Hard Way を始める前に詰まりかねません。GCP は既存アカウントだと無料クレジットが付かないのが痛いところで、新規アカウントを切る手もあるものの、本筋から外れるので諦めました。
 
 ## VM 構成と公式差分
 
-公式は VM 数 4 台 (jumpbox / server / node-0 / node-1) を要求し、各 server / node に 20GB のディスクを推奨しています。本記事では Mac のディスクを節約するため以下に縮小しました:
+公式では VM 4 台 (jumpbox / server / node-0 / node-1) で、各 server / node に 20GB のディスクを推奨しています。Mac のディスクを節約するため、今回は以下のように縮小しました:
 
 | VM      | CPU | Memory | Disk (宣言) | 役割                                                              |
 | ------- | --- | ------ | ----------- | ----------------------------------------------------------------- |
@@ -184,7 +184,7 @@ sudo chmod -R go-w /opt/socket_vmnet
 limactl sudoers | sudo tee /private/etc/sudoers.d/lima
 ```
 
-なぜこの設計かというと、`socket_vmnet` を sudo NOPASSWD で起動できるようにするためには、**実行ファイル自身とそこに至るパス全体が root 所有 + 他ユーザー書込不可**でなければならないからです。さもないと「悪意あるバイナリに差し替えて sudo 経由で root 昇格」が成立してしまいます。Homebrew の Cellar 構造はユーザー所有前提なので、これと相性が悪いです。
+`socket_vmnet` を sudo NOPASSWD で起動するには、**実行ファイル自身とそこに至るパス全体が root 所有 + 他ユーザー書込不可**である必要があります。そうでないと、悪意あるバイナリに差し替えて sudo 経由で root 昇格できてしまうためです。Homebrew の Cellar 構造はユーザー所有前提なので、この要件と相性が悪いです。
 
 副作用として、`brew upgrade socket_vmnet` を打っても `/opt/socket_vmnet/` 側は更新されません。アップグレードのたびに上記の `cp` を手で打ち直すしかなく、これが地味に忘れがちです。
 

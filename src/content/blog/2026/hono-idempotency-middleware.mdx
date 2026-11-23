@@ -9,11 +9,11 @@ category: programming
 
 ## はじめに
 
-決済APIでPOSTリクエストが二重に飛んだら、請求が二重に発生します。ネットワークが不安定なモバイル環境では、クライアントがタイムアウトでリトライするのは日常茶飯事です。
+決済APIにPOSTリクエストが二重に飛ぶと、請求も二重に発生します。ネットワークが不安定なモバイル環境では、タイムアウトによるリトライが珍しくありません。
 
 この問題を解決するのが**冪等性キー（Idempotency-Key）パターン**です。同じキーのリクエストは何度送っても結果が1回分になります。Stripeの実装が広く知られており、現在IETFで[draft-ietf-httpapi-idempotency-key-header](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/)として標準化が進んでいます。
 
-Honoのエコシステムにはこのミドルウェアが存在しなかったので、**hono-idempotency**として作りました。
+Honoのエコシステムには対応するミドルウェアがなかったので、**hono-idempotency**を作りました。
 
 https://github.com/paveg/hono-idempotency
 
@@ -38,9 +38,9 @@ app.use('/api/*', idempotency({ store: memoryStore() }));
 
 ## なぜ作ったのか
 
-Honoのエコシステムには冪等性ミドルウェアがありませんでした。
+Honoのエコシステムに冪等性ミドルウェアが無かったため作成しました。
 
-IETF draftの仕様面では、sushichan044氏の[Zennの解説記事](https://zenn.dev/sushichaaaan/articles/5b8318db98dde5)が非常に参考になりました。仕様の読み方やミドルウェア設計の考え方として学びが多かったです。
+IETF draftの仕様面では、sushichan044氏の[Zennの解説記事](https://zenn.dev/sushichaaaan/articles/5b8318db98dde5)が大変参考になり、仕様の読み方やミドルウェア設計の考え方を学びました。
 
 hono-idempotencyは**今日インストールして、今日本番に入れられること**を最優先で設計しています。
 
@@ -50,9 +50,9 @@ hono-idempotencyは**今日インストールして、今日本番に入れら�
 
 ### 1. Stripeパターンの採用
 
-Stripeの冪等性実装は実戦で検証された設計です。hono-idempotencyはこれを参考にしています。
+Stripeの冪等性実装は本番で鍛えられた設計で、hono-idempotencyもこれを参考にしています。
 
-**非2xxレスポンスはキャッシュしません。** ハンドラーがエラーを返した場合、ストアからキーを削除します。クライアントは同じキーでリトライ可能です。キャッシュするのは成功レスポンスだけです。
+**非2xxレスポンスはキャッシュしません。** ハンドラーがエラーを返した場合はストアからキーを削除し、同じキーでリトライできるようにしています。キャッシュするのは成功レスポンスだけです。
 
 ```ts
 // middleware.ts L102-107 の実際のコード
@@ -81,9 +81,9 @@ const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
 
 ### 3. 楽観的ロック
 
-ストアの`lock()`はアトミックな操作を要求します。2つのリクエストが同時に同じキーでロックを試みた場合、一方だけが`true`を返し、他方は`false`を返します。
+ストアの`lock()`にはアトミックな操作が必要です。2つのリクエストが同時に同じキーでロックを試みたとき、一方だけが`true`、もう一方が`false`を返します。
 
-各ストアでのロック実装は以下の通りです。
+各ストアのロック実装です。
 
 | ストア          | ロック方式                                                         |
 | --------------- | ------------------------------------------------------------------ |
@@ -95,7 +95,7 @@ const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
 
 ### 4. RFC 9457 Problem Details
 
-エラーレスポンスは[RFC 9457](https://www.rfc-editor.org/rfc/rfc9457)に準拠した`application/problem+json`形式です。`code`フィールドでクライアントのコードがエラーを識別できます。RFC 9457 の形式そのものは、[hono-problem-details の記事](/blog/2026/hono-problem-details-rfc9457/)で解説しています。
+エラーレスポンスは[RFC 9457](https://www.rfc-editor.org/rfc/rfc9457)準拠の`application/problem+json`形式で返し、`code`フィールドでエラー種別を判別できます。RFC 9457自体の詳細は[hono-problem-details の記事](/blog/2026/hono-problem-details-rfc9457/)にまとめました。
 
 ```json
 {
@@ -113,7 +113,7 @@ const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
 
 ## ストアアダプター
 
-ストアは用途に応じて差し替え可能です。インターフェースは5つのメソッドだけで構成されています。
+ストアは用途に応じて差し替えられます。インターフェースは5つのメソッドだけです。
 
 ```ts
 interface IdempotencyStore {
@@ -127,7 +127,7 @@ interface IdempotencyStore {
 
 ### 開発: Memory Store
 
-プロセス内`Map`を使用します。セットアップ不要で開発時に便利です。`maxSize`を設定すれば、上限を超えたときに古い順に自動削除されます。
+プロセス内の`Map`を使うためセットアップが不要で、ローカル開発に向いています。`maxSize`を指定すると、上限を超えた際に古い順で自動削除されます。
 
 ```ts
 import { memoryStore } from 'hono-idempotency/stores/memory';
@@ -152,8 +152,8 @@ const store = redisStore({ client: new Redis(), ttl: 86400 });
 Cloudflare Workersでは3つの選択肢があります。
 
 - KV は結果整合性ですが最もシンプルです。TTLはKVの`expirationTtl`で自動管理されます
-- D1 は SQL による強整合性を提供し、`INSERT OR IGNORE` でアトミックロックを実現します。テーブルは自動作成されます
-- Durable Objects は単一書き込みモデルで最も強力な整合性保証を持ち、`get` → check → `put` がランタイムレベルで排他されます
+- D1 は SQL による強整合性があり、`INSERT OR IGNORE` でアトミックにロックできます。テーブルは自動作成されます
+- Durable Objects は単一書き込みモデルで整合性が最も強く、`get` → check → `put` がランタイムレベルで排他されます
 
 ```ts
 // D1の例
@@ -181,13 +181,13 @@ Hono + 冪等性の実装例として[hono-idempotent-api](https://github.com/Ki
 | 同時リクエストの排他制御 | なし                           | 409 CONFLICTとRetry-After     |
 | エラー形式               | HTTPステータスのみ             | RFC 9457 Problem Details      |
 
-大きな設計上の分岐は**キーの生成主体**です。
+設計上の大きな違いは**キーの生成主体**です。
 
 hono-idempotent-apiはサーバーがボディからキーを導出します。クライアントの実装負担がゼロで、仕組みとしてシンプルです。ボディだけで操作が決まるAPI（例えばリソースの属性上書き）では、このアプローチは合理的に機能します。
 
-一方、「同じボディだが別の意図」があるケースでは問題が起きます。典型的なのが決済で、同じカード・同じ金額で2回支払いたい場合、`{card: "4242", amount: 1000}` のハッシュは常に同じになるので、サーバーは2回目を重複とみなして捨ててしまいます。クライアントが別のキーを振れば、それぞれ独立した決済として処理できます。
+一方で、同じボディでも別のリクエストとして扱いたいケースでは困ります。たとえば同じカード・同じ金額で2回決済する場合、`{card: "4242", amount: 1000}` のハッシュは同じになるため、2回目が重複として弾かれてしまいます。クライアント側で別のキーを振れば、それぞれ独立した決済として処理できます。
 
-IETF draftがクライアント指定を採用しているのは、汎用仕様としてボディ=操作の前提を置けないからだと考えています。hono-idempotencyもこれに従っています。
+IETF draftがクライアント指定を採用しているのも、汎用仕様として「ボディ＝操作」という前提を置けないためだと考えており、hono-idempotencyもこれに倣っています。
 
 hono-idempotencyの立ち位置は**必要なものが一式揃ったミドルウェア**です。ストアアダプターを5種類同梱し、`npm install`した時点でMemoryからRedis・Cloudflare D1まで選べます。
 
@@ -195,11 +195,11 @@ hono-idempotencyの立ち位置は**必要なものが一式揃ったミドル�
 
 ## セキュリティ上の考慮点
 
-本番運用で気をつけるべき点をいくつか紹介します。
+本番運用で意識しておきたい点もいくつかあります。
 
 ### キーの不正操作対策
 
-ストアキーは`encodeURIComponent`で安全にエスケープされます。ユーザーが`:`を含むキーを送っても、区切り文字が混同されてキーの境界が壊れることはありません。
+ストアキーは`encodeURIComponent`でエスケープしているため、`:`を含むキーが送られても区切り文字と混同されません。
 
 ```ts
 // middleware.ts L59-61
@@ -212,17 +212,17 @@ const storeKey = rawPrefix
 
 ### Set-Cookieヘッダーの除外
 
-キャッシュ済みレスポンスを返す際、`Set-Cookie`ヘッダーは除外されます。セッションCookieが別ユーザーに再送されるのを防ぐためです。
+セッションCookieが別ユーザーに再送されるのを防ぐため、キャッシュ済みレスポンスを返す際は`Set-Cookie`ヘッダーを除外しています。
 
 ### フックのエラー隔離
 
-`onCacheHit`/`onCacheMiss`のエラーは握り潰されます。監視用フックのバグが冪等性保証を壊さないようにする設計です。
+監視用フックのバグで冪等性が損なわれないよう、`onCacheHit`/`onCacheMiss`内で起きたエラーは握り潰す設計にしています。
 
 ---
 
 ## Honoの型システムとの統合
 
-Hono RPCクライアントと組み合わせると、エンドツーエンドの型安全性が得られます。
+Hono RPCクライアントと組み合わせれば、エンドツーエンドで型安全に書けます。
 
 ```ts
 import type { IdempotencyEnv } from 'hono-idempotency';
@@ -260,7 +260,7 @@ app.post('/api/payments', (c) => {
 });
 ```
 
-本番でRedisを使う場合は、次のようにします。
+本番でRedisを使う場合の例です。
 
 ```ts
 import { redisStore } from 'hono-idempotency/stores/redis';
@@ -276,7 +276,7 @@ app.use(
 );
 ```
 
-本番でCloudflare D1を使う場合は、次のようにします。
+Cloudflare D1を使う場合は次のように書きます。
 
 ```ts
 import { d1Store } from 'hono-idempotency/stores/cloudflare-d1';
