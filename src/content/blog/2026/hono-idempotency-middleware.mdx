@@ -13,7 +13,7 @@ category: programming
 
 この問題を解決するのが**冪等性キー（Idempotency-Key）パターン**です。同じキーのリクエストは何度送っても結果が1回分になります。Stripeの実装が広く知られており、現在IETFで[draft-ietf-httpapi-idempotency-key-header](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/)として標準化が進んでいます。
 
-Honoのエコシステムにはこのミドルウェアが存在しなかったので、**hono-idempotency**として作りました。
+Honoのエコシステムには対応するミドルウェアがなかったので、**hono-idempotency**を作りました。
 
 https://github.com/paveg/hono-idempotency
 
@@ -83,7 +83,7 @@ const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
 
 ストアの`lock()`にはアトミックな操作が必要です。2つのリクエストが同時に同じキーでロックを試みたとき、一方だけが`true`、もう一方が`false`を返します。
 
-各ストアでのロック実装は以下の通りです。
+各ストアのロック実装です。
 
 | ストア          | ロック方式                                                         |
 | --------------- | ------------------------------------------------------------------ |
@@ -113,7 +113,7 @@ const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
 
 ## ストアアダプター
 
-ストアは用途に応じて差し替えられ、インターフェースも5つのメソッドだけで構成しています。
+ストアは用途に応じて差し替えられます。インターフェースは5つのメソッドだけです。
 
 ```ts
 interface IdempotencyStore {
@@ -152,8 +152,8 @@ const store = redisStore({ client: new Redis(), ttl: 86400 });
 Cloudflare Workersでは3つの選択肢があります。
 
 - KV は結果整合性ですが最もシンプルです。TTLはKVの`expirationTtl`で自動管理されます
-- D1 は SQL による強整合性を提供し、`INSERT OR IGNORE` でアトミックロックを実現します。テーブルは自動作成されます
-- Durable Objects は単一書き込みモデルで最も強力な整合性保証を持ち、`get` → check → `put` がランタイムレベルで排他されます
+- D1 は SQL による強整合性があり、`INSERT OR IGNORE` でアトミックにロックできます。テーブルは自動作成されます
+- Durable Objects は単一書き込みモデルで整合性が最も強く、`get` → check → `put` がランタイムレベルで排他されます
 
 ```ts
 // D1の例
@@ -181,7 +181,7 @@ Hono + 冪等性の実装例として[hono-idempotent-api](https://github.com/Ki
 | 同時リクエストの排他制御 | なし                           | 409 CONFLICTとRetry-After     |
 | エラー形式               | HTTPステータスのみ             | RFC 9457 Problem Details      |
 
-大きな設計上の分岐は**キーの生成主体**です。
+設計上の大きな違いは**キーの生成主体**です。
 
 hono-idempotent-apiはサーバー側でボディからキーを生成するため、クライアントの実装負担がなくシンプルです。ボディだけで操作が一意に決まるAPI（リソースの属性上書きなど）なら、この方式でも問題ありません。
 
@@ -222,7 +222,7 @@ const storeKey = rawPrefix
 
 ## Honoの型システムとの統合
 
-Hono RPCクライアントと組み合わせると、エンドツーエンドの型安全性が得られます。
+Hono RPCクライアントと組み合わせれば、エンドツーエンドで型安全に書けます。
 
 ```ts
 import type { IdempotencyEnv } from 'hono-idempotency';
