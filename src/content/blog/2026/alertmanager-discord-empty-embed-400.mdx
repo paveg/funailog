@@ -178,7 +178,7 @@ w := webhook{
 }
 ```
 
-`color` は、発火中なら赤、解消なら緑、それ以外なら灰色が必ず入ります。つまり title と message を空にしても embed は消えず、**title と description が空文字の embed が送られます。** Discord はこれを 400 `{"embeds": ["0"]}` で拒否していました。Discord のドキュメントには、空の embed を拒否するとは書かれていません。ただ、後で書くとおり title だけを変えたら受理されたので、中身が空だったのが原因と考えています。
+`color` は、発火中なら赤、解消なら緑、それ以外なら灰色が必ず入ります。つまり title と message を空にしても embed は消えず、**title と description が空文字の embed が送られます。** Discord はこれを 400 `{"embeds": ["0"]}` で拒否していました。Discord のドキュメントには、空の embed を拒否するとは書かれていません。ただ、後で書くとおり title だけを変えたら受理されたので、中身が空なことが拒否の理由だと考えています。
 
 <Image
   src={embedJsonFigure}

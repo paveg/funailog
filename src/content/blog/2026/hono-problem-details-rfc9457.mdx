@@ -85,7 +85,7 @@ Honoの`HTTPException`は手軽ですが、`throw new HTTPException(404)`する�
 - Fastify は @fastify/sensible が RFC 7807 に対応
 - NestJS や Spring Boot はフレームワーク組み込み
 
-Honoは軽量さを重視しているため、こうした仕組みは内蔵していません。そこで`app.onError`にフックするProblem Detailsミドルウェアを作りました。
+Honoは軽量さが魅力のフレームワークなので、こうした仕組みは内蔵していません。そこで`app.onError`にフックするProblem Detailsミドルウェアが必要でした。
 
 hono-problem-detailsは、**`app.onError`に渡すだけで全エラーが構造化される** ことを最優先に設計しました。
 

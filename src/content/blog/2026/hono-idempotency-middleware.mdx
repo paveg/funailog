@@ -38,7 +38,7 @@ app.use('/api/*', idempotency({ store: memoryStore() }));
 
 ## なぜ作ったのか
 
-Honoのエコシステムに冪等性ミドルウェアが見当たらなかったため作成しました。
+Honoのエコシステムに冪等性ミドルウェアが無かったため作成しました。
 
 IETF draftの仕様面では、sushichan044氏の[Zennの解説記事](https://zenn.dev/sushichaaaan/articles/5b8318db98dde5)が大変参考になり、仕様の読み方やミドルウェア設計の考え方を学びました。
 

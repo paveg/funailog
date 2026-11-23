@@ -54,7 +54,7 @@ inductive Handler (α : Type) : Type where
 
 IO も DB 接続も書けないので、型の上では、ハンドラは認可層を通らないと DB に触れられません。リクエストヘッダの型には `Authorization` と `Cookie` がないので、ハンドラは JWT にも触れられません。
 
-主定理 [`authorization_safety`](https://github.com/NyxFoundation/nyxis/blob/785c11a6285fe92901e871e1fc0f7064eda93941/Nyxis/Runtime.lean#L746-L771) が示すのは、どんなアプリ・初期状態・認証済みリクエスト列でも、発行される DB 操作はすべてそのリクエストの主体についてポリシーが許可したもので、スキーマで宣言した操作の範囲に収まるということです。主体や時刻、ID をハンドラが偽ることもできません。判定には Lean で形式化された Cedar の仕様（[cedar-spec](https://github.com/cedar-policy/cedar-spec)）の `isAuthorized` を使います。
+主定理 [`authorization_safety`](https://github.com/NyxFoundation/nyxis/blob/785c11a6285fe92901e871e1fc0f7064eda93941/Nyxis/Runtime.lean#L746-L771) は、どんなアプリ・初期状態・認証済みのリクエスト列についても、次のことを述べます。発行される DB 操作は、すべてそのリクエストの主体についてポリシーが許可したもので、スキーマで宣言した操作の範囲に収まります。主体や時刻、ID をハンドラが偽ることもできません。判定には Lean で形式化された Cedar の仕様（[cedar-spec](https://github.com/cedar-policy/cedar-spec)）の `isAuthorized` を使います。
 
 ただし、保証の強さは部品によって違います。証明の手前と後ろに、信頼するしかない部分が残ります。
 

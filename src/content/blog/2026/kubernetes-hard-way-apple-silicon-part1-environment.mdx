@@ -184,7 +184,7 @@ sudo chmod -R go-w /opt/socket_vmnet
 limactl sudoers | sudo tee /private/etc/sudoers.d/lima
 ```
 
-`socket_vmnet` を sudo NOPASSWD で起動するには、**実行ファイル自身とそこに至るパス全体が root 所有 + 他ユーザー書込不可**である必要があります。そうでないと、悪意あるバイナリに差し替えて sudo 経由で root 昇格できてしまうためです。Homebrew の Cellar 構造はユーザー所有前提なので、この要件を満たせません。
+`socket_vmnet` を sudo NOPASSWD で起動するには、**実行ファイル自身とそこに至るパス全体が root 所有 + 他ユーザー書込不可**である必要があります。そうでないと、悪意あるバイナリに差し替えて sudo 経由で root 昇格できてしまうためです。Homebrew の Cellar 構造はユーザー所有前提なので、この要件と相性が悪いです。
 
 副作用として、`brew upgrade socket_vmnet` を打っても `/opt/socket_vmnet/` 側は更新されません。アップグレードのたびに上記の `cp` を手で打ち直すしかなく、これが地味に忘れがちです。
 
