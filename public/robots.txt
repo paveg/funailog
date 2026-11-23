@@ -1,8 +1,3 @@
-# No AI training crawl (Google-Extended covers Gemini/Vertex training).
-# llms.txt below is for LLMs citing/referencing pages at query time, not training.
-User-Agent: Google-Extended
-Disallow: /
-
 User-Agent: *
 Allow: /
 
