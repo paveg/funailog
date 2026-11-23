@@ -21,9 +21,9 @@ seriesOrder: 3
 - Tier 1 A: CoreDNS 手動 deploy (Hard Way には CoreDNS が無いので、kubeadm が裏でやっている工程を素手で経験する)
 - G25: Hard Way 2024 の **上流バグ** (cert SAN と Service CIDR の不整合)
 
-特に G25 は lima や Apple Silicon に関係なく、公式 Hard Way 2024 を素直になぞった全員が踏むはずのバグです。CoreDNS deploy で初めて顕在化するので、Chapter 12 完走で満足して次に進むと気付かないという、いやらしい性質を持っています。
+特に G25 は lima や Apple Silicon に関係なく、公式 Hard Way 2024 を素直になぞれば誰でも踏むバグです。CoreDNS を deploy して初めて表面化するので、Chapter 12 完走で満足して次に進むと気付かない、いやらしいバグです。
 
-## 完走後の観察：kubeadm が隠しているもの
+## 完走後の観察: kubeadm が隠しているもの
 
 Tier 1 に入る前に少しだけクラスタを観察します。CKA の Troubleshooting 視点で「普段 kubeadm が裏でやっていることが、Hard Way だとどう見えるか」を確認するパートです。
 
@@ -57,7 +57,7 @@ kubectl auth can-i create pods --as=system:node:node-0
 
 kubelet (`system:node:<name>`) は任意の Pod 作成権限を持たない。これが「kubelet が compromise されても他ノードに横展開できない」セキュリティモデルで、`Node Authorizer + NodeRestriction` admission plugin の効果です。
 
-こうした「クラスタが動いた後に何が見えるか」を素手で観察するだけで、CKA の Troubleshooting で問われるレイヤがどこにあるか分かるようになります。
+クラスタが動いた後に何が起きているかを素手で観察すると、CKA の Troubleshooting で問われるレイヤが見えてきます。
 
 ## Tier 1 B: etcd backup / restore で G24 を踏む
 
@@ -150,7 +150,7 @@ kubectl get svc -A
 # default/kubernetes 10.0.0.1, default/nginx 10.0.0.224  → Service CIDR 10.0.0.0/24 確定
 ```
 
-apiserver の `--service-cluster-ip-range` は未指定で default の `10.0.0.0/24` が採用されています。これが後で G25 を踏み抜く決定打になるので、頭の片隅に置いておいてください。
+apiserver の `--service-cluster-ip-range` が未指定なので、default の `10.0.0.0/24` が使われます。これが後で G25 を踏む原因になるので、頭の片隅に置いておいてください。
 
 ### Step 1-2: CoreDNS manifest 取得 + apply
 
@@ -199,7 +199,7 @@ CoreDNS は in-cluster Pod として動いているので、apiserver には `de
 - `kube-api-server.crt` の SAN は **`10.32.0.1`** だけで、`10.0.0.1` を含まない
 - in-cluster Pod が Service IP `10.0.0.1` 経由で apiserver に TLS 接続 → cert 検証失敗
 
-なぜ Chapter 12 完走まで顕在化しなかったのか、というと、Pod から apiserver に話しかけたクライアントがいなかったからです。これまでの接続クライアントは:
+Chapter 12 完走まで顕在化しなかったのは、Pod から apiserver にアクセスするクライアントがいなかったからです。これまでの接続元は:
 
 - DNS 名 `server.kubernetes.local` (cert SAN にあり OK)
 - `127.0.0.1` (admin kubeconfig、cert SAN にあり OK)
@@ -241,7 +241,7 @@ ssh root@server systemctl restart kube-apiserver
 kubectl rollout restart deployment coredns -n kube-system
 ```
 
-ポイントは **key を維持して cert だけ再発行する** こと。これは本番でもよくやる「**証明書の SAN を後から拡張する**」操作で、同じ手順で証明書の期限の延長もできます。`openssl req -new -key <既存の key>` の組み合わせを覚えておくと PKI rotation 全般で効きます。
+ポイントは **key を維持して cert だけ再発行する** ことです。本番でもよく使う「**証明書の SAN を後から拡張する**」手順で、有効期限の延長も同じやり方でできます。`openssl req -new -key <既存の key>` の形を覚えておくと PKI rotation 全般で役立ちます。
 
 cert 再発行後、CoreDNS は `1/1 Running` に到達し、DNS 解決テスト 4 種すべて成功:
 
@@ -279,7 +279,7 @@ Tier 1 A までやると、Hard Way で出てくる CIDR が 6 つあると気�
 | `10.200.1.0/24`    | node-1 の **Pod CIDR**                     | (動作中の Pod なし)                                       |
 | `10.200.0.0/16`    | Pod CIDR の親 (各 node /24 を切り出す範囲) | -                                                         |
 
-K8s が「Service IP は仮想 (kube-proxy が DNAT)、Pod IP は実体 (CNI/route で疎通)、物理 IP は別レイヤ」という 3 層構造で動いていることが、自分の手で構築すると体に染み込みます。Service CIDR と Pod CIDR を混同していると CKA / 実務でハマるので、ここで一度整理しておくと役に立ちます。
+「Service IP は仮想 (kube-proxy が DNAT)、Pod IP は実体 (CNI/route で疎通)、物理 IP は別レイヤ」という 3 層構造は、自分の手で組むと腹落ちします。Service CIDR と Pod CIDR を混同していると CKA でも実務でもハマるので、ここで一度整理しておくと役に立ちます。
 
 ## まとめ
 
@@ -294,9 +294,9 @@ Part 3 で扱った内容と所要時間:
 
 Part 1 の環境構築 4 時間 + Part 2 の Hard Way 完走 4 時間 + Part 3 の Tier 1 1.5 時間で、延べ約 9.5 時間で「環境構築 → 完走 → 内部理解」までを 1 周。
 
-新規に発見したハマりポイントは通算 6 件 (G20-G25)、うち G25 だけは公式 Hard Way 2024 の上流バグで、lima 関係なく全員が踏む性質を持っています。
+新規に見つけたハマりポイントは通算 6 件 (G20-G25) です。うち G25 だけは公式 Hard Way 2024 の上流バグなので、lima に関係なく誰でも踏みます。
 
-学びの圧縮:
+今回の学びをまとめると:
 
 - **PKI rotation は実務スキル**。「key を維持して cert だけ再発行 (SAN 拡張 / 期限延長)」は Hard Way の文脈を超えて使える
 - **etcd backup/restore は CKA の核**。動いてる K8s の etcd を入れ替えても **AGE が連続する** こと自体が、K8s の decoupled architecture の証明になる
