@@ -27,7 +27,7 @@ import embedJsonFigure from '../../../assets/blog/2026/alertmanager-discord-embe
 - 不通のあいだは、通知そのものがインターネット経由なので送れない
 - 復旧したあとも、Alertmanager の通知を Discord が HTTP 400 で拒否していた。こちらは障害と関係がなく、3 か月前に入れた設定の誤りがそのまま残っていた
 
-この記事では、2 つ目の原因を Alertmanager のソースまで追った経緯と、その修正、そして修正しても残る穴を書きます。回線が止まった原因（ゲートウェイの自動更新）は、メーカーのサポートの回答を待っているので、別の記事で書く予定です。
+この記事では、2 つ目の原因を Alertmanager のソースまで追った経緯と修正内容、修正しても残る穴について書きます。回線が止まった原因（ゲートウェイの自動更新）は、メーカーのサポートの回答を待っているので、別の記事で書く予定です。
 
 なお、この記事は調査・事実確認に AI（Claude）を使い、AI が書いた下書きを僕が校正する形で執筆しています。
 
@@ -35,7 +35,7 @@ import embedJsonFigure from '../../../assets/blog/2026/alertmanager-discord-embe
 
 - Prometheus と Alertmanager で、自宅や小さなチームのシステムを監視している人
 - Alertmanager の `discord_configs` で、Discord に通知を飛ばしている人。特に、embed を使わずに本文だけで送ろうとしている人
-- 「監視は動いているはずなのに、通知が来ない」という状況を一度でも疑ったことがある人
+- 「監視は動いているはずなのに、通知が来ない」と一度でも疑ったことがある人
 
 Prometheus のルールの書き方や、Alertmanager の基本は説明しません。
 
@@ -164,7 +164,7 @@ type webhookEmbed struct {
 }
 ```
 
-`title` と `description` の JSON タグに `omitempty` がありません。そして送信のたびに、embed を 1 つ、条件なしに組み立てています。この部分は、執筆時点の最新版の v0.34.2 でも変わっていません。
+`title` と `description` の JSON タグに `omitempty` がありません。送信のたびに、無条件で embed を 1 つ組み立てています。この部分は、執筆時点の最新版の v0.34.2 でも変わっていません。
 
 ```go
 w := webhook{
@@ -178,7 +178,7 @@ w := webhook{
 }
 ```
 
-`color` は、発火中なら赤、解消なら緑、それ以外なら灰色が必ず入ります。つまり title と message を空にしても embed は消えず、**title と description が空文字の embed が送られます。** Discord はこれを 400 `{"embeds": ["0"]}` で拒否していました。Discord のドキュメントには、空の embed を拒否するとは書かれていません。ただ、後で書くとおり title だけを変えたら受理されたので、中身が空なことが拒否の理由だと考えています。
+`color` は、発火中なら赤、解消なら緑、それ以外なら灰色が必ず入ります。つまり title と message を空にしても embed は消えず、**title と description が空文字の embed が送られます。** Discord はこれを 400 `{"embeds": ["0"]}` で拒否していました。Discord のドキュメントには、空の embed を拒否するとは書かれていません。ただ、後で書くとおり title だけを変えたら受理されたので、中身が空だったのが原因と考えています。
 
 <Image
   src={embedJsonFigure}
@@ -198,11 +198,11 @@ title: '{{ if eq .Status "firing" }}🔴{{ else }}✅{{ end }} {{ .CommonLabels.
 message: ''
 ```
 
-`amtool check-config` で設定の文法を確かめ、Alertmanager に設定を読み直させました。すると、その時点で発火中だった別のアラートが再送され、送信の成功回数（`notifications_total` から `failed_total` を引いた値）が 0 から 1 に増えました。続けてテストのアラートを入れると 2 になり、失敗は増えていません。
+`amtool check-config` で文法を確かめ、Alertmanager に設定を再読み込みさせました。すると、その時点で発火中だった別のアラートが再送され、送信の成功回数（`notifications_total` から `failed_total` を引いた値）が 0 から 1 に増えました。続けてテストのアラートを入れると 2 になり、失敗は増えていません。
 
 テストのアラートは、`DiscordDeliveryTest` という名前で Alertmanager の API に直接入れました。Discord には `🔴 FIRING · DiscordDeliveryTest · info` が、embed のタイトル付きで届いています。
 
-これで分かったのは、title さえあれば、description（`message`）が空でも Discord は受理するということです。message を空にしたこと自体は問題ではありませんでした。
+これで、title さえあれば description（`message`）が空でも Discord は受理すると分かりました。message を空にしたこと自体は問題ではありませんでした。
 
 ## 修正しても残る穴
 
