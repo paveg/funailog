@@ -28,7 +28,7 @@ https://github.com/paveg/dots
 
 ## 2026年のトレンドと自分の立ち位置
 
-最近の開発環境記事を読むと、いくつかのトレンドが見えてきます。
+最近の開発環境記事のトレンドと、自分の選択を並べました。
 
 | トレンド       | 代表例                              | 自分の選択                   |
 | :------------- | :---------------------------------- | :--------------------------- |
@@ -66,7 +66,7 @@ chezmoi (dotfiles) + devbox (CLI tools)
 | ランタイム管理 | mise          | Node.js / Python / Go のバージョン切り替え |
 | GUIアプリ      | Homebrew Cask | Raycast, 1Password等                       |
 
-devboxはJetifyが開発するNixのラッパーです。`devbox.json`に書いたツールが宣言的にインストールされ、どのマシンでも同じバージョンが再現されます。
+devboxはJetify製のNixラッパーです。`devbox.json`に書いたツールがそのまま入るので、どのマシンでも同じバージョンを再現できます。
 
 ### なぜmiseとdevboxを併用するのか
 
@@ -134,7 +134,7 @@ Zellijは良いマルチプレクサですが、**キーバインドの競合が
 
 **Alacrittyをやめた理由**
 
-Alacritty自体に不満はありませんでした。ただ、Ghosttyの以下の点が魅力的だったので乗り換えました。
+Alacritty自体に不満はありませんでしたが、Ghosttyの以下の点に惹かれて乗り換えました。
 
 - ネイティブのタブ・分割機能
 - 日本語レンダリングの美しさ
@@ -169,7 +169,7 @@ keybind = super+shift+d=new_split:down
 
 ## シェル: zsh + zinit turbo mode
 
-powerlevel10kのinstant promptとzinit turbo modeの組み合わせで、高速な起動を実現しています。
+powerlevel10kのinstant promptとzinit turbo modeを組み合わせて、起動を速くしています。
 
 ### Starship → Powerlevel10k への移行
 
@@ -179,7 +179,7 @@ powerlevel10kのinstant promptとzinit turbo modeの組み合わせで、高速�
 - 起動速度は Starship より体感で速い
 - カスタマイズは `p10k configure` で対話的にできる
 
-Starshipも良いプロンプトですが、zshに特化したpowerlevel10kの方がパフォーマンスで有利でした。
+Starshipも良いプロンプトですが、zshに特化したpowerlevel10kの方が速かったです。
 
 ### 起動時間ベンチマーク
 
@@ -294,7 +294,7 @@ kickstart.nvimをベースに、lazy.nvimでプラグイン管理しています
 
 ## AIツール
 
-2026年のトレンドとして外せないのがAIコーディングツールです。
+AIコーディングツールは以下の構成で使っています。
 
 | ツール                  | 用途                                      |
 | :---------------------- | :---------------------------------------- |
@@ -343,9 +343,9 @@ devboxでグローバルにインストールしているツールです。
 
 **Raycast** はSpotlightの代替として使っています。クリップボード履歴、スニペット、ウィンドウ切り替えなど、これなしでは生きていけません。
 
-**Tailscale** は外出先からiPhone/iPadで自宅のMacBookにSSH接続し、Claude Codeを叩くために使っています。VPNの設定が簡単で、どこからでも安全に接続できます。
+**Tailscale** は外出先からiPhone/iPadで自宅のMacBookにSSH接続し、Claude Codeを叩くために使っています。設定が簡単で、どこからでも安全に繋がります。
 
-**Antigravity** はGoogleが2025年末にリリースしたAI IDE（VS Codeフォーク）です。Gemini 3との統合が強力で、エージェントに並列でタスクを任せられる「Manager View」が特徴的です。Claude Codeと使い分けながら、いまはトライアル中です。
+**Antigravity** はGoogleが2025年末にリリースしたAI IDE（VS Codeフォーク）です。Gemini 3との統合や、エージェントに並列でタスクを任せられる「Manager View」が便利です。Claude Codeと使い分けながら試しています。
 
 ## まとめ
 
