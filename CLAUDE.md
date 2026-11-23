@@ -29,7 +29,9 @@ Cloudflare Pages ではなく、SSR でもない。
 ルートの `tailwind.config.mjs` はどこからも読み込まれていない残骸で、編集しても何も変わらない（`@config` ディレクティブが無く、未インストールの依存を import している）。
 
 ブログ記事は `src/content/blog/{year}/*.mdx` に年ディレクトリのみで配置する。
-日本語のみで、英語コンテンツツリーは存在しない（英語は `src/pages/en/portfolio.astro` の 1 ページだけ）。
+日本語のみで、英語コンテンツツリーは存在しない。
+ポートフォリオは https://me.funailog.com/ に移した。
+`src/content/portfolio/*.yml` は CV の PDF 生成（`pnpm cv`）のためだけに残している。
 固定ページは `src/content/page/*.mdx`（about, privacy）、サイトメタデータは `src/content/site/meta.yml`。
 新しい記事は `writing-funailog-articles` スキル（`.claude/skills/`）の工程で書く。
 

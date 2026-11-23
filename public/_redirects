@@ -1,7 +1,11 @@
-/about /portfolio/ 301
-/about/ /portfolio/ 301
-/en /en/portfolio/ 301
-/en/ /en/portfolio/ 301
+/portfolio https://me.funailog.com/ 301
+/portfolio/ https://me.funailog.com/ 301
+/en/portfolio https://me.funailog.com/en/ 301
+/en/portfolio/ https://me.funailog.com/en/ 301
+/about https://me.funailog.com/ 301
+/about/ https://me.funailog.com/ 301
+/en https://me.funailog.com/en/ 301
+/en/ https://me.funailog.com/en/ 301
 /articles/preducts-first-impression /blog/2023/preducts-first-impression/ 301
 /articles/preducts-first-impression/ /blog/2023/preducts-first-impression/ 301
 /articles/popular-articles-with-google-analytics-4 /blog/2023/popular-articles-with-google-analytics-4/ 301

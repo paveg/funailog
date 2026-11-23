@@ -117,10 +117,4 @@ export const portfolioCollection = defineCollection({
 
 export type Star = z.infer<typeof starSchema>;
 export type RoleEntry = z.infer<typeof roleEntrySchema>;
-export type Profile = z.infer<typeof profileSchema>;
-export type WorkExperience = z.infer<typeof workExperienceSchema>;
-export type Project = z.infer<typeof projectSchema>;
-export type Skill = z.infer<typeof skillSchema>;
-export type Certification = z.infer<typeof certificationSchema>;
-export type Education = z.infer<typeof educationSchema>;
 export type PortfolioData = z.infer<typeof portfolioSchema>;
