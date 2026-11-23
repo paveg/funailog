@@ -192,8 +192,6 @@ const KNOWN_ROUTES = new Set([
   '/blog/tags',
   '/blog/categories',
   '/blog/series',
-  '/portfolio',
-  '/en/portfolio',
   '/rss.xml',
   '/llms.txt',
 ]);

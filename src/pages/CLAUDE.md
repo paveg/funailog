@@ -16,10 +16,11 @@
 ## i18n（手動運用）
 
 英語ページは自動生成されない。
-`src/pages/en/` に手で `.astro` ページを作り、`useTranslations('en')` を使う（現状は `en/portfolio.astro` のみ）。
+`src/pages/en/` に手で `.astro` ページを作り、`useTranslations('en')` を使う（現状、英語ページは無い）。
 `generateHreflangs()` は ja と x-default しか返さないため、
 英語版が存在するページは hreflang をページ内にハードコードする。
-実例は `portfolio.astro` と `en/portfolio.astro` のペア。
+ポートフォリオは別サイト（https://me.funailog.com/）へ移した。
+`/portfolio` などの旧 URL は `public/_redirects` で転送する。
 
 UI 文字列は `src/i18n/ui.ts` の `ja` と `en` 両方のマップにキーを追加し、コンポーネントでは `t()` で参照する。
 表示文字列をコンポーネントに直書きしない。

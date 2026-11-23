@@ -8,7 +8,7 @@ export function useTranslations(lang: SupportedLang) {
 
 /**
  * Generate hreflang array for SEO. Pages with an English counterpart
- * should hardcode their own hreflangs inline (see src/pages/en/portfolio.astro).
+ * should hardcode their own hreflangs inline.
  */
 export function generateHreflangs(basePath: string): Array<{
   path: string;

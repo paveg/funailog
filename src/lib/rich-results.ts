@@ -7,7 +7,6 @@ import type {
   CollectionPage,
   Organization,
   Person,
-  ProfilePage,
   WebPage,
   WebSite,
 } from 'schema-dts';
@@ -146,31 +145,9 @@ export const WebPageLd = (opts: {
   };
 };
 
-export const ProfilePageLd = (opts: {
-  name: string;
-  description: string;
-  url: string;
-  meta: CollectionEntry<'site'>;
-  site: URL | '';
-  lang?: string;
-}): WithContext<ProfilePage> => {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'ProfilePage',
-    '@id': opts.url,
-    name: opts.name,
-    description: opts.description,
-    url: opts.url,
-    inLanguage: opts.lang ?? 'ja',
-    mainEntity: person(opts.meta),
-    isPartOf: WebsiteLd(opts.meta, opts.site),
-  };
-};
-
 export type JsonLdSchema =
   | WithContext<Article>
   | WithContext<BreadcrumbList>
   | WithContext<CollectionPage>
-  | WithContext<ProfilePage>
   | WithContext<WebPage>
   | WithContext<WebSite>;
