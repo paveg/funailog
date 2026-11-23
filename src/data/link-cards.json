@@ -176,6 +176,13 @@
     },
     "title": "幸福駅 - Wikipedia"
   },
+  "https://jaf.or.jp/common/safety-drive/car-learning/user-test/snow/co-poisoning": {
+    "description": "車内の一酸化炭素中毒の危険性と対策について実験、検証をしました。JAFユーザーテストは、JAFが独自に実施しユーザーの疑問に答える実験、検証です。",
+    "image": {
+      "src": "/.cache/embed/edbd33a8e50245eff7ac5cd9e4167206c01d9c7a899ab3ec5d9a445a13ebbf19.avif"
+    },
+    "title": "クルマが雪で埋まった場合、CO中毒に注意（JAFユーザーテスト）"
+  },
   "https://jaga-farm.com/flexispot-e7/": {
     "description": "FlexiSpotのスタンディングデスクE7をレビュー。純正竹天板を鬼目ナット化してみた。天板への穴あけから取り付けまで詳細に解説。",
     "image": {
@@ -383,9 +390,21 @@
     },
     "title": "Introducing: React Best Practices"
   },
+  "https://webshop.montbell.jp/goods/disp.php?product_id=1121425": {
+    "description": "素材の保温性を最大限に引き出し、高い伸縮性により快眠をサポートするシームレス バロウバッグシリーズ。表地に縫い目の出ないシームレス構造にすることで保温材のロフト（かさ高さ）を高く保持し、内部からの放熱も防ぎます。保温材は、優れた耐久性を備え、濡れても保温力をキープするモンベル独自の化繊綿エクセロフト&reg;を使用しています。積雪期の登山や、冬季のキャンプなどで幅広く使用できるモデルです。",
+    "image": {
+      "src": "/.cache/embed/9f49ed2f2c809bf1b5659bdfc4ec2195f7951ff737d2e8970a83959b8ec9258c.avif"
+    },
+    "title": "【モンベル】シームレス バロウバッグ #2"
+  },
   "https://wiki.archlinux.jp/index.php/XDG_Base_Directory": {
     "image": {},
     "title": "XDG Base Directory - ArchWiki"
+  },
+  "https://www.aizu-rv.co.jp/aizufr/msdetail/679": {
+    "description": "アイズのマルチシェードは国内自社生産のキルティング生地で高い断熱性能と品質を実現。オートキャンプに車中泊、アウトドアの幅が広がります。",
+    "image": {},
+    "title": "マルチシェード|アイズの高断熱サンシェード|レクサス NX 20系|株式会社アイズ"
   },
   "https://www.amazon.co.jp/dp/B09R4GW3V6?tag=funailog-22": {
     "description": "Amazon.co.jp: Blue Microphones Spark SL XLR マイク コンデンサーマイク ショックマウント付き マイクスタンドセット [ BM1100BK + BM100CBK ] : 楽器・音響機器",
@@ -545,6 +564,11 @@
       "src": "/.cache/embed/020a96f8b51ae3aa545a4ba768b85270a6c44aca121b5faf9c63f7201569c822.avif"
     },
     "title": "Error: 404"
+  },
+  "https://www.nite.go.jp/jiko/chuikanki/mailmagazin/2025fy/vol493_260127.html": {
+    "description": "製品評価技術基盤機構のホームページです。製品安全分野の製品安全情報マガジン Vol.493の情報を掲載しています。",
+    "image": {},
+    "title": "製品安全情報マガジン　Vol.493　1月27日号「電気マット、電気毛布、電気あんかの事故」 | 製品安全 | 製品評価技術基盤機構"
   },
   "https://www.oculus.com/quest/": {
     "description": "現実を超えてゆけ、Meta Questで。MetaのVRヘッドセットは、デジタルゲームとエンターテイメントを一新します。Quest 3Sの詳細を確認し、すべてのヘッドセットをご覧ください。",
