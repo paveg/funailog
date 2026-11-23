@@ -77,7 +77,7 @@ for host in node-0 node-1; do
 done
 ```
 
-kubelet の systemd unit は `--tls-cert-file=/var/lib/kubelet/kubelet.crt` を期待しているので、ホスト名を含むファイル名のままだとノードごとに別 unit が必要になってしまう。リネームのおかげで全 worker で同じ unit を使い回せる、という地味に賢い設計です。
+kubelet の systemd unit は `--tls-cert-file=/var/lib/kubelet/kubelet.crt` を参照するので、ホスト名を含むファイル名のままだとノードごとに別 unit が必要になってしまう。リネームのおかげで全 worker で同じ unit を使い回せる、という地味に賢い設計です。
 
 ## Chapter 5: kubeconfig を 5 つ作る
 
@@ -156,7 +156,7 @@ TLS 検証は名前ベースなので動いてはいるんですが、server 上
 ssh root@server "sed -i 's|^127.0.1.1.*|127.0.1.1\tserver|' /etc/hosts"
 ```
 
-これで「FQDN は 192.168.105.3 だけが返す」状態になりました。動いていても動いている理由が想定通りでないのは気持ち悪いので、こういう違和感は早めに潰しておきたいところです。
+これで「FQDN を引いたときに 192.168.105.3 だけが返る」状態になりました。動いていても理由が想定通りでないのは気持ち悪いので、こういう違和感は早めに潰しておきたいところです。
 
 ## Chapter 7: etcd Bootstrap で SSH host key が変わっていた (G21)
 
@@ -234,7 +234,7 @@ ssh root@server mv ca.crt ca.key \
 ssh root@server systemctl restart kube-apiserver
 ```
 
-肝心のエラーが 200 行の flag dump に埋もれて見えなくなる、というのは K8s の systemd ベースのコンポーネントで普遍的に起きる罠で、**`grep -iE "error|failed|cannot|no such"` を癖にする** だけで原因にたどり着くまでが一気に早くなります。CKA の Troubleshooting (配点 30%) でも同じパターンが頻出します。
+肝心のエラーが 200 行の flag dump に埋もれて見えなくなるのは K8s の systemd 系コンポーネントでよくある罠です。**`grep -iE "error|failed|cannot|no such"` を癖にする** だけで原因特定が一気に早くなります。CKA の Troubleshooting (配点 30%) でも同じパターンが頻出します。
 
 apiserver が立ち上がった瞬間のログには、apiserver が `default/kubernetes` Service を自動生成した跡が見えます:
 
@@ -308,7 +308,7 @@ kubectl exec -it $POD_NAME -- nginx -v
 # nginx version: nginx/1.29.8
 ```
 
-`kubeadm` で立てたクラスタなら自動でこの RBAC が入るので意識せずに済みますが、Hard Way は意図的に手動 apply を要求してきます。`kubeadm` の便利さの正体がここに隠れていることが分かる、いい題材です。
+`kubeadm` で立てたクラスタなら自動でこの RBAC が入るので意識せずに済みますが、Hard Way は意図的に手動 apply を要求してきます。`kubeadm` の便利さの正体が分かる、いい題材です。
 
 最後の Test 6 (NodePort Service) では:
 
@@ -351,7 +351,7 @@ Part 1 の環境構築 4 時間と合わせて延べ 8 時間で Hard Way 完走
 
 次の [Part 3](/blog/2026/kubernetes-hard-way-apple-silicon-part3-tier1-and-upstream-bug) では完走したクラスタを学習材料として深掘りします。Tier 1 B (etcd backup/restore で `etcdctl` から `etcdutl` への分離 G24)、Tier 1 A (CoreDNS 手動 deploy)、そして本シリーズの一番の見どころである Hard Way 2024 公式の上流バグ G25 (cert SAN と Service CIDR 不整合) の分析を扱います。
 
-CoreDNS を deploy してみたら CoreDNS Pod が `READY 0/1` で停滞する、その原因が公式テンプレート 2 ファイル間の値の不整合だった、という発見の話です。
+CoreDNS を deploy したら Pod が `READY 0/1` のまま進まず、原因を追うと公式テンプレート 2 ファイル間の値の不整合だった、という話です。
 
 それでは [Part 3](/blog/2026/kubernetes-hard-way-apple-silicon-part3-tier1-and-upstream-bug) でまたお会いしましょう。
 
