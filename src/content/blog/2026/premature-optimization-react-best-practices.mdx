@@ -24,7 +24,7 @@ https://vercel.com/blog/introducing-react-best-practices
 
 **結果、GC イベントが 22% 増加しました。**
 
-この記事では、read-it-later アプリ「[Tuck](https://gettuck.app)」での実体験をもとに、ベストプラクティスを闇雲に適用する危険性と、適用すべきプロジェクトの規模感について解説します。
+この記事では、read-it-later アプリ「[Tuck](https://gettuck.app)」での実体験をもとに、ベストプラクティスをそのまま適用する危うさと、どんな規模のプロジェクトに向いているかをまとめます。
 
 ---
 
@@ -436,7 +436,7 @@ const MemoizedChild = memo(function MemoizedChild({ onClick }) {
 
 ## Vercel の推奨事項の適用範囲
 
-ここで押さえておきたいのは、Vercel の React Best Practices がどのような文脈で書かれたかです。
+Vercel の React Best Practices がどういう前提で書かれているかも見ておきます。
 
 僕の読みでは、Vercel が想定しているのは以下のような環境です。
 
@@ -444,7 +444,7 @@ const MemoizedChild = memo(function MemoizedChild({ onClick }) {
 - エッジチューニング、つまり他の最適化が完了した後の、最後の数%を絞り出す段階
 - Next.js + Vercel という、インフラとフレームワークが最適化済みの状態
 
-つまり、すでに高度に最適化されたアプリケーションの、さらなる改善のためのガイドラインです。
+つまり、すでに最適化が進んだアプリケーションをさらに改善するためのガイドラインです。
 
 ### 個人開発や中小規模のプロジェクトでは
 
@@ -454,13 +454,13 @@ const MemoizedChild = memo(function MemoizedChild({ onClick }) {
 - API のレスポンス時間の方がボトルネック
 - コンポーネントの再レンダリングは体感できるレベルではない
 
-このような状況で `memo()` を闇雲に適用しても、効果がないどころか逆効果になることがあります。
+この状況で `memo()` を闇雲に入れても、効果がないどころか逆効果になり得ます。
 
 ---
 
 ## 得られる効果 vs DX の悪化
 
-パフォーマンス改善は重要ですが、得られる効果と開発体験（DX）のトレードオフを考える必要があります。
+パフォーマンス改善は、得られる効果と開発体験（DX）のバランスで判断します。
 
 ### 今回得られた効果
 
@@ -547,7 +547,7 @@ https://github.com/paveg/tuck/pull/215
 
 ### チェックリスト
 
-最適化を適用する前に確認すべきことをまとめます。
+最適化を入れる前に確認しておきたい項目です。
 
 | チェック項目       | 内容                                          |
 | :----------------- | :-------------------------------------------- |
@@ -560,7 +560,7 @@ https://github.com/paveg/tuck/pull/215
 
 > "Premature optimization is the root of all evil" - Donald Knuth (1974)
 
-計算機科学の巨匠 Donald Knuth が1974年の論文 "Structured Programming with go to Statements" で述べた有名な言葉です。ただし、この引用には続きがあります。
+Donald Knuth が1974年の論文 "Structured Programming with go to Statements" で書いた有名な言葉です。ただし、これには続きがあります。
 
 > "We should forget about small efficiencies, say about 97% of the time: premature optimization is the root of all evil. **Yet we should not pass up our opportunities in that critical 3%.**"
 
@@ -572,7 +572,7 @@ https://github.com/paveg/tuck/pull/215
 
 ### Vercel の React Best Practices が有効な場面
 
-Vercel のガイドラインは、以下のような場面で真価を発揮します。
+Vercel のガイドラインが効く場面と、逆効果になりやすい場面を整理するとこうなります。
 
 | 適用が有効な場面                       | 適用が逆効果な場面                 |
 | :------------------------------------- | :--------------------------------- |
@@ -585,7 +585,7 @@ Vercel のガイドラインは、以下のような場面で真価を発揮し�
 
 すでに非同期ウォーターフォールを排除し、バンドルサイズを削減し、サーバーサイドレンダリングを最適化した上で、それでもあと数%のパフォーマンスを絞り出したい。そういう段階で初めて `memo()` の出番が来ます。
 
-個人開発や中小規模のプロジェクトでは、まず計測し、本当にボトルネックになっている箇所を特定してから適用しましょう。**DX を犠牲にして得られる改善がユーザーに体感できないなら、その最適化は不要です。**
+個人開発や中小規模のプロジェクトでは、まず計測してボトルネックを特定してから適用するのが無難です。**DX を犠牲にして得られる改善がユーザーに体感できないなら、その最適化は不要です。**
 
 ---
 
