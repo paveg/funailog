@@ -20,7 +20,7 @@ APIのエラーレスポンスは、書く人によってバラバラになり�
 
 同じアプリ内でもエンドポイントごとに形式が違うと、クライアント側でエラーの種類ごとに分岐を書く羽目になり、フロントエンドの同僚から「エラーのパースどうすればいいの」と聞かれます。
 
-[RFC 9457 "Problem Details for HTTP APIs"](https://www.rfc-editor.org/rfc/rfc9457.html)は、この問題を解決するための標準仕様です。HTTPエラーを5つの標準フィールドと拡張メンバーからなる統一フォーマットで表現します。
+[RFC 9457 "Problem Details for HTTP APIs"](https://www.rfc-editor.org/rfc/rfc9457.html)は、HTTPエラーを5つの標準フィールドと拡張メンバーで統一する標準仕様です。
 
 Honoにはこの仕様のミドルウェアがなかったので、**hono-problem-details**として作りました。
 
@@ -192,7 +192,7 @@ app.post('/orders/:id', async (c) => {
 });
 ```
 
-`type`と`title`は省略できます。`type`のデフォルトは`about:blank`、`title`はステータスコードから自動導出されます（409 → "Conflict"）。
+`type`と`title`は省略できます。`type`のデフォルトは`about:blank`、`title`はステータスコードから自動で決まります（409 → "Conflict"）。
 
 ### 応用: Problem Type Registry
 
@@ -282,7 +282,7 @@ app.post('/users', zValidator('json', schema, zodProblemHook()), (c) => {
 
 ### Valibot
 
-使い勝手はZodと同じです。バンドルサイズを抑えたい場合はValibotと組み合わせるのが有効です（Zod から Valibot への移行は[別の記事](/blog/2025/zod-to-valibot-migration/)に書きました）。
+使い勝手はZodと同じです。バンドルサイズを抑えたい場合はValibotが向いています（Zod から Valibot への移行は[別の記事](/blog/2025/zod-to-valibot-migration/)に書きました）。
 
 ```ts
 import { vValidator } from '@hono/valibot-validator';
@@ -348,7 +348,7 @@ const route = createRoute({
 });
 ```
 
-`problemDetailsResponse()`はステータスコードから`description`を自動導出します。拡張メンバーを含むスキーマも定義できます。
+`problemDetailsResponse()`はステータスコードから`description`を自動で設定します。拡張メンバーを含むスキーマも定義できます。
 
 ```ts
 const ValidationErrorSchema = createProblemDetailsSchema(
