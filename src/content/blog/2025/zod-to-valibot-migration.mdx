@@ -13,7 +13,7 @@ category: programming
 
 今回、サプリメント摂取管理アプリ「DailyDose」のAPIバックエンド（Cloudflare Workers + Hono）で使用していたスキーマバリデーションライブラリを Zod から Valibot に移行し、ライブラリ分のサイズを約89%削りました。
 
-この記事では、移行の動機、具体的な変換パターン、そして移行時の注意点を解説します。
+この記事では、移行の動機と具体的な変換パターン、移行時の注意点をまとめます。
 
 ## 移行の動機：バンドルサイズの比較
 
@@ -24,7 +24,7 @@ category: programming
 
 ライブラリ単体のサイズ（Minified）で比べると、**約89%の削減**になります。Gzipped でも 14KB→2KB で、約86%の削減です。
 
-この差が生まれる理由は、両ライブラリの設計思想の違いにあります。
+この差は、両ライブラリの設計の違いから生まれます。
 
 - Zod はメソッドチェーンによる直感的なAPIで、全機能がバンドルされる
 - Valibot は関数合成ベースのモジュラー設計で、使用する機能のみがバンドルされる（tree-shakingで不要分が除かれる）
@@ -197,7 +197,7 @@ const createLogSchema = v.object({
 
 ## Honoとの統合
 
-Honoでは `@hono/valibot-validator` パッケージを使用することで、Zodと同じ使用感でValibotを利用できます。
+Honoでは `@hono/valibot-validator` を使えば、Zodと同じ感覚でValibotを扱えます。
 
 ```typescript
 import { Hono } from 'hono';
@@ -231,7 +231,7 @@ app.get('/api/items/:id', vValidator('param', paramSchema), (c) => {
 
 ### 1. pipe() の理解
 
-Valibotの最大の特徴は `v.pipe()` による関数合成です。Zodのメソッドチェーンに慣れていると最初は違和感がありますが、この設計がtree-shakingを可能にしています。
+Valibotの最大の特徴は `v.pipe()` による関数合成です。Zodのメソッドチェーンに慣れていると最初は違和感がありますが、この設計のおかげでtree-shakingが効きます。
 
 ```typescript
 // Zodのメソッドチェーン
@@ -271,9 +271,9 @@ v.optional(v.nullable(v.string()));
 
 ---
 
-## テスト戦略
+## 移行後の検証
 
-移行の成功を確認するため、既存のAPIテストを活用しました。
+移行後の動作確認には、既存のAPIテストを使いました。
 
 ```bash
 # 全テストを実行
@@ -283,13 +283,13 @@ pnpm test:run
 
 スキーマバリデーションの振る舞いはAPIのレスポンスに直接影響するため、既存のインテグレーションテストが通れば機能的な互換性が担保されます。
 
-また、TypeScriptの型チェックも重要な検証手段です。
+TypeScriptの型チェックでも検証できます。
 
 ```bash
 pnpm typecheck
 ```
 
-Valibotは型推論が優れており、Zodと同等の型安全性を提供します。
+Valibotは型推論が優れており、Zodと同等の型安全性を保てます。
 
 ---
 
@@ -360,7 +360,7 @@ import { vValidator } from '@hono/valibot-validator';
 
 ## まとめ
 
-ZodからValibotへの移行は、特にバンドルサイズに敏感なエッジ環境（Cloudflare Workers）やPWAにおいて大きなメリットがあります。
+ZodからValibotへの移行は、バンドルサイズを小さく保ちたいエッジ環境（Cloudflare Workers）やPWAで特に効果的です。
 
 **移行のポイント：**
 
@@ -368,7 +368,7 @@ ZodからValibotへの移行は、特にバンドルサイズに敏感なエッ�
 - `enum` → `picklist` などの名前の違いに注意
 - 既存テストを活用して互換性を確認
 
-Valibotは積極的に開発が進んでおり、Zodに匹敵する機能を提供しながらも軽量さを維持しています。新規プロジェクトでは最初からValibotを採用することも検討に値するでしょう。
+Valibotは開発も活発で、Zodと遜色ない機能を持ちながら軽量です。新規プロジェクトなら最初からValibotを採用するのも有力な選択肢です。
 
 ---
 
