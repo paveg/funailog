@@ -31,7 +31,7 @@ https://github.com/paveg/hono-problem-details
 - 利用者の報告で変わったのは、どれも「自分の手元の環境では起きない」問題だった
   - `moduleResolution: "node"` でサブパスの型が見つからない（[#67](https://github.com/paveg/hono-problem-details/issues/67)）
   - Hono 5（5.0.0-rc.1）で `onError` の呼ばれ方が変わり、型は通るのに全エラーが `text/plain` になる（[#226](https://github.com/paveg/hono-problem-details/issues/226)）
-- 「zod が2つ入ると読み込んだ瞬間に落ちる」という報告（[#133](https://github.com/paveg/hono-problem-details/issues/133)）に対して、手元で再現しないまま破壊的変更を出した。この記事のために試し直すと、ライブラリ側では落ちていなかった
+- 「zod が2つ入ると読み込んだ瞬間に落ちる」という報告（[#133](https://github.com/paveg/hono-problem-details/issues/133)）に対して、手元で再現しないまま破壊的変更を出した。この記事のために試し直すと、ライブラリ側で落ちる構成は再現できなかった
 - 外部の方からの PR で、レスポンスに OpenTelemetry の `traceId` が入るようになった（[#139](https://github.com/paveg/hono-problem-details/pull/139)）
 - 報告ごとに、同じ種類の問題を見つけるテストを CI に足した。ただし、[#67](https://github.com/paveg/hono-problem-details/issues/67)と同じ種類の取りこぼしを CI が拾えるようになったのは8月から
 - それでも、同じクラスが2つある不具合を、ライブラリ自身のビルドで作っていた（[#235](https://github.com/paveg/hono-problem-details/issues/235)）
@@ -189,7 +189,7 @@ const ProblemDetailsSchema = getProblemDetailsSchema();
 
 再発を防ぐテストとして、モジュールを import しただけでは `.openapi()` が呼ばれないことを、spy で確かめています。
 
-ここまで、僕は一度も手元で再現していません。分析が丁寧だったので、そのまま信じてしまいました。
+ここまで、僕は一度も手元で再現していません。そのうえ Issue には「esbuild は zod を1つにまとめるので、まず間違いなく読み込みの順番の問題で、v0.7.0 で直る」と書き込んでいます。この推測も、確かめないまま書いていました。
 
 この記事を書くために、報告者に近い構成を組んで試し直しました。すると、修正前のv0.6.1でもライブラリは落ちません。理由は、`z` をどこから取ってきているかにありました。`./openapi` は `z` を `@hono/zod-openapi` から import しています。そして `@hono/zod-openapi` は、自分で zod を拡張してから、その `z` をそのまま export しています。
 
@@ -212,9 +212,11 @@ export { /* ... */ z };
 - CommonJS と ESM の混在
 - 循環 import
 
-v0.6.1・v0.7.0・v0.12.3のどれでも、ライブラリからは例外が出ませんでした（Node で動かした結果で、workerd では試していません）。同じエラーが出たのは、利用者のコード自身が `import { z } from 'zod'` で別の zod を読み込み、そこで `.openapi()` を呼んだときだけでした。報告者の Worker で実際に何が起きていたのかは、今も分かりません。
+v0.6.1・v0.7.0・v0.12.3のどれでも、ライブラリから `.openapi is not a function` は出ませんでした（Node で動かした結果で、workerd では試していません）。同じエラーが出たのは、利用者のコード自身が `import { z } from 'zod'` で別の zod を読み込み、そこで `.openapi()` を呼んだときだけでした。報告者の Worker で実際に何が起きていたのかは、今も分かりません。
 
-ただ、例外は出ないものの、別の問題が見つかりました。`@asteasolutions/zod-to-openapi` が2つ入ってしまう構成（monorepo でパッケージごとに zod のバージョンが違う場合など）では、`.openapi()` で付けた `title` や `description` が、生成した OpenAPI ドキュメントからエラーも出さずに消えます。メタデータを保存する `Map` がコピーごとに別々にあり、書き込む側と読む側で別のコピーを見てしまうためです。ライブラリを使わずに作ったスキーマでも同じように消えるので、原因はライブラリではなく、インストールのされ方にあります。そこで README に「`zod` と `@hono/zod-openapi` は1つにそろえる」という注意を書き足し、ADR-0004にも確かめ直した結果を追記しました。
+ただ、例外は出ないものの、別の問題が見つかりました。monorepo でパッケージごとに zod のバージョンが違うと、`@asteasolutions/zod-to-openapi` が2つ入ります。この構成では、共有パッケージ側で作ったスキーマの `title` や `description` が、アプリ側の `OpenAPIHono` が生成したドキュメントから、エラーも出さずに消えます。メタデータを保存する `Map` がコピーごとに別々にあり、書き込む側と読む側で別のコピーを見てしまうためです。
+
+共有パッケージ側でライブラリを使わずに作ったスキーマも同じように消え、アプリ側で作ったスキーマは消えませんでした。原因はライブラリではなく、スキーマをどちらのコピーで作ったかにあります。そこで README に「`@asteasolutions/zod-to-openapi` が1つになるように、`zod` と `@hono/zod-openapi` のバージョンをそろえる」という注意を書き足し、ADR-0004にも確かめ直した結果を追記しました。
 
 v0.7.0の変更は害がないので、そのままにしています（戻すと、また破壊的変更を出すことになります）。ただ、これで[#133](https://github.com/paveg/hono-problem-details/issues/133)が直ったとは言えません。報告者からの返事も、まだありません。
 
@@ -284,7 +286,7 @@ tsup は既定で、ESM ではチャンクを共有しますが、CommonJS で�
 | [#226](https://github.com/paveg/hono-problem-details/issues/226) | Hono 4しか入れていなかった             | Hono 5でも型検査とテストを回すジョブ         |
 | [#235](https://github.com/paveg/hono-problem-details/issues/235) | テストが `src` を直接読んでいた        | ビルド後の `dist` を CJS と ESM で読むテスト |
 
-一方、[#133](https://github.com/paveg/hono-problem-details/issues/133)はその逆で、手元で起きるかどうかを確かめずに、分析をそのまま信じて直していました。OpenTelemetry（[#139](https://github.com/paveg/hono-problem-details/pull/139)）は機能の提案なので、ここでは数えていません。
+一方、[#133](https://github.com/paveg/hono-problem-details/issues/133)はその逆で、手元で起きるかどうかを確かめないまま直していました。OpenTelemetry（[#139](https://github.com/paveg/hono-problem-details/pull/139)）は機能の提案なので、ここでは数えていません。
 
 ライブラリを公開している人に持ち帰ってほしいことを、自分への戒めも込めて3つ挙げます。
 
