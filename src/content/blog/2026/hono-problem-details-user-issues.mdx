@@ -27,7 +27,7 @@ https://github.com/paveg/hono-problem-details
 
 ## TL;DR
 
-- `app.onError(problemDetailsHandler())` の 1 行で、Hono の全エラーが `application/problem+json` になる。この入口は v0.1.0 から変えていない
+- `app.onError(problemDetailsHandler())` の 1 行で、ハンドラーやミドルウェアが投げたエラーはすべて `application/problem+json` になる（未定義のルートの 404 は `notFound` が返すので対象外）。この入口は v0.1.0 から変えていない
 - 利用者の報告で変わったのは、どれも「自分の手元の環境では起きない」問題だった
   - `moduleResolution: "node"` でサブパスの型が見つからない（[#67](https://github.com/paveg/hono-problem-details/issues/67)）
   - バンドルに zod が 2 つ入ると、`./openapi` を読み込んだ瞬間に落ちる（[#133](https://github.com/paveg/hono-problem-details/issues/133)）
@@ -92,7 +92,7 @@ Zod・Valibot・Standard Schema のバリデーターの hook、`@hono/zod-opena
 
 ### 3. エラーハンドラーの中では例外を外に出さない
 
-`localize` や `mapError` は利用者が書くコールバックなので、例外を投げることがあります。この例外を `onError` の外に出すと、Hono が `onError` を呼び直したり、`app.request()` が reject したりします。どちらの場合も、クライアントには Problem Details ではないレスポンスが返ります。そこで、コールバックが投げた例外は握りつぶして、変換前の内容で応答します（[ADR-0003](https://github.com/paveg/hono-problem-details/blob/main/docs/adr/0003-swallow-exceptions-from-localize-callback.md)、[ADR-0005](https://github.com/paveg/hono-problem-details/blob/main/docs/adr/0005-swallow-exceptions-from-map-error-callback.md)）。翻訳が壊れても、404 は 404 のまま返ります。その代わり、コールバック自体の不具合はどこにも記録されません。気づきたい場合は、コールバックの中で例外を捕まえてログに出してください（ADR にもそう書いています）。
+`localize` や `mapError` は利用者が書くコールバックなので、例外を投げることがあります。この例外を `onError` の外に出すと、Hono 4 では `app.request()` が reject します（ミドルウェアがあると、`onError` も呼び直されます）。Hono 5 では `500 text/plain` が返ります。どちらでも、クライアントには Problem Details ではないレスポンスが返ります。そこで、コールバックが投げた例外は握りつぶして、変換前の内容で応答します（[ADR-0003](https://github.com/paveg/hono-problem-details/blob/main/docs/adr/0003-swallow-exceptions-from-localize-callback.md)、[ADR-0005](https://github.com/paveg/hono-problem-details/blob/main/docs/adr/0005-swallow-exceptions-from-map-error-callback.md)）。翻訳が壊れても、404 は 404 のまま返ります。その代わり、コールバック自体の不具合はどこにも記録されません。気づきたい場合は、コールバックの中で例外を捕まえてログに出してください（ADR にもそう書いています）。
 
 ### 4. 必須の依存は `hono` だけ
 
@@ -118,7 +118,8 @@ Zod や Valibot、OpenTelemetry との連携はすべて optional な peer depen
 ```text
 Cannot find module 'hono-problem-details/standard-schema' or its corresponding type declarations.
   There are types at '.../dist/integrations/standard-schema.d.ts', but this result could not be
-  resolved under your current 'moduleResolution' setting.
+  resolved under your current 'moduleResolution' setting. Consider updating to 'node16',
+  'nodenext', or 'bundler'.
 ```
 
 `package.json` の `exports` にはサブパスを書いていましたが、TypeScript の `moduleResolution: "node"`（`node10`）は `exports` を読みません。このリポジトリの `tsconfig.json` は `bundler` だったので、この差に気づいていませんでした。
@@ -158,7 +159,7 @@ import { z } from '@hono/zod-openapi';
 
 export const ProblemDetailsSchema = z
   .object({
-    type: z.string().openapi({ description: 'Problem type URI' }),
+    type: z.string().openapi({ description: 'Problem type URI', example: 'about:blank' }),
     // ...
   })
   .openapi({ title: 'ProblemDetails' });
@@ -201,7 +202,7 @@ const ProblemDetailsSchema = getProblemDetailsSchema();
 
 同じ 5 月に、外部の方から PR が届きました。エラーレスポンスに OpenTelemetry の `traceId` を入れて、フロントエンドからサーバーのトレースを引けるようにする、という提案です。ASP.NET Core の `DefaultProblemDetailsFactory` が同じことをしている、という参照も付いていました。
 
-設計で気にしたのは依存です。ライブラリの中で `@opentelemetry/api` を import すると、使わない人にも依存が増えます。この PR では、利用者が `@opentelemetry/api` を引数で渡します。ライブラリ側は import せず、必要な形だけを自前の型（`OtelApiLike`）で定義しています。`@opentelemetry/api` は optional な peer dependency なので、使わない人の依存は増えません。
+設計で気にしたのは依存です。ライブラリの中で `@opentelemetry/api` を import すると、使わない人にも依存が増えます。届いた時点の PR は、ライブラリの中で `@opentelemetry/api` を import していました。レビューの途中で、利用者が `@opentelemetry/api` を引数で渡す形に変わりました。そのうえで僕から、import をやめて、必要な形だけを自前の型（`OtelApiLike`）で定義してほしいとお願いしています。`@opentelemetry/api` は optional な peer dependency なので、使わない人の依存は増えません。
 
 ```ts
 import * as otelApi from '@opentelemetry/api';
@@ -261,14 +262,14 @@ tsup は既定で、ESM ではチャンクを共有しますが、CommonJS で�
 | :--- | :------------------------------------- | :------------------------------------------- |
 | #67  | `moduleResolution` が `bundler` だった | `attw` で `node10` を含む型の解決を検査      |
 | #133 | zod が 1 つしか入っていなかった        | import だけで `.openapi()` が呼ばれないこと  |
-| #226 | Hono 4 しか入れていなかった            | Hono 5 の上で全テストを回すジョブ            |
+| #226 | Hono 4 しか入れていなかった            | Hono 5 の上で型検査とテストを回すジョブ      |
 | #235 | テストが `src` を直接読んでいた        | ビルド後の `dist` を CJS と ESM で読むテスト |
 
 ライブラリを公開している人に持ち帰ってほしいことを、自分への戒めも込めて 3 つ挙げます。
 
 - **モジュールのトップレベルで、他のパッケージの状態に頼る処理を動かさない。** 読み込み時の例外は、利用者に避ける手段がありません
 - **`instanceof` で、パッケージをまたいだクラスの同一性を仮定しない。** バンドラーとビルドの設定しだいで、同じクラスは簡単に 2 つになります
-- **型が通ることは、動くことの証明にならない。** Hono 5 の `ErrorHandler` のように、依存先が型の定義を変えたせいで、古い呼ばれ方を前提にしたコードでも型が通ることがあります。テストは公開する形（`dist`）と、サポートするメジャーバージョンの上で回します
+- **型が通ることは、動くことの証明にならない。** Hono 5 の `ErrorHandler` のように、依存先が型の定義を変えたせいで、古い呼ばれ方を前提にしたコードでも型が通ることがあります。テストは、公開する形（`dist`）でも、サポートするメジャーバージョンの上でも回します
 
 そして、報告者の方々には本当に助けられました。#133 は原因の分析と修正案まで、#226 は再現コードと回避策まで書いてくれていて、僕がやったのはほとんど「確かめて、選んで、テストを書く」ことでした。ありがとうございました。
 
