@@ -225,11 +225,11 @@ export { /* ... */ z };
 
 v0.6.1・v0.7.0・v0.12.3のどれでも、ライブラリから `.openapi is not a function` は出ませんでした（Node で動かした結果で、workerd では試していません）。同じエラーが出たのは、利用者のコード自身が `import { z } from 'zod'` で別の zod を読み込み、そこで `.openapi()` を呼んだときだけでした。報告者の Worker で実際に何が起きていたのかは、今も分かりません。
 
-ただ、例外は出ないものの、別の問題が見つかりました。monorepo でパッケージごとに zod のバージョンが違うと、`@asteasolutions/zod-to-openapi` が2つ入ります。この構成では、共有パッケージ（`packages/shared`）側で作ったスキーマに `.openapi()` で付けた `title` や `description` が、アプリ（`packages/app`）側の `OpenAPIHono` が生成したドキュメントから、エラーも出さずに消えます。メタデータを保存する `Map` がコピーごとに別々にあり、書き込む側と読む側で別のコピーを見てしまうためです（`.describe()` で付けた説明は残ります）。
+ただ、例外は出ないものの、別の問題が見つかりました。pnpm の monorepo でパッケージごとに zod のバージョンが違うと、`@asteasolutions/zod-to-openapi` が2つ入ります（npm workspaces で試した構成では1つにまとまり、消えませんでした）。この構成では、共有パッケージ（`packages/shared`）側で作ったスキーマに `.openapi()` で付けた `title` や `description` が、アプリ（`packages/app`）側の `OpenAPIHono` が生成したドキュメントから、エラーも出さずに消えます。メタデータを保存する `Map` がコピーごとに別々にあり、書き込む側と読む側で別のコピーを見てしまうためです（`.describe()` で付けた説明は残ります）。
 
 <Image
   src={metadataSplitFigure}
-  alt="monorepo で zod のバージョンが分かれたときの図。packages/shared で作ったライブラリのスキーマは、title を zod-to-openapi ① の Map ① に書く。そのスキーマを packages/app の OpenAPIHono のルートに渡すと、ドキュメントの生成は zod-to-openapi ② の Map ② だけを読むので title が undefined になる。app 側で作ったスキーマは Map ② に書かれるので title が残る。例外は出ない"
+  alt="pnpm の monorepo で zod のバージョンが分かれたときの図。packages/shared で作ったライブラリのスキーマは、title を zod-to-openapi ① の Map ① に書く。そのスキーマを packages/app の OpenAPIHono のルートに渡すと、ドキュメントの生成は zod-to-openapi ② の Map ② だけを読むので title が undefined になる。app 側で作ったスキーマは Map ② に書かれるので title が残る。例外は出ない"
   width={1200}
 />
 
