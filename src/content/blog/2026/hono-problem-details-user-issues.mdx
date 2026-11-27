@@ -9,13 +9,13 @@ category: programming
 
 ## はじめに
 
-この記事は [Hono Advent Calendar 2026](https://qiita.com/advent-calendar/2026/hono) の 11 日目です。
+この記事は [Hono Advent Calendar 2026](https://qiita.com/advent-calendar/2026/hono) の11日目です。
 
-2026 年 2 月に、ミドルウェア **hono-problem-details** を公開しました。Hono のエラーレスポンスを [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457.html)（Problem Details for HTTP APIs）の形に揃えるものです。使い方は[公開時の記事](/blog/2026/hono-problem-details-rfc9457/)にまとめています。
+2026年2月に、ミドルウェア **hono-problem-details** を公開しました。Hono のエラーレスポンスを [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457.html)（Problem Details for HTTP APIs）の形に揃えるものです。使い方は[公開時の記事](/blog/2026/hono-problem-details-rfc9457/)にまとめています。
 
 https://github.com/paveg/hono-problem-details
 
-それから 9 か月で v0.1.0 は v0.12.3 になりました。自分で見つけて直したものも多いのですが、気づけなかった問題は、利用者からの Issue や PR で知りました。この記事では、公開から維持している設計の軸と、利用者の Issue や PR で変わったところを判断の理由とあわせて書きます。
+それから9か月でv0.1.0はv0.12.3になりました。自分で見つけて直したものも多いのですが、気づけなかった問題は、利用者からの Issue や PR で知りました。この記事では、公開から維持している設計の軸と、利用者の Issue や PR で変わったところを判断の理由とあわせて書きます。
 
 調査・事実確認に AI（Claude）を使い、AI が書いた下書きを僕が校正する形で執筆しています。
 
@@ -27,14 +27,14 @@ https://github.com/paveg/hono-problem-details
 
 ## TL;DR
 
-- `app.onError(problemDetailsHandler())` の 1 行で、ハンドラーやミドルウェアが投げたエラーはすべて `application/problem+json` になる（未定義のルートの 404 は `notFound` が返すので対象外）。この入口は v0.1.0 から変えていない
+- `app.onError(problemDetailsHandler())` の1行で、ハンドラーやミドルウェアが投げたエラーはすべて `application/problem+json` になる（未定義のルートの404は `notFound` が返すので対象外）。この入口はv0.1.0から変えていない
 - 利用者の報告で変わったのは、どれも「自分の手元の環境では起きない」問題だった
   - `moduleResolution: "node"` でサブパスの型が見つからない（[#67](https://github.com/paveg/hono-problem-details/issues/67)）
   - Hono 5（5.0.0-rc.1）で `onError` の呼ばれ方が変わり、型は通るのに全エラーが `text/plain` になる（[#226](https://github.com/paveg/hono-problem-details/issues/226)）
-- 「zod が 2 つ入ると読み込んだ瞬間に落ちる」という報告（[#133](https://github.com/paveg/hono-problem-details/issues/133)）に対して、手元で再現しないまま破壊的変更を出した。この記事のために試し直すと、ライブラリ側では落ちていなかった
+- 「zod が2つ入ると読み込んだ瞬間に落ちる」という報告（[#133](https://github.com/paveg/hono-problem-details/issues/133)）に対して、手元で再現しないまま破壊的変更を出した。この記事のために試し直すと、ライブラリ側では落ちていなかった
 - 外部の方からの PR で、レスポンスに OpenTelemetry の `traceId` が入るようになった（[#139](https://github.com/paveg/hono-problem-details/pull/139)）
-- 報告ごとに、同じ種類の問題を見つけるテストを CI に足した。ただし、#67 と同じ種類の取りこぼしを CI が拾えるようになったのは 8 月から
-- それでも、同じクラスが 2 つある不具合を、ライブラリ自身のビルドで作っていた（[#235](https://github.com/paveg/hono-problem-details/issues/235)）
+- 報告ごとに、同じ種類の問題を見つけるテストを CI に足した。ただし、#67と同じ種類の取りこぼしを CI が拾えるようになったのは8月から
+- それでも、同じクラスが2つある不具合を、ライブラリ自身のビルドで作っていた（[#235](https://github.com/paveg/hono-problem-details/issues/235)）
 
 ---
 
@@ -42,7 +42,7 @@ https://github.com/paveg/hono-problem-details
 
 Hono の `HTTPException` をそのまま投げると、レスポンスは `text/plain` になります。ルートごとに `{ error }` や `{ message }` を返していると、クライアント側で形ごとに分岐を書く必要があります。
 
-RFC 9457 は、エラーの形を `type`・`status`・`title`・`detail`・`instance` の 5 つの標準メンバーと、任意の拡張メンバーで決める仕様です。hono-problem-details は `app.onError` に渡すハンドラーとして、Hono アプリのエラーレスポンスをこの形に統一します。
+RFC 9457は、エラーの形を `type`・`status`・`title`・`detail`・`instance` の5つの標準メンバーと、任意の拡張メンバーで決める仕様です。hono-problem-details は `app.onError` に渡すハンドラーとして、Hono アプリのエラーレスポンスをこの形に統一します。
 
 ```ts
 import { Hono } from 'hono';
@@ -80,9 +80,9 @@ Zod・Valibot・Standard Schema 向けのバリデーター hook、`@hono/zod-op
 
 ## 公開から維持している設計の軸
 
-次の 4 つは、公開から今まで方針として維持しています。ただし 2 と 3 は、公開後に見つかった穴を v0.1.1、[#77](https://github.com/paveg/hono-problem-details/pull/77)、v0.12.0 で塞いで、方針どおりに直したものです。判断の理由は、リポジトリの [docs/adr](https://github.com/paveg/hono-problem-details/tree/main/docs/adr) に ADR（Architecture Decision Record）として残しています。
+次の4つは、公開から今まで方針として維持しています。判断の理由は、リポジトリの [docs/adr](https://github.com/paveg/hono-problem-details/tree/main/docs/adr) に ADR（Architecture Decision Record）として残しています。
 
-### 1. 入口は `app.onError` の 1 行
+### 1. 入口は `app.onError` の1行
 
 既存の `throw new HTTPException(404)` を書き換えずに導入できることを最優先にしています。ハンドラーは `ProblemDetailsError`、`mapError` の結果、`HTTPException`、それ以外の `Error` の順に見て、どれも Problem Details に変換します。
 
@@ -90,9 +90,13 @@ Zod・Valibot・Standard Schema 向けのバリデーター hook、`@hono/zod-op
 
 拡張メンバーはトップレベルにフラットに展開します。名前がぶつかったときは、標準メンバーを優先します（[ADR-0002](https://github.com/paveg/hono-problem-details/blob/main/docs/adr/0002-extension-flatten-with-standard-field-precedence.md)）。`extensions: { status: 999 }` を渡しても、`status` は HTTP のステータスコードのままです。
 
+もっとも、最初のv0.1.0では、拡張メンバーが標準メンバーを上書きできてしまっていました。方針どおりになったのはv0.1.1からです。
+
 ### 3. エラーハンドラーの中では例外を外に出さない
 
-`localize` や `mapError` は利用者が書くコールバックなので、例外を投げることがあります。この例外を `onError` の外に出すと、Hono 4 では `app.request()` が reject します（ミドルウェアがあると、`onError` も呼び直されます）。Hono 5 では `500 text/plain` が返ります。どちらも、Problem Details ではないレスポンスになります。そこで、コールバックが投げた例外は握りつぶして、変換前の内容で応答します（[ADR-0003](https://github.com/paveg/hono-problem-details/blob/main/docs/adr/0003-swallow-exceptions-from-localize-callback.md)、[ADR-0005](https://github.com/paveg/hono-problem-details/blob/main/docs/adr/0005-swallow-exceptions-from-map-error-callback.md)）。翻訳が壊れても、404 は 404 のまま返ります。その代わり、コールバック自体の不具合はどこにも記録されません。気づきたい場合は、コールバックの中で例外をキャッチしてログに出してください（ADR にもそう書いています）。
+`localize` や `mapError` は利用者が書くコールバックなので、例外を投げることがあります。この例外を `onError` の外に出すと、Hono 4では `app.request()` が reject します（ミドルウェアがあると、`onError` も呼び直されます）。Hono 5では `500 text/plain` が返ります。どちらも、Problem Details ではないレスポンスになります。そこで、コールバックが投げた例外は握りつぶして、変換前の内容で応答します（[ADR-0003](https://github.com/paveg/hono-problem-details/blob/main/docs/adr/0003-swallow-exceptions-from-localize-callback.md)、[ADR-0005](https://github.com/paveg/hono-problem-details/blob/main/docs/adr/0005-swallow-exceptions-from-map-error-callback.md)）。翻訳が壊れても、404は404のまま返ります。その代わり、コールバック自体の不具合はどこにも記録されません。気づきたい場合は、コールバックの中で例外をキャッチしてログに出してください（ADR にもそう書いています）。
+
+この方針も、最初から守れていたわけではありません。`localize` はv0.1.8（[#77](https://github.com/paveg/hono-problem-details/pull/77)）で、`mapError` はv0.12.0（[#213](https://github.com/paveg/hono-problem-details/pull/213)）で、例外が外に漏れる穴を塞いでいます。
 
 ### 4. 必須の依存は `hono` だけ
 
@@ -109,7 +113,7 @@ Zod や Valibot、OpenTelemetry との連携はすべて optional な peer depen
 | 2026-03 | #67 サブパスの型が解決できない            | `typesVersions` を追加                           | v0.1.6   |
 | 2026-05 | #133 zod の二重読み込みで落ちるという報告 | スキーマの定数を廃止し、関数で返す（破壊的変更） | v0.7.0   |
 | 2026-05 | #139 OpenTelemetry 連携の PR              | `otelApi` オプションで `traceId` を入れる        | v0.8.0   |
-| 2026-11 | #226 Hono 5 で動かない                    | `onError` の 2 つの呼ばれ方を両方受ける          | v0.12.1  |
+| 2026-11 | #226 Hono 5で動かない                     | `onError` の2つの呼ばれ方を両方受ける            | v0.12.1  |
 
 ### #67：`moduleResolution: "node"` でサブパスが import できない
 
@@ -139,13 +143,13 @@ Cannot find module 'hono-problem-details/standard-schema' or its corresponding t
 }
 ```
 
-修正は 8 行でしたが、返信までに 2 週間以上かかりました（Issue のコメントで謝っています）。
+修正は8行でしたが、返信までに2週間以上かかりました（Issue のコメントで謝っています）。
 
-その後、公開する型を TypeScript 5.0〜7.0 で確かめる CI を段階的に足しました。ただ、この CI は `dist` を相対パスで読んでいたので、`exports` と `typesVersions` を検査できていませんでした。気づいたのは #67 から 5 か月後です。8 月の [#192](https://github.com/paveg/hono-problem-details/pull/192) で、テストの import をパッケージ名に切り替えました。あわせて、[are-the-types-wrong](https://github.com/arethetypeswrong/arethetypeswrong.github.io)（`attw --pack`）で、pack した状態のパッケージを検査し、型が解決できるかを確かめています。対象は `node10`・`node16`・`bundler` の 3 つです。#67 と同じ種類の取りこぼしは、ここで見つかるはずです。
+その後、公開する型を TypeScript 5.0〜7.0で確かめる CI を段階的に足しました。ただ、この CI は `dist` を相対パスで読んでいたので、`exports` と `typesVersions` を検査できていませんでした。気づいたのは#67から5か月後です。8月の [#192](https://github.com/paveg/hono-problem-details/pull/192) で、テストの import をパッケージ名に切り替えました。あわせて、[are-the-types-wrong](https://github.com/arethetypeswrong/arethetypeswrong.github.io)（`attw --pack`）で、pack した状態のパッケージを検査し、型が解決できるかを確かめています。対象は `node10`・`node16`・`bundler` の3つです。#67と同じ種類の取りこぼしは、ここで見つかるはずです。
 
 ### #133：手元で再現しないまま、破壊的変更を出した
 
-5 月に届いた Issue は、Cloudflare Workers の大きなバンドル（300 以上のモジュール）を `wrangler deploy` すると、`hono-problem-details/openapi` を読み込んだ時点で次の例外が出る、というものでした。
+5月に届いた Issue は、Cloudflare Workers の大きなバンドル（300以上のモジュール）を `wrangler deploy` すると、`hono-problem-details/openapi` を読み込んだ時点で次の例外が出る、というものでした。
 
 ```text
 TypeError: e.string(...).openapi is not a function
@@ -165,16 +169,16 @@ export const ProblemDetailsSchema = z
   .openapi({ title: 'ProblemDetails' });
 ```
 
-`.openapi()` は、`@hono/zod-openapi` が初期化時に zod のプロトタイプへ足すメソッドです。報告では、バンドルに zod が 2 つ入っていて、拡張されていないほうの zod でこのコードが動いている、ということでした。読み込んだ時点で落ちるので、利用者は import をやめるしかありません。
+`.openapi()` は、`@hono/zod-openapi` が初期化時に zod のプロトタイプへ足すメソッドです。報告では、バンドルに zod が2つ入っていて、拡張されていないほうの zod でこのコードが動いている、ということでした。読み込んだ時点で落ちるので、利用者は import をやめるしかありません。
 
-報告者は、2 つの修正案まで書いてくれていました。
+報告者は、2つの修正案まで書いてくれていました。
 
 - 案 A：定数をやめて、スキーマを返す関数にする（破壊的変更）
 - 案 B：`Proxy` で包み、初めて触られたときに組み立てる（API はそのまま）
 
 破壊的変更を避けたかったので、案 B を試しました。`.shape` や `.safeParse()` は動きましたが、`OpenAPIHono` に渡すと、生成された OpenAPI ドキュメントから `title: "ProblemDetails"` が消えました。`@asteasolutions/zod-to-openapi` はメタデータを、スキーマのオブジェクトそのものをキーにした `Map` で持っています。`Proxy` と中身のスキーマは別のオブジェクトなので、`Map` から引けません。
 
-結局、報告者が推していた案 A にしました。v0.7.0 で `ProblemDetailsSchema` を廃止し、メモ化した関数 `getProblemDetailsSchema()` に置き換えています（[ADR-0004](https://github.com/paveg/hono-problem-details/blob/main/docs/adr/0004-defer-openapi-schema-construction-via-factory.md)）。
+結局、報告者が推していた案 A にしました。v0.7.0で `ProblemDetailsSchema` を廃止し、メモ化した関数 `getProblemDetailsSchema()` に置き換えています（[ADR-0004](https://github.com/paveg/hono-problem-details/blob/main/docs/adr/0004-defer-openapi-schema-construction-via-factory.md)）。
 
 ```ts
 // v0.7.0 以降
@@ -187,7 +191,7 @@ const ProblemDetailsSchema = getProblemDetailsSchema();
 
 ここまで、僕は一度も手元で再現していません。分析が丁寧だったので、そのまま信じてしまいました。
 
-この記事を書くために、報告者に近い構成を組んで試し直しました。すると、修正前の v0.6.1 でもライブラリは落ちません。理由は、`z` をどこから取ってきているかにありました。`./openapi` は `z` を `@hono/zod-openapi` から import しています。そして `@hono/zod-openapi` は、自分で zod を拡張してから、その `z` をそのまま export しています。
+この記事を書くために、報告者に近い構成を組んで試し直しました。すると、修正前のv0.6.1でもライブラリは落ちません。理由は、`z` をどこから取ってきているかにありました。`./openapi` は `z` を `@hono/zod-openapi` から import しています。そして `@hono/zod-openapi` は、自分で zod を拡張してから、その `z` をそのまま export しています。
 
 ```js
 // @hono/zod-openapi の dist/index.mjs（v1.6.3、抜粋）
@@ -198,7 +202,7 @@ extendZodWithOpenApi(z);
 export { /* ... */ z };
 ```
 
-つまり、ライブラリが使う `z` は必ず拡張済みです。zod が 2 つ入っていても、ライブラリの中で拡張前の zod を使うことはありません。
+つまり、ライブラリが使う `z` は必ず拡張済みです。zod が2つ入っていても、ライブラリの中で拡張前の zod を使うことはありません。
 
 試した構成は次のとおりです。
 
@@ -208,15 +212,15 @@ export { /* ... */ z };
 - CommonJS と ESM の混在
 - 循環 import
 
-v0.6.1・v0.7.0・v0.12.3 のどれでも、ライブラリからは例外が出ませんでした（Node で動かした結果で、workerd では試していません）。同じエラーが出たのは、利用者のコード自身が `import { z } from 'zod'` で別の zod を読み込み、そこで `.openapi()` を呼んだときだけでした。報告者の Worker で実際に何が起きていたのかは、今も分かりません。
+v0.6.1・v0.7.0・v0.12.3のどれでも、ライブラリからは例外が出ませんでした（Node で動かした結果で、workerd では試していません）。同じエラーが出たのは、利用者のコード自身が `import { z } from 'zod'` で別の zod を読み込み、そこで `.openapi()` を呼んだときだけでした。報告者の Worker で実際に何が起きていたのかは、今も分かりません。
 
-ただ、例外は出ないものの、別の問題が見つかりました。`@asteasolutions/zod-to-openapi` が 2 つ入ってしまう構成（monorepo でパッケージごとに zod のバージョンが違う場合など）では、`.openapi()` で付けた `title` や `description` が、生成した OpenAPI ドキュメントからエラーも出さずに消えます。メタデータを保存する `Map` がコピーごとに別々にあり、書き込む側と読む側で別のコピーを見てしまうためです。ライブラリを使わずに作ったスキーマでも同じように消えるので、原因はライブラリではなく、インストールのされ方にあります。そこで README に「`zod` と `@hono/zod-openapi` は 1 つにそろえる」という注意を書き足し、ADR-0004 にも確かめ直した結果を追記しました。
+ただ、例外は出ないものの、別の問題が見つかりました。`@asteasolutions/zod-to-openapi` が2つ入ってしまう構成（monorepo でパッケージごとに zod のバージョンが違う場合など）では、`.openapi()` で付けた `title` や `description` が、生成した OpenAPI ドキュメントからエラーも出さずに消えます。メタデータを保存する `Map` がコピーごとに別々にあり、書き込む側と読む側で別のコピーを見てしまうためです。ライブラリを使わずに作ったスキーマでも同じように消えるので、原因はライブラリではなく、インストールのされ方にあります。そこで README に「`zod` と `@hono/zod-openapi` は1つにそろえる」という注意を書き足し、ADR-0004にも確かめ直した結果を追記しました。
 
-v0.7.0 の変更は害がないので、そのままにしています（戻すと、また破壊的変更を出すことになります）。ただ、これで #133 が直ったとは言えません。報告者からの返事も、まだありません。
+v0.7.0の変更は害がないので、そのままにしています（戻すと、また破壊的変更を出すことになります）。ただ、これで#133が直ったとは言えません。報告者からの返事も、まだありません。
 
 ### #139：OpenTelemetry の `traceId` を入れたい
 
-同じ 5 月に、外部の方から PR が届きました。エラーレスポンスに OpenTelemetry の `traceId` を入れて、フロントエンドからサーバーのトレースを引けるようにする、という提案です。ASP.NET Core の `DefaultProblemDetailsFactory` が同じことをしている、という事例も添えられていました。
+同じ5月に、外部の方から PR が届きました。エラーレスポンスに OpenTelemetry の `traceId` を入れて、フロントエンドからサーバーのトレースを引けるようにする、という提案です。ASP.NET Core の `DefaultProblemDetailsFactory` が同じことをしている、という事例も添えられていました。
 
 設計で気にしたのは、依存が増えることです。届いた時点の PR は、ライブラリの中で `@opentelemetry/api` を import していました。このままでは、使わない人にも依存が増えてしまいます。レビューの途中で、PR の作成者が `@opentelemetry/api` を引数で渡す形に変えてくれました。そのうえで僕から、import をやめて必要な形だけを自前の型（`OtelApiLike`）で定義してほしいとお願いしています。`@opentelemetry/api` は optional な peer dependency なので、使わない人の依存は増えません。
 
@@ -228,17 +232,17 @@ app.onError(problemDetailsHandler({ otelApi }));
 // トレースが有効なとき、レスポンスに "traceId" が入る
 ```
 
-レビューでやり取りしたあとマージし、v0.8.0 で出しました。直後に、型の互換性テストへ OpenTelemetry の連携を足す PR も同じ方から届いています（[#144](https://github.com/paveg/hono-problem-details/pull/144)）。
+レビューでやり取りしたあとマージし、v0.8.0で出しました。直後に、型の互換性テストへ OpenTelemetry の連携を足す PR も同じ方から届いています（[#144](https://github.com/paveg/hono-problem-details/pull/144)）。
 
-### #226：Hono 5 で、型は通るのに全エラーが `text/plain` になる
+### #226：Hono 5で、型は通るのに全エラーが `text/plain` になる
 
-11 月には、Hono 5（`5.0.0-rc.1`）で使うと、どのエラーも `500 text/plain` になるという報告が届きました。
+11月には、Hono 5（`5.0.0-rc.1`）で使うと、どのエラーも `500 text/plain` になるという報告が届きました。
 
-Hono 4 は `onError` のハンドラーを `(error, c)` で呼びます。Hono 5 では `onError` がエラーを扱うミドルウェアに変わり、`(c, next)` で呼ばれます。エラーは `c.error` に入ります。hono-problem-details は第 1 引数の context をエラーとして、第 2 引数の `next` を context として扱ったため、`c.set is not a function` で落ちていました。
+Hono 4は `onError` のハンドラーを `(error, c)` で呼びます。Hono 5では `onError` がエラーを扱うミドルウェアに変わり、`(c, next)` で呼ばれます。エラーは `c.error` に入ります。hono-problem-details は第1引数の context をエラーとして、第2引数の `next` を context として扱ったため、`c.set is not a function` で落ちていました。
 
-厄介なのは、型チェックが通ることです。`problemDetailsHandler()` が返す関数の型は Hono の `ErrorHandler` で、Hono 5 はこの型自体をミドルウェアの型に定義し直しています。`app.onError(problemDetailsHandler())` は、Hono 4 でも 5 でもコンパイルが通ります。
+厄介なのは、型チェックが通ることです。`problemDetailsHandler()` が返す関数の型は Hono の `ErrorHandler` で、Hono 5はこの型自体をミドルウェアの型に定義し直しています。`app.onError(problemDetailsHandler())` は、Hono 4でも5でもコンパイルが通ります。
 
-`hono` の peer dependency は `>=4.13.7` で上限を付けていないので、Hono 5.0.0 が出ればその範囲に入ります。Hono 4 の利用者を切り捨てたくもないので、1 つのビルドで両方の呼ばれ方を受けることにしました（[ADR-0006](https://github.com/paveg/hono-problem-details/blob/main/docs/adr/0006-support-both-hono-onerror-signatures.md)）。
+`hono` の peer dependency は `>=4.13.7` で上限を付けていないので、Hono 5.0.0が出ればその範囲に入ります。Hono 4の利用者を切り捨てたくもないので、1つのビルドで両方の呼ばれ方を受けることにしました（[ADR-0006](https://github.com/paveg/hono-problem-details/blob/main/docs/adr/0006-support-both-hono-onerror-signatures.md)）。
 
 ```ts
 // 処理の本体は handle(error, c) に置き、呼ばれ方だけを振り分ける
@@ -250,47 +254,47 @@ const dispatch = (first: Error | Context, second: Context | Next) => {
 return dispatch as unknown as ErrorHandler;
 ```
 
-どちらの呼ばれ方かは、`first instanceof Context` ではなく、2 つ目の引数が関数かどうかで判定しています。バンドルに同じパッケージが 2 つ入る構成を考えたためです。そうなると、`instanceof` は同じはずのクラスを別物と判定してしまいます。Hono 5 で 2 つ目の引数にくる `next` は関数で、Hono 4 の `c` は関数ではないので、この判定はクラスの同一性に頼りません。
+どちらの呼ばれ方かは、`first instanceof Context` ではなく、2つ目の引数が関数かどうかで判定しています。バンドルに同じパッケージが2つ入る構成を考えたためです。そうなると、`instanceof` は同じはずのクラスを別物と判定してしまいます。Hono 5で2つ目の引数にくる `next` は関数で、Hono 4の `c` は関数ではないので、この判定はクラスの同一性に頼りません。
 
-`c.error` が無いのに `(c, next)` で呼ばれたときは、`next()` を呼んで次の処理に渡します。Problem Details を作る元のエラーが無いので、ここで 500 を返すと、起きていないエラーを作ることになるためです。
+`c.error` が無いのに `(c, next)` で呼ばれたときは、`next()` を呼んで次の処理に渡します。Problem Details を作る元のエラーが無いので、ここで500を返すと、起きていないエラーを作ることになるためです。
 
-Hono 5 を入れた環境でも全テストを回す CI ジョブを足して、v0.12.1 で出しました。報告者の再現コードと回避策が Issue に書かれていたので、確認は短時間で済みました。
+Hono 5を入れた環境でも全テストを回す CI ジョブを足して、v0.12.1で出しました。報告者の再現コードと回避策が Issue に書かれていたので、確認は短時間で済みました。
 
 ---
 
-## 同じクラスが 2 つある不具合を、自分で作っていた
+## 同じクラスが2つある不具合を、自分で作っていた
 
-Hono 5 に対応する修正（#226）を出した 3 日後、今度は自分で不具合を見つけました（[#235](https://github.com/paveg/hono-problem-details/issues/235)）。CommonJS のビルドで、バリデーターの hook に `delegateToHandler: true` を付けると、422 のはずが 500 になります。
+Hono 5に対応する修正（#226）を出した3日後、今度は自分で不具合を見つけました（[#235](https://github.com/paveg/hono-problem-details/issues/235)）。CommonJS のビルドで、バリデーターの hook に `delegateToHandler: true` を付けると、422のはずが500になります。
 
-tsup は既定で、ESM ではチャンクを共有しますが、CommonJS では共有しません。CommonJS では、`index.cjs` と `zod.cjs`、`valibot.cjs`、`standard-schema.cjs` がそれぞれ自分の `ProblemDetailsError` を持っていました。hook が投げたエラーは `zod.cjs` のクラスのインスタンスなので、ハンドラーの `error instanceof ProblemDetailsError` が偽になり、500 に落ちていました。
+tsup は既定で、ESM ではチャンクを共有しますが、CommonJS では共有しません。CommonJS では、`index.cjs` と `zod.cjs`、`valibot.cjs`、`standard-schema.cjs` がそれぞれ自分の `ProblemDetailsError` を持っていました。hook が投げたエラーは `zod.cjs` のクラスのインスタンスなので、ハンドラーの `error instanceof ProblemDetailsError` が偽になり、500に落ちていました。
 
-ちょうど #133 で疑った「同じはずのものが 2 つある」状態を、ライブラリ自身のビルドで本当に作ってしまっていました。テストは `src` を直接 import していたため、ビルド後の `dist` を動かして確かめていませんでした。
+ちょうど#133で疑った「同じはずのものが2つある」状態を、ライブラリ自身のビルドで本当に作ってしまっていました。テストは `src` を直接 import していたため、ビルド後の `dist` を動かして確かめていませんでした。
 
-`tsup.config.ts` に `splitting: true` を足して、CommonJS でもチャンクを共有するようにしました（v0.12.3）。あわせて、`pnpm build` のあとに `dist` を CommonJS と ESM の両方から読み込み、各 hook が 422 を返すことを確かめるテストを CI に入れています。
+`tsup.config.ts` に `splitting: true` を足して、CommonJS でもチャンクを共有するようにしました（v0.12.3）。あわせて、`pnpm build` のあとに `dist` を CommonJS と ESM の両方から読み込み、各 hook が422を返すことを確かめるテストを CI に入れています。
 
 ---
 
 ## 振り返って
 
-2 つの報告（#67、#226）と 1 つの自爆（#235）には、共通点があります。どれも、このリポジトリの開発とテストの環境（`moduleResolution: "bundler"`、Hono 4、`src` を直接テスト）では起きない問題でした。
+2つの報告（#67、#226）と1つの自爆（#235）には、共通点があります。どれも、このリポジトリの開発とテストの環境（`moduleResolution: "bundler"`、Hono 4、`src` を直接テスト）では起きない問題でした。
 
 | 報告 | 手元で起きなかった理由                 | 足したテスト                                 |
 | :--- | :------------------------------------- | :------------------------------------------- |
 | #67  | `moduleResolution` が `bundler` だった | `attw` で `node10` を含む型の解決を検査      |
-| #226 | Hono 4 しか入れていなかった            | Hono 5 でも型検査とテストを回すジョブ        |
+| #226 | Hono 4しか入れていなかった             | Hono 5でも型検査とテストを回すジョブ         |
 | #235 | テストが `src` を直接読んでいた        | ビルド後の `dist` を CJS と ESM で読むテスト |
 
-一方、#133 はその逆で、手元で起きるかどうかを確かめずに、分析をそのまま信じて直していました。OpenTelemetry（#139）は機能の提案なので、ここでは数えていません。
+一方、#133はその逆で、手元で起きるかどうかを確かめずに、分析をそのまま信じて直していました。OpenTelemetry（#139）は機能の提案なので、ここでは数えていません。
 
-ライブラリを公開している人に持ち帰ってほしいことを、自分への戒めも込めて 3 つ挙げます。
+ライブラリを公開している人に持ち帰ってほしいことを、自分への戒めも込めて3つ挙げます。
 
 - **直す前に、手元で再現する。** 報告の分析がどれだけ丁寧でも、再現しないまま出した修正は、効いたのかどうか確かめようがありません
-- **`instanceof` で、パッケージをまたいだクラスの同一性を仮定しない。** バンドラーとビルドの設定しだいで、同じクラスは簡単に 2 つになります
-- **型が通っても、動くとは限らない。** Hono 5 の `ErrorHandler` のように、依存先が型の定義を変えたせいで、古い呼ばれ方を前提にしたコードでも型が通ることがあります。テストは、公開する形（`dist`）でも、サポートするメジャーバージョンでも回します
+- **`instanceof` で、パッケージをまたいだクラスの同一性を仮定しない。** バンドラーとビルドの設定しだいで、同じクラスは簡単に2つになります
+- **型が通っても、動くとは限らない。** Hono 5の `ErrorHandler` のように、依存先が型の定義を変えたせいで、古い呼ばれ方を前提にしたコードでも型が通ることがあります。テストは、公開する形（`dist`）でも、サポートするメジャーバージョンでも回します
 
-そして、報告者の方々には本当に助けられました。#226 は再現コードと回避策まで書いてくれていて、僕がやったのはほとんど「確かめて、選んで、テストを書く」ことでした。#133 も、修正案の比較まで書いてくれていました（確かめる工程を飛ばしたのは僕のほうです）。ありがとうございました。
+そして、報告者の方々には本当に助けられました。#226は再現コードと回避策まで書いてくれていて、僕がやったのはほとんど「確かめて、選んで、テストを書く」ことでした。#133も、修正案の比較まで書いてくれていました（確かめる工程を飛ばしたのは僕のほうです）。ありがとうございました。
 
-Hono 5 で使うなら v0.12.1 以降、CommonJS で `delegateToHandler` を使うなら v0.12.3 以降を入れてください。Issue も PR も歓迎です。
+Hono 5で使うならv0.12.1以降、CommonJS で `delegateToHandler` を使うならv0.12.3以降を入れてください。Issue も PR も歓迎です。
 
 https://github.com/paveg/hono-problem-details
 
